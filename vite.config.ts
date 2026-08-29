@@ -4,6 +4,13 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    // Lets the dev server answer through an ngrok tunnel (free-tier
+    // subdomains are random each run, hence the wildcard) — Vite blocks
+    // unrecognized Host headers by default to guard against DNS
+    // rebinding. Dev-server only; has no effect on the production build.
+    allowedHosts: [".ngrok-free.dev", ".ngrok-free.app"],
+  },
   plugins: [
     react(),
     VitePWA({
