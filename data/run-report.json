@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-29T10:35:50.590Z",
+  "generatedAt": "2026-08-29T11:12:28.656Z",
   "layers": [
     "stooq",
     "yahoo-chart-query1",
@@ -8,7 +8,9 @@
     "stockanalysis",
     "nasdaq",
     "marketwatch",
+    "wsj",
     "fmp",
+    "tiingo",
     "twelvedata",
     "alphavantage",
     "last-known-good-cache"
@@ -54,12 +56,12 @@
       "points": 1254,
       "stale": false
     },
-    "ROBO": {
+    "CIBR": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "CIBR": {
+    "ROBO": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -104,22 +106,22 @@
       "points": 1254,
       "stale": false
     },
-    "FINX": {
-      "layer": "yahoo-chart-query1",
-      "points": 1254,
-      "stale": false
-    },
     "IPAY": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "BKCH": {
+    "BLOK": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "BLOK": {
+    "FINX": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "BKCH": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -134,17 +136,17 @@
       "points": 1254,
       "stale": false
     },
-    "URA": {
-      "layer": "yahoo-chart-query1",
-      "points": 1254,
-      "stale": false
-    },
     "NLR": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
     "XOP": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "URA": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -169,12 +171,12 @@
       "points": 1254,
       "stale": false
     },
-    "FIW": {
+    "GRID": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "GRID": {
+    "FIW": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -184,12 +186,12 @@
       "points": 1254,
       "stale": false
     },
-    "GDX": {
+    "GDXJ": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "GDXJ": {
+    "GDX": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -199,7 +201,7 @@
       "points": 1254,
       "stale": false
     },
-    "PICK": {
+    "REMX": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -209,12 +211,12 @@
       "points": 1254,
       "stale": false
     },
-    "REMX": {
+    "PICK": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "SLX": {
+    "XBI": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -224,7 +226,7 @@
       "points": 1254,
       "stale": false
     },
-    "XBI": {
+    "SLX": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -249,17 +251,12 @@
       "points": 1254,
       "stale": false
     },
-    "IHI": {
-      "layer": "yahoo-chart-query1",
-      "points": 1254,
-      "stale": false
-    },
     "EUAD": {
       "layer": "yahoo-chart-query1",
       "points": 463,
       "stale": false
     },
-    "VIS": {
+    "IHI": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -274,12 +271,12 @@
       "points": 1254,
       "stale": false
     },
-    "XLRE": {
+    "VIS": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "XLY": {
+    "XLRE": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -294,17 +291,17 @@
       "points": 1254,
       "stale": false
     },
-    "SPY": {
-      "layer": "yahoo-chart-query1",
-      "points": 1254,
-      "stale": false
-    },
     "EWG": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
-    "EWU": {
+    "SPY": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "XLY": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -315,6 +312,11 @@
       "stale": false
     },
     "EWD": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "EWU": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
