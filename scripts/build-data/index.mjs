@@ -20,7 +20,9 @@ import * as yahooSpark from "./sources/yahooSpark.mjs";
 import * as stockanalysis from "./sources/stockanalysis.mjs";
 import * as nasdaq from "./sources/nasdaq.mjs";
 import * as marketwatch from "./sources/marketwatch.mjs";
+import * as wsj from "./sources/wsj.mjs";
 import * as fmp from "./sources/fmp.mjs";
+import * as tiingo from "./sources/tiingo.mjs";
 import * as twelvedata from "./sources/twelvedata.mjs";
 import * as alphavantage from "./sources/alphavantage.mjs";
 import * as cacheLayer from "./sources/cache.mjs";
@@ -31,7 +33,7 @@ import { holtForecast } from "./lib/holtwinters.mjs";
 // Ranked fallback chain. Order matters: cheapest/most-reliable-first,
 // keyed layers (which no-op without their secret) near the end, the
 // committed cache as the floor that never fails outright.
-const LAYERS = [stooq, yahooQ1, yahooQ2, yahooSpark, stockanalysis, nasdaq, marketwatch, fmp, twelvedata, alphavantage, cacheLayer];
+const LAYERS = [stooq, yahooQ1, yahooQ2, yahooSpark, stockanalysis, nasdaq, marketwatch, wsj, fmp, tiingo, twelvedata, alphavantage, cacheLayer];
 
 const report = { generatedAt: new Date().toISOString(), layers: LAYERS.map((l) => l.name), tickers: {} };
 

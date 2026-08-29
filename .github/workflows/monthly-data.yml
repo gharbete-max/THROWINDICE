@@ -30,6 +30,7 @@ jobs:
           # them as repo secrets (Settings → Secrets and variables →
           # Actions) to enable the keyed fallback layers.
           FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: node scripts/build-data/index.mjs
