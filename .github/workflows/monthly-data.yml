@@ -42,4 +42,12 @@ jobs:
           git add src/data/generated.json data/cache data/run-report.json
           git diff --cached --quiet && echo "No data changes." && exit 0
           git commit -m "data: monthly refresh $(date -u +%Y-%m-%d)"
-          git push
+          # Rebase onto whatever the branch's tip actually is right now
+          # before pushing — the checkout at the top of this job can be
+          # behind main by the time we get here (another merge landed
+          # meanwhile, or this run itself is a re-run of an old, now-stale
+          # attempt), and a plain `git push` would be rejected as a
+          # non-fast-forward in either case.
+          git fetch origin ${{ github.ref_name }}
+          git rebase origin/${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
