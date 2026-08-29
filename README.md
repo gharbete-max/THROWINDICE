@@ -22,7 +22,7 @@ and deployed, whether or not the data pipeline has ever run.
 
 `scripts/build-data/` is a free, no-API-key-required (optionally
 key-enhanced) pipeline that fetches real ETF/index prices from a ranked
-chain of 11 fallback sources, computes the app's scores/forecast from
+chain of 13 fallback sources, computes the app's scores/forecast from
 them, and writes `src/data/generated.json`. Runs monthly via
 `.github/workflows/monthly-data.yml` (free on GitHub Actions).
 

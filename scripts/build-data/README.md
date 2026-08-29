@@ -12,16 +12,17 @@ running app ever calls an external API.
 node scripts/build-data/index.mjs
 ```
 
-Run from `app/`. Takes well under a minute for the full ~66-ticker
-dataset. `.github/workflows/monthly-data.yml` runs it automatically on
-the 1st of every month via GitHub Actions (free) and commits the result.
+Run from the repo root. Takes well under a minute for the full
+~66-ticker dataset. `.github/workflows/monthly-data.yml` runs it
+automatically on the 1st of every month via GitHub Actions (free) and
+commits the result.
 
-## The fallback chain (11 layers)
+## The fallback chain (13 layers)
 
 Every ticker walks this list in order until one source returns a
 plausible ≥400-point daily series (`lib/normalize.mjs`'s `validateSeries`
 is the gate). Most tickers resolve on layer 1 or 2; the rest exist for
-the days those are down, rate-limited, or geo-blocked.
+the days those are down, rate-limited, or blocked.
 
 | # | Source | Key needed? | File |
 |---|---|---|---|
@@ -32,16 +33,31 @@ the days those are down, rate-limited, or geo-blocked.
 | 5 | stockanalysis.com JSON API | no | `sources/stockanalysis.mjs` |
 | 6 | Nasdaq public quote API | no | `sources/nasdaq.mjs` |
 | 7 | MarketWatch CSV download | no | `sources/marketwatch.mjs` |
-| 8 | Financial Modeling Prep | free tier key | `sources/fmp.mjs` |
-| 9 | Twelve Data | free tier key | `sources/twelvedata.mjs` |
-| 10 | Alpha Vantage | free tier key | `sources/alphavantage.mjs` |
-| 11 | Last-known-good cache (`data/cache/`) | — | `sources/cache.mjs` |
+| 8 | Wall Street Journal CSV download | no | `sources/wsj.mjs` |
+| 9 | Financial Modeling Prep | free tier key | `sources/fmp.mjs` |
+| 10 | Tiingo | free tier key | `sources/tiingo.mjs` |
+| 11 | Twelve Data | free tier key | `sources/twelvedata.mjs` |
+| 12 | Alpha Vantage | free tier key | `sources/alphavantage.mjs` |
+| 13 | Last-known-good cache (`data/cache/`) | — | `sources/cache.mjs` |
 
-Layers 8–10 are **skipped, not failed**, when their env var
-(`FMP_API_KEY` / `TWELVEDATA_API_KEY` / `ALPHAVANTAGE_API_KEY`) isn't
-set — the pipeline runs fully anonymously on layers 1–7 + 11 out of the
-box. Add free-tier keys as GitHub Actions secrets only if you want the
-extra redundancy; none are required.
+Layers 9–12 are **skipped, not failed**, when their env var
+(`FMP_API_KEY` / `TIINGO_API_KEY` / `TWELVEDATA_API_KEY` /
+`ALPHAVANTAGE_API_KEY`) isn't set — the pipeline runs fully anonymously
+on layers 1–8 + 13 out of the box. Add free-tier keys as GitHub Actions
+secrets only if you want the extra redundancy; none are required.
+
+**What actually happened on the first real run** (see
+`data/run-report.json` in the repo): all 67 tickers resolved, but every
+single one came from layer 2 (Yahoo) — layer 1 (Stooq) failed uniformly
+across every ticker, which looks like Stooq blocking/rate-limiting the
+shared GitHub Actions IP ranges rather than anything ticker-specific
+(see the comment in `sources/stooq.mjs`). Left in place regardless —
+harmless when it fails (costs under a second before falling through),
+and it may work fine from a different runner. Layers 5–8 have not yet
+been exercised for real (Yahoo has caught everything so far); their
+correctness is written to match each provider's documented/observed
+shape but, same caveat as before, unverified against live traffic from
+this session specifically.
 
 Layer 11 is the floor: whatever the last successful fetch for that
 ticker was (committed to `data/cache/<TICKER>.json` by whichever layer
@@ -51,7 +67,7 @@ blank screen. `data/run-report.json` records which layer won for every
 ticker on the last run, and how many were stale — that's your signal for
 "is a source quietly rotting" over time.
 
-**Adding a 12th layer**: copy any file in `sources/` as a template — it
+**Adding another layer**: copy any file in `sources/` as a template — it
 just needs to export `name` and an async `fetchDaily(ticker)` returning
 `normalizeSeries(rows)` or `null`. Add it to the `LAYERS` array in
 `index.mjs` wherever you want it ranked.
