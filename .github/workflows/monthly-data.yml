@@ -1,0 +1,44 @@
+name: Monthly data refresh
+
+# Free on GitHub-hosted runners for a public repo (2,000 min/month free
+# even on a private one — this job takes well under a minute). Runs the
+# fallback pipeline, commits whatever it produced (generated.json, the
+# last-known-good cache, and the run report) straight back to main.
+on:
+  schedule:
+    # 06:00 UTC on the 1st of every month — after markets have a full
+    # prior trading day to close everywhere the app covers.
+    - cron: "0 6 1 * *"
+  workflow_dispatch: {} # lets you trigger a run manually from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  build-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run the data pipeline
+        env:
+          # Optional — only the anonymous layers run without these. Add
+          # them as repo secrets (Settings → Secrets and variables →
+          # Actions) to enable the keyed fallback layers.
+          FMP_API_KEY: ${{ secrets.FMP_API_KEY }}
+          TWELVEDATA_API_KEY: ${{ secrets.TWELVEDATA_API_KEY }}
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: node scripts/build-data/index.mjs
+
+      - name: Commit updated data
+        run: |
+          git config user.name "isobar-data-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/data/generated.json data/cache data/run-report.json
+          git diff --cached --quiet && echo "No data changes." && exit 0
+          git commit -m "data: monthly refresh $(date -u +%Y-%m-%d)"
+          git push
