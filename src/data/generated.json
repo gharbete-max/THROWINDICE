@@ -1,6 +1,6 @@
 {
-  "asOf": "2026-08",
-  "nextReport": "1 September",
+  "asOf": "2026-09",
+  "nextReport": "1 October",
   "families": [
     {
       "key": "tech",
@@ -16,14 +16,14 @@
           "name": "AI & machine learning",
           "proxy": "AI software and models",
           "etfs": "ARTY · IGPT · CHAT",
-          "temp": 44,
-          "delta": 6,
+          "temp": 36,
+          "delta": -2,
           "f": [
-            92.9,
+            64.2,
             0,
-            50,
-            61.9,
-            15.4
+            48.3,
+            56.5,
+            11.3
           ],
           "hist": [
             48,
@@ -49,16 +49,16 @@
             78,
             76,
             38,
-            44
+            36
           ],
           "forecast": {
-            "p1": 42,
-            "p2": 40,
+            "p1": 34,
+            "p2": 32,
             "resid": 16.8,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being rising, though it is still choppy."
+          "line": "This month held steady, most helped by being rising, though it is still choppy."
         },
         {
           "key": "qc",
@@ -66,14 +66,14 @@
           "name": "Quantum computing",
           "proxy": "Quantum hardware",
           "etfs": "QTUM",
-          "temp": 43,
-          "delta": 7,
+          "temp": 37,
+          "delta": 1,
           "f": [
-            79.2,
-            8.8,
-            48.3,
-            65.3,
-            14.5
+            54.5,
+            8.3,
+            46.7,
+            59.4,
+            15.2
           ],
           "hist": [
             53,
@@ -99,16 +99,16 @@
             80,
             82,
             36,
-            43
+            37
           ],
           "forecast": {
-            "p1": 41,
-            "p2": 39,
-            "resid": 18.9,
+            "p1": 35,
+            "p2": 32,
+            "resid": 18.8,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being rising, though it is still choppy."
+          "line": "This month held steady, most helped by being near its high, though it is still choppy."
         },
         {
           "key": "rb",
@@ -143,7 +143,7 @@
             86,
             68,
             63,
-            73,
+            74,
             76,
             50,
             68,
@@ -166,13 +166,13 @@
           "name": "Space & satellites",
           "proxy": "Launch, satellites, imaging",
           "etfs": "ARKX · UFO",
-          "temp": 19,
-          "delta": 4,
+          "temp": 16,
+          "delta": 1,
           "f": [
-            38.5,
-            16.7,
-            23.3,
-            17.3,
+            26.9,
+            16.9,
+            21.7,
+            12.1,
             0
           ],
           "hist": [
@@ -199,16 +199,16 @@
             77,
             50,
             15,
-            19
+            16
           ],
           "forecast": {
-            "p1": 13,
-            "p2": 8,
+            "p1": 10,
+            "p2": 5,
             "resid": 19.8,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being rising, though it is still quiet."
+          "line": "This month held steady, most helped by being rising, though it is still quiet."
         },
         {
           "key": "cy",
@@ -216,14 +216,14 @@
           "name": "Cybersecurity",
           "proxy": "Security software",
           "etfs": "CIBR · HACK · BUG",
-          "temp": 74,
-          "delta": 2,
+          "temp": 75,
+          "delta": 3,
           "f": [
             100,
-            19,
+            24.6,
             100,
-            94.4,
-            55.8
+            91.2,
+            56.8
           ],
           "hist": [
             73,
@@ -237,7 +237,7 @@
             57,
             72,
             73,
-            66,
+            65,
             62,
             63,
             57,
@@ -249,11 +249,11 @@
             70,
             72,
             72,
-            74
+            75
           ],
           "forecast": {
-            "p1": 75,
-            "p2": 76,
+            "p1": 76,
+            "p2": 77,
             "resid": 9,
             "alpha": 0.9,
             "beta": 0.1
@@ -266,14 +266,14 @@
           "name": "Semiconductors",
           "proxy": "Chip makers and tools",
           "etfs": "SMH · SOXX",
-          "temp": 39,
-          "delta": -1,
+          "temp": 30,
+          "delta": -10,
           "f": [
-            76,
+            45.4,
             0,
-            45,
-            43.8,
-            29
+            43.3,
+            36,
+            25
           ],
           "hist": [
             37,
@@ -299,16 +299,16 @@
             69,
             76,
             40,
-            39
+            30
           ],
           "forecast": {
-            "p1": 37,
-            "p2": 36,
-            "resid": 12.4,
+            "p1": 29,
+            "p2": 26,
+            "resid": 12.6,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month held steady, most helped by being rising, though it is still choppy."
+          "line": "This month weakened, most helped by being rising, though it is still choppy."
         },
         {
           "key": "bt",
@@ -316,14 +316,14 @@
           "name": "Established big tech",
           "proxy": "Large profitable tech",
           "etfs": "XLK · QQQ",
-          "temp": 59,
-          "delta": 8,
+          "temp": 54,
+          "delta": 3,
           "f": [
-            77.9,
-            41.6,
+            60.8,
+            41.8,
             66.7,
-            86.4,
-            20.3
+            83.5,
+            19.1
           ],
           "hist": [
             60,
@@ -349,16 +349,16 @@
             70,
             77,
             51,
-            59
+            54
           ],
           "forecast": {
-            "p1": 58,
-            "p2": 57,
+            "p1": 53,
+            "p2": 52,
             "resid": 10.6,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being near its high, though it is still quiet."
+          "line": "This month held steady, most helped by being near its high, though it is still quiet."
         }
       ]
     },
@@ -379,14 +379,14 @@
           "temp": 73,
           "delta": -2,
           "f": [
-            64.1,
-            89.2,
-            98.3,
-            91.8,
-            23.9
+            61,
+            89,
+            100,
+            89.9,
+            23.8
           ],
           "hist": [
-            76,
+            77,
             78,
             85,
             62,
@@ -413,8 +413,8 @@
           ],
           "forecast": {
             "p1": 74,
-            "p2": 75,
-            "resid": 9.8,
+            "p2": 74,
+            "resid": 9.7,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -426,14 +426,14 @@
           "name": "Fintech & payments",
           "proxy": "Payments, digital banking",
           "etfs": "FINX · IPAY",
-          "temp": 59,
-          "delta": 0,
+          "temp": 56,
+          "delta": -3,
           "f": [
-            79.5,
-            52.2,
-            70,
-            48.9,
-            46.7
+            64.7,
+            51.4,
+            71.7,
+            41.7,
+            49.7
           ],
           "hist": [
             80,
@@ -459,16 +459,16 @@
             43,
             47,
             59,
-            59
+            56
           ],
           "forecast": {
-            "p1": 59,
-            "p2": 59,
+            "p1": 56,
+            "p2": 56,
             "resid": 12.7,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month held steady, most helped by being rising."
+          "line": "This month held steady, most helped by being broad-based."
         },
         {
           "key": "bc",
@@ -476,14 +476,14 @@
           "name": "Blockchain & stablecoins",
           "proxy": "Exchanges, miners, issuers",
           "etfs": "BLOK · BKCH",
-          "temp": 31,
-          "delta": 13,
+          "temp": 21,
+          "delta": 3,
           "f": [
-            83.5,
+            41.9,
             0,
             28.3,
-            27.4,
-            18.2
+            16.7,
+            20
           ],
           "hist": [
             38,
@@ -491,7 +491,7 @@
             76,
             55,
             61,
-            25,
+            26,
             9,
             16,
             56,
@@ -509,16 +509,16 @@
             53,
             45,
             18,
-            31
+            21
           ],
           "forecast": {
-            "p1": 30,
-            "p2": 31,
-            "resid": 22.8,
+            "p1": 20,
+            "p2": 20,
+            "resid": 22.6,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being rising, though it is still choppy."
+          "line": "This month held steady, most helped by being rising, though it is still choppy."
         },
         {
           "key": "ins",
@@ -529,11 +529,11 @@
           "temp": 76,
           "delta": -1,
           "f": [
-            68.2,
-            88.6,
-            98.3,
-            98.2,
-            27.4
+            65.8,
+            88.4,
+            100,
+            96.2,
+            30.2
           ],
           "hist": [
             85,
@@ -586,14 +586,14 @@
           "name": "Nuclear & uranium",
           "proxy": "Reactors, uranium miners",
           "etfs": "URA · NLR",
-          "temp": 38,
-          "delta": 30,
+          "temp": 29,
+          "delta": 21,
           "f": [
-            100,
+            66.1,
             0,
-            25,
-            24,
-            42.5
+            26.7,
+            9.3,
+            41.1
           ],
           "hist": [
             49,
@@ -619,12 +619,12 @@
             29,
             17,
             8,
-            38
+            29
           ],
           "forecast": {
-            "p1": 35,
-            "p2": 36,
-            "resid": 20.6,
+            "p1": 26,
+            "p2": 26,
+            "resid": 20,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -636,45 +636,45 @@
           "name": "Oil & gas companies",
           "proxy": "Majors, drillers, services",
           "etfs": "XLE · XOP",
-          "temp": 62,
-          "delta": 6,
+          "temp": 65,
+          "delta": 9,
           "f": [
-            81.6,
-            57.1,
+            89.5,
+            56.4,
             60,
-            92.9,
-            17
+            100,
+            18.3
           ],
           "hist": [
-            47,
+            48,
             48,
             66,
             51,
             63,
             54,
-            64,
+            65,
             35,
             33,
-            49,
+            50,
             64,
             66,
             66,
             56,
             66,
-            55,
+            56,
             89,
             88,
             90,
-            69,
+            70,
             51,
             35,
             56,
-            62
+            65
           ],
           "forecast": {
-            "p1": 61,
-            "p2": 61,
-            "resid": 15.5,
+            "p1": 64,
+            "p2": 64,
+            "resid": 15.6,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -686,14 +686,14 @@
           "name": "Solar",
           "proxy": "Panel makers, installers",
           "etfs": "TAN",
-          "temp": 16,
-          "delta": 3,
+          "temp": 11,
+          "delta": -2,
           "f": [
-            22.2,
-            6.4,
-            13.3,
             0,
-            39.3
+            6,
+            11.7,
+            0,
+            36.6
           ],
           "hist": [
             38,
@@ -719,16 +719,16 @@
             73,
             34,
             13,
-            16
+            11
           ],
           "forecast": {
             "p1": 0,
             "p2": 0,
-            "resid": 14.1,
+            "resid": 14,
             "alpha": 0.5,
             "beta": 0.9
           },
-          "line": "This month held steady, most helped by being actively traded, though it is still well off its high."
+          "line": "This month held steady, most helped by being actively traded, though it is still falling."
         },
         {
           "key": "wnd",
@@ -736,14 +736,14 @@
           "name": "Wind",
           "proxy": "Turbine makers, developers",
           "etfs": "FAN",
-          "temp": 57,
-          "delta": 13,
+          "temp": 52,
+          "delta": 8,
           "f": [
-            52.4,
-            72.5,
-            10,
-            63.7,
-            84.2
+            36.6,
+            71.4,
+            8.3,
+            57,
+            85.4
           ],
           "hist": [
             71,
@@ -769,14 +769,14 @@
             82,
             54,
             44,
-            57
+            52
           ],
           "forecast": {
-            "p1": 52,
-            "p2": 48,
-            "resid": 14.2,
-            "alpha": 0.9,
-            "beta": 0.3
+            "p1": 39,
+            "p2": 34,
+            "resid": 13.9,
+            "alpha": 0.7,
+            "beta": 0.7
           },
           "line": "This month improved, most helped by being actively traded, though it is still narrow — a few names doing the work."
         },
@@ -786,14 +786,14 @@
           "name": "Water & hydro",
           "proxy": "Utilities, treatment, pipes",
           "etfs": "PHO · FIW",
-          "temp": 66,
-          "delta": 6,
+          "temp": 67,
+          "delta": 7,
           "f": [
-            64,
-            79,
-            83.3,
-            88.8,
-            15.3
+            62.5,
+            78.4,
+            85,
+            84.9,
+            25.2
           ],
           "hist": [
             76,
@@ -819,16 +819,16 @@
             58,
             69,
             60,
-            66
+            67
           ],
           "forecast": {
-            "p1": 65,
-            "p2": 65,
+            "p1": 66,
+            "p2": 66,
             "resid": 9.5,
             "alpha": 0.7,
             "beta": 0.3
           },
-          "line": "This month improved, most helped by being near its high, though it is still quiet."
+          "line": "This month improved, most helped by being broad-based, though it is still quiet."
         },
         {
           "key": "grd",
@@ -836,14 +836,14 @@
           "name": "Grid & storage",
           "proxy": "Cables, batteries, grid kit",
           "etfs": "GRID · BATT",
-          "temp": 52,
-          "delta": 14,
+          "temp": 46,
+          "delta": 8,
           "f": [
-            69.6,
-            44.7,
-            33.3,
-            69.5,
-            43.7
+            49.9,
+            44.1,
+            31.7,
+            64,
+            42.1
           ],
           "hist": [
             68,
@@ -869,16 +869,16 @@
             72,
             61,
             38,
-            52
+            46
           ],
           "forecast": {
-            "p1": 48,
-            "p2": 46,
-            "resid": 14.2,
+            "p1": 42,
+            "p2": 39,
+            "resid": 14,
             "alpha": 0.9,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being rising, though it is still narrow — a few names doing the work."
+          "line": "This month improved, most helped by being near its high, though it is still narrow — a few names doing the work."
         }
       ]
     },
@@ -896,14 +896,14 @@
           "name": "Gold miners",
           "proxy": "Gold mining companies",
           "etfs": "GDX · GDXJ",
-          "temp": 49,
-          "delta": 38,
+          "temp": 47,
+          "delta": 36,
           "f": [
             100,
             0,
-            28.3,
-            59.6,
-            55.9
+            31.7,
+            44.8,
+            60.3
           ],
           "hist": [
             66,
@@ -929,12 +929,12 @@
             23,
             14,
             11,
-            49
+            47
           ],
           "forecast": {
-            "p1": 44,
-            "p2": 44,
-            "resid": 16.2,
+            "p1": 42,
+            "p2": 42,
+            "resid": 15.9,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -946,14 +946,14 @@
           "name": "Copper & industrial metals",
           "proxy": "Copper and metal miners",
           "etfs": "COPX · PICK",
-          "temp": 57,
-          "delta": 22,
+          "temp": 53,
+          "delta": 18,
           "f": [
-            100,
-            4.9,
+            88.6,
+            3.6,
             43.3,
-            99.7,
-            36
+            89.3,
+            38.2
           ],
           "hist": [
             58,
@@ -979,16 +979,16 @@
             52,
             36,
             35,
-            57
+            53
           ],
           "forecast": {
-            "p1": 55,
-            "p2": 65,
-            "resid": 14.8,
+            "p1": 51,
+            "p2": 60,
+            "resid": 14.5,
             "alpha": 0.5,
             "beta": 0.9
           },
-          "line": "This month improved, most helped by being rising, though it is still choppy."
+          "line": "This month improved, most helped by being near its high, though it is still choppy."
         },
         {
           "key": "lit",
@@ -996,14 +996,14 @@
           "name": "Lithium & battery metals",
           "proxy": "Lithium, rare earths",
           "etfs": "LIT · REMX",
-          "temp": 32,
-          "delta": 18,
+          "temp": 27,
+          "delta": 13,
           "f": [
-            76.1,
+            60.2,
             17.7,
             11.7,
-            28.6,
-            23.5
+            24.8,
+            22.6
           ],
           "hist": [
             41,
@@ -1026,15 +1026,15 @@
             75,
             46,
             62,
-            56,
+            57,
             36,
             14,
-            32
+            27
           ],
           "forecast": {
-            "p1": 28,
-            "p2": 26,
-            "resid": 16,
+            "p1": 23,
+            "p2": 20,
+            "resid": 15.8,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -1046,14 +1046,14 @@
           "name": "Steel & building materials",
           "proxy": "Steel, cement, chemicals",
           "etfs": "SLX · XLB",
-          "temp": 66,
-          "delta": 6,
+          "temp": 63,
+          "delta": 3,
           "f": [
-            62.7,
-            70,
+            53.9,
+            69.5,
             58.3,
-            97.6,
-            40.3
+            93.1,
+            38.3
           ],
           "hist": [
             68,
@@ -1072,23 +1072,23 @@
             79,
             81,
             71,
-            86,
+            87,
             93,
             62,
             64,
             64,
             58,
             60,
-            66
+            63
           ],
           "forecast": {
-            "p1": 63,
-            "p2": 62,
+            "p1": 61,
+            "p2": 60,
             "resid": 11.4,
             "alpha": 0.7,
             "beta": 0.1
           },
-          "line": "This month improved, most helped by being near its high."
+          "line": "This month held steady, most helped by being near its high, though it is still quiet."
         }
       ]
     },
@@ -1106,14 +1106,14 @@
           "name": "Biotech",
           "proxy": "Drug developers",
           "etfs": "XBI · IBB",
-          "temp": 76,
-          "delta": 14,
+          "temp": 74,
+          "delta": 12,
           "f": [
-            100,
-            48.9,
-            91.7,
-            97,
-            43.7
+            96.9,
+            46.7,
+            93.3,
+            87,
+            43.6
           ],
           "hist": [
             69,
@@ -1139,12 +1139,12 @@
             64,
             79,
             62,
-            76
+            74
           ],
           "forecast": {
-            "p1": 77,
-            "p2": 79,
-            "resid": 12,
+            "p1": 74,
+            "p2": 76,
+            "resid": 11.9,
             "alpha": 0.9,
             "beta": 0.3
           },
@@ -1159,11 +1159,11 @@
           "temp": 72,
           "delta": 2,
           "f": [
-            68.2,
-            69.5,
-            98.3,
-            90.9,
-            32.7
+            70.7,
+            69.6,
+            100,
+            88.5,
+            32.5
           ],
           "hist": [
             75,
@@ -1206,14 +1206,14 @@
           "name": "Medical devices",
           "proxy": "Equipment, diagnostics",
           "etfs": "IHI",
-          "temp": 57,
-          "delta": 4,
+          "temp": 59,
+          "delta": 6,
           "f": [
-            69.7,
-            54,
-            66.7,
-            50,
-            43.6
+            76.1,
+            54.1,
+            68.3,
+            51.8,
+            42.2
           ],
           "hist": [
             69,
@@ -1239,12 +1239,12 @@
             38,
             40,
             53,
-            57
+            59
           ],
           "forecast": {
-            "p1": 56,
-            "p2": 56,
-            "resid": 10.6,
+            "p1": 58,
+            "p2": 58,
+            "resid": 10.7,
             "alpha": 0.9,
             "beta": 0.1
           },
@@ -1266,14 +1266,14 @@
           "name": "Defence & aerospace",
           "proxy": "Defence contractors",
           "etfs": "ITA · EUAD",
-          "temp": 60,
-          "delta": 3,
+          "temp": 55,
+          "delta": -2,
           "f": [
-            60,
-            64,
+            44.5,
+            61.7,
             90,
-            81,
-            4.2
+            71.6,
+            5.6
           ],
           "hist": [
             87,
@@ -1294,12 +1294,12 @@
             46,
             49,
             57,
-            60
+            55
           ],
           "forecast": {
             "p1": 48,
             "p2": 46,
-            "resid": 10,
+            "resid": 9.7,
             "alpha": 0.1,
             "beta": 0.3
           },
@@ -1311,14 +1311,14 @@
           "name": "Industrials & machinery",
           "proxy": "Machinery, transport",
           "etfs": "XLI · VIS",
-          "temp": 64,
-          "delta": 1,
+          "temp": 60,
+          "delta": -3,
           "f": [
-            55.8,
-            75,
-            83.3,
-            85.8,
-            19
+            45.5,
+            73.7,
+            81.7,
+            79.1,
+            19.9
           ],
           "hist": [
             77,
@@ -1344,16 +1344,16 @@
             61,
             75,
             63,
-            64
+            60
           ],
           "forecast": {
-            "p1": 64,
-            "p2": 63,
-            "resid": 9.8,
+            "p1": 62,
+            "p2": 61,
+            "resid": 9.9,
             "alpha": 0.5,
             "beta": 0.1
           },
-          "line": "This month held steady, most helped by being near its high, though it is still quiet."
+          "line": "This month held steady, most helped by being broad-based, though it is still quiet."
         },
         {
           "key": "ev",
@@ -1361,14 +1361,14 @@
           "name": "Everyday goods",
           "proxy": "Food, drink, household",
           "etfs": "XLP",
-          "temp": 63,
-          "delta": -2,
+          "temp": 65,
+          "delta": 0,
           "f": [
-            45.3,
-            78.2,
-            81.7,
-            85.7,
-            23.7
+            52.6,
+            79.3,
+            83.3,
+            85.3,
+            22.6
           ],
           "hist": [
             83,
@@ -1394,11 +1394,11 @@
             53,
             59,
             65,
-            63
+            65
           ],
           "forecast": {
-            "p1": 63,
-            "p2": 63,
+            "p1": 65,
+            "p2": 66,
             "resid": 12.5,
             "alpha": 0.9,
             "beta": 0.3
@@ -1411,14 +1411,14 @@
           "name": "Retail & consumer",
           "proxy": "Shops, brands, leisure",
           "etfs": "XRT · XLY",
-          "temp": 61,
-          "delta": -4,
+          "temp": 60,
+          "delta": -5,
           "f": [
-            46.5,
-            72.9,
-            76.7,
-            82.5,
-            24.1
+            48.6,
+            73.4,
+            75,
+            82.9,
+            21.4
           ],
           "hist": [
             69,
@@ -1444,11 +1444,11 @@
             62,
             67,
             65,
-            61
+            60
           ],
           "forecast": {
-            "p1": 61,
-            "p2": 61,
+            "p1": 60,
+            "p2": 59,
             "resid": 10,
             "alpha": 0.9,
             "beta": 0.1
@@ -1461,14 +1461,14 @@
           "name": "Real estate",
           "proxy": "Property companies",
           "etfs": "XLRE · VNQ",
-          "temp": 69,
-          "delta": -3,
+          "temp": 68,
+          "delta": -4,
           "f": [
-            44.9,
-            83.9,
-            88.3,
-            89.7,
-            36.9
+            44.6,
+            83.6,
+            86.7,
+            85.7,
+            37.7
           ],
           "hist": [
             82,
@@ -1494,16 +1494,16 @@
             66,
             73,
             72,
-            69
+            68
           ],
           "forecast": {
             "p1": 70,
-            "p2": 70,
+            "p2": 69,
             "resid": 9.3,
             "alpha": 0.3,
             "beta": 0.9
           },
-          "line": "This month held steady, most helped by being near its high, though it is still quiet."
+          "line": "This month weakened, most helped by being broad-based, though it is still quiet."
         }
       ]
     }
@@ -1515,14 +1515,14 @@
       "name": "United States",
       "proxy": "S&P 500",
       "etfs": "",
-      "temp": 72,
-      "delta": 2,
+      "temp": 69,
+      "delta": -1,
       "f": [
-        67.3,
-        89.8,
+        58.4,
+        89.7,
         86.7,
-        97.1,
-        20
+        95.4,
+        17
       ],
       "hist": [
         75,
@@ -1548,11 +1548,11 @@
         68,
         77,
         70,
-        72
+        69
       ],
       "forecast": {
-        "p1": 71,
-        "p2": 71,
+        "p1": 68,
+        "p2": 68,
         "resid": 7.4,
         "alpha": 0.9,
         "beta": 0.1
@@ -1565,13 +1565,13 @@
       "name": "Germany",
       "proxy": "DAX 40",
       "etfs": "",
-      "temp": 63,
-      "delta": 2,
+      "temp": 60,
+      "delta": -1,
       "f": [
-        71.4,
-        83.1,
+        62.7,
+        82.8,
         58.3,
-        100,
+        97.4,
         0
       ],
       "hist": [
@@ -1598,12 +1598,12 @@
         55,
         56,
         61,
-        63
+        60
       ],
       "forecast": {
-        "p1": 62,
-        "p2": 62,
-        "resid": 6.5,
+        "p1": 59,
+        "p2": 59,
+        "resid": 6.4,
         "alpha": 0.9,
         "beta": 0.1
       },
@@ -1615,14 +1615,14 @@
       "name": "France",
       "proxy": "CAC 40",
       "etfs": "",
-      "temp": 69,
-      "delta": 1,
+      "temp": 67,
+      "delta": -1,
       "f": [
-        56.8,
-        84.7,
-        95,
-        87.7,
-        20.6
+        49.4,
+        84.5,
+        93.3,
+        85.8,
+        20.5
       ],
       "hist": [
         66,
@@ -1648,11 +1648,11 @@
         58,
         67,
         68,
-        69
+        67
       ],
       "forecast": {
-        "p1": 70,
-        "p2": 70,
+        "p1": 67,
+        "p2": 67,
         "resid": 8.1,
         "alpha": 0.9,
         "beta": 0.3
@@ -1665,14 +1665,14 @@
       "name": "United Kingdom",
       "proxy": "FTSE 100",
       "etfs": "",
-      "temp": 69,
-      "delta": 0,
+      "temp": 68,
+      "delta": -1,
       "f": [
-        60,
-        92.1,
-        76.7,
-        94.9,
-        20.1
+        54.1,
+        91.9,
+        78.3,
+        93.1,
+        23.4
       ],
       "hist": [
         73,
@@ -1698,11 +1698,11 @@
         57,
         60,
         69,
-        69
+        68
       ],
       "forecast": {
-        "p1": 70,
-        "p2": 70,
+        "p1": 68,
+        "p2": 69,
         "resid": 9.3,
         "alpha": 0.9,
         "beta": 0.3
@@ -1715,14 +1715,14 @@
       "name": "Nordics",
       "proxy": "OMX Nordic 40",
       "etfs": "",
-      "temp": 79,
-      "delta": 3,
+      "temp": 77,
+      "delta": 1,
       "f": [
-        69,
-        76.9,
+        59,
+        76.6,
         60,
-        97.3,
-        92.9
+        94.2,
+        93.7
       ],
       "hist": [
         64,
@@ -1748,12 +1748,12 @@
         58,
         56,
         76,
-        79
+        77
       ],
       "forecast": {
-        "p1": 74,
-        "p2": 74,
-        "resid": 11.2,
+        "p1": 72,
+        "p2": 73,
+        "resid": 11.1,
         "alpha": 0.5,
         "beta": 0.1
       },
@@ -1765,14 +1765,14 @@
       "name": "Europe (all)",
       "proxy": "STOXX Europe 600",
       "etfs": "",
-      "temp": 72,
-      "delta": 2,
+      "temp": 69,
+      "delta": -1,
       "f": [
-        65.9,
-        88.4,
+        57.3,
+        88.1,
         98.3,
-        96.7,
-        9.5
+        94.5,
+        8.8
       ],
       "hist": [
         67,
@@ -1798,11 +1798,11 @@
         63,
         72,
         70,
-        72
+        69
       ],
       "forecast": {
-        "p1": 71,
-        "p2": 70,
+        "p1": 68,
+        "p2": 67,
         "resid": 9.1,
         "alpha": 0.9,
         "beta": 0.1
@@ -1815,13 +1815,13 @@
       "name": "Japan",
       "proxy": "Nikkei 225",
       "etfs": "",
-      "temp": 61,
-      "delta": 3,
+      "temp": 59,
+      "delta": 1,
       "f": [
-        73.1,
+        61.6,
         61.5,
         81.7,
-        91.1,
+        91.2,
         0
       ],
       "hist": [
@@ -1848,11 +1848,11 @@
         58,
         66,
         58,
-        61
+        59
       ],
       "forecast": {
-        "p1": 59,
-        "p2": 58,
+        "p1": 57,
+        "p2": 55,
         "resid": 10.5,
         "alpha": 0.9,
         "beta": 0.3
@@ -1865,14 +1865,14 @@
       "name": "Asia ex-Japan",
       "proxy": "MSCI Asia ex-Japan",
       "etfs": "",
-      "temp": 50,
-      "delta": 7,
+      "temp": 47,
+      "delta": 4,
       "f": [
-        76.9,
+        63.8,
         31.6,
         55,
-        82,
-        5.3
+        80,
+        6.2
       ],
       "hist": [
         74,
@@ -1898,12 +1898,12 @@
         65,
         64,
         43,
-        50
+        47
       ],
       "forecast": {
-        "p1": 41,
-        "p2": 36,
-        "resid": 10.5,
+        "p1": 39,
+        "p2": 33,
+        "resid": 10.4,
         "alpha": 0.5,
         "beta": 0.5
       },
@@ -1915,14 +1915,14 @@
       "name": "China",
       "proxy": "CSI 300",
       "etfs": "",
-      "temp": 47,
-      "delta": 0,
+      "temp": 45,
+      "delta": -2,
       "f": [
-        49.9,
+        46.4,
         75.9,
-        40,
-        45,
-        24.2
+        41.7,
+        44.1,
+        18.8
       ],
       "hist": [
         70,
@@ -1948,11 +1948,11 @@
         42,
         39,
         47,
-        47
+        45
       ],
       "forecast": {
-        "p1": 50,
-        "p2": 51,
+        "p1": 46,
+        "p2": 46,
         "resid": 13.8,
         "alpha": 0.9,
         "beta": 0.9
@@ -1965,14 +1965,14 @@
       "name": "India",
       "proxy": "Nifty 50",
       "etfs": "",
-      "temp": 59,
-      "delta": 0,
+      "temp": 60,
+      "delta": 1,
       "f": [
-        54,
+        52.9,
         90.2,
-        78.3,
-        65.3,
-        8.4
+        80,
+        66.3,
+        9.1
       ],
       "hist": [
         77,
@@ -1998,11 +1998,11 @@
         43,
         55,
         59,
-        59
+        60
       ],
       "forecast": {
-        "p1": 60,
-        "p2": 61,
+        "p1": 61,
+        "p2": 63,
         "resid": 9.9,
         "alpha": 0.9,
         "beta": 0.3
@@ -2015,14 +2015,14 @@
       "name": "Australia",
       "proxy": "ASX 200",
       "etfs": "",
-      "temp": 64,
-      "delta": 6,
+      "temp": 63,
+      "delta": 5,
       "f": [
-        65.3,
-        80.9,
+        56.8,
+        81.1,
         60,
-        96.5,
-        18
+        95.5,
+        19.7
       ],
       "hist": [
         73,
@@ -2048,12 +2048,12 @@
         54,
         56,
         58,
-        64
+        63
       ],
       "forecast": {
-        "p1": 64,
-        "p2": 64,
-        "resid": 10.9,
+        "p1": 63,
+        "p2": 63,
+        "resid": 10.8,
         "alpha": 0.9,
         "beta": 0.3
       },
