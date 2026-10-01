@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-01T10:35:06.836Z",
+  "generatedAt": "2026-10-01T11:53:26.350Z",
   "layers": [
     "stooq",
     "yahoo-chart-query1",
@@ -16,69 +16,64 @@
     "last-known-good-cache"
   ],
   "tickers": {
-    "IGPT": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
     "ARTY": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "IGPT": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "CHAT": {
       "layer": "yahoo-chart-query1",
-      "points": 823,
+      "points": 845,
       "stale": false
     },
     "QTUM": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "ARKX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "IRBO": {
-      "layer": "yahoo-chart-query1",
-      "points": 1222,
+      "points": 1254,
       "stale": false
     },
     "ROBO": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "BOTZ": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "UFO": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "CIBR": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "HACK": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "BUG": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "SMH": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "SOXX": {
@@ -86,12 +81,12 @@
       "points": 1254,
       "stale": false
     },
-    "XLK": {
+    "QQQ": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
-    "QQQ": {
+    "XLK": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -103,47 +98,52 @@
     },
     "KBE": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "FINX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "IPAY": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "BKCH": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "BLOK": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
-    "IAI": {
+    "IPAY": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "KIE": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "IRBO": {
+      "layer": "last-known-good-cache",
+      "points": 1222,
+      "stale": true
+    },
+    "BKCH": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "IAI": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "URA": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "NLR": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "XLE": {
@@ -153,40 +153,35 @@
     },
     "XOP": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "TAN": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "FAN": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "FIW": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "PHO": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "GRID": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "BATT": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
-    "GDX": {
+    "GRID": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
@@ -196,39 +191,59 @@
       "points": 1254,
       "stale": false
     },
-    "PICK": {
+    "GDX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "COPX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "PICK": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "LIT": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "REMX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "SLX": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "XLB": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "XBI": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "IBB": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "PPH": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "IHI": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "XLV": {
@@ -236,49 +251,44 @@
       "points": 1254,
       "stale": false
     },
-    "XBI": {
-      "layer": "yahoo-chart-query2",
-      "points": 1253,
-      "stale": false
-    },
-    "PPH": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "IHI": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
     "ITA": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "EUAD": {
       "layer": "yahoo-chart-query1",
-      "points": 464,
+      "points": 486,
       "stale": false
     },
     "XLI": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "VIS": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "XLP": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "XRT": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "XLY": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "VNQ": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "XLRE": {
@@ -286,69 +296,59 @@
       "points": 1254,
       "stale": false
     },
-    "XLY": {
+    "SPY": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "VNQ": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "EWG": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
-    "SPY": {
+    "EWQ": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "EWU": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
+      "stale": false
+    },
+    "VGK": {
       "layer": "yahoo-chart-query1",
       "points": 1254,
       "stale": false
     },
     "EWD": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "EWQ": {
-      "layer": "yahoo-chart-query2",
-      "points": 1253,
-      "stale": false
-    },
-    "EWU": {
-      "layer": "yahoo-chart-query2",
-      "points": 1253,
-      "stale": false
-    },
-    "VGK": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
-      "stale": false
-    },
-    "AAXJ": {
-      "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "EWJ": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
+      "stale": false
+    },
+    "AAXJ": {
+      "layer": "yahoo-chart-query1",
+      "points": 1254,
       "stale": false
     },
     "MCHI": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "INDA": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     },
     "EWA": {
       "layer": "yahoo-chart-query1",
-      "points": 1253,
+      "points": 1254,
       "stale": false
     }
   }
