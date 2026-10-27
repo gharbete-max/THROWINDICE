@@ -81,4 +81,4 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - The selected-fund panel now has a pulsing glowing border in the fund's own candy colour, a "✓ SELECTED FUND" tag, and the fund's bubble (same colour and icon) beside its name; it flashes when a new fund is picked.
 - Initial drop is less bouncy: first rebound ≈ 21% of the impact speed (was about 40%).
 - Bubble size follows a hidden tier per fund (volume based, 4 tiers); e.g. in Crypto IBIT is the biggest and the company funds the smallest. Tiers are never shown. 40 of 92 tiers are rough estimates because those funds have no data in facts.json.
-- Re-run: no console errors, no overflow, no contrast failures; pit, pop, throw, reduced motion and mobile tap still work.
+- Re-run: no console errors, no overflow, no contrast failures; pit, pop, throw, reduced motion and mobile tap still work. Bubble fill reduced to ~32% of the screen and a stronger calm-down so the bigger tier-4 bubbles come to rest without overlapping (7 themes checked at 9 s).
