@@ -15,3 +15,6 @@ Everything lives in `index.html`.
 
 ## Brokers
 `BROKERS` in the script holds placeholder broker names and plain homepages. Replace with real affiliate URLs when available and keep the "sponsored" rel and the disclosure.
+
+## Hidden bubble size tiers
+`TIER` in `index.html` gives each fund a size tier from 1 (small) to 4 (large). It only sets how big its bubble is in the pit; users never see it. Tiers come from average daily dollar volume (3-month average shares × latest monthly close, from `data/facts.json`): 4 ≥ $1B, 3 ≥ $200M, 2 ≥ $40M, 1 below. Funds with no data in `facts.json` (UCITS funds and some newer ones) have rough estimates. When you add a fund, add it to `TIER`; refresh the numbers each quarter (run the data workflow by hand, then recompute).
