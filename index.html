@@ -799,7 +799,8 @@ document.getElementById('guideModal').addEventListener('click',e=>{if(e.target.i
 calc();
 const KITTEN='<svg viewBox="-50 -22 100 100" aria-hidden="true"><g transform="translate(8 54)"><g class="kTail"><path d="M0 0C14 0 18-14 12-20" fill="none" stroke="#e08a2e" stroke-width="5.5" stroke-linecap="round"/><path d="M12-20q-2-2-4-1" stroke="#7a4310" stroke-width="5.5" stroke-linecap="round" fill="none"/></g></g><g transform="translate(0 56)"><g class="kLegs"><ellipse cx="-6" cy="6" rx="4.6" ry="8" fill="url(#kfur)"/><ellipse cx="6" cy="6" rx="4.6" ry="8" fill="url(#kfur)"/><ellipse cx="-6" cy="13" rx="4.4" ry="3.4" fill="#ffe3bd"/><ellipse cx="6" cy="13" rx="4.4" ry="3.4" fill="#ffe3bd"/></g></g><ellipse cx="0" cy="50" rx="11.5" ry="14.5" fill="url(#kfur)"/><ellipse cx="0" cy="53" rx="6.4" ry="9.5" fill="#ffe9c9"/><path d="M-10 46q3 2 1 6M10 46q-3 2-1 6M-9 55q3 1 2 5M9 55q-3 1-2 5" stroke="#d27a22" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M-8 44Q-16 32-12 20M8 44Q16 32 12 20" stroke="url(#kfur)" stroke-width="6.4" stroke-linecap="round" fill="none"/><circle cx="-12" cy="19.5" r="4.4" fill="#ffe3bd"/><circle cx="12" cy="19.5" r="4.4" fill="#ffe3bd"/><path d="M-13.6 18.6v2M-11.8 18.2v2.4M10.4 18.2v2.4M12.2 18.6v2" stroke="#e3b48a" stroke-width=".9" stroke-linecap="round"/><g transform="translate(0 33)"><g class="kHead"><polygon points="-10,-7 -9.5,-18 -1.5,-10" fill="#ffa94d"/><polygon points="10,-7 9.5,-18 1.5,-10" fill="#ffa94d"/><polygon points="-8.4,-9 -8.2,-15 -3.6,-10.6" fill="#ff9db6"/><polygon points="8.4,-9 8.2,-15 3.6,-10.6" fill="#ff9db6"/><circle cx="0" cy="0" r="11.6" fill="url(#kfur)"/><path d="M-3 -10v4M0 -11v5M3 -10v4" stroke="#d27a22" stroke-width="1.5" stroke-linecap="round"/><g class="kEye"><circle cx="-4.4" cy="-1" r="2.9" fill="#1d1208"/><circle cx="4.4" cy="-1" r="2.9" fill="#1d1208"/><circle cx="-3.6" cy="-2" r="1" fill="#fff"/><circle cx="5.2" cy="-2" r="1" fill="#fff"/></g><ellipse cx="-7.6" cy="4.4" rx="2.6" ry="1.6" fill="#ff8fa8" opacity=".7"/><ellipse cx="7.6" cy="4.4" rx="2.6" ry="1.6" fill="#ff8fa8" opacity=".7"/><path d="M-1.2 3.2h2.4l-1.2 1.5Z" fill="#ff7aa0"/><path d="M0 4.7q-1.4 2-3 .6M0 4.7q1.4 2 3 .6" stroke="#4a2a14" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="M-9 2l-6-1M-9 4l-6 2M9 2l6-1M9 4l6 2" stroke="#fff4e3" stroke-width=".8" stroke-linecap="round" opacity=".9"/></g></g></svg>';
 var KR=22,KL=40,KG=2200,kRaf=0,kLast=0;
-function kTarget(w){const i=w.querySelector('input'),W=w.clientWidth,p=(i.value-i.min)/(i.max-i.min);return KR+p*(W-2*KR)}
+function kP(w){const i=w.querySelector('input');return w._pc!=null?w._pc:(i.value-i.min)/(i.max-i.min)}
+function kTarget(w){return KR+kP(w)*(w.clientWidth-2*KR)}
 function kRender(w){const k=w._k,d=57.296,f=(n)=>n.toFixed(2),st=w.style;st.setProperty('--bx',f(k.x));st.setProperty('--rot',f(k.x/KR*d)+'deg');st.setProperty('--phi',f(k.phi*d)+'deg');st.setProperty('--tail',f(k.tail*d)+'deg');st.setProperty('--legs',f(k.legs*d)+'deg');st.setProperty('--head',f(-k.phi*d*.45)+'deg')}
 function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=false;
  document.querySelectorAll('.kitty').forEach(w=>{const k=w._k;if(!k||!w.clientWidth)return;const tx=kTarget(w);if(!k.init){k.x=k.px=tx;k.vf=k.vp=0;k.init=1;kRender(w)}
@@ -814,10 +815,25 @@ function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=
   w.classList.toggle('moving',moving);kRender(w);if(moving)busy=true});
  kRaf=busy?requestAnimationFrame(kStep):0}
 function kWake(){if(!kRaf){kLast=performance.now();kRaf=requestAnimationFrame(kStep)}}
-function kittySync(){document.querySelectorAll('.kitty').forEach(w=>{const i=w.querySelector('input');w.style.setProperty('--p',(i.value-i.min)/(i.max-i.min))});kWake()}
+function kittySync(){document.querySelectorAll('.kitty').forEach(w=>w.style.setProperty('--p',kP(w)));kWake()}
 document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);w._k={x:22,v:0,phi:0,om:0,tail:0,tailv:0,legs:0,legsv:0};const b=document.createElement('span'),c=document.createElement('span');b.className='kBall';b.setAttribute('aria-hidden','true');b.innerHTML='<i></i>';c.className='kCat';c.setAttribute('aria-hidden','true');c.innerHTML=KITTEN;w.append(b,c)});
 if(window.ResizeObserver){const ro=new ResizeObserver(es=>es.forEach(e=>{const k=e.target._k;if(k){k.init=0;kWake()}}));document.querySelectorAll('.kitty').forEach(w=>ro.observe(w))}
 kittySync();
+
+/* Glide: after a flick, the ball keeps rolling with friction, bounces softly at the ends and settles on a step. */
+function glide(i,w,v){const id=++w._gl,min=+i.min,max=+i.max,st=+i.step||1;let p=(i.value-min)/(max-min),last=performance.now();
+ const q=x=>Math.min(max,Math.max(min,Math.round((min+x*(max-min)-min)/st)*st+min));
+ (function f(t){if(w._gl!==id)return;const dt=Math.min(.05,(t-last)/1000);last=t;p+=v*dt;v*=Math.exp(-dt*2.5);
+  if(p<0){p=0;v=Math.abs(v)*.35}else if(p>1){p=1;v=-Math.abs(v)*.35}
+  const pq=(q(p)-min)/(max-min);if(Math.abs(v)<.3){p+=(pq-p)*Math.min(1,dt*10);v*=.9}
+  w._pc=p;const nv=q(p);if(String(nv)!==String(+i.value)){i.value=nv;i.dispatchEvent(new Event('input',{bubbles:true}))}else kittySync();
+  if(Math.abs(v)<.02&&Math.abs(pq-p)<.0005){w._pc=null;i.value=q(p);kittySync();return}
+  requestAnimationFrame(f)})(last)}
+document.querySelectorAll('.kitty').forEach(w=>{const i=w.querySelector('input');let drag=false,S=[];w._gl=0;
+ i.addEventListener('pointerdown',()=>{drag=true;S=[];w._gl++;w._pc=null;kittySync()});
+ i.addEventListener('input',()=>{if(drag){S.push([performance.now(),(i.value-i.min)/(i.max-i.min)]);if(S.length>12)S.shift()}});
+ window.addEventListener('pointerup',()=>{if(!drag)return;drag=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const now=performance.now(),r=S.filter(x=>now-x[0]<110);if(r.length<2)return;const a=r[0],b=r[r.length-1],dt=(b[0]-a[0])/1000;if(dt<=0)return;let v=(b[1]-a[1])/dt;if(Math.abs(v)<.15)return;glide(i,w,Math.max(-3,Math.min(3,v)))});
+ window.addEventListener('pointercancel',()=>{drag=false})});
 document.addEventListener('click',e=>{const el=e.target.closest('button,.exploreCard');if(!el)return;el.classList.remove('bounce-click');void el.offsetWidth;el.classList.add('bounce-click');setTimeout(()=>el.classList.remove('bounce-click'),450)});
 function revealApp(){setTimeout(()=>{document.getElementById('loadingScreen').classList.add('done');document.getElementById('appShell').style.opacity='1';},250)}
 if(document.readyState==='complete'){revealApp()}else{window.addEventListener('load',revealApp,{once:true})}
