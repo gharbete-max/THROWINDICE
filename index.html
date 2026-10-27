@@ -404,7 +404,9 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 .dg.open{display:block;-webkit-line-clamp:unset;line-clamp:unset}
 .dgMore{display:inline-block;margin:2px 0 6px;padding:3px 12px;border:0;border-radius:999px;font:700 12px/1.4 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}
 .dgMore:focus-visible{outline:3px solid var(--text);outline-offset:2px}
-.tokenWatch{margin:0 0 16px}.tokenWatch summary{cursor:pointer;font-weight:800;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);list-style:none}.tokenWatch[open] summary{margin-bottom:12px}
+.moreFold{margin:0 0 16px}.moreFold summary{cursor:pointer;font-weight:800;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);list-style:none}.moreFold[open] summary{margin-bottom:12px}.tokenWatch{margin:0 0 16px}.tokenWatch summary{cursor:pointer;font-weight:800;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);list-style:none}.tokenWatch[open] summary{margin-bottom:12px}
+.dgInfo{display:inline-grid;place-items:center;width:26px;height:26px;margin:2px 0 4px;border:0;border-radius:50%;font:800 14px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}
+.dgInfo:focus-visible{outline:3px solid var(--text);outline-offset:2px}.dgHide{display:none!important}
 </style>
 </head>
 <body>
@@ -565,7 +567,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 <div class="exploreCard"><h3>Tokenized assets · Tether Gold (XAUT)</h3><p>A token representing gold held in a vault. Check the issuer, how ownership is documented, redemption terms, fees and any holder restrictions.</p><a href="https://gold.tether.to/" rel="noopener noreferrer" target="_blank">Tether Gold ↗</a></div>
 <div class="exploreCard"><h3>Networks · Ethereum</h3><p>Public smart-contract network. Inspect gas fees, validators, upgrades, network usage and the distinction between Ethereum mainnet and tokens issued on it.</p><a href="https://ethereum.org/en/developers/docs/" rel="noopener noreferrer" target="_blank">Developer documentation ↗</a></div>
 <div class="exploreCard"><h3>Networks · Solana</h3><p>Public network used for token transfers and applications. Compare validator design, network reliability, fee structure and ecosystem concentration.</p><a href="https://solana.com/docs" rel="noopener noreferrer" target="_blank">Solana documentation ↗</a></div></div><p class="disclaimer">Token terms and reserve disclosures can change. These links lead to issuer or project documentation; descriptions are a starting checklist, not verification of solvency, suitability or legal rights.</p>
-<section aria-label="Dated token market indicators" class="tokenSnapshot tokenLiveSnapshot">
+<details class="moreFold"><summary>📚 Market context &amp; case studies</summary><section aria-label="Dated token market indicators" class="tokenSnapshot tokenLiveSnapshot">
 <div class="sectionHead"><div><div class="eyebrow">DATED MARKET SNAPSHOT · 23–26 OCT 2026</div><h2>Token markets in context</h2><p>External reference data, not a live feed. Providers may update at different times and methodologies differ.</p></div><span class="tag blue">SOURCE-LINKED</span></div>
 <div class="tokenDataGrid">
 <article class="tokenDataCard"><span>GLOBAL STABLECOINS</span><strong>$300.89B</strong><p>Total stablecoin market capitalisation reported 23 Oct 2026. USDT represented about 60.65% in that snapshot.</p><a href="https://defillama.com/stablecoins" target="_blank" rel="noopener noreferrer">Open DeFiLlama stablecoins ↗</a></article>
@@ -605,7 +607,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 </article>
 </div>
 <div class="caseLesson"><strong>Quick lesson</strong><p>A token's price chart cannot tell the whole story. For a cryptoasset, inspect utility and supply; for a stablecoin, reserves and redemption; for a tokenized fund, legal rights, underlying holdings and the official ownership record.</p></div>
-</section>
+</section></details>
 <div class="sectionHead tokenSectionHead"><div><h2>Explore the system</h2><p>Pick a layer to see the questions that matter.</p></div><span class="tag">ILLUSTRATIVE GUIDE</span></div>
 <div class="exploreRows tokenTopicRows">
 <button class="exploreCard tokenTopic" onclick="showTokenDetail('assets')"><div class="big">▣</div><h3>Tokenized assets</h3><p>Funds, bonds, credit, property and commodities represented digitally.</p><small>Mock watchlist: backing · issuer · redemption · legal rights</small></button>
@@ -1021,7 +1023,7 @@ window.addEventListener('resize',()=>{if(!bub||bub.reduced)return;const F=docume
 document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-theme]');if(c)goTheme(c.dataset.theme)});
 
 /* digest: clamp long text, add a More pill */
-(function(){let t;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary'))return;e.dataset.dg=1;if(e.textContent.trim().length<90)return;e.classList.add('dg');const b=document.createElement('button');b.type='button';b.className='dgMore';b.textContent='More ▾';b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const o=e.classList.toggle('open');b.textContent=o?'Less ▴':'More ▾';b.setAttribute('aria-expanded',o)};e.after(b)})}
+(function(){let t;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary'))return;e.dataset.dg=1;const L=e.textContent.trim().length;if(L>25&&e.matches('.pageTitle p,.sectionHead p,.disclaimer,.brokerIntro p,.tokenBrowse>p,.newsCard p')){e.classList.add('dgHide');const i=document.createElement('button');i.type='button';i.className='dgInfo';i.textContent='ⓘ';i.setAttribute('aria-label','Show info');i.setAttribute('aria-expanded','false');i.onclick=ev=>{ev.stopPropagation();const h=e.classList.toggle('dgHide');i.textContent=h?'ⓘ':'✕';i.setAttribute('aria-expanded',!h)};e.before(i);return}if(L<90)return;e.classList.add('dg');const b=document.createElement('button');b.type='button';b.className='dgMore';b.textContent='More ▾';b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const o=e.classList.toggle('open');b.textContent=o?'Less ▴':'More ▾';b.setAttribute('aria-expanded',o)};e.after(b)})}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60)}).observe(document.body,{childList:true,subtree:true,characterData:true});run()})();
 </script>
 </body>

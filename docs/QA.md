@@ -91,3 +91,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Digest mode (2026-10-27)
 - Paragraphs over 90 characters show 2 lines with a "More ▾" pill; Token World intro points folded into one "What to watch" fold.
 - qa.js clean (overflow/contrast, both themes, 3 widths); no console errors.
+
+## Round: Less text (2026-10-27)
+- Page intros, section blurbs, disclaimers and news summaries hide behind an ⓘ button; other long text clamps to 2 lines with More.
+- Token World market context and case studies folded into one "📚" fold.
+- qa.js clean; no console errors.
