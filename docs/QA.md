@@ -56,3 +56,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Smug cat with glasses and a toothy grin guides the ETF page.
 - Kittens now hang from the yarn balls. Ball follows the slider with a spring; the cat swings as a damped pendulum with paw friction, heavier than a free pendulum, clamped to about ±60° (measured peak ≈ 50° on a very fast drag; settles in ≤ 250 ms).
 - Re-run: no console errors, no overflow, no contrast failures, no duplicate IDs, nav lands.
+
+## Update — glued sliders, awkward dog, clickable fund tiles, TradingView charts
+- Ball now sits exactly on the slider thumb (measured gap ≤ 0.3 px while dragging, at rest and with the keyboard). Only the cat has physics (pendulum driven by the ball's smoothed acceleration; peak ≈ 30–50° on a very fast drag).
+- Smug cat replaced by an awkward dog (dot eyes, no glasses, tongue out, animated drool).
+- Fund tiles are fully clickable and open the details panel with links; token and theme tiles open their ETF lists.
+- "Show chart" (US-listed ETFs) and "📈 Chart" (BTC, ETH, SOL, LINK, PAXG, XAUT) open a TradingView mini chart in a modal; it loads only on click. Verified in headless Chromium for SPY, IBIT, EWG, FBTC, BTC and XAUT (real data rendered); UCITS funds and ETCs have no chart button. If the host blocks the script (e.g. the claude.ai preview) the modal shows a fallback message and a TradingView link.
