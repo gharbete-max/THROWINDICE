@@ -82,3 +82,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Initial drop is less bouncy: first rebound ≈ 21% of the impact speed (was about 40%).
 - Bubble size follows a hidden tier per fund (volume based, 4 tiers); e.g. in Crypto IBIT is the biggest and the company funds the smallest. Tiers are never shown. 40 of 92 tiers are rough estimates because those funds have no data in facts.json.
 - Re-run: no console errors, no overflow, no contrast failures; pit, pop, throw, reduced motion and mobile tap still work. Bubble fill reduced to ~32% of the screen and a stronger calm-down so the bigger tier-4 bubbles come to rest without overlapping (7 themes checked at 9 s).
+
+## Round: Token World space revamp (2026-10-27)
+- Crypto/token piles moved from Real World ETF page to Token Home ("Token fund orbit"); popped funds dock in Token World.
+- Very slow nebula (300s) + star drift (600s) background, forced dark palette in Token World, ringed candy planets; reduced motion = static.
+- Checked: qa.js (overflow/contrast, both themes, 3 widths) clean; no console errors; real world pile list has no crypto group.
