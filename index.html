@@ -78,6 +78,24 @@ body{--cc:var(--c1)}
 .saveStar{border:0;background:none;color:var(--text);font-size:24px;line-height:1;padding:6px 8px;transition:transform .25s cubic-bezier(.2,.9,.25,1.8)}.saveStar:hover{transform:scale(1.3) rotate(15deg)}.saveStar.on{color:var(--text)}.exploreCard{position:relative}.exploreCard>.saveStar{position:absolute;top:10px;right:10px}
 #dashboardNewsGrid,#news .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid>.span6{grid-column:auto}@media(max-width:700px){#dashboardNewsGrid,#news .grid{grid-template-columns:1fr}}
 #etfs .grid>.card{grid-column:span 12}#fund4{grid-template-columns:repeat(2,minmax(0,1fr))}.exploreCard{padding:22px}.exploreCard>a{display:inline-block;margin-top:8px;font-size:13px;color:var(--accent-text);font-weight:800}.exploreCard h3{padding-right:34px}.exploreCard .tag{margin:10px 0 4px}.exploreCard .actions{margin-top:14px}.exploreCard details p{margin-top:8px}.answer{display:block;font-size:22px;font-weight:900;margin:6px 0;letter-spacing:-.03em}
+
+.kitty{position:relative;height:56px;margin:34px 44px 6px}
+.kitty input{position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;-webkit-appearance:none;appearance:none;z-index:1;cursor:grab;touch-action:pan-y}.kitty input:active{cursor:grabbing}
+.kitty input::-webkit-slider-runnable-track{height:12px;border-radius:99px;background:linear-gradient(90deg,var(--c2) calc(22px + var(--p)*(100% - 44px)),var(--surface2) 0)}
+.kitty input::-moz-range-track{height:12px;border-radius:99px;background:linear-gradient(90deg,var(--c2) calc(22px + var(--p)*(100% - 44px)),var(--surface2) 0)}
+.kitty input::-webkit-slider-thumb{-webkit-appearance:none;width:44px;height:44px;margin-top:-16px;background:transparent;border:0}
+.kitty input::-moz-range-thumb{width:44px;height:44px;background:transparent;border:0}
+.kBall{position:absolute;top:6px;left:calc(var(--p)*(100% - 44px));width:44px;height:44px;border-radius:50%;z-index:3;pointer-events:none;background:repeating-linear-gradient(40deg,rgba(255,255,255,.22) 0 4px,transparent 4px 10px),radial-gradient(circle at 32% 26%,rgba(255,255,255,.85) 0 7%,transparent 8%),radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--c2) 55%,#fff),var(--c2) 55%,color-mix(in srgb,var(--c2) 70%,#000));box-shadow:inset 0 -4px 7px rgba(0,0,0,.25),0 5px 10px rgba(0,0,0,.3);transform:rotate(calc(var(--p)*900deg))}
+.kitty:focus-within .kBall{outline:3px solid var(--text);outline-offset:2px}
+.kCat{position:absolute;top:-16px;z-index:2;width:76px;height:58px;left:calc(var(--p)*(100% - 44px) - 66px);pointer-events:none;transition:left .32s cubic-bezier(.3,1.5,.5,1)}
+.kCat svg{width:100%;height:100%;overflow:visible;display:block}
+.kitty.flip .kCat{left:calc(var(--p)*(100% - 44px) + 34px)}.kitty.flip .kCat svg{transform:scaleX(-1)}
+.kCat .tail{transform-box:fill-box;transform-origin:100% 100%;animation:tailSway 2.2s ease-in-out infinite}
+.kCat .paw{transform-box:fill-box;transform-origin:0 50%}
+.kitty.moving .kCat svg{animation:catPush .28s ease-in-out infinite}.kitty.moving .paw{animation:pawPush .28s ease-in-out infinite}
+@keyframes tailSway{50%{transform:rotate(14deg)}}
+@keyframes catPush{50%{transform:translateY(-3px) rotate(-2deg)}}
+@keyframes pawPush{50%{transform:translateX(3px)}}
 .page{display:block;scroll-margin-top:22px}.page+.page{margin-top:64px}
 body.token-world .page:not(#parallel){display:none}body:not(.token-world) #parallel{display:none}
 :focus-visible{outline:3px solid var(--text);outline-offset:3px}
@@ -386,7 +404,7 @@ body.token-world #parallel{display:block}
 <div class="sectionHead"><div><div class="eyebrow">Explore the atlas</div><h2>Choose where to go next</h2><p>Jump straight into a part of the market.</p></div></div>
 <div class="topicGrid">
 <button class="topic" onclick="openPage('world')"><div class="symbol">🌍</div><b>World &amp; regions</b><small>Countries · currencies · indices</small></button>
-<button class="topic" onclick="openPage('fees')"><div class="symbol">％</div><b>Fees</b><small>Costs · compounding · assumptions</small></button>
+<button class="topic" onclick="openPage('fees')"><div class="symbol">％</div><b>Basic skills</b><small>Saving · investing · fees</small></button>
 <button class="topic" onclick="openPage('sectors')"><div class="symbol">◈</div><b>Sectors &amp; themes</b><small>Industries · emerging ideas</small></button>
 <button class="topic" onclick="openPage('commodities')"><div class="symbol">⚒</div><b>Commodities</b><small>Energy · metals · agriculture</small></button>
 <button class="topic" onclick="openPage('etfs')"><div class="symbol">▤</div><b>ETF explorer</b><small>Fair Price · Fees · Fluctuation · Flow</small></button>
@@ -414,30 +432,35 @@ body.token-world #parallel{display:block}
 <p class="disclaimer">Issuer-reported expense ratios/charges: VT 0.06%, VOO 0.03%, BND 0.03%, AGG 0.03%, GLD 0.40%, IAU 0.25%, VWO 0.06%, IEMG 0.09%, VGT 0.09% and QQQM 0.15%. Verify current prospectuses before relying on a figure. Market price, share class, tax treatment, spread and trading currency differ; these products are not direct substitutes. Issuer sources linked below; checked 26 Oct 2026.</p>
 </section>
 <section class="card span5" id="etfSelected"><div class="eyebrow">Selected real fund</div><h2 id="etfName" style="margin-top:6px">VT · Vanguard Total World Stock ETF</h2><p id="etfPlain" style="font-size:17px;color:var(--text)"></p><details style="margin-top:10px"><summary class="textlink" style="cursor:pointer">More about this fund</summary><p id="etfDescription" style="margin-top:8px"></p></details>
-<div class="fgrid" id="fund4" style="margin-top:18px"></div><p class="disclaimer" id="etfSource"></p><button class="btn" onclick="openPage('fees')" style="width:100%;margin-top:18px">Calculate fee impact →</button><div class="actions"><button class="btn secondary" id="etfSaveBtn" onclick="saveCurrentETF()" type="button">☆ Save</button><button class="btn" id="etfBuyBtn" type="button" onclick="openBuy(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">Where to buy</button></div><p class="disclaimer">Brokers shown are placeholders, not partners yet.</p></section>
+<div class="fgrid" id="fund4" style="margin-top:18px"></div><p class="disclaimer" id="etfSource"></p><button class="btn" onclick="openPage('fees')" style="width:100%;margin-top:18px">Try the fee calculator →</button><div class="actions"><button class="btn secondary" id="etfSaveBtn" onclick="saveCurrentETF()" type="button">☆ Save</button><button class="btn" id="etfBuyBtn" type="button" onclick="openBuy(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">Where to buy</button></div><p class="disclaimer">Brokers shown are placeholders, not partners yet.</p></section>
 </div>
-<div class="card" style="margin-top:16px"><div class="sectionHead"><div><h2>How to read the four Fs</h2><p>Select any fund to load its stated annual fee and a research note. Valuation, volatility, volume and bid–ask spread require dated holdings/market data; follow the linked source rather than treating missing figures as zero.</p></div></div><div class="fgrid">
-<div class="fbox"><span class="letter">01 · FAIR PRICE</span><b>Is the portfolio relatively expensive?</b><small>Compare suitable valuation measures against its own history and relevant peers. Not the ETF's share price.</small></div>
-<div class="fbox"><span class="letter">02 · FEES</span><b>What does it cost over time?</b><small>Annual charge, tracking difference and the effect of compounding.</small></div>
-<div class="fbox"><span class="letter">03 · FLUCTUATION</span><b>How much has it moved?</b><small>Historical volatility, drawdowns and the period used to calculate them.</small></div>
-<div class="fbox"><span class="letter">04 · FLOW</span><b>How tradable is it?</b><small>Trading volume and bid–ask spread. Fund inflows/outflows are a separate measure.</small></div>
-</div></div>
 </section>
 <section class="page" id="fees">
-<div class="pageTitle"><div class="eyebrow"></div><h1>Fee calculator</h1><p>Adjust the assumptions to see how annual fees can affect a hypothetical investment over time.</p></div>
-<div class="card"><div class="calcgrid"><div>
-<div class="control"><label for="principal">Initial investment <output id="principalOut">€10,000</output></label><input id="principal" max="100000" min="1000" step="1000" type="range" value="10000"/></div>
-<div class="control"><label for="returnRate">Assumed annual return <output id="returnOut">6.0%</output></label><input id="returnRate" max="12" min="0" step=".5" type="range" value="6"/></div>
-<div class="control"><label for="fee">Annual fund fee <output id="feeOut">0.20%</output></label><input id="fee" max="2" min="0" step=".05" type="range" value=".2"/></div>
-<div class="control"><label for="years">Investment period <output id="yearsOut">20 years</output></label><input id="years" max="40" min="1" step="1" type="range" value="20"/></div>
-<p class="disclaimer">Illustrative annual compounding model. Assumes a constant return and fee; excludes taxes, trading costs, inflation and changing fees. The fee value is loaded from the selected fund’s published expense ratio, but the outcome remains hypothetical.</p>
+<div class="pageTitle"><div class="eyebrow">BASIC SKILLS</div><h1>Basic skills for saving and investing</h1><p>One calculator, four big questions and one reason to care. Slide the kittens to play.</p></div>
+<div class="card"><div class="sectionHead"><div><h2>🧮 What do fees really cost?</h2><p>A small yearly fee looks tiny. Over many years it adds up. Slide and see.</p></div></div><div class="calcgrid"><div>
+<div class="control"><label for="principal">Money you put in <output id="principalOut">€10,000</output></label><input id="principal" max="100000" min="1000" step="1000" type="range" value="10000"/></div>
+<div class="control"><label for="returnRate">Growth per year (a guess) <output id="returnOut">6.0%</output></label><input id="returnRate" max="12" min="0" step=".5" type="range" value="6"/></div>
+<div class="control"><label for="fee">Fund cost per year <output id="feeOut">0.20%</output></label><input id="fee" max="2" min="0" step=".05" type="range" value=".2"/></div>
+<div class="control"><label for="years">How many years <output id="yearsOut">20 years</output></label><input id="years" max="40" min="1" step="1" type="range" value="20"/></div>
+<p class="disclaimer">A simple example, not a promise. It assumes the same growth and cost every year and leaves out taxes, trading costs and inflation. Pick a fund in the ETF explorer to load its real fee.</p>
 </div><div>
-<div class="eyebrow">Estimated outcome</div><div class="result"><p>Potential value without fund fee</p><div class="bigResult" id="noFee">€32,071</div></div>
-<div class="result"><p>Potential value after fund fee</p><div class="bigResult" id="withFee">€30,861</div></div>
-<div class="result"><p>Potential future value difference</p><div class="bigResult" id="lostValue">€1,210</div><p id="lostPct">3.8% of the no-fee value</p></div>
-<button class="btn secondary" onclick="resetCalc()">Reset assumptions</button>
-</div></div></div>
-<div class="guide"><span style="font-size:21px">ⓘ</span><div><h3>Fees paid ≠ future value lost</h3><p>The difference above includes the hypothetical growth the money might otherwise have earned. It is not a bill charged by the fund.</p></div></div>
+<div class="eyebrow">What it could look like</div><div class="result"><p>Without the fund cost</p><div class="bigResult" id="noFee">€32,071</div></div>
+<div class="result"><p>With the fund cost</p><div class="bigResult" id="withFee">€30,861</div></div>
+<div class="result"><p>The difference</p><div class="bigResult" id="lostValue">€1,210</div><p id="lostPct">3.8% of the no-fee value</p></div>
+<button class="btn secondary" onclick="resetCalc()">Reset</button>
+</div></div>
+<div class="guide"><span style="font-size:21px">ⓘ</span><div><h3>It is not a bill</h3><p>The difference includes the growth that money could have made. The fund does not send you an invoice.</p></div></div></div>
+<div class="card" style="margin-top:16px"><div class="sectionHead"><div><h2>The four big questions</h2><p>Ask these about any fund. They are separate questions, so there is no single score.</p></div></div><div class="fgrid">
+<div class="fbox"><span class="letter">💸 FAIR PRICE</span><b>Is the price fair?</b><small>Like checking a shop’s price before you buy: is what you pay fair for what is inside?</small></div>
+<div class="fbox"><span class="letter">🧾 FEES</span><b>What does it cost each year?</b><small>Small percentages add up over many years. Try the sliders above.</small></div>
+<div class="fbox"><span class="letter">🎢 FLUCTUATION</span><b>How much does it jump around?</b><small>Prices go up and down. A fund that owns many things usually jumps less than one thing alone.</small></div>
+<div class="fbox"><span class="letter">🔄 FLOW</span><b>Easy to buy and sell?</b><small>Popular funds are easy to trade. Money moving in or out of a fund is a different thing.</small></div>
+</div></div>
+<div class="card" style="margin-top:16px"><div class="sectionHead"><div><h2>Why people invest at all</h2><p>Three small ideas. No panic needed.</p></div></div><div class="fgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<div class="fbox"><span class="letter">🎈 PRICES CREEP UP</span><b>Cash sitting still buys a little less each year</b><small>This is called inflation. If prices rise 2% a year (just an example), €1,000 kept as cash buys about what €673 buys today after 20 years. Investing is one way to give money a job so it can try to keep up.</small></div>
+<div class="fbox"><span class="letter">🧩 ALTERNATIVE COST</span><b>A euro can only do one job</b><small>Money you spend or leave idle cannot also be growing somewhere else. Neither choice is wrong. It is just a trade, so it helps to know it.</small></div>
+<div class="fbox"><span class="letter">🏖 PENSION</span><b>You may already be investing</b><small>Many pensions invest part of your pay for you automatically. Ask your provider where it goes and what it costs.</small></div>
+</div><p class="disclaimer">Investing can grow your money and it can also fall. Learn first, start small, and never invest money you need soon. Educational only, not financial advice.</p></div>
 </section>
 <section class="page" id="news">
 <div class="pageTitle"><div class="eyebrow">PUBLISHER LINKS · UPDATED 26 OCT 2026</div><h1>News</h1><p>Curated external reporting on markets and investment products. Each card links to the original publisher or an authorized syndication page; summaries are written for this explorer.</p></div>
@@ -563,7 +586,7 @@ body.token-world #parallel{display:block}
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button class="navbtn" data-normal="News" data-page="news" data-token="Assets" onclick="navAction(this,'news','assets')"><span class="ico">▣</span><span class="navLabel">News</span></button>
-<button class="navbtn" data-normal="Fees" data-page="fees" data-token="Networks" onclick="navAction(this,'fees','networks')"><span class="ico">⛓</span><span class="navLabel">Fees</span></button>
+<button class="navbtn" data-normal="Basics" data-page="fees" data-token="Networks" onclick="navAction(this,'fees','networks')"><span class="ico">⛓</span><span class="navLabel">Basics</span></button>
 <button class="navbtn" data-normal="World" data-page="world" data-token="Contracts" onclick="navAction(this,'world','contracts')"><span class="ico">⌘</span><span class="navLabel">World</span></button>
 <button aria-label="Dashboard home" class="navbtn home active" data-normal="Dashboard" data-page="dashboard" data-token="Token Home" onclick="navAction(this,'dashboard','home')"><span class="ico">⌂</span><span class="navLabel">Dashboard</span></button>
 <button class="navbtn" data-normal="Sectors" data-page="sectors" data-token="Issuance" onclick="navAction(this,'sectors','issuance')"><span class="ico">↔</span><span class="navLabel">Sectors</span></button>
@@ -616,7 +639,7 @@ function renderFund(t){const f=etfFacts[t],box=(e,l,a,x)=>'<div class="fbox"><sp
  document.getElementById('fund4').innerHTML=box('💸','FAIR PRICE','Not overpaying','Is what you pay fair for what is inside?')+box('🧾','FEES',f.fee.toFixed(2)+'% a year','About €'+(f.fee*100).toFixed(0)+' a year on €10,000.')+box('🎢','FLUCTUATION','Ups and downs','How much the price jumps around.')+box('🔄','FLOW','Easy in, easy out','How easily you can buy and sell it.')}
 function selectETF(ticker,quiet){const f=etfFacts[ticker];if(!f)return;document.getElementById('etfName').textContent=ticker+' · '+f.name;document.getElementById('etfPlain').textContent=PLAIN[ticker]||'';document.getElementById('etfDescription').textContent=f.description;document.getElementById('etfSource').innerHTML='Fee checked 26 Oct 2026 · <a href="'+f.url+'" target="_blank" rel="noopener noreferrer">Fund provider page ↗</a> · Verify the current prospectus.';document.getElementById('fee').value=f.fee;document.getElementById('etfName').dataset.ticker=ticker;renderFund(ticker);calc();if(!quiet)toast('Selected '+ticker)}
 function money(n){return new Intl.NumberFormat('en-IE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-function calc(){const p=+document.getElementById('principal').value,r=+document.getElementById('returnRate').value/100,f=+document.getElementById('fee').value/100,n=+document.getElementById('years').value;const no=p*Math.pow(1+r,n),yes=p*Math.pow(Math.max(0,1+r-f),n),lost=no-yes;document.getElementById('principalOut').textContent=money(p);document.getElementById('returnOut').textContent=(r*100).toFixed(1)+'%';document.getElementById('feeOut').textContent=(f*100).toFixed(2)+'%';document.getElementById('yearsOut').textContent=n+' year'+(n===1?'':'s');document.getElementById('noFee').textContent=money(no);document.getElementById('withFee').textContent=money(yes);document.getElementById('lostValue').textContent=money(lost);document.getElementById('lostPct').textContent=(no?((lost/no)*100).toFixed(1):'0')+'% of the no-fee value'}
+function calc(){const p=+document.getElementById('principal').value,r=+document.getElementById('returnRate').value/100,f=+document.getElementById('fee').value/100,n=+document.getElementById('years').value;const no=p*Math.pow(1+r,n),yes=p*Math.pow(Math.max(0,1+r-f),n),lost=no-yes;document.getElementById('principalOut').textContent=money(p);document.getElementById('returnOut').textContent=(r*100).toFixed(1)+'%';document.getElementById('feeOut').textContent=(f*100).toFixed(2)+'%';document.getElementById('yearsOut').textContent=n+' year'+(n===1?'':'s');document.getElementById('noFee').textContent=money(no);document.getElementById('withFee').textContent=money(yes);document.getElementById('lostValue').textContent=money(lost);document.getElementById('lostPct').textContent=(no?((lost/no)*100).toFixed(1):'0')+'% of the no-fee value';if(typeof kittySync==="function")kittySync()}
 ['principal','returnRate','fee','years'].forEach(id=>document.getElementById(id).addEventListener('input',calc));function resetCalc(){document.getElementById('principal').value=10000;document.getElementById('returnRate').value=6;document.getElementById('fee').value=.2;document.getElementById('years').value=20;calc()}
 
 const tokenDetails={
@@ -650,6 +673,10 @@ function closeGuide(){document.getElementById('guideModal').classList.remove('sh
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGuide()});
 document.getElementById('guideModal').addEventListener('click',e=>{if(e.target.id==='guideModal')closeGuide()});
 calc();
+const KITTEN='<svg viewBox="0 0 84 64" aria-hidden="true"><path class="tail" d="M16 46C2 44 0 26 12 24" fill="none" stroke="#e8923a" stroke-width="7" stroke-linecap="round"/><ellipse cx="34" cy="46" rx="24" ry="14" fill="#ffb347"/><path d="M22 36q2 6 0 10M32 33q2 6 0 12M42 34q2 6 0 11" stroke="#e8923a" stroke-width="3" stroke-linecap="round" fill="none"/><ellipse cx="20" cy="58" rx="8" ry="4" fill="#ffd9a3"/><ellipse cx="40" cy="58" rx="8" ry="4" fill="#ffd9a3"/><path d="M50 20L53 4L64 14Z" fill="#ffb347"/><path d="M62 14L73 4L76 20Z" fill="#ffb347"/><path d="M54 17L55 9L60 14Z" fill="#ff9bb3"/><path d="M66 14L72 9L73 17Z" fill="#ff9bb3"/><circle cx="62" cy="31" r="17" fill="#ffb347"/><circle cx="55" cy="29" r="3" fill="#2a1a00"/><circle cx="69" cy="29" r="3" fill="#2a1a00"/><circle cx="56" cy="28" r="1" fill="#fff"/><circle cx="70" cy="28" r="1" fill="#fff"/><path d="M60 35h4l-2 2.6Z" fill="#ff6f9c"/><path d="M62 37.6q-3 3-5 1M62 37.6q3 3 5 1" stroke="#2a1a00" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M50 34l-9-2M50 37l-9 2M74 34l9-2M74 37l9 2" stroke="#2a1a00" stroke-width="1" stroke-linecap="round"/><g class="paw"><ellipse cx="76" cy="48" rx="7" ry="4.6" fill="#ffd9a3"/></g></svg>';
+function kittySync(){document.querySelectorAll('.kitty').forEach(w=>{const i=w.querySelector('input'),v=+i.value;if(v!==i._last){i._dir=v>i._last?1:-1;i._last=v;w.classList.add('moving');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.remove('moving'),350)}w.style.setProperty('--p',(v-i.min)/(i.max-i.min));w.classList.toggle('flip',i._dir<0)})}
+document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);i._last=+i.value;i._dir=1;const b=document.createElement('span'),c=document.createElement('span');b.className='kBall';c.className='kCat';b.setAttribute('aria-hidden','true');c.setAttribute('aria-hidden','true');c.innerHTML=KITTEN;w.append(c,b)});
+kittySync();
 document.addEventListener('click',e=>{const el=e.target.closest('button,.exploreCard');if(!el)return;el.classList.remove('bounce-click');void el.offsetWidth;el.classList.add('bounce-click');setTimeout(()=>el.classList.remove('bounce-click'),450)});
 function revealApp(){setTimeout(()=>{document.getElementById('loadingScreen').classList.add('done');document.getElementById('appShell').style.opacity='1';},250)}
 if(document.readyState==='complete'){revealApp()}else{window.addEventListener('load',revealApp,{once:true})}
