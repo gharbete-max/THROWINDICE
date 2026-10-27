@@ -65,3 +65,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Update — glide on release
 - Flicking a slider and letting go keeps it gliding with friction (soft bounce at the ends, then it eases onto the nearest step). Measured: a fast flick released at 21 years glided 27 → 32 → 35 → 37 → 38 and stopped; a slow release does not glide; ball stays glued to the thumb (gap ≤ 0.3 px); calculator updates during the glide. Skipped under `prefers-reduced-motion`.
+
+## Update — bubble pit
+- The ETF page no longer lists all funds. It shows 45 "piles" (themes grouped under Countries, Sectors, Big ideas, Everything & bonds, Commodities, Crypto & tokens). Every fund belongs to at least one pile (checked).
+- Clicking any theme tile or pile opens a full-screen pit where that theme's funds drop in as heavy, glossy bubbles (gravity, wall/floor/bubble collisions with low bounce, squash on impact, sized to fill roughly half the screen). Clicking a bubble pops it (sparks) and opens that fund's details; from Token World the portal runs first. A wobbling "go back!" arrow, Escape, or the pop closes the pit. Reduced motion shows a plain wrapped grid instead of physics.
+- Checked in headless Chromium: all 45 themes open with the expected bubble count; on the 7 themes sampled for physics, bubbles never overlap or leave the field and ease to rest within about 10 s; back/Escape close, reduced motion shows a static grid, pop enters the fund (also from Token World), save/buy/chart still work. One console message from TradingView's own iframe on close ("Cannot listen to the event from the provided iframe") is third-party noise.
+- Not tested: touch taps on bubbles, Firefox/Safari, very small phones.
