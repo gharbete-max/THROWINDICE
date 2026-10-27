@@ -109,3 +109,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Starburst sticker on the fee card.
 - TradingView chart now a direct iframe (widgetembed), no script injection. Not renderable in the offline test sandbox; verify on a live connection.
 - qa.js clean; no console errors.
+
+## Round: Balloon More + focus pages (2026-10-27)
+- Long text is fully hidden behind a "🎈 More" button; tapping pops the balloon with confetti and pops the text in (reduced motion: plain toggle).
+- "Follows via X" tags removed. Country, sector and commodity cards open a focus page with a TradingView news feed (country filter or fund ticker) plus Google News links. Feeds need a live connection to render; not renderable in the offline test sandbox.
+- Coin hint bubble now hides after 3.5 s.
+- qa.js clean; no console errors.
