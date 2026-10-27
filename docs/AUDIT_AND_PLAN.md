@@ -29,11 +29,11 @@ Problems found:
 | 1 | 9 `<style>` blocks, 86 KB CSS, **778 `!important`**, the same selectors redefined up to 18 times (`.active`, `.shell`, `.navbtn` …) | Every change fights earlier layers. Root cause of the light-mode black-on-black hero. |
 | 2 | Lime / magenta / rose per-card gradients and glows | The spec forbids them; the user wants calm palettes. |
 | 3 | No theme toggle. Only `prefers-color-scheme` (11 queries) | Spec requires a light/dark switch. |
-| 4 | Only 1 `aria-expanded`, 1 `tabindex`, clickable `div.exploreCard` | Keyboard and screen-reader gaps. |
+| 4 ✅ | Only 1 `aria-expanded`, 1 `tabindex`, clickable `div.exploreCard` | Keyboard and screen-reader gaps. |
 | 5 | Real World is one long page, `body.token-world` hides the rest with `display:none!important` | Works, but fragile. Nav is a 6-button bottom bar where "Dashboard" is a raised centre button. |
-| 6 | Copy is jargon-heavy ("bid–ask spread", "benchmark / focus", "holdings-based valuation") | Opposite of "simpletons understand". |
-| 7 | Four Fs card shows labels only ("Historical volatility & drawdown") with **no numbers** | Looks empty. The repo has real data to fill it (see B). |
-| 8 | Fund list = 10 ETFs only. The bar says "SOURCED SNAPSHOTS · NOT LIVE QUOTES", the page says "CONCEPT" | Needs the indices-first catalogue, and honest labelling kept. |
+| 6 ✅ | Copy is jargon-heavy ("bid–ask spread", "benchmark / focus", "holdings-based valuation") | Opposite of "simpletons understand". |
+| 7 ✅ | Four Fs card shows labels only ("Historical volatility & drawdown") with **no numbers** | Looks empty. The repo has real data to fill it (see B). |
+| 8 ✅ | Fund list = 10 ETFs only. The bar says "SOURCED SNAPSHOTS · NOT LIVE QUOTES", the page says "CONCEPT" | Needs the indices-first catalogue, and honest labelling kept. |
 | 9 | Fonts load from Google Fonts | One external request. Fine, but not "fully offline". |
 | 10 | Inline `onclick` everywhere, ~18 KB of JS with data mixed into the logic | Hard to extend. Move data into one JSON block. |
 
@@ -88,10 +88,10 @@ Functional:
 | 1 ✅ | Remove the Isobar app and its toolchain; rename everything to THROWINDICE; `throwindice.html` becomes `index.html` | Clean repo |
 | 2 ✅ | Trim the pipeline: drop scoring/forecast/holdings/prose; emit `data/facts.json` with 1y/3y/5y price change, volatility, worst fall, average volume per ticker, each with an as-of date. Add V31's ten funds + a handful of commodity ETFs to the ticker list | Real numbers, no opinion |
 | 3 ✅ | Rebuild the CSS as a token system: pure black/white, calm green and blue accent, no gradients, theme toggle, real focus states. Delete the 778 `!important` layers | One small stylesheet |
-| 4 ◐ | Move content into one JSON block; plain-word copy (one sentence per card, "More" for detail); index-first catalogue | Simple content |
+| 4 ✅ | Move content into one JSON block; plain-word copy (one sentence per card, "More" for detail); index-first catalogue | Simple content |
 | 5 ✅ | Fund page: four plain questions with real numbers from `facts.json` + 5-year ride sparkline + cost in euros | Fills the empty Four Fs |
-| 6 | My list: stars everywhere, share/export, affiliate hook | Profile v2 |
-| 7 | Token World: same card layout, dated sourced numbers, verified issuer docs | Token parity |
-| 8 | QA: both worlds × both themes × 3 widths, keyboard, reduced motion, contrast, offline | Report |
+| 6 ✅ | My list: stars everywhere, share/export, affiliate hook | Profile v2 |
+| 7 ✅ | Token World: same card layout, dated sourced numbers, verified issuer docs | Token parity |
+| 8 ✅ | QA: both worlds × both themes × 3 widths, keyboard, reduced motion, contrast, offline | Report |
 
 Open items that need the owner, not me: real affiliate programs and URLs, and a final domain.
