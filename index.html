@@ -418,6 +418,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .dgHide{display:none!important}.dgMore{display:inline-block;margin:2px 0 6px;padding:5px 14px;border:0;border-radius:999px 999px 999px 999px/ 1.1em 1.1em 1.1em 1.1em;font:800 13px/1.4 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}
 .popB{animation:balloonPop .45s cubic-bezier(.2,1.6,.4,1)}@keyframes balloonPop{0%{transform:scale(1)}30%{transform:scale(1.55,1.7)}55%{transform:scale(.8)}100%{transform:scale(1)}}
 .dgPop{animation:textPop .55s cubic-bezier(.2,1.5,.4,1)}@keyframes textPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.tvBlocked{display:grid;gap:8px;padding:18px;border-radius:14px;background:var(--surface2);border:1px dashed var(--line)}.tvBlocked span{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -945,11 +946,14 @@ const BROKERS={real:[['Interactive Brokers','https://www.interactivebrokers.com/
 const TOKEN_IDS=['BTC','ETH','USDC','USDT','SOL','LINK','PAXG','XAUT'];
 const COIN_SYM={BTC:'BTCUSD',ETH:'ETHUSD',SOL:'SOLUSD',LINK:'LINKUSD',PAXG:'PAXGUSD',XAUT:'XAUTUSD'};
 function tvSym(id){const f=etfFacts[id];if(f)return f.kind==='US-listed ETF'?id:null;return COIN_SYM[id]||null}
+document.addEventListener('securitypolicyviolation',e=>{if(!/tradingview/.test(e.blockedURI||''))return;document.querySelectorAll('[data-tv]').forEach(b=>{if(b.dataset.tv==='blocked'||!b.querySelector('script,iframe'))return;b.dataset.tv='blocked';clearTimeout(b._t);const l=JSON.parse(b.dataset.links||'[]');b.innerHTML='<div class="tvBlocked"><b>Live embed is blocked in this preview</b><span>It works on the hosted site. Use the links instead.</span><div class="actions">'+l.map(x=>'<a class="btn small" target="_blank" rel="noopener noreferrer" href="'+x[1]+'">'+x[0]+' ↗</a>').join('')+'</div></div>'})});
+function tvEmbed(box,name,cfg,fallback,h,links){box.innerHTML='';box.dataset.tv='1';box.dataset.links=JSON.stringify(links||[]);const w=document.createElement('div');w.className='tradingview-widget-container';w.style.cssText='width:100%;height:'+h+'px';const i=document.createElement('div');i.className='tradingview-widget-container__widget';i.style.cssText='width:100%;height:100%';w.append(i);const sc=document.createElement('script');sc.src='https://s3.tradingview.com/external-embedding/embed-widget-'+name+'.js';sc.async=true;sc.text=JSON.stringify(Object.assign({width:'100%',height:h,locale:'en',isTransparent:false},cfg));w.append(sc);box.append(w);
+ clearTimeout(box._t);box._t=setTimeout(()=>{if(box.querySelector('iframe')||!box.isConnected||!box.innerHTML)return;box.innerHTML='';const f=document.createElement('iframe');f.title='TradingView';f.style.cssText='width:100%;height:'+h+'px;border:0;border-radius:14px';f.src=fallback;box.append(f)},4000)}
 function openChart(id,name){const sym=tvSym(id);if(!sym)return;lastFocus=document.activeElement;closeProfile(true);const g=x=>document.getElementById(x);
  g('chartTitle').textContent=(name||id)+' chart';g('chartLink').href='https://www.tradingview.com/symbols/'+sym+'/';const box=g('chartBox');box.innerHTML='';g('chartFallback').hidden=true;
- const dark=document.documentElement.dataset.theme==='dark',fr=document.createElement('iframe');fr.title=(name||id)+' chart';fr.loading='eager';fr.referrerPolicy='no-referrer-when-downgrade';fr.style.cssText='width:100%;height:360px;border:0;border-radius:14px;background:var(--surface2)';
- fr.src='https://s.tradingview.com/widgetembed/?frameElementId=tv_'+id+'&symbol='+encodeURIComponent(sym)+'&interval=D&range=12M&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&withdateranges=1&allow_symbol_change=0&theme='+(dark?'dark':'light')+'&style=3&timezone=Etc%2FUTC&locale=en';
- fr.onload=()=>{g('chartFallback').hidden=true;fr._ok=1};box.append(fr);g('chartModal').classList.add('show');g('chartLink').focus();clearTimeout(window._chartT);window._chartT=setTimeout(()=>{if(!fr._ok)g('chartFallback').hidden=false},6000)}
+ const dark=document.documentElement.dataset.theme==='dark';
+ tvEmbed(box,'advanced-chart',{symbol:sym,interval:'D',range:'12M',timezone:'Etc/UTC',theme:dark?'dark':'light',style:'3',hide_top_toolbar:true,hide_side_toolbar:true,allow_symbol_change:false,save_image:false,withdateranges:true,calendar:false,support_host:'https://www.tradingview.com'},'https://s.tradingview.com/widgetembed/?frameElementId=tv_'+id+'&symbol='+encodeURIComponent(sym)+'&interval=D&range=12M&hidesidetoolbar=1&hidetoptoolbar=1&symboledit=0&saveimage=0&allow_symbol_change=0&theme='+(dark?'dark':'light')+'&style=3&locale=en',360,[['Open on TradingView','https://www.tradingview.com/symbols/'+sym+'/']]);
+ g('chartModal').classList.add('show');g('chartLink').focus();g('chartFallback').hidden=true}
 function closeChart(){clearTimeout(window._chartT);document.getElementById('chartModal').classList.remove('show');document.getElementById('chartBox').innerHTML='';if(lastFocus&&lastFocus.focus)lastFocus.focus()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeChart()});
 document.addEventListener('click',e=>{if(e.target.id==='chartModal')closeChart()});
@@ -1056,7 +1060,7 @@ function openFocus(c){const g=x=>document.getElementById(x),id=c.dataset.id,name
  const q=encodeURIComponent(k==='world'?name+' stock market news':name+' news investing');
  g('focusNews').href='https://news.google.com/search?q='+q;const ex=g('focusExch');ex.hidden=k!=='world';ex.href='https://news.google.com/search?q='+encodeURIComponent((FOCUS_EXCH[id]||name)+' stock exchange news');
  g('focusEtf').onclick=()=>{closeFocus(true);goTheme(th)};
- const box=g('focusBox');box.innerHTML='';const fr=document.createElement('iframe');fr.title=name+' news';fr.style.cssText='width:100%;height:400px;border:0;border-radius:14px;background:var(--surface2)';fr.src='https://www.tradingview-widget.com/embed-widget/timeline/?locale=en#'+encodeURIComponent(JSON.stringify(cfg));box.append(fr);
+ tvEmbed(g('focusBox'),'timeline',cfg,'https://s.tradingview.com/embed-widget/timeline/?locale=en#'+encodeURIComponent(JSON.stringify(cfg)),400,[['Google News','https://news.google.com/search?q='+q],['TradingView news','https://www.tradingview.com/news/']]);
  g('focusModal').classList.add('show');g('focusEtf').focus()}
 function closeFocus(q){document.getElementById('focusModal').classList.remove('show');document.getElementById('focusBox').innerHTML='';if(!q&&lastFocus&&lastFocus.focus)lastFocus.focus()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFocus()});

@@ -115,3 +115,6 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - "Follows via X" tags removed. Country, sector and commodity cards open a focus page with a TradingView news feed (country filter or fund ticker) plus Google News links. Feeds need a live connection to render; not renderable in the offline test sandbox.
 - Coin hint bubble now hides after 3.5 s.
 - qa.js clean; no console errors.
+
+## Round: TradingView CSP (2026-10-27)
+- The artifact preview blocks all third-party frames and scripts (ERR_BLOCKED_BY_CSP). Embeds now use TradingView's script loader, fall back to an s.tradingview.com iframe, and on a CSP violation show link buttons instead of an error page. Verified with a simulated CSP; live rendering still needs the hosted site or a local file.
