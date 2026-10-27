@@ -917,18 +917,21 @@ function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);co
  L.hidden=false;document.body.style.overflow='hidden';document.getElementById('bubTitle').textContent=T[1]+' '+T[0];
  const ids=T[2],n=ids.length;document.getElementById('bubNote').textContent=T[3]||(SMUG[Math.floor(Math.random()*SMUG.length)].replace('{n}',T[0]));document.getElementById('bubDog').innerHTML='<svg viewBox="0 0 130 120">'+DOGSVG.replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'')+'</svg>';
  F.innerHTML='';const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;F.classList.toggle('static',reduced);
- const W=F.clientWidth,H=F.clientHeight;let r=Math.sqrt(W*H*.46/(n*Math.PI));r=Math.max(34,Math.min(r,190,Math.min(W,H)/3.2));
+ const W=F.clientWidth,H=F.clientHeight;let r=Math.sqrt(W*H*.38/(n*Math.PI));r=Math.max(34,Math.min(r,190,Math.min(W,H)/3.2));
  const items=ids.map((id,i)=>{const f=etfFacts[id],rr=r*(.88+.24*(((i*37)%10)/10)),el=document.createElement('button');el.type='button';el.className='bub';el.style.cssText='--cc:var(--c'+((i%6)+1)+');width:'+2*rr+'px;height:'+2*rr+'px;font-size:'+Math.max(11,rr*.22)+'px';
   el.setAttribute('aria-label','Open '+id+': '+f.name);el.innerHTML='<span class="bi" aria-hidden="true">'+f.icon+'</span><b>'+id+'</b>'+(rr>=58?'<em>'+f.name.split(' ').slice(0,3).join(' ')+'</em>':'');
   const b={id,el,r:rr,m:rr*rr,x:rr+Math.random()*Math.max(1,W-2*rr),y:-rr-i*rr*1.3,vx:(Math.random()-.5)*260,vy:0,delay:i*.14,popped:false,hit:0};el.onclick=()=>popBubble(b);F.append(el);return b});
  bub={items,W,H,raf:0,last:performance.now(),reduced,key};
  if(reduced){F.style.cssText='';items.forEach(b=>{b.el.style.position='relative';b.el.style.transform='none'})}else{items.forEach(b=>{b.el.style.opacity=0});bub.raf=requestAnimationFrame(bubStep)}
  document.getElementById('bubBack').focus()}
-function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000||.016);B.last=t;const G=1900,REST=.4;const live=B.items.filter(b=>!b.popped);
- live.forEach(b=>{if(b.delay>0){b.delay-=dt;return}b.el.style.opacity=1;b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=Math.exp(-.15*dt);
+function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000||.016);B.last=t;B.age=(B.age||0)+dt;const G=1900,REST=.4,calm=B.age>3?Math.exp(-Math.min(8,(B.age-3)*2)*dt):1;const live=B.items.filter(b=>!b.popped);
+ live.forEach(b=>{if(b.delay>0){b.delay-=dt;return}b.el.style.opacity=1;b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=Math.exp(-.15*dt)*calm;if(calm<1)b.vy*=calm;
   if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx)*REST}else if(b.x>B.W-b.r){b.x=B.W-b.r;b.vx=-Math.abs(b.vx)*REST}
-  if(b.y>B.H-b.r){const sp=Math.abs(b.vy);b.y=B.H-b.r;b.vy=-sp*REST;if(sp<45)b.vy=0;b.vx*=.97;if(sp>380)bubSquash(b)}});
- for(let it=0;it<3;it++)for(let i=0;i<live.length;i++)for(let j=i+1;j<live.length;j++){const p=live[i],q=live[j];if(p.delay>0||q.delay>0)continue;let dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy),min=p.r+q.r;if(d>=min||d===0)continue;const nx=dx/d,ny=dy/d,ov=min-d,im=1/p.m,jm=1/q.m,tot=im+jm;p.x-=nx*ov*im/tot;p.y-=ny*ov*im/tot;q.x+=nx*ov*jm/tot;q.y+=ny*ov*jm/tot;const vn=(q.vx-p.vx)*nx+(q.vy-p.vy)*ny;if(vn<0){const j2=-(1+REST)*vn/tot;p.vx-=j2*nx*im;p.vy-=j2*ny*im;q.vx+=j2*nx*jm;q.vy+=j2*ny*jm;if(-vn>380){bubSquash(p);bubSquash(q)}}}
+  if(b.y>B.H-b.r){const sp=Math.abs(b.vy);b.y=B.H-b.r;b.vy=sp<160?0:-sp*REST;b.vx*=.97;if(sp>380)bubSquash(b)}});
+ const clampB=b=>{if(b.delay>0)return;b.x=Math.max(b.r,Math.min(B.W-b.r,b.x));if(b.y>B.H-b.r)b.y=B.H-b.r};
+ for(let it=0;it<6;it++){for(let i=0;i<live.length;i++)for(let j=i+1;j<live.length;j++){const p=live[i],q=live[j];if(p.delay>0||q.delay>0)continue;let dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy),min=p.r+q.r;if(d>=min||d===0)continue;const nx=dx/d,ny=dy/d,ov=min-d,im=1/p.m,jm=1/q.m,tot=im+jm;p.x-=nx*ov*im/tot;p.y-=ny*ov*im/tot;q.x+=nx*ov*jm/tot;q.y+=ny*ov*jm/tot;const vn=(q.vx-p.vx)*nx+(q.vy-p.vy)*ny;if(vn<0){const j2=-(1+(-vn<160?0:REST))*vn/tot;p.vx-=j2*nx*im;p.vy-=j2*ny*im;q.vx+=j2*nx*jm;q.vy+=j2*ny*jm;if(-vn>380){bubSquash(p);bubSquash(q)}}}
+ live.forEach(clampB)}
+ live.forEach(b=>{if(b.delay>0)return;const sp=Math.hypot(b.vx,b.vy);if(b.y>=B.H-b.r-1)b.vx*=Math.exp(-5*dt);if(sp<130){b.vx*=.93;b.vy*=.96}});
  live.forEach(b=>{b.el.style.transform='translate3d('+(b.x-b.r).toFixed(1)+'px,'+(b.y-b.r).toFixed(1)+'px,0)'});B.raf=requestAnimationFrame(bubStep)}
 function bubSquash(b){if(b.hit>performance.now())return;b.hit=performance.now()+180;const e=b.el;e.classList.remove('squash');void e.offsetWidth;e.classList.add('squash')}
 function popBubble(b){if(b.popped)return;b.popped=true;const F=document.getElementById('bubField'),rect=b.el.getBoundingClientRect(),fr=F.getBoundingClientRect(),cx=rect.left-fr.left+rect.width/2,cy=rect.top-fr.top+rect.height/2;
