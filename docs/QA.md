@@ -102,3 +102,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Selected fund resets and page scrolls to top when switching worlds.
 - Alien cat (green, two antennas) replaces the old Token fund orbit title; mobile content zoomed 1.12x.
 - qa.js clean; no console errors.
+
+## Round: Basics nav, sticker, currencies, chart iframe (2026-10-27)
+- Basics is the bottom-right nav button in both worlds (in Token World it shows the Basics page without leaving the world).
+- Fee calculator: 85 currencies (EU, other Europe, Americas, Asia) with scaled slider ranges.
+- Starburst sticker on the fee card.
+- TradingView chart now a direct iframe (widgetembed), no script injection. Not renderable in the offline test sandbox; verify on a live connection.
+- qa.js clean; no console errors.
