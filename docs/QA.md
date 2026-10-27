@@ -62,3 +62,6 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Smug cat replaced by an awkward dog (dot eyes, no glasses, tongue out, animated drool).
 - Fund tiles are fully clickable and open the details panel with links; token and theme tiles open their ETF lists.
 - "Show chart" (US-listed ETFs) and "📈 Chart" (BTC, ETH, SOL, LINK, PAXG, XAUT) open a TradingView mini chart in a modal; it loads only on click. Verified in headless Chromium for SPY, IBIT, EWG, FBTC, BTC and XAUT (real data rendered); UCITS funds and ETCs have no chart button. If the host blocks the script (e.g. the claude.ai preview) the modal shows a fallback message and a TradingView link.
+
+## Update — glide on release
+- Flicking a slider and letting go keeps it gliding with friction (soft bounce at the ends, then it eases onto the nearest step). Measured: a fast flick released at 21 years glided 27 → 32 → 35 → 37 → 38 and stopped; a slow release does not glide; ball stays glued to the thumb (gap ≤ 0.3 px); calculator updates during the glide. Skipped under `prefers-reduced-motion`.
