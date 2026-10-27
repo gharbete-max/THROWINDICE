@@ -42,3 +42,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - All range inputs are wrapped: a kitten pushes a rolling ball (right) or drags it back (left); the native input stays underneath so mouse, touch and arrow keys work. Verified by drag (right then left flips the kitten, `moving` toggles), keyboard (Arrow key moves years), and Reset.
 - "Fees" is now "Basic skills for saving and investing": fee calculator, the four big questions, and one "Why people invest at all" block (inflation, alternative cost, pensions).
 - Re-run: no console errors, no overflow, no contrast failures, no duplicate IDs; buy modal, saved list, tour and nav still work.
+
+## Update — fund list, kittens under the track, typical-fund calculator
+- ETF page is now a filterable list of 25 funds (10 with sourced fees; 15 added with no fee and a "check the fund page" note). Clicking a fund shows what is inside, the four questions, and links to justETF / etf.com / stockanalysis holdings / provider. Reviewed quarterly; the monthly price job no longer runs on a schedule.
+- UCITS entries carry justETF ISIN links only where the ISIN is certain (VWCE, SWDA, CSPX, EIMI, EQQQ, SGLN); other links are searches or per-ticker URLs and were not click-tested from this sandbox.
+- Token cards: added Solana, Chainlink, Paxos Gold, Tether Gold (links to their official sites, not click-tested).
+- Calculator starts at a typical fund: 7% growth (a guess; S&P 500 about 10% since 1928, world stocks about 8% since 1970, sources differ) and 0.14% cost (ICI average for index equity ETFs). Figures came from search results; the source pages could not be fetched from this sandbox.
+- Kittens moved under the track so the slider no longer covers them.

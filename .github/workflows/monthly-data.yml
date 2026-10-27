@@ -5,10 +5,8 @@ name: Monthly data refresh
 # fallback pipeline, commits whatever it produced (facts.json, the
 # last-known-good cache, and the run report) straight back to main.
 on:
-  schedule:
-    # 06:00 UTC on the 1st of every month — after markets have a full
-    # prior trading day to close everywhere the app covers.
-    - cron: "0 6 1 * *"
+  # No schedule: the site lists funds and explains them, it does not show prices.
+  # Run by hand from the Actions tab if price facts are wanted again.
   workflow_dispatch: {} # lets you trigger a run manually from the Actions tab
 
 permissions:
