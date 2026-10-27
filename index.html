@@ -398,6 +398,13 @@ body.token-world .topic.pile .symbol{position:relative}
 body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-30%;right:-30%;top:50%;height:22%;border:2px solid rgba(255,255,255,.6);border-radius:50%;transform:translateY(-50%) rotate(-18deg);pointer-events:none}
 #tokenFundHost:empty{display:none}#tokenFundHost{margin-top:16px}
 @media(prefers-reduced-motion:reduce){body.token-world::before,body.token-world::after{animation:none}}
+
+/* ---- Digest mode: long text is clamped, tap More ---- */
+.dg{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden}
+.dg.open{display:block;-webkit-line-clamp:unset;line-clamp:unset}
+.dgMore{display:inline-block;margin:2px 0 6px;padding:3px 12px;border:0;border-radius:999px;font:700 12px/1.4 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}
+.dgMore:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.tokenWatch{margin:0 0 16px}.tokenWatch summary{cursor:pointer;font-weight:800;padding:10px 14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line);list-style:none}.tokenWatch[open] summary{margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -529,13 +536,14 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 <section class="page" id="parallel">
 <div class="pageTitle"><div class="eyebrow">TOKEN WORLD / EXPLORER</div><h1>Tokenization &amp; blockchain</h1><p>Follow how an asset becomes a digital token, where it lives, who services it, and how ownership records move. Educational view only — no trading actions.</p></div>
 <section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><h2>🚀 Token fund orbit</h2><p>Pick a planet. Its funds float out as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
-<div class="tokenNotice"><strong>What is worth watching?</strong><span>Not just token prices: watch the asset behind the token, the network it uses, the legal rights it represents, and the institutions connecting the two worlds.</span></div>
+<details class="tokenWatch"><summary>🔭 What to watch (4 quick points)</summary><div class="tokenNotice"><strong>What is worth watching?</strong><span>Not just token prices: watch the asset behind the token, the network it uses, the legal rights it represents, and the institutions connecting the two worlds.</span></div>
 <div class="tokenMetrics">
 <article class="tokenMetric"><span>ASSET BACKING</span><strong>What does it represent?</strong><p>Fund units, government debt, private credit, property or a claim on something else.</p></article>
 <article class="tokenMetric"><span>NETWORK</span><strong>Where is it recorded?</strong><p>Public or permissioned chain, validators, uptime, congestion and interoperability.</p></article>
 <article class="tokenMetric"><span>RIGHTS &amp; RULES</span><strong>What can holders claim?</strong><p>Redemption terms, transfer restrictions, legal ownership and investor eligibility.</p></article>
 <article class="tokenMetric"><span>ADOPTION</span><strong>Is it actually being used?</strong><p>Outstanding value, active wallets, transaction activity and repeat institutional use.</p></article>
 </div>
+</details>
 <section class="tokenBrowse" id="tokenCategories">
 <div class="sectionHead tokenSectionHead"><div><div class="eyebrow">BROWSE TOKEN MARKETS</div><h2>Three connected worlds</h2><p>Start with the type of digital asset, then inspect what supports it.</p></div><span class="tag blue">EDUCATIONAL MAP</span></div>
 <p class="tokenBrowseIntro">Token markets are not one single asset class. A cryptoasset, a stablecoin and a tokenized fund can use similar technology while representing very different rights, risks and economic purposes.</p>
@@ -1011,6 +1019,10 @@ function closeBubbles(quiet){if(bub&&bub.raf)cancelAnimationFrame(bub.raf);bub=n
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeBubbles()});
 window.addEventListener('resize',()=>{if(!bub||bub.reduced)return;const F=document.getElementById('bubField');bub.W=F.clientWidth;bub.H=F.clientHeight;bub.items.forEach(b=>{b.x=Math.min(b.x,bub.W-b.r);b.y=Math.min(b.y,bub.H-b.r)})});
 document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-theme]');if(c)goTheme(c.dataset.theme)});
+
+/* digest: clamp long text, add a More pill */
+(function(){let t;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary'))return;e.dataset.dg=1;if(e.textContent.trim().length<90)return;e.classList.add('dg');const b=document.createElement('button');b.type='button';b.className='dgMore';b.textContent='More ▾';b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const o=e.classList.toggle('open');b.textContent=o?'Less ▴':'More ▾';b.setAttribute('aria-expanded',o)};e.after(b)})}
+new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60)}).observe(document.body,{childList:true,subtree:true,characterData:true});run()})();
 </script>
 </body>
 </html>

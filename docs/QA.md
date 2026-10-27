@@ -87,3 +87,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Crypto/token piles moved from Real World ETF page to Token Home ("Token fund orbit"); popped funds dock in Token World.
 - Very slow nebula (300s) + star drift (600s) background, forced dark palette in Token World, ringed candy planets; reduced motion = static.
 - Checked: qa.js (overflow/contrast, both themes, 3 widths) clean; no console errors; real world pile list has no crypto group.
+
+## Round: Digest mode (2026-10-27)
+- Paragraphs over 90 characters show 2 lines with a "More ▾" pill; Token World intro points folded into one "What to watch" fold.
+- qa.js clean (overflow/contrast, both themes, 3 widths); no console errors.
