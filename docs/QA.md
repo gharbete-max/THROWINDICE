@@ -96,3 +96,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Page intros, section blurbs, disclaimers and news summaries hide behind an ⓘ button; other long text clamps to 2 lines with More.
 - Token World market context and case studies folded into one "📚" fold.
 - qa.js clean; no console errors.
+
+## Round: Token fold + alien cat (2026-10-27)
+- Brokers, Issuance and Real examples folded; bottom nav opens the fold before scrolling.
+- Selected fund resets and page scrolls to top when switching worlds.
+- Alien cat (green, two antennas) replaces the old Token fund orbit title; mobile content zoomed 1.12x.
+- qa.js clean; no console errors.
