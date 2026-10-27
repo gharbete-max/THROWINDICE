@@ -85,9 +85,9 @@ Functional:
 | Step | Work | Output |
 |---|---|---|
 | 0 | This audit | `docs/AUDIT_AND_PLAN.md` |
-| 1 | Remove the Isobar app and its toolchain; rename everything to THROWINDICE; `throwindice.html` becomes `index.html` | Clean repo |
-| 2 | Trim the pipeline: drop scoring/forecast/holdings/prose; emit `data/facts.json` with 1y/3y/5y price change, volatility, worst fall, average volume per ticker, each with an as-of date. Add V31's ten funds + a handful of commodity ETFs to the ticker list | Real numbers, no opinion |
-| 3 | Rebuild the CSS as a token system: pure black/white, calm green and blue accent, no gradients, theme toggle, real focus states. Delete the 778 `!important` layers | One small stylesheet |
+| 1 ✅ | Remove the Isobar app and its toolchain; rename everything to THROWINDICE; `throwindice.html` becomes `index.html` | Clean repo |
+| 2 ✅ | Trim the pipeline: drop scoring/forecast/holdings/prose; emit `data/facts.json` with 1y/3y/5y price change, volatility, worst fall, average volume per ticker, each with an as-of date. Add V31's ten funds + a handful of commodity ETFs to the ticker list | Real numbers, no opinion |
+| 3 ✅ | Rebuild the CSS as a token system: pure black/white, calm green and blue accent, no gradients, theme toggle, real focus states. Delete the 778 `!important` layers | One small stylesheet |
 | 4 | Move content into one JSON block; plain-word copy (one sentence per card, "More" for detail); index-first catalogue | Simple content |
 | 5 | Fund page: four plain questions with real numbers from `facts.json` + 5-year ride sparkline + cost in euros | Fills the empty Four Fs |
 | 6 | My list: stars everywhere, share/export, affiliate hook | Profile v2 |
