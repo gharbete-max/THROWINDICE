@@ -2,7 +2,7 @@ name: Monthly data refresh
 
 # Free on GitHub-hosted runners for a public repo (2,000 min/month free
 # even on a private one — this job takes well under a minute). Runs the
-# fallback pipeline, commits whatever it produced (generated.json, the
+# fallback pipeline, commits whatever it produced (facts.json, the
 # last-known-good cache, and the run report) straight back to main.
 on:
   schedule:
@@ -37,9 +37,9 @@ jobs:
 
       - name: Commit updated data
         run: |
-          git config user.name "isobar-data-bot"
+          git config user.name "throwindice-data-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add src/data/generated.json data/cache data/run-report.json
+          git add data/facts.json data/cache data/run-report.json
           git diff --cached --quiet && echo "No data changes." && exit 0
           git commit -m "data: monthly refresh $(date -u +%Y-%m-%d)"
           # Rebase onto whatever the branch's tip actually is right now
