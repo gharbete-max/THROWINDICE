@@ -26,3 +26,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Facts come from a free Yahoo-based pipeline (one ticker, IRBO, served from stale cache on the last run).
 - Token World figures are V31's dated snapshots; the pipeline has no token data yet.
 - Buy links are placeholders (`example.com`).
+
+## Update — colourful rebuild
+- Market stats (last year, worst fall, bumpiness, volume, price path) removed from the page; `data/facts.json` is still refreshed monthly but not shown.
+- Loud colour-block design restored (lime, magenta, amber, cyan, rose, purple; cooler set in Token World), black/white page background, light/dark toggle.
+- "Where to buy" opens a modal with placeholder broker names (Interactive Brokers, DEGIRO, Trading 212; Coinbase, Kraken, Binance) linking to their plain homepages. No affiliate tags.
+- Re-run after the change: no console errors, no overflow, no contrast failures (dark/light × Real/Token × 390/820/1280); buy modal, saved list, fund tiles, Quick Tour and nav work.

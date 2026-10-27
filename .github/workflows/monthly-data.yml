@@ -35,14 +35,11 @@ jobs:
           ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
         run: node scripts/build-data/index.mjs
 
-      - name: Inject facts into index.html
-        run: node scripts/inject-facts.mjs
-
       - name: Commit updated data
         run: |
           git config user.name "throwindice-data-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/facts.json data/cache data/run-report.json index.html
+          git add data/facts.json data/cache data/run-report.json
           git diff --cached --quiet && echo "No data changes." && exit 0
           git commit -m "data: monthly refresh $(date -u +%Y-%m-%d)"
           # Rebase onto whatever the branch's tip actually is right now
