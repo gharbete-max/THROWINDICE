@@ -76,3 +76,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Tap a bubble: it zooms ~30% while the others dim, pops with a 54-piece confetti burst (confetti keeps flying after the pit closes), then the fund opens. Keyboard (Enter/Space) pops too; reduced motion skips straight to the fund.
 - Press and hold (≈0.2 s) or drag a bubble to grab it; release to throw (velocity from the pointer, capped); grabbed bubbles shove others. Verified with a mouse (grabbed flag set, throw velocity after release) and a touch tap on a 390 px viewport (opens the fund, no overflow). A touch drag/throw was not run.
 - The four questions are now fund-specific: 16 fund profiles (broad world, S&P 500, Nasdaq, single country, sector, narrow theme, broad/long bonds, T-bill cash, physical metal, futures, commodity companies, coins, crypto companies, dividend, small caps) give each fund its own plain-language answer, a "Look at:" tip for where to check, and extras (UCITS currency note, accumulating vs distributing, futures roll cost). All 92 funds map to a profile and render without gaps. The text is general guidance, not numbers, and has not been checked fund-by-fund against factsheets.
+
+## Update — selected glow, orb beside the title, softer drop, hidden size tiers
+- The selected-fund panel now has a pulsing glowing border in the fund's own candy colour, a "✓ SELECTED FUND" tag, and the fund's bubble (same colour and icon) beside its name; it flashes when a new fund is picked.
+- Initial drop is less bouncy: first rebound ≈ 21% of the impact speed (was about 40%).
+- Bubble size follows a hidden tier per fund (volume based, 4 tiers); e.g. in Crypto IBIT is the biggest and the company funds the smallest. Tiers are never shown. 40 of 92 tiers are rough estimates because those funds have no data in facts.json.
+- Re-run: no console errors, no overflow, no contrast failures; pit, pop, throw, reduced motion and mobile tap still work.
