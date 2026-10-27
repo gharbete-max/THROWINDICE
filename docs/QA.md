@@ -49,3 +49,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Token cards: added Solana, Chainlink, Paxos Gold, Tether Gold (links to their official sites, not click-tested).
 - Calculator starts at a typical fund: 7% growth (a guess; S&P 500 about 10% since 1928, world stocks about 8% since 1970, sources differ) and 0.14% cost (ICI average for index equity ETFs). Figures came from search results; the source pages could not be fetched from this sandbox.
 - Kittens moved under the track so the slider no longer covers them.
+
+## Update — tiles lead to ETFs, smug cat, hanging kittens
+- Every tile (countries, sectors, themes, commodities, token cards, token category detail) opens the ETF page filtered to that theme (39 themes, each checked to show exactly its listed funds). Token tiles leave Token World through the portal first. "Show all funds" or any category pill clears the filter.
+- ETF list grew to 92 funds (10 with sourced fees, the rest linking out). Crypto tiles map to spot bitcoin/ether funds or blockchain-company funds; stablecoin and tokenized-fund tiles map to short T-bill funds as "cousins", with a note that they are not the tokens.
+- Smug cat with glasses and a toothy grin guides the ETF page.
+- Kittens now hang from the yarn balls. Ball follows the slider with a spring; the cat swings as a damped pendulum with paw friction, heavier than a free pendulum, clamped to about ±60° (measured peak ≈ 50° on a very fast drag; settles in ≤ 250 ms).
+- Re-run: no console errors, no overflow, no contrast failures, no duplicate IDs, nav lands.
