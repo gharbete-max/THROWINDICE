@@ -356,7 +356,9 @@ body.token-world #parallel{display:block}
 .sk-wide{height:12px;width:min(440px,100%);margin-top:7px}.sk-wide.short{width:min(270px,65vw)}.loadingCaption{font-size:12px;margin-top:12px}
 .brandMark .token-logo,.loadingMarkSvg .token-logo{display:none}body.token-world .brandMark .real-logo,body.token-world .loadingMarkSvg .real-logo{display:none}body.token-world .brandMark .token-logo,body.token-world .loadingMarkSvg .token-logo{display:block}
 .portalOverlay{position:fixed;inset:0;z-index:200;background:var(--bg);display:grid;place-items:center;opacity:0;visibility:hidden;pointer-events:none;overflow:hidden}
-.portalOverlay.active{opacity:1;visibility:visible;pointer-events:auto}
+.portalOverlay.active{opacity:1;visibility:visible;pointer-events:auto;transition:none}
+.portalOverlay{transition:opacity .3s,visibility .3s}
+.portalVideo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}.portalOverlay.video .portalVideo{display:block}.portalOverlay.video .portalVisual{display:none}
 .portalVisual{width:min(84vmin,720px);aspect-ratio:1;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.08) rotate(-90deg)}
 .portalVisual svg{width:100%;height:100%;overflow:visible}
 .portalVisual .spiralPath{fill:none;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}
@@ -674,7 +676,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 <button class="navbtn" data-normal="Basics" data-page="fees" data-token="Basics" onclick="navAction(this,'fees','basics')"><span class="ico">✦</span><span class="navLabel">Basics</span></button>
 </div></nav>
 <div aria-labelledby="guideTitle" aria-modal="true" class="modalShade" id="guideModal" role="dialog"><div class="modal"><div class="eyebrow" id="guideStep">QUICK TOUR · 1 OF 3</div><h2 id="guideTitle" style="margin-top:8px">Start with a question</h2><div class="guideDots" id="guideDots"><i class="on"></i><i></i><i></i></div><p id="guideText">Choose a region, a sector or a commodity. There is no single correct starting point — follow your curiosity.</p><div class="modalFoot"><button class="btn secondary" onclick="closeGuide()">Skip tour</button><button class="btn" id="nextGuide" onclick="nextGuide()">Next →</button></div></div></div>
-<div aria-hidden="true" class="portalOverlay" id="portalOverlay"><div aria-hidden="true" class="portalVisual"><svg role="presentation" viewbox="0 0 500 500"><path class="spiralPath" d="M250 250 C250 190 330 190 330 250 C330 330 220 350 170 285 C100 190 190 95 285 115 C405 140 430 285 355 375 C270 475 100 420 65 290 C20 120 170 5 330 40" stroke="#7da88c"></path><path class="spiralPath" d="M250 250 C290 210 325 255 290 285 C245 325 180 280 195 225 C215 155 310 150 355 210 C420 295 355 395 270 400" stroke="#86acd2"></path><path class="spiralPath" d="M250 250 L305 195 L360 250 L305 305 L250 250 L195 195 L140 250 L195 305 L250 250" stroke="#7da88c"></path></svg></div></div>
+<div aria-hidden="true" class="portalOverlay" id="portalOverlay"><video aria-hidden="true" class="portalVideo" muted playsinline preload="auto" src="assets/token-portal.mp4"></video><div aria-hidden="true" class="portalVisual"><svg role="presentation" viewbox="0 0 500 500"><path class="spiralPath" d="M250 250 C250 190 330 190 330 250 C330 330 220 350 170 285 C100 190 190 95 285 115 C405 140 430 285 355 375 C270 475 100 420 65 290 C20 120 170 5 330 40" stroke="#7da88c"></path><path class="spiralPath" d="M250 250 C290 210 325 255 290 285 C245 325 180 280 195 225 C215 155 310 150 355 210 C420 295 355 395 270 400" stroke="#86acd2"></path><path class="spiralPath" d="M250 250 L305 195 L360 250 L305 305 L250 250 L195 195 L140 250 L195 305 L250 250" stroke="#7da88c"></path></svg></div></div>
 <div aria-labelledby="profileTitle" aria-modal="true" class="modalShade" id="profileModal" role="dialog"><div class="modal wide"><div class="eyebrow">YOUR PROFILE</div><h2 id="profileTitle" style="margin-top:8px">Saved</h2><p>Funds and assets you starred. Saved on this device only.</p><div id="savedList"></div><div class="modalFoot"><button class="btn small" onclick="copyList()" type="button">Copy my list</button><button class="btn secondary small" id="profileClose" onclick="closeProfile()" type="button">Close</button></div><p class="disclaimer">Brokers are placeholders. Educational only, not financial advice.</p></div></div>
 <div aria-labelledby="buyTitle" aria-modal="true" class="modalShade" id="buyModal" role="dialog"><div class="modal wide"><div class="eyebrow">PICK A BROKER</div><h2 id="buyTitle" style="margin-top:8px">Where to buy</h2><p>Tap a broker to open its site.</p><div class="actions" id="buyList" style="flex-direction:column;align-items:stretch"></div><div class="modalFoot" style="margin-top:18px"><button class="btn secondary small" onclick="closeBuy()" type="button">Close</button></div><p class="disclaimer">These brokers are placeholders, not partners. No affiliate links yet. Educational only, not financial advice.</p></div></div>
 <div aria-labelledby="focusTitle" aria-modal="true" class="modalShade" id="focusModal" role="dialog"><div class="modal wide" style="max-width:760px"><div class="eyebrow" id="focusEye">FOCUS</div><h2 id="focusTitle" style="margin-top:8px">Focus</h2><div class="actions" style="margin:10px 0"><button class="btn small" id="focusEtf" type="button">See ETFs →</button><a class="btn small secondary" id="focusNews" target="_blank" rel="noopener noreferrer">More news ↗</a><a class="btn small secondary" id="focusExch" target="_blank" rel="noopener noreferrer">Exchange news ↗</a><button class="btn secondary small" onclick="closeFocus()" type="button">Close</button></div><div id="focusBox" style="min-height:300px"></div><p class="disclaimer">News feeds are by TradingView, a third party, and load only when you open this page. Headlines are not advice.</p></div></div>
@@ -694,13 +696,20 @@ function portalTransition(direction,target){
   const overlay=document.getElementById('portalOverlay');portalBusy=true;
   overlay.classList.remove('entering','exiting');overlay.classList.add('active',direction==='enter'?'entering':'exiting');overlay.setAttribute('aria-hidden','false');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const duration=reduced?30:(direction==='enter'?820:620);
+  let duration=reduced?30:(direction==='enter'?820:620);
   if(direction==='exit')setPage(target);
-  window.setTimeout(()=>{
+  const finish=()=>{
     if(direction==='enter')setPage(target);
     scrollToSection(target);
-    overlay.classList.remove('active','entering','exiting');overlay.setAttribute('aria-hidden','true');portalBusy=false;
-  },duration);
+    overlay.classList.remove('active','entering','exiting','video');overlay.setAttribute('aria-hidden','true');portalBusy=false;
+  };
+  const video=overlay.querySelector('.portalVideo');
+  if(direction==='enter'&&!reduced&&video){
+    // wormhole video when entering; falls back to the spiral if it can't play
+    overlay.classList.add('video');video.currentTime=0;duration=2500;
+    video.play().catch(()=>{overlay.classList.remove('video');clearTimeout(timer);timer=window.setTimeout(finish,820)});
+  }
+  let timer=window.setTimeout(finish,duration);
 }
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),2300)}
 function filterRegion(btn,region){document.querySelectorAll('#world .filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#regionCards .exploreCard').forEach(c=>c.style.display=region==='all'||c.dataset.region===region?'block':'none')}

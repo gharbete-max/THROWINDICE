@@ -33,7 +33,7 @@ jobs:
       - uses: actions/configure-pages@v5
         with:
           enablement: true
-      - run: mkdir site && cp index.html site/
+      - run: mkdir site && cp -r index.html assets site/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
