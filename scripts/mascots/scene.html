@@ -1,0 +1,243 @@
+<!doctype html><html><body style="margin:0;background:#888">
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const P = new URLSearchParams(location.search);
+const CHAR = P.get('char'), W = +P.get('size') || 800;
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1); renderer.setSize(W, W); renderer.setClearColor(0, 0);
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+scene.add(new THREE.HemisphereLight(0xe8e0ff, 0xffe6d0, 0.7));
+const key = new THREE.DirectionalLight(0xffffff, 1.7); key.position.set(1.5, 8, 4); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3 }); key.shadow.bias = -0.0005;
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xb9a6ff, 1.1); rim.position.set(-4, 3, -4); scene.add(rim);
+
+// ---------- helpers ----------
+const clay = (color, o = {}) => new THREE.MeshPhysicalMaterial({ color, roughness: 0.55, clearcoat: 0.18, clearcoatRoughness: 0.5, sheen: 0.5, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xffffff), ...o });
+const gloss = (color) => new THREE.MeshPhysicalMaterial({ color, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03 });
+const flat = (color, opacity = 1) => new THREE.MeshBasicMaterial({ color, transparent: opacity < 1, opacity, depthWrite: opacity === 1 });
+function mesh(geo, mat, pos = [0, 0, 0], scl = [1, 1, 1], rot = [0, 0, 0], parent) {
+  const m = new THREE.Mesh(geo, mat); m.position.set(...pos); m.scale.set(...scl); m.rotation.set(...rot);
+  m.castShadow = true; if (parent) parent.add(m); return m;
+}
+const sph = (r, mat, pos, scl, rot, parent) => mesh(new THREE.SphereGeometry(r, 64, 48), mat, pos, scl, rot, parent);
+const cap = (r, len, mat, pos, scl, rot, parent) => mesh(new THREE.CapsuleGeometry(r, len, 16, 48), mat, pos, scl, rot, parent);
+const tube = (pts, r, mat, parent) => mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map(p => new THREE.Vector3(...p))), 64, r, 24), mat, undefined, undefined, undefined, parent);
+const softCone = (r, h, mat, pos, scl, rot, parent) => {
+  const pts = []; for (let i = 0; i <= 24; i++) { const k = i / 24; pts.push(new THREE.Vector2(r * Math.pow(1 - k, 0.9) * (1 - 0.15 * k) + 0.012, h * k)); }
+  pts.push(new THREE.Vector2(0, h + 0.012));
+  return mesh(new THREE.LatheGeometry(pts, 48), mat, pos, scl, rot, parent);
+};
+const grp = (parent, pos = [0, 0, 0]) => { const g = new THREE.Group(); g.position.set(...pos); parent.add(g); return g; };
+const eye = (parent, x, y, z, r, s = 1) => { // glossy eye with catchlights
+  sph(r, gloss(0x0d0a10), [x, y, z], [1, 1.12, 0.6], [0, 0, 0], parent);
+  sph(r * 0.3, flat(0xffffff), [x - r * 0.32 * s, y + r * 0.42, z + r * 0.5], [1, 1, 0.4], [0, 0, 0], parent);
+  sph(r * 0.13, flat(0xffffff), [x + r * 0.35 * s, y - r * 0.35, z + r * 0.52], [1, 1, 0.4], [0, 0, 0], parent);
+};
+const ease = (x) => x < 0 ? 0 : x > 1 ? 1 : x * x * (3 - 2 * x);
+const bump = (t, a, b) => Math.sin(Math.PI * ease((t - a) / (b - a))); // 0→1→0 between a and b
+
+// ground shadow catcher
+function ground() {
+  const g = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.ShadowMaterial({ opacity: 0.22 }));
+  g.rotation.x = -Math.PI / 2; g.receiveShadow = true; scene.add(g);
+}
+
+// ---------- standing biped rig (alien cat & pug) ----------
+function biped(c) {
+  const root = grp(scene); const hips = grp(root, [0, c.hipY, 0]);
+  const legs = [-1, 1].map(s => {
+    const p = grp(hips, [s * 0.2, 0, 0]);
+    cap(c.legR, 0.2, c.body, [0, -0.22, 0], undefined, undefined, p);
+    sph(c.legR * 1.18, c.foot, [0, -c.hipY + c.legR * 0.7, 0.06], [1, 0.62, 1.35], undefined, p);
+    return p;
+  });
+  const torso = grp(hips, [0, 0.3, 0]);
+  sph(0.45, c.body, [0, 0, 0], [1, 1.1, 0.92], undefined, torso);
+  sph(0.3, c.belly, [0, -0.06, 0.25], [0.88, 1.05, 0.5], undefined, torso);
+  const arms = [-1, 1].map(s => {
+    const p = grp(torso, [s * 0.36, 0.18, 0.02]);
+    cap(0.1, 0.24, c.body, [s * 0.2, 0, 0], undefined, [0, 0, Math.PI / 2], p);
+    sph(0.135, c.paw, [s * 0.42, 0, 0.02], [1, 0.95, 0.95], undefined, p);
+    return p;
+  });
+  const head = grp(torso, [0, 0.4, 0]); const face = grp(head, [0, c.headR * 0.78, 0]);
+  return { root, hips, legs, torso, arms, head, face };
+}
+
+function alienCat() {
+  const body = clay(0x5be38a, { sheenColor: new THREE.Color(0xd8ffe6) }), belly = clay(0xd2fbe0), pink = clay(0xff8fd0);
+  const R = biped({ hipY: 0.62, legR: 0.13, headR: 0.56, body, belly, foot: belly, paw: belly });
+  const f = R.face, r = 0.56;
+  sph(r, body, [0, 0, 0], [1.13, 0.95, 0.98], undefined, f);
+  R.ears = [-1, 1].map(s => {
+    const e = grp(f, [s * 0.37, 0.33, 0.02]); e.rotation.z = -s * 0.42;
+    softCone(0.2, 0.38, body, [0, 0, 0], [1, 1, 0.75], undefined, e);
+    softCone(0.12, 0.25, pink, [0, 0.03, 0.08], [1, 1, 0.35], undefined, e);
+    return e;
+  });
+  R.ants = [-1, 1].map(s => {
+    const a = grp(f, [s * 0.13, 0.46, 0]);
+    tube([[0, 0, 0], [s * 0.08, 0.2, 0], [s * 0.2, 0.42, 0.02]], 0.028, body, a);
+    const orb = sph(0.095, new THREE.MeshPhysicalMaterial({ color: 0xff6fd6, emissive: 0xff3fc8, emissiveIntensity: 0.8, roughness: 0.15, clearcoat: 1 }), [s * 0.2, 0.44, 0.02], undefined, undefined, a);
+    a.orb = orb; return a;
+  });
+  eye(f, -0.22, 0.04, 0.47, 0.15, 1); eye(f, 0.22, 0.04, 0.47, 0.15, 1);
+  sph(0.1, belly, [-0.075, -0.19, 0.49], [1, 0.8, 0.62], undefined, f); sph(0.1, belly, [0.075, -0.19, 0.49], [1, 0.8, 0.62], undefined, f);
+  sph(0.045, gloss(0xff5fb8), [0, -0.11, 0.55], [1.35, 0.9, 0.8], undefined, f);
+  mesh(new THREE.TorusGeometry(0.035, 0.011, 12, 32, Math.PI), flat(0x123018), [-0.035, -0.205, 0.565], undefined, [0, 0, Math.PI], f);
+  mesh(new THREE.TorusGeometry(0.035, 0.011, 12, 32, Math.PI), flat(0x123018), [0.035, -0.205, 0.565], undefined, [0, 0, Math.PI], f);
+  [-1, 1].forEach(s => sph(0.08, flat(0xff7ccf, 0.55), [s * 0.37, -0.12, 0.43], [1.2, 0.7, 0.3], [0, s * 0.6, 0], f));
+  R.tail = grp(R.hips, [0, 0.05, -0.36]);
+  tube([[0, 0, 0], [0.25, 0.15, -0.2], [0.4, 0.55, -0.2], [0.25, 0.8, -0.1]], 0.06, body, R.tail);
+  sph(0.075, pink, [0.25, 0.8, -0.1], undefined, undefined, R.tail);
+  R.ring = mesh(new THREE.TorusGeometry(1, 0.025, 16, 128), new THREE.MeshBasicMaterial({ color: 0x55e7ff, transparent: true, opacity: 0 }), [0, 1.2, 0], undefined, [Math.PI / 2, 0, 0]);
+  R.ring2 = mesh(new THREE.TorusGeometry(1, 0.018, 16, 128), new THREE.MeshBasicMaterial({ color: 0xff7ad9, transparent: true, opacity: 0 }), [0, 1.2, 0], undefined, [Math.PI / 2, 0, 0]);
+  R.ring.castShadow = R.ring2.castShadow = false;
+
+  R.animate = (t, special) => {
+    const ti = special ? t : t, p = 2 * Math.PI * ti, s1 = Math.sin(p);
+    // kitten shuffle: weight shift, step, arms out wobbling
+    R.root.position.set(0.1 * s1, 0, 0); R.root.rotation.set(0, -0.28 + 0.14 * s1, -0.09 * s1);
+    R.legs[1].position.y = 0.09 * Math.max(0, s1); R.legs[0].position.y = 0.09 * Math.max(0, -s1);
+    R.legs[1].rotation.z = 0.15 * Math.max(0, s1); R.legs[0].rotation.z = -0.15 * Math.max(0, -s1);
+    R.hips.position.y = 0.62 - 0.03 * Math.cos(2 * p);
+    R.torso.scale.set(1 - 0.025 * Math.cos(2 * p), 1 + 0.035 * Math.cos(2 * p), 1);
+    let arm = 0.5 + 0.28 * Math.sin(2 * p);
+    R.head.rotation.set(0.06 * Math.sin(2 * p), 0.15 * s1, 0.17 * Math.sin(p - 0.6));
+    R.ants.forEach((a, i) => a.rotation.z = 0.22 * Math.sin(2 * p - 1 + i));
+    R.ears.forEach((e, i) => e.rotation.x = 0.1 * Math.sin(2 * p + i));
+    R.tail.rotation.y = 0.5 * s1;
+    let glow = 0.8, ring = 0;
+    if (special) { // warp jump: crouch, leap + 360 spin with glowing antennae, ring burst, land
+      const crouch = bump(t, 0, 0.25) * 0.6 + bump(t, 0.72, 0.95);
+      const air = bump(t, 0.18, 0.8);
+      R.hips.position.y -= 0.12 * crouch; R.torso.scale.y *= 1 - 0.12 * crouch; R.torso.scale.x *= 1 + 0.08 * crouch;
+      R.root.position.y = 0.35 * air;
+      R.root.rotation.y += 2 * Math.PI * ease((t - 0.18) / 0.6);
+      arm += 0.9 * air; glow = 0.8 + 4 * air; ring = bump(t, 0.35, 0.95);
+      R.legs.forEach(l => l.rotation.x = -0.4 * air);
+    }
+    R.arms.forEach((a, i) => { const s = i ? 1 : -1; a.rotation.set(0.25 * Math.sin(p + i * Math.PI), 0, s * arm); });
+    R.ants.forEach(a => a.orb.material.emissiveIntensity = glow);
+    const rs = 0.5 + 1.1 * ease((t - 0.35) / 0.6);
+    [R.ring, R.ring2].forEach((g, i) => { g.scale.setScalar(rs * (i ? 0.85 : 1)); g.material.opacity = ring * 0.9; g.position.y = 1.0 + 0.2 * i; });
+  };
+  return R;
+}
+
+function pug() {
+  const body = clay(0x524a5a, { sheenColor: new THREE.Color(0xc9bdd8), roughness: 0.58 }), dark = clay(0x18151b, { roughness: 0.45 });
+  const belly = clay(0xd4b0b8), pink = clay(0xff8aa8, { clearcoat: 0.6 }), wr = clay(0x6e6578);
+  const R = biped({ hipY: 0.55, legR: 0.145, headR: 0.62, body, belly, foot: body, paw: dark });
+  const f = R.face;
+  sph(0.64, body, [0, 0, 0], [1.24, 0.92, 0.92], undefined, f);
+  sph(0.27, dark, [0, -0.17, 0.46], [1.38, 0.74, 0.52], undefined, f); // flat black mask
+  [-1, 1].forEach(s => sph(0.14, dark, [s * 0.11, -0.27, 0.5], [1.1, 0.85, 0.7], undefined, f)); // jowls
+  sph(0.085, gloss(0x060508), [0, -0.06, 0.6], [1.6, 0.9, 0.7], undefined, f);
+  mesh(new THREE.TorusGeometry(0.2, 0.024, 12, 48, Math.PI), wr, [0, 0.0, 0.53], [1, 0.5, 1], [-0.3, 0, 0], f); // nose roll
+  mesh(new THREE.TorusGeometry(0.16, 0.02, 12, 48, Math.PI * 0.8), wr, [0, 0.24, 0.545], [1, 0.4, 1], [-0.55, 0, 0.31], f);
+  mesh(new THREE.TorusGeometry(0.11, 0.018, 12, 48, Math.PI * 0.8), wr, [0, 0.36, 0.475], [1, 0.4, 1], [-0.75, 0, 0.31], f);
+  eye(f, -0.3, 0.08, 0.5, 0.17, 1); eye(f, 0.3, 0.08, 0.5, 0.17, 1);
+  R.ears = [-1, 1].map(s => { // folded button ears: flap lies on the head, tip pointing down toward the eye
+    const e = grp(f, [s * 0.5, 0.47, 0.14]);
+    const y = new THREE.Vector3(s * 0.3, -0.75, 0.6).normalize(), n = new THREE.Vector3(s * 0.55, 0.55, 0.6).normalize();
+    const z = n.sub(y.clone().multiplyScalar(n.dot(y))).normalize(), x = new THREE.Vector3().crossVectors(y, z);
+    e.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x, y, z)); e.base = e.quaternion.clone();
+    softCone(0.2, 0.3, dark, [0, -0.02, 0.03], [1, 1, 0.28], undefined, e); return e;
+  });
+  R.tongue = cap(0.065, 0.06, pink, [0.05, -0.38, 0.53], [1, 1, 0.45], [0.35, 0, 0.1], f);
+  R.tail = grp(R.hips, [0, 0.25, -0.4]);
+  mesh(new THREE.TorusGeometry(0.11, 0.055, 24, 48, Math.PI * 1.6), body, [0, 0.08, 0], undefined, [0, 0, 0.6], R.tail);
+
+  R.animate = (t, special) => {
+    const p = 2 * Math.PI * t, s1 = Math.sin(p), b = Math.abs(s1);
+    // puppy party: bounce on the beat, arms pump in turns, head nods, twist
+    R.root.position.set(0, 0, 0); R.root.rotation.set(0, -0.22 + 0.28 * s1, 0.05 * s1);
+    R.hips.position.y = 0.55 - 0.05 * b;
+    R.torso.scale.set(1 + 0.03 * b, 1 - 0.04 * b, 1);
+    R.legs.forEach((l, i) => { l.position.y = 0; l.rotation.set(0, 0, (i ? 1 : -1) * 0.06 * b); });
+    let a0 = 0.45 + 0.65 * s1, a1 = 0.45 - 0.65 * s1;
+    R.head.rotation.set(0.14 * b - 0.04, 0.1 * s1, 0.13 * Math.sin(p + 0.5));
+    R.ears.forEach((e, i) => { e.quaternion.copy(e.base); e.rotateX(-0.35 * b); });
+    R.tail.rotation.z = 0.6 * Math.sin(2 * p);
+    R.tongue.scale.y = 1 + 0.25 * b;
+    if (special) { // spin hop then a big "ta-da"
+      const air = bump(t, 0.12, 0.62), crouch = bump(t, 0, 0.18) + bump(t, 0.56, 0.72) * 0.8, tada = bump(t, 0.6, 1);
+      R.root.position.y = 0.35 * air;
+      R.root.rotation.y += 2 * Math.PI * ease((t - 0.12) / 0.5);
+      R.hips.position.y -= 0.1 * crouch; R.torso.scale.y *= 1 - 0.1 * crouch;
+      const spread = Math.max(air, tada);
+      a0 = a0 * (1 - spread) + (air > tada ? 0.05 : 1.35) * spread; a1 = a1 * (1 - spread) + (air > tada ? 0.05 : 1.35) * spread;
+      R.head.rotation.x -= 0.25 * tada; R.ears.forEach(e => e.rotateX(-0.7 * air));
+      R.legs.forEach((l, i) => l.rotation.z += (i ? 1 : -1) * 0.25 * air);
+    }
+    R.arms.forEach((a, i) => { const s = i ? 1 : -1; a.rotation.set(0.35 * (i ? -s1 : s1), 0, s * (i ? a1 : a0)); });
+  };
+  return R;
+}
+
+// ---------- hanging kitten (units match the old SVG: origin = ball centre, y up, paws at (±12,-19.5)) ----------
+function kitten() {
+  const white = clay(0xf7f3ef, { roughness: 0.7, sheen: 1, sheenColor: new THREE.Color(0xffffff) });
+  const grey = clay(0x8e8a95, { roughness: 0.7, sheen: 0.8, sheenColor: new THREE.Color(0xd9d4e6) });
+  const pink = clay(0xffa3bd);
+  const R = { root: grp(scene) };
+  const torso = grp(R.root, [0, -50, 0]);
+  sph(11.5, white, [0, 0, 0], [1, 1.28, 0.9], undefined, torso);
+  sph(9, grey, [0, 4, -4], [1, 1.1, 0.7], undefined, torso); // grey back patch
+  [-1, 1].forEach(s => { // arms up to the paws
+    tube([[s * 8, 6, 1], [s * 11, 18, 2], [s * 12, 30.5, 2]], 3.4, white, torso);
+    sph(4.7, white, [s * 12, 30.5, 2.5], [1, 0.95, 1], undefined, torso);
+    [-1.6, 0, 1.6].forEach(dx => sph(1.1, pink, [s * 12 + dx, 28.6, 6.3], [1, 0.8, 0.5], undefined, torso));
+  });
+  R.legs = [-1, 1].map(s => { const l = grp(torso, [s * 5.8, -10, 0]); cap(4.2, 6, white, [0, -5, 0], undefined, undefined, l); sph(4.4, white, [0, -9.5, 1], [1, 0.8, 1.15], undefined, l); return l; });
+  R.tail = grp(torso, [4, -9, -6]);
+  tube([[0, 0, 0], [8, -3, -1], [15, 2, 0], [15, 12, 1]], 2.6, white, R.tail); sph(3, grey, [15, 12, 1], [1, 1.3, 1], undefined, R.tail);
+  R.head = grp(R.root, [0, -33, 3]);
+  const h = grp(R.head);
+  const cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; const g = cv.getContext('2d');
+  g.fillStyle = '#f7f3ef'; g.fillRect(0, 0, 1024, 512);
+  g.filter = 'blur(18px)'; g.fillStyle = '#8e8a95'; g.fillRect(-50, -50, 1124, 290);  // grey hood down to eye line
+  g.fillStyle = '#f7f3ef'; g.beginPath(); g.ellipse(256, 300, 70, 150, 0, 0, 7); g.fill(); // white blaze + muzzle (front is u=.25)
+  g.beginPath(); g.ellipse(256, 400, 260, 140, 0, 0, 7); g.fill();
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+  sph(12.6, clay(0xffffff, { map: tex, roughness: 0.7, sheen: 1, sheenColor: new THREE.Color(0xffffff) }), [0, 0, 0], [1.12, 0.98, 1], undefined, h);
+  R.ears = [-1, 1].map(s => { const e = grp(h, [s * 8, 8.5, 0.5]); e.rotation.z = -s * 0.45; softCone(5.2, 9, grey, [0, 0, 0], [1, 1, 0.7], undefined, e); softCone(3.1, 6, pink, [0, 0.6, 2.2], [1, 1, 0.3], undefined, e); return e; });
+  eye(h, -4.7, 0.2, 9.8, 3.1, 1); eye(h, 4.7, 0.2, 9.8, 3.1, 1);
+  sph(2.4, white, [-1.6, -4.4, 11.2], [1, 0.8, 0.6], undefined, h); sph(2.4, white, [1.6, -4.4, 11.2], [1, 0.8, 0.6], undefined, h);
+  sph(1.1, gloss(0xff7aa0), [0, -2.7, 12.2], [1.4, 0.9, 0.8], undefined, h);
+  [-1, 1].forEach(s => sph(2, flat(0xff9cb8, 0.5), [s * 8, -3.5, 9], [1.2, 0.7, 0.3], [0, s * 0.6, 0], h));
+  R.animate = (t) => {
+    const p = 2 * Math.PI * t;
+    R.legs[0].rotation.x = 0.35 * Math.sin(p); R.legs[1].rotation.x = -0.35 * Math.sin(p);
+    R.legs[0].rotation.z = -0.1 + 0.1 * Math.sin(p); R.legs[1].rotation.z = 0.1 + 0.1 * Math.sin(p);
+    R.tail.rotation.z = 0.25 * Math.sin(p); R.tail.rotation.y = 0.2 * Math.cos(p);
+    R.head.rotation.set(0.05 * Math.sin(2 * p), 0.12 * Math.sin(p), 0.1 * Math.sin(p + 0.8));
+    torso.rotation.z = 0.04 * Math.sin(p);
+    R.ears.forEach((e, i) => e.rotation.x = Math.max(0, Math.sin(2 * p + i * 2)) ** 6 * -0.35);
+  };
+  return R;
+}
+
+let cam, R;
+if (CHAR === 'kitten') {
+  cam = new THREE.OrthographicCamera(-50, 50, 22, -78, 1, 1000); cam.position.set(0, 0, 300);
+  key.position.set(60, 140, 160); Object.assign(key.shadow.camera, { left: -60, right: 60, top: 40, bottom: -100, far: 600 });
+  rim.position.set(-80, 40, -100); R = kitten();
+} else {
+  cam = new THREE.PerspectiveCamera(26, 1, 0.1, 100); cam.position.set(0, 1.85, 7.6); cam.lookAt(0, 1.5, 0);
+  ground(); R = CHAR === 'pug' ? pug() : alienCat();
+}
+window.frame = (t, special) => { R.animate(t, special); renderer.render(scene, cam); return renderer.domElement.toDataURL('image/png'); };
+window.ready = true;
+</script></body></html>

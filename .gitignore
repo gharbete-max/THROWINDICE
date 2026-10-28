@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+scripts/mascots/node_modules/
+scripts/mascots/frames/
