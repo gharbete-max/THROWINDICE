@@ -129,18 +129,20 @@ def make_rig(bones):
     for pb in ob.pose.bones: pb.rotation_mode = 'XYZ'
     return ob
 
-def seg_dist(P, a, b):
+def seg_dist(P, a, b, limb=False):
     a, b = np.array(a), np.array(b); ab = b - a
-    t = np.clip(((P - a) @ ab) / (ab @ ab), 0, 1)
-    return np.linalg.norm(P - (a + t[:, None] * ab), axis=1)
+    t = (P - a) @ ab / (ab @ ab); tc = np.clip(t, 0, 1)
+    d = np.linalg.norm(P - (a + tc[:, None] * ab), axis=1)
+    if limb: d = np.where(t < 0.08, d + 10 * (0.08 - t), d)  # limbs only own what lies past the shoulder/hip joint
+    return d
 
-def skin(obj, rig, bones, power=6.0, only=None):
+def skin(obj, rig, bones, power=4.0, only=None):
     """Smooth automatic weights from distance to each bone segment (robust replacement for bone-heat)."""
     P = np.array([v.co for v in obj.data.vertices]) @ np.array(obj.matrix_world.to_3x3()).T + np.array(obj.matrix_world.translation)
     names = [b[0] for b in bones if (only is None or b[0] in only)]
-    D = np.stack([seg_dist(P, b[1], b[2]) for b in bones if b[0] in names], 1) + 1e-4
+    D = np.stack([seg_dist(P, b[1], b[2], b[0].startswith(('arm.', 'leg.'))) for b in bones if b[0] in names], 1) + 1e-4
     W = D ** -power
-    W[D > np.sort(D, 1)[:, [1]] + 1e-9] = 0  # only the two nearest bones influence a vertex (stops arms dragging the face)
+    W[D > np.sort(D, 1)[:, [2]] + 1e-9] = 0  # at most three nearest bones per vertex
     W /= W.sum(1, keepdims=True)
     for j, n in enumerate(names):
         vg = obj.vertex_groups.new(name=n)

@@ -16,7 +16,7 @@ def build():
         v = nt.nodes.new('ShaderNodeVectorMath'); v.operation = 'LENGTH'; cm = nt.nodes.new('ShaderNodeCombineXYZ')
         nt.links.new(dx.outputs[0], cm.inputs[0]); nt.links.new(dz.outputs[0], cm.inputs[1]); nt.links.new(cm.outputs[0], v.inputs[0])
         return mult(nt, smooth_mask(nt, v.outputs['Value'], 1.0, 0.6), smooth_mask(nt, sx.outputs['Y'], -0.1, -0.3))
-    region_mix(furm, (0.5, 0.33, 0.35), belly)
+    region_mix(furm, (0.22, 0.13, 0.15), belly)
     ear_m = fur_bump(principled('pugEar', (0.012, 0.011, 0.013), 0.7, sheen=0.3, sheen_rough=0.5, sheen_tint=(0.4, 0.4, 0.5), spec=0.3), 900, 0.2)
     nose_m = fur_bump(principled('nose', (0.0, 0.0, 0.0), 0.5, spec=0.22), 1800, 0.9, 1.0)
     tongue_m = principled('tongue', (0.82, 0.12, 0.24), 0.28, sss=0.2, sss_radius=(1, 0.3, 0.3), sss_scale=0.05, coat=0.5, coat_rough=0.1)

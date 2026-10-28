@@ -411,7 +411,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 .dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .dogMascot{width:132px;margin:-14px -8px -10px -10px}.dogMascot img,.bubDog img{width:100%;height:auto;display:block}.bubDog{width:96px;margin:-10px 0}
 .alienCat{width:92px;height:92px;margin:-14px -12px -14px -14px;animation:none}
-.kCat img{position:absolute;left:-50px;top:-22px;width:100px;height:100px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+.kCat img{position:absolute;left:-34px;top:-8px;width:68px;height:68px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2))}
 @media(max-width:800px){.shell{zoom:1.12}}
 body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{font-size:19px}
 body.token-world.basics-open #parallel{display:none}body.token-world.basics-open #fees{display:block}
@@ -1018,7 +1018,7 @@ document.querySelectorAll('.topic,.exploreCard,.tokenCategory,.tokenTopic,.token
 
 /* Bubble pit: a theme's funds drop in as heavy bouncing balls. Pop one to open the fund. */
 const DOGSVG=document.querySelector('.dogMascot').innerHTML;let bub=null;
-document.addEventListener('click',e=>{const m=e.target.closest('.dogMascot,.bubDog,.alienCat');const i=m&&(m.tagName==='IMG'?m:m.querySelector('img'));if(!i||!i.dataset.move||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.src;(i._mv||(i._mv=fetch(i.dataset.move).then(r=>r.blob()))).then(b=>{const u=URL.createObjectURL(b);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},1200)}).catch(()=>{i._busy=0})});
+document.addEventListener('click',e=>{const m=e.target.closest('.dogMascot,.bubDog,.alienCat');const i=m&&(m.tagName==='IMG'?m:m.querySelector('img'));if(!i||!i.dataset.move||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.src;(i._mv||(i._mv=fetch(i.dataset.move).then(r=>r.blob()))).then(b=>{const u=URL.createObjectURL(b);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},990)}).catch(()=>{i._busy=0})});
 function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);const L=document.getElementById('bubbleLayer'),F=document.getElementById('bubField');lastFocus=document.activeElement;
  L.hidden=false;document.body.style.overflow='hidden';document.getElementById('bubTitle').textContent=T[1]+' '+T[0];
  const ids=T[2],n=ids.length;document.getElementById('bubNote').textContent=T[3]||(SMUG[Math.floor(Math.random()*SMUG.length)].replace('{n}',T[0]));document.getElementById('bubDog').innerHTML=DOGSVG;

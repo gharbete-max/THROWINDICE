@@ -4,8 +4,16 @@ from PIL import Image
 F, OUT, SITE = '/home/claude/bl/frames', '/home/claude/bl/out', '/home/claude/throwindice/assets/mascots'
 os.makedirs(OUT, exist_ok=True); os.makedirs(SITE, exist_ok=True)
 
+import numpy as np
+def edge_fade(im):
+    """Fade alpha near the left/right/bottom borders so floor shadows don't end in a hard edge."""
+    a = np.asarray(im).astype(np.float32); n = a.shape[0]; r = np.linspace(0, 1, n)
+    fx = np.clip(np.minimum(r, 1 - r) / 0.16, 0, 1); fy = np.clip((1 - r) / 0.1, 0, 1)
+    a[..., 3] *= (fx[None, :] * fy[:, None]) ** 1.5; return Image.fromarray(a.astype(np.uint8))
+
 def load(name, size):
-    d = f'{F}/{name}'; return [Image.open(f'{d}/{f}').convert('RGBA').resize((size, size), Image.LANCZOS) for f in sorted(os.listdir(d))]
+    d = f'{F}/{name}'; fr = [Image.open(f'{d}/{f}').convert('RGBA').resize((size, size), Image.LANCZOS) for f in sorted(os.listdir(d))]
+    return fr if name.startswith('kitten') else [edge_fade(im) for im in fr]
 
 def webp(frames, path, ms):
     frames[0].save(path, save_all=True, append_images=frames[1:], duration=ms, loop=0, quality=86, method=6)

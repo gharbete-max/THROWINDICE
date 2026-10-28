@@ -4,6 +4,7 @@ import bpy; from mathutils import Vector
 from lib import *; import anim
 char, mode, n, res, samples = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]), int(sys.argv[5])
 only = int(sys.argv[6]) if len(sys.argv) > 6 else None
+if char == 'kitten' and os.path.exists('/home/claude/bl/skip_kitten') and only is None: sys.exit(0)  # kitten rendered separately
 if char == 'pug':
     import pug; rig, parts = pug.build(); pose = anim.pug_pose; exp = 0.45
 else:
