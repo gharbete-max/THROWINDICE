@@ -25,13 +25,8 @@ def build(kind='alien'):
         mask = lambda nt, sx: maxs(nt, oval(nt, sx, 0, 0.9, 0.2, 0.24), oval(nt, sx, 0, 1.56, 0.2, 0.1, -0.3))
         flen, iris = 0.02, (0.32, 0.14, 0.5)
     else:
-        c1, c2 = (0.97, 0.96, 0.95), (0.17, 0.16, 0.19)  # white kitten, grey hood
-        def mask(nt, sx):
-            top = smooth_mask(nt, sx.outputs['Z'], 1.84, 1.97)
-            ax = nt.nodes.new('ShaderNodeMath'); ax.operation = 'ABSOLUTE'; nt.links.new(sx.outputs['X'], ax.inputs[0])
-            blaze = mult(nt, mult(nt, smooth_mask(nt, ax.outputs[0], 0.13, 0.05), smooth_mask(nt, sx.outputs['Y'], -0.2, -0.38)), smooth_mask(nt, sx.outputs['Z'], 2.12, 1.98))
-            inv = nt.nodes.new('ShaderNodeMath'); inv.operation = 'SUBTRACT'; inv.inputs[0].default_value = 1; nt.links.new(blaze, inv.inputs[1])
-            return mult(nt, top, inv.outputs[0])
+        c1, c2 = (0.85, 0.36, 0.08), (0.98, 0.88, 0.72)  # ginger kitten, cream muzzle / chest / belly
+        mask = lambda nt, sx: maxs(nt, oval(nt, sx, 0, 1.57, 0.2, 0.12, -0.3), oval(nt, sx, 0, 1.05, 0.24, 0.42, -0.12))
         flen, iris = 0.026, (0.22, 0.42, 0.62)
     skin_m = region_mix(principled('catSkin', c1, 0.6, sss=0.15, sss_radius=(1, 0.4, 0.3), sss_scale=0.04), c2, mask)
     pink = principled('pink', (0.95, 0.42, 0.52), 0.42, sss=0.4, sss_radius=(1, 0.3, 0.3), sss_scale=0.03)
@@ -117,8 +112,20 @@ def build(kind='alien'):
             o = uv_sphere(f'orb{s}', 0.075, (x0 + s * 0.175, y0 - 0.065, z0 + 0.48)); o.data.materials.append(orb_m); extra.append(o)
 
     if alien: hm = hair_mat('catHair', color=c1, rough=0.32, region=(c2, mask))
-    else: hm = hair_mat('catHair', color=c1, rough=0.38, region=(c2, mask))
-    hair_tint(hm, (1.0, 0.38, 0.55), lambda nt, sx: maxs(nt, oval(nt, sx, 0.3, 1.6, 0.11, 0.075, -0.1), oval(nt, sx, -0.3, 1.6, 0.11, 0.075, -0.1)), 1.0)  # blush
+    else:  # ginger fur via melanin (plain colours render pale): cream where the mask is, soft tabby stripes elsewhere
+        hm = hair_mat('catHair', melanin=0.32, redness=0.97, rough=0.42); nt = hm.node_tree
+        h = [n for n in nt.nodes if n.type == 'BSDF_HAIR_PRINCIPLED'][0]
+        tc = nt.nodes.new('ShaderNodeTexCoord'); sx = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Object'], sx.inputs[0])
+        cream = mask(nt, sx)
+        base = nt.nodes.new('ShaderNodeMapRange'); base.inputs['To Min'].default_value = 0.32; base.inputs['To Max'].default_value = 0.05; nt.links.new(cream, base.inputs['Value'])
+        wv = nt.nodes.new('ShaderNodeTexWave'); wv.wave_type = 'BANDS'; wv.bands_direction = 'Z'; wv.inputs['Scale'].default_value = 5.5
+        wv.inputs['Distortion'].default_value = 5; wv.inputs['Detail'].default_value = 2; nt.links.new(tc.outputs['Object'], wv.inputs['Vector'])
+        st = smooth_mask(nt, wv.outputs['Fac'], 0.55, 0.85)
+        inv = nt.nodes.new('ShaderNodeMath'); inv.operation = 'SUBTRACT'; inv.inputs[0].default_value = 1; nt.links.new(cream, inv.inputs[1])
+        amt = nt.nodes.new('ShaderNodeMath'); amt.operation = 'MULTIPLY'; amt.inputs[1].default_value = 0.2; nt.links.new(mult(nt, st, inv.outputs[0]), amt.inputs[0])
+        mel = nt.nodes.new('ShaderNodeMath'); mel.operation = 'ADD'; nt.links.new(base.outputs['Result'], mel.inputs[0]); nt.links.new(amt.outputs[0], mel.inputs[1])
+        nt.links.new(mel.outputs[0], h.inputs['Melanin'])
+    if alien: hair_tint(hm, (1.0, 0.38, 0.55), lambda nt, sx: maxs(nt, oval(nt, sx, 0.3, 1.6, 0.11, 0.075, -0.1), oval(nt, sx, -0.3, 1.6, 0.11, 0.075, -0.1)), 1.0)  # blush
     eyec = [tuple(c) for c in ecs]
     fur(body, hm, count=30000, length=flen, children=14, droop=(0, 0, -0.5), radius=0.0022, clump=0.12, rough=0.003, lift=0.25,
         avoid=[(c, er * 1.02) for c in eyec] + [((0, ny, nz), 0.06), ((0, ny, 1.565), 0.05)] + ([] if alien else [((s * 0.85, S(s * 0.85, 2.33), 2.33), 0.085) for s in (-1, 1)]),

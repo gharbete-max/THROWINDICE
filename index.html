@@ -411,7 +411,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 .dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .dogMascot{width:132px;margin:-14px -8px -10px -10px}.dogMascot img,.bubDog img{width:100%;height:auto;display:block}.bubDog{width:96px;margin:-10px 0}
 .alienCat{width:92px;height:92px;margin:-14px -12px -14px -14px;animation:none}
-.kCat img{position:absolute;left:-34px;top:-8px;width:68px;height:68px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2))}
+.kCat img{position:absolute;left:-34px;top:-8px;width:68px;height:68px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2));transition:opacity .09s ease-out}.kCat .kScared{opacity:0}.kCat.scared .kScared{opacity:1}.kCat.scared picture img{opacity:0}
 @media(max-width:800px){.shell{zoom:1.12}}
 body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{font-size:19px}
 body.token-world.basics-open #parallel{display:none}body.token-world.basics-open #fees{display:block}
@@ -899,7 +899,7 @@ function closeGuide(){document.getElementById('guideModal').classList.remove('sh
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGuide()});
 document.getElementById('guideModal').addEventListener('click',e=>{if(e.target.id==='guideModal')closeGuide()});
 calc();
-const KITTEN='<picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/mascots/kitten-still.webp"><img src="assets/mascots/kitten-idle.webp" alt="" aria-hidden="true" draggable="false"></picture>';
+const KITTEN='<picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/mascots/kitten-still.webp"><img src="assets/mascots/kitten-idle.webp" alt="" aria-hidden="true" draggable="false"></picture><img class="kScared" alt="" aria-hidden="true" draggable="false">';
 var KR=22,KL=40,KG=2200,kRaf=0,kLast=0;
 function kP(w){const i=w.querySelector('input');return w._pc!=null?w._pc:(i.value-i.min)/(i.max-i.min)}
 function kTarget(w){return KR+kP(w)*(w.clientWidth-2*KR)}
@@ -916,7 +916,11 @@ function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=
   const moving=Math.abs(k.vf)>.5||Math.abs(k.phi)>.004||Math.abs(k.om)>.03||Math.abs(k.tail)>.004;
   w.classList.toggle('moving',moving);kRender(w);if(moving)busy=true});
  kRaf=busy?requestAnimationFrame(kStep):0}
-function kScare(w){const i=w.querySelector('.kCat img');if(!i||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.getAttribute('src');(window._kScare||(window._kScare=fetch('assets/mascots/kitten-scared.webp').then(r=>{if(!r.ok)throw 0;return r.blob()}))).then(bl=>{const u=URL.createObjectURL(bl);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},870)}).catch(()=>{i._busy=0;window._kScare=null})}
+function kScare(w){/* scared clip: separate file, restarted from frame 0 and cross-faded over the still-running hang loop */
+ const c=w.querySelector('.kCat'),sc=c&&c.querySelector('.kScared');if(!sc||c._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;c._busy=1;
+ (window._kScare||(window._kScare=fetch('assets/mascots/kitten-scared.webp').then(r=>{if(!r.ok)throw 0;return r.blob()}))).then(bl=>{
+  const u=URL.createObjectURL(bl);sc.onload=()=>{c.classList.add('scared');setTimeout(()=>{c.classList.remove('scared');setTimeout(()=>{URL.revokeObjectURL(u);c._busy=0},120)},780)};sc.src=u})
+ .catch(()=>{c._busy=0;window._kScare=null})}
 function kWake(){if(!kRaf){kLast=performance.now();kRaf=requestAnimationFrame(kStep)}}
 function kittySync(){document.querySelectorAll('.kitty').forEach(w=>w.style.setProperty('--p',kP(w)));kWake()}
 document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);w._k={x:22,v:0,phi:0,om:0,tail:0,tailv:0,legs:0,legsv:0};const b=document.createElement('span'),c=document.createElement('span');b.className='kBall';b.setAttribute('aria-hidden','true');b.innerHTML='<i></i>';c.className='kCat';c.setAttribute('aria-hidden','true');c.innerHTML=KITTEN;w.append(b,c)});
