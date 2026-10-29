@@ -408,7 +408,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 @keyframes alienBob{50%{transform:translateY(-5px) rotate(-4deg)}}@media(prefers-reduced-motion:reduce){.alienCat{animation:none}}
 @media(max-width:800px){.shell{zoom:1.12}}
 body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{font-size:19px}
-body.token-world.basics-open #parallel{display:none}body.token-world.basics-open #fees{display:block}
+body.token-world:is(.basics-open,.calc-open) #parallel{display:none}body.token-world.basics-open #basics{display:block}body.token-world.calc-open #fees{display:block}
 .feeSticker{position:absolute;right:-6px;top:-24px;z-index:3;width:168px;height:168px;display:grid;place-items:center;text-align:center;padding:30px;font:800 11.5px/1.2 inherit;font-family:inherit;color:#000;background:var(--c3,#ffb000);clip-path:polygon(50% 0,60% 12%,74% 6%,78% 21%,93% 22%,89% 37%,100% 46%,90% 58%,97% 72%,82% 76%,80% 91%,65% 88%,55% 100%,45% 89%,31% 96%,26% 82%,10% 80%,14% 65%,0 54%,11% 44%,4% 29%,19% 25%,22% 10%,38% 14%);transform:rotate(9deg);animation:stickerWob 3.2s ease-in-out infinite;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
 @keyframes stickerWob{50%{transform:rotate(-4deg) scale(1.05)}}@media(prefers-reduced-motion:reduce){.feeSticker{animation:none}}
 #fees .card:has(.feeSticker){position:relative}@media(max-width:640px){.feeSticker{width:150px;height:150px;font-size:10px;padding:26px;top:-34px;right:-10px}}
@@ -472,6 +472,25 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 .invB{pointer-events:auto;width:88px;height:88px;border-radius:50%;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:800 12px/1.1 inherit;color:#000;cursor:pointer;background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.85),rgba(255,255,255,0) 42%),var(--cc);box-shadow:inset 0 -7px 12px rgba(0,0,0,.2),0 7px 14px rgba(0,0,0,.3);animation:invIn .5s cubic-bezier(.2,.9,.25,1.5) both;transform-origin:50% 100%}.invB:nth-child(2){margin-bottom:22px;animation-delay:.07s}.invB:nth-child(3){animation-delay:.14s}.invB span{font-size:30px;line-height:1}.invB:hover,.invB:focus-visible{transform:translateY(-4px) scale(1.06)}.invB:active{transform:scale(.92)}
 @keyframes invIn{0%{transform:translateY(40px) scale(.2);opacity:0}100%{transform:none;opacity:1}}@media(prefers-reduced-motion:reduce){.invB{animation:none}}
 @media(max-width:420px){.invB{width:78px;height:78px;font-size:11px}.invB span{font-size:26px}}
+
+/* One page at a time, framed by a black vignette */
+body[data-view]:not(.token-world) .page{display:none}body[data-view]:not(.token-world) .page.cur{display:block}
+@property --vr{syntax:'<percentage>';inherits:false;initial-value:68%}
+#vig{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 42%,transparent var(--vr),rgba(0,0,0,.92) 118%);transition:opacity .45s}#vig.on{opacity:1}#vig.go{animation:vigIris .75s cubic-bezier(.2,.9,.25,1)}
+@keyframes vigIris{0%{--vr:0%}100%{--vr:68%}}@media(prefers-reduced-motion:reduce){#vig.go{animation:none}}
+body.token-world #vig{display:none}
+/* Investing bubbles: bigger pop, bob, sparkles */
+.invB{animation:invIn .65s cubic-bezier(.2,.9,.25,1) both,invBob 2.6s ease-in-out .8s infinite}.invB:nth-child(2){animation-delay:.09s,.9s}.invB:nth-child(3){animation-delay:.18s,1s}
+@keyframes invIn{0%{transform:translateY(70px) scale(.05) rotate(-30deg);opacity:0}55%{transform:translateY(-22px) scale(1.25) rotate(9deg);opacity:1}75%{transform:translateY(5px) scale(.92) rotate(-4deg)}100%{transform:none;opacity:1}}
+@keyframes invBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+.invB span{display:inline-block;animation:invWig 1.8s ease-in-out infinite}@keyframes invWig{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.15)}}
+.invB:hover,.invB:focus-visible{animation:none;transform:translateY(-6px) scale(1.14) rotate(-3deg)}
+.invB.pick{animation:invPick .3s ease-in forwards}.invB.drop{animation:invDrop .25s ease-in forwards}.invPop.out .invB{animation:invDrop .2s ease-in forwards}
+@keyframes invPick{to{transform:scale(1.7);opacity:0}}@keyframes invDrop{to{transform:translateY(30px) scale(.1);opacity:0}}
+.invSpark{position:absolute;left:0;top:0;font-size:20px;pointer-events:none;will-change:transform,opacity}
+.navbtn.open .ico{animation:icoBounce .7s}
+@media(prefers-reduced-motion:reduce){.invB,.invB span{animation:none}}
+.flatGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.flatGrid .fbox{padding:14px}.flatGrid .fbox b{display:block;font-size:17px;margin:4px 0}.flatGrid .fbox small{display:block;font-size:13px;line-height:1.4}.flatGrid.three{grid-template-columns:1fr}@media(min-width:760px){.flatGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.flatGrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -529,7 +548,7 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 <div class="sectionHead"><div><div class="eyebrow">Explore the atlas</div><h2>Choose where to go next</h2><p>Jump straight into a part of the market.</p></div></div>
 <div class="topicGrid">
 <button class="topic" onclick="openPage('world')"><div class="symbol">🌍</div><b>World &amp; regions</b><small>Countries · currencies · indices</small></button>
-<button class="topic" onclick="openPage('fees')"><div class="symbol">％</div><b>Basic skills</b><small>Saving · investing · fees</small></button>
+<button class="topic" onclick="openPage('basics')"><div class="symbol">％</div><b>Basics</b><small>Saving · investing · fees</small></button>
 <button class="topic" onclick="openPage('sectors')"><div class="symbol">◈</div><b>Sectors &amp; themes</b><small>Industries · emerging ideas</small></button>
 <button class="topic" onclick="openPage('commodities')"><div class="symbol">⚒</div><b>Commodities</b><small>Energy · metals · agriculture</small></button>
 <button class="topic" onclick="openPage('etfs')"><div class="symbol">▤</div><b>ETF explorer</b><small>Fair Price · Fees · Fluctuation · Flow</small></button>
@@ -562,8 +581,23 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 
 </div>
 </section>
+<section class="page" id="basics">
+<div class="pageTitle"><div class="eyebrow">BASICS</div><h1>The 4 Fs</h1><p>Ask these four questions about any fund.</p></div>
+<div class="card"><div class="flatGrid">
+<div class="fbox"><span class="letter">💸 FAIR PRICE</span><b>Is the price fair?</b><small>P/E = the price for €1 of yearly profit. Compare it with similar funds.</small></div>
+<div class="fbox"><span class="letter">🧾 FEES</span><b>What does it cost?</b><small>A small yearly cost that adds up. Lower is better for the same thing.</small></div>
+<div class="fbox"><span class="letter">🎢 FLUCTUATION</span><b>How much does it jump?</b><small>Many things inside means smaller jumps than one thing alone.</small></div>
+<div class="fbox"><span class="letter">🔄 FLOW</span><b>Easy to buy and sell?</b><small>More trading means a fair price and a small gap between buy and sell.</small></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="button" onclick="openPage('fees')">🧮 Try the fee calculator</button></div>
+<details class="moreFold" style="margin-top:14px"><summary>🎈 Why invest at all?</summary><div class="flatGrid three" style="margin-top:10px">
+<div class="fbox"><span class="letter">🎈 PRICES CREEP UP</span><small>Cash sitting still buys a little less each year. This is called inflation.</small></div>
+<div class="fbox"><span class="letter">🧩 ONE JOB</span><small>A euro can only do one job. Spending and saving are both trades.</small></div>
+<div class="fbox"><span class="letter">🏖 PENSION</span><small>You may already invest through your pension. Ask where it goes.</small></div>
+</div></details>
+<p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
+</section>
 <section class="page" id="fees">
-<div class="pageTitle"><div class="eyebrow">BASIC SKILLS</div><h1>Basic skills for saving and investing</h1><p>One calculator, four big questions and one reason to care. Slide the kittens to play.</p></div>
+<div class="pageTitle"><div class="eyebrow">FEE CALCULATOR</div><h1>What do fees cost?</h1><p>Slide the kittens to play.</p></div>
 <div class="card" id="feeCalc"><div class="feeSticker" role="note">This is why science has favored passive investing for over 50 years!</div><div class="sectionHead"><div><h2>🧮 What do fees really cost?</h2><p>A small yearly fee looks tiny. Over many years it adds up. Slide and see.</p></div></div><div class="calcgrid"><div>
 <div class="control"><label for="ccy">Currency</label><select id="ccy" aria-label="Currency"></select></div>
 <div class="control"><label for="principal">Money you put in <output id="principalOut">€10,000</output></label><input id="principal" max="100000" min="1000" step="1000" type="range" value="10000"/></div>
@@ -578,17 +612,6 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 <button class="btn secondary" onclick="resetCalc()">Back to typical fund</button>
 </div></div>
 <div class="guide"><span style="font-size:21px">ⓘ</span><div><h3>It is not a bill</h3><p>The difference includes the growth that money could have made. The fund does not send you an invoice.</p></div></div></div>
-<div class="card" style="margin-top:16px"><div class="sectionHead"><div><h2>The four big questions</h2><p>Ask these about any fund. They are separate questions, so there is no single score.</p></div></div><div class="fgrid">
-<div class="fbox"><span class="letter">💸 FAIR PRICE</span><b>Is the price fair?</b><small>Like a shop: is the price right for what you get?</small><small class="peExp"><strong>P/E?</strong> The price you pay for €1 of yearly profit. P/E 20 = €20 for every €1 the companies earn in a year. Higher means pricier.</small></div>
-<div class="fbox"><span class="letter">🧾 FEES</span><b>What does it cost each year?</b><small>A small yearly cost. Over many years it adds up. Try the sliders above.</small></div>
-<div class="fbox"><span class="letter">🎢 FLUCTUATION</span><b>How much does it jump around?</b><small>Prices go up and down. A fund with many things inside jumps less than one thing alone.</small></div>
-<div class="fbox"><span class="letter">🔄 FLOW</span><b>Easy to buy and sell?</b><small>Flow means how easy it is to buy and sell. When many people trade a fund, you can buy and sell fast at a fair price.</small></div>
-</div></div>
-<div class="card" style="margin-top:16px"><div class="sectionHead"><div><h2>Why people invest at all</h2><p>Three small ideas. No panic needed.</p></div></div><div class="fgrid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-<div class="fbox"><span class="letter">🎈 PRICES CREEP UP</span><b>Cash sitting still buys a little less each year</b><small>This is called inflation. If prices rise 2% a year (just an example), €1,000 kept as cash buys about what €673 buys today after 20 years. Investing is one way to give money a job so it can try to keep up.</small></div>
-<div class="fbox"><span class="letter">🧩 ALTERNATIVE COST</span><b>A euro can only do one job</b><small>Money you spend or leave idle cannot also be growing somewhere else. Neither choice is wrong. It is just a trade, so it helps to know it.</small></div>
-<div class="fbox"><span class="letter">🏖 PENSION</span><b>You may already be investing</b><small>Many pensions invest part of your pay for you automatically. Ask your provider where it goes and what it costs.</small></div>
-</div><p class="disclaimer">Investing can grow your money and it can also fall. Learn first, start small, and never invest money you need soon. Educational only, not financial advice.</p></div>
 </section>
 <section class="page" id="news">
 <div class="pageTitle"><div class="eyebrow">PUBLISHER LINKS · UPDATED 26 OCT 2026</div><h1>News</h1><p>Curated external reporting on markets and investment products. Each card links to the original publisher or an authorized syndication page; summaries are written for this explorer.</p></div>
@@ -732,10 +755,11 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 <button class="navbtn" data-page="news" onclick="navAction(this,'news','news')"><span class="ico">▣</span><span class="navLabel">News</span></button>
 <button aria-controls="invPop" aria-expanded="false" aria-haspopup="true" class="navbtn" data-pages="world sectors commodities" id="invBtn" onclick="invToggle(this)"><span class="ico">📈</span><span class="navLabel">Investing</span></button>
 <button aria-label="Dashboard home" class="navbtn home active" data-page="dashboard" onclick="navAction(this,'dashboard','home')"><span class="ico">⌂</span><span class="navLabel">Dashboard</span></button>
-<button class="navbtn" data-page="fees" onclick="navAction(this,'fees','basics')"><span class="ico">✦</span><span class="navLabel">Basics</span></button>
-<button class="navbtn" data-page="feecalc" onclick="navAction(this,'feecalc','feecalc')"><span class="ico">🧮</span><span class="navLabel">Fee calc</span></button>
+<button class="navbtn" data-page="basics" onclick="navAction(this,'basics','basics')"><span class="ico">✦</span><span class="navLabel">Basics</span></button>
+<button class="navbtn" data-page="fees feecalc" onclick="navAction(this,'feecalc','feecalc')"><span class="ico">🧮</span><span class="navLabel">Fee calc</span></button>
 <button class="navbtn" data-page="game" onclick="navGame(this)"><span class="ico">🎮</span><span class="navLabel">Game</span></button>
 </div></nav>
+<div id="vig" aria-hidden="true"></div>
 <div class="invPop" id="invPop" role="group" aria-label="Investing" hidden></div>
 <div aria-labelledby="guideTitle" aria-modal="true" class="modalShade" id="guideModal" role="dialog"><div class="modal"><div class="eyebrow" id="guideStep">QUICK TOUR · 1 OF 3</div><h2 id="guideTitle" style="margin-top:8px">Start with a question</h2><div class="guideDots" id="guideDots"><i class="on"></i><i></i><i></i></div><p id="guideText">Choose a region, a sector or a commodity. There is no single correct starting point — follow your curiosity.</p><div class="modalFoot"><button class="btn secondary" onclick="closeGuide()">Skip tour</button><button class="btn" id="nextGuide" onclick="nextGuide()">Next →</button></div></div></div>
 <div aria-hidden="true" class="portalOverlay" id="portalOverlay"><div aria-hidden="true" class="portalVisual"><svg role="presentation" viewbox="0 0 500 500"><path class="spiralPath" d="M250 250 C250 190 330 190 330 250 C330 330 220 350 170 285 C100 190 190 95 285 115 C405 140 430 285 355 375 C270 475 100 420 65 290 C20 120 170 5 330 40" stroke="#7da88c"></path><path class="spiralPath" d="M250 250 C290 210 325 255 290 285 C245 325 180 280 195 225 C215 155 310 150 355 210 C420 295 355 395 270 400" stroke="#86acd2"></path><path class="spiralPath" d="M250 250 L305 195 L360 250 L305 305 L250 250 L195 195 L140 250 L195 305 L250 250" stroke="#7da88c"></path></svg></div></div>
@@ -747,20 +771,24 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 <div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Go back"><svg viewBox="0 0 90 56" aria-hidden="true"><path d="M82 30C66 4 50 54 26 30" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M36 12L14 30L38 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>go back!</span></button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div><div class="bubDog" id="bubDog" aria-hidden="true"></div></div><div class="bubModes" id="bubModes" role="group" aria-label="Colour the bubbles by"><button type="button" data-m="fun" class="on" onclick="bubMode('fun')">🎨 Fun</button><button type="button" data-m="fee" onclick="bubMode('fee')">💸 Fee</button><button type="button" data-m="calm" onclick="bubMode('calm')">🌊 Calm</button><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><span class="bubLegend" id="bubLegend" hidden><i></i><em id="bubLegTxt"></em></span></div><div class="bubField" id="bubField"></div></div>
 <div class="toast" id="toast"></div>
 <script>
-const pages=['dashboard','news','fees','world','sectors','commodities','etfs','parallel'];
-function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);document.body.classList.remove('basics-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
-function scrollToSection(id){const el=document.getElementById(id);if(el){const d=el.closest('details');if(d)d.open=true;}if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+const pages=['dashboard','news','basics','fees','world','sectors','commodities','etfs','parallel'];
+function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);document.body.classList.remove('basics-open','calc-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
+function showView(id){const B=document.body;if(B.classList.contains('token-world')||B.dataset.view===id)return;B.dataset.view=id;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',x.id===id));const v=document.getElementById('vig');if(v){v.classList.toggle('on',id!=='dashboard');v.classList.remove('go');void v.offsetWidth;v.classList.add('go')}}
+function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==pg.id){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
 function navAction(button,page,act){invClose();const T=document.body.classList.contains('token-world'),mark=()=>document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));
- if(T&&(act==='basics'||act==='feecalc')){document.body.classList.add('basics-open');mark();if(act==='feecalc')setTimeout(()=>scrollToSection('feeCalc'),60);else window.scrollTo({top:0,behavior:'smooth'});return}
+ if(T&&(act==='basics'||act==='feecalc')){const B=document.body;B.classList.toggle('basics-open',act==='basics');B.classList.toggle('calc-open',act==='feecalc');mark();window.scrollTo({top:0,behavior:'smooth'});return}
  if(T&&act==='news'){setPage('news');scrollToSection('news');return}
- if(T){document.body.classList.remove('basics-open');if(act==='networks')showTokenDetail('networks');if(act==='issuance')showTokenDetail('settlement');mark();scrollToSection({assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow'}[act]||'parallel');return}
- mark();scrollToSection(page==='feecalc'?'feeCalc':page)}
+ if(T){document.body.classList.remove('basics-open','calc-open');if(act==='networks')showTokenDetail('networks');if(act==='issuance')showTokenDetail('settlement');mark();scrollToSection({assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow'}[act]||'parallel');return}
+ mark();scrollToSection(page==='feecalc'?'fees':page)}
 const INV={real:[['world','🌍','World','var(--c2)'],['sectors','🏭','Sectors','var(--c1)'],['commodities','🥇','Commodities','var(--c3)']],token:[['assets','🪙','Assets','var(--c2)'],['networks','⛓️','Networks','var(--c1)'],['issuance','📜','Issuance','var(--c3)']]};
-function invClose(){const P=document.getElementById('invPop');if(!P||P.hidden)return;P.hidden=true;P.innerHTML='';document.getElementById('invBtn').setAttribute('aria-expanded','false')}
-function invToggle(btn){const P=document.getElementById('invPop');if(!P.hidden){invClose();return}const T=document.body.classList.contains('token-world');P.innerHTML=INV[T?'token':'real'].map(x=>'<button class="invB" type="button" style="--cc:'+x[3]+'" data-k="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>').join('');P.hidden=false;btn.setAttribute('aria-expanded','true');
- const r=btn.getBoundingClientRect(),w=P.offsetWidth;P.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';
- P.querySelectorAll('.invB').forEach(b=>b.onclick=()=>navAction(btn,b.dataset.k,T?b.dataset.k:'')) ;P.querySelector('.invB').focus()}
+let invT=0;
+function invClose(now){const P=document.getElementById('invPop');if(!P||P.hidden)return;document.getElementById('invBtn').setAttribute('aria-expanded','false');document.getElementById('invBtn').classList.remove('open');const done=()=>{P.hidden=true;P.innerHTML='';P.classList.remove('out')};clearTimeout(invT);if(now||matchMedia('(prefers-reduced-motion: reduce)').matches)done();else{P.classList.add('out');invT=setTimeout(done,210)}}
+function invSparks(P,cx,cy,n){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!P.animate)return;const E=['✨','⭐','💫','🎈','🪙','✦'];for(let i=0;i<n;i++){const e=document.createElement('i');e.className='invSpark';e.textContent=E[i%E.length];e.style.cssText='left:'+cx+'px;top:'+cy+'px;font-style:normal';P.append(e);const a=Math.random()*Math.PI*2,d=60+Math.random()*90;e.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:1},{transform:'translate('+(Math.cos(a)*d-10)+'px,'+(Math.sin(a)*d-40)+'px) scale(1.3) rotate('+(Math.random()*240-120)+'deg)',opacity:0}],{duration:650+Math.random()*350,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>e.remove()}}
+function invToggle(btn){const P=document.getElementById('invPop');if(!P.hidden&&!P.classList.contains('out')){invClose();return}clearTimeout(invT);P.classList.remove('out');const T=document.body.classList.contains('token-world');P.innerHTML=INV[T?'token':'real'].map(x=>'<button class="invB" type="button" style="--cc:'+x[3]+'" data-k="'+x[0]+'"><span aria-hidden="true">'+x[1]+'</span>'+x[2]+'</button>').join('');P.hidden=false;btn.setAttribute('aria-expanded','true');btn.classList.remove('open');void btn.offsetWidth;btn.classList.add('open');
+ const r=btn.getBoundingClientRect(),w=P.offsetWidth;P.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';invSparks(P,r.left+r.width/2-parseFloat(P.style.left),P.offsetHeight,10);
+ P.querySelectorAll('.invB').forEach(b=>b.onclick=()=>{const q=b.getBoundingClientRect(),pr=P.getBoundingClientRect();P.querySelectorAll('.invB').forEach(x=>x.classList.add(x===b?'pick':'drop'));invSparks(P,q.left-pr.left+q.width/2,q.top-pr.top+q.height/2,14);setTimeout(()=>{invClose(true);navAction(btn,b.dataset.k,T?b.dataset.k:'')},300)});P.querySelector('.invB').focus()}
 document.addEventListener('click',e=>{if(!e.target.closest('#invPop,#invBtn'))invClose()});document.addEventListener('keydown',e=>{if(e.key==='Escape')invClose()});
+document.body.dataset.view='dashboard';document.getElementById('dashboard').classList.add('cur');
 function navGame(b){invClose();toast('🎮 A game is coming soon!')}
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
@@ -1176,7 +1204,7 @@ document.querySelectorAll('.tokenRealExamples .exploreCard').forEach(c=>{const h
  if(id){c.dataset.id=id;c.dataset.name=name}{const w0=document.createElement('div');w0.className='actions';const b0=document.createElement('button');b0.type='button';b0.className='btn small';b0.textContent=th==='gold'||th==='btc'||th==='eth'?'See ETFs →':'See related ETFs →';b0.onclick=()=>goTheme(th);w0.append(b0);c.append(w0)}
  if(buy){const a=document.createElement('button');a.type='button';a.className='btn small';a.dataset.buy=id;a.dataset.name=name;a.textContent='Where to buy';const w=document.createElement('div');w.className='actions';w.append(a);if(COIN_SYM[id]){const g=document.createElement('button');g.type='button';g.className='btn small secondary';g.textContent='📈 Chart';g.onclick=()=>openChart(id,name);w.append(g)}c.append(w)}
  else if(id){const n=document.createElement('p');n.className='sub';n.textContent='Not sold to everyone. Read the fund page first.';c.append(n)}});
-function pickFund(t){const p=document.getElementById('etfSelected');p.hidden=false;selectETF(t);p.scrollIntoView({behavior:'smooth',block:'start'})}
+function pickFund(t){const p=document.getElementById('etfSelected');p.hidden=false;selectETF(t);scrollToSection('etfSelected')}
 document.getElementById('pileGrid').innerHTML=GROUPS.map(([g,ico,keys])=>'<h3 class="pileHead">'+ico+' '+g+'</h3><div class="exploreRows pileRow">'+keys.filter(k=>THEMES[k]).map(k=>{const T=THEMES[k],n=T[2].length;return '<button class="topic pile" type="button" onclick="openBubbles(\''+k+'\')"><div class="symbol" aria-hidden="true">'+T[1]+'</div><b>'+T[0]+'</b><small>'+n+' fund'+(n>1?'s':'')+'</small></button>'}).join('')+'</div>').join('');
 document.getElementById('tokenPileGrid').innerHTML='<div class="exploreRows pileRow">'+['crypto','btc','eth','blockchain','cash','tokfund'].map(k=>{const T=THEMES[k],n=T[2].length;return '<button class="topic pile" type="button" onclick="openBubbles(\''+k+'\')"><div class="symbol" aria-hidden="true">'+T[1]+'</div><b>'+T[0]+'</b><small>'+n+' fund'+(n>1?'s':'')+'</small></button>'}).join('')+'</div>';
 function dockPanel(token){const p=document.getElementById('etfSelected'),h=document.getElementById('tokenFundHost'),a=document.getElementById('etfSelAnchor');if(!p||!h||!a)return;if(token)h.appendChild(p);else a.after(p)}

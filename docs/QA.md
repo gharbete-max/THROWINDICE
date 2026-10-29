@@ -188,3 +188,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Commodities page trimmed to gold, silver, platinum & palladium, oil. Natural gas, copper and farm funds all exist, but they hold futures and can drift from the price; their piles are removed from the menu (data kept in THEMES).
 - Bottom menu: token coin (far left), News, Investing (pops World / Sectors / Commodities bubbles; in Token World Assets / Networks / Issuance), Dashboard, Basics, Fee calc, Game (placeholder toast).
 - Headless 390/1280: no console errors, nav clicks scroll to the right sections, qa.js clean.
+
+## One page at a time, fun Investing bubbles, own Basics page
+- Real world shows one page at a time (`body[data-view]`, `showView`, called from `scrollToSection`), framed by a black vignette (`#vig`, iris animation) on every page except the dashboard.
+- Investing bubbles: bouncy pop with stagger, idle bob, wiggling icons, sparkle bursts on open and on pick, shrink-out on close.
+- Basics is its own page (`#basics`): the 4 Fs in one short line each, a button to the fee calculator, and a folded "Why invest at all?". The fee calculator page (`#fees`) now holds only the calculator.
+- Headless 390/1280: every nav path shows only its page; no console errors; qa.js clean.
