@@ -18,3 +18,6 @@ Everything lives in `index.html`.
 
 ## Hidden bubble size tiers
 `TIER` in `index.html` gives each fund a size tier from 1 (small) to 4 (large). It only sets how big its bubble is in the pit; users never see it. Tiers come from average daily dollar volume (3-month average shares × latest monthly close, from `data/facts.json`): 4 ≥ $1B, 3 ≥ $200M, 2 ≥ $40M, 1 below. Funds with no data in `facts.json` (UCITS funds and some newer ones) have rough estimates. When you add a fund, add it to `TIER`; refresh the numbers each quarter (run the data workflow by hand, then recompute).
+
+## Fee and volatility maps (FEEX, VOLX in index.html)
+Each quarter refresh `FEEX` (percent per year, US-listed ETFs) from Yahoo Finance fund profiles (quoteSummary `fundProfile.feesExpensesInvestment`, needs a crumb from `query1.finance.yahoo.com/v1/test/getcrumb` after loading `fc.yahoo.com` cookies) and `VOLX` from `data/facts.json` `volatility3y`. Funds with an issuer-reported fee in `etfFacts` keep that value. Update the source/date line above `FEEX` and the disclaimer text.
