@@ -220,3 +220,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Corner flames on spinning tiles
 - While a carousel spins, a small flame (three layered flames plus two sparks) sits on each of the four tile corners. Heat follows the spin speed: it grows as the tile accelerates when you keep clicking, leans against the direction of travel, and dies down as it slows. The layer is removed when the tile locks in. Hidden with reduced motion (the spin is already off then).
 - Headless: heat reached 1.0 at full spin, layer and `.spinning` class removed after settling, no console errors; qa.js clean.
+
+## Flames circle the whole tile
+- The corner flames became a ring of fire: 14 to 34 flames (by tile size) evenly spaced around the whole tile edge, each pointing outward, and the ring travels around the tile in the direction of the spin. Size and brightness follow the spin speed; the ring is removed when the tile locks in.
+- Headless: heat reaches 1.0, ring gone after settling, no console errors; qa.js clean.
