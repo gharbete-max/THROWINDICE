@@ -299,3 +299,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - From level 2 up, touching down loses level x depth/600 of the score; if that reaches 100% the score is $0 and you are liquidated (e.g. level 2 and a 300 px valley). Level 1 keeps the old rule (depth/900, at most 40%). Fixed a bug where valleys deeper than about 230 px cost fuel but no score.
 - Cash-out is now a choice: landing on the card stops the game, banks the score (+25%, best score saved) and shows "CASHED OUT: keep speculating >:)" or END EARLY! Ending early shows "YOU WALKED AWAY" with the score ("the only winning move"). Continuing bounces, goes gold for 3 s and starts the next level. Offered at every cash-out.
 - Headless: the choice card, both buttons, gold bounce into level 2, end early, level-2 liquidation at $0 all worked; qa.js clean.
+
+## Coinpull: forward thrust, longer and snappier fuel, fewer rug deaths
+- Pressing now tilts the character forward (up to about 15 degrees, flames trail behind) and adds up to +50% forward speed while thrusting (taps and hold), so crossing the gap is realistic.
+- Fuel lasts longer: a tap costs 2.5% (was 3.5%), holding burns 0.55 per second (was 0.8). Snappier: tap lift 640 px/s (was 520), hold thrust starts after 30 ms (was 80) with acceleration 2600 (was 2000), max rise 760.
+- Fewer rug deaths: terminal fall speed 2200 (was 2600), hard-landing penalty from 1000 px/s (was 800), death from 1500 px/s (was 1150), and the camera shows more ground below while falling. Gap width factor retuned to 10 for the faster forward speed.
+- Scripted checks: a tapper crossed 30% at 10% fuel and every time from 25%; when it fell in, it survived the pit every time (0 deaths); the careful, greedy and all-in policies all survived the first rug.
+- Headless: no console errors, qa.js clean.
