@@ -278,3 +278,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Leverage L: points x L; valley loss L times bigger (capped at 40% x L, max 90%) and each valley landing has a (L-1) x depth/640 chance of outright liquidation (e.g. L=2, 320 px valley = 50%).
 - Falling into the pit instead keeps the level and leverage as before (brake to survive).
 - Headless: forced scenario crossed the gap, bounced, went gold (gold 3 s, LEV 2x, background changed), card renders with the letters, no console errors, qa.js clean.
+
+## Coinpull: more fuel, more valleys, silent red blink
+- Fuel is more generous: green candles recharge 1% growing to 3% per candle (was 0.4% to 1.4%), taps cost 3.5% (was 5%), holding burns 0.8 per second (was 1.15), start fuel 60%.
+- Valleys are more common (17% of climbing candles, 40 to 320 px deep).
+- Touching anything going down now costs score: any landing after a fall of 20 px or more takes depth/9 % (times the leverage), and the whole screen blinks red slightly. No text is shown for these penalties (the OUCH and VALLEY messages are gone; the hard-landing fuel loss also just blinks). Gold invulnerability still blocks them.
+- Headless: a 120 px drop cost about 11% of the score with the blink and no text; qa.js clean.
