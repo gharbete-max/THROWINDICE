@@ -420,10 +420,14 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .dgPop{animation:textPop .55s cubic-bezier(.2,1.5,.4,1)}@keyframes textPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 .tvBlocked{display:grid;gap:8px;padding:18px;border-radius:14px;background:var(--surface2);border:1px dashed var(--line)}.tvBlocked span{color:var(--muted)}
 
-/* ---- One tile at a time: every tile row is a swipe carousel (overrides earlier grids on purpose) ---- */
-.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid{display:flex!important;gap:12px!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 8px;margin-bottom:0}
-.exploreRows::-webkit-scrollbar,.tokenCategoryGrid::-webkit-scrollbar,.tokenCaseGrid::-webkit-scrollbar,.brokerGrid::-webkit-scrollbar,.fgrid::-webkit-scrollbar,.tokenMetrics::-webkit-scrollbar,.tokenDataGrid::-webkit-scrollbar{display:none}
-.exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{flex:0 0 min(86%,520px)!important;scroll-snap-align:center;min-width:0;padding:22px!important}
+/* ---- One tile at a time: tile rows are a roll (lucky-wheel style); only the current tile shows ---- */
+.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid{display:block!important;perspective:900px;overflow:hidden;padding:4px 2px 8px;margin-bottom:0}
+.exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{width:min(100%,560px)!important;margin:0 auto!important;padding:22px!important;backface-visibility:hidden;transform-origin:50% 50%}
+.wOff{display:none!important}
+.rollOutN{animation:rollOutN .26s cubic-bezier(.5,0,.8,.6) forwards}.rollInN{animation:rollInN .38s cubic-bezier(.2,1.25,.4,1)}.rollOutP{animation:rollOutP .26s cubic-bezier(.5,0,.8,.6) forwards}.rollInP{animation:rollInP .38s cubic-bezier(.2,1.25,.4,1)}
+@keyframes rollOutN{to{transform:rotateX(-85deg) translateY(-30px);opacity:0}}@keyframes rollInN{from{transform:rotateX(85deg) translateY(30px);opacity:0}}
+@keyframes rollOutP{to{transform:rotateX(85deg) translateY(30px);opacity:0}}@keyframes rollInP{from{transform:rotateX(-85deg) translateY(-30px);opacity:0}}
+@media(prefers-reduced-motion:reduce){.rollOutN,.rollInN,.rollOutP,.rollInP{animation:none}}
 .exploreRows h3,.tokenCategoryGrid h3,.tokenCaseGrid h3,.brokerGrid h3,.fgrid b{font-size:22px}
 .exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
 .carCtl{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}.carCtl span{font:800 14px/1 inherit;font-family:inherit;min-width:56px;text-align:center}
@@ -1097,11 +1101,15 @@ function closeFocus(q){document.getElementById('focusModal').classList.remove('s
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFocus()});
 document.addEventListener('click',e=>{if(e.target.id==='focusModal')closeFocus();if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-focus]');if(c)openFocus(c)});
 
-(function(){const SEL='.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid';let t;
-function vis(c){return[...c.children].filter(x=>x.offsetParent!==null)}
-function upd(c){const k=c._ctl;if(!k)return;const v=vis(c),w=v[0]?v[0].getBoundingClientRect().width+12:1,i=Math.min(v.length-1,Math.max(0,Math.round(c.scrollLeft/w)));k.q('span').textContent=(v.length?i+1:0)+' / '+v.length;k.hidden=v.length<2}
-function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';const go=d=>{const v=vis(c),w=v[0]?v[0].getBoundingClientRect().width+12:300;c.scrollBy({left:d*w,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})};k.children[0].onclick=()=>go(-1);k.children[2].onclick=()=>go(1);c.after(k);c._ctl=k;c.addEventListener('scroll',()=>upd(c),{passive:true});upd(c)});document.querySelectorAll(SEL).forEach(upd)}
-new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class','style']});build();addEventListener('resize',build)})();
+(function(){const SEL='.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid';let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const elig=c=>[...c.children].filter(x=>x.style.display!=='none'&&!x.hidden);
+function sync(c){const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.children].forEach(x=>{if(x!==c._cur&&!x._anim)x.classList.add('wOff')});if(c._cur)c._cur.classList.remove('wOff');const k=c._ctl;if(k){k.q('span').textContent=(l.length?l.indexOf(c._cur)+1:0)+' / '+l.length;k.hidden=l.length<2}}
+function go(c,d){if(c._lock)return;const l=elig(c);if(l.length<2)return;const cur=c._cur,nx=l[(l.indexOf(cur)+d+l.length)%l.length];if(nx===cur)return;c._cur=nx;const D=d>0?'N':'P';
+ if(RM()){cur.classList.add('wOff');nx.classList.remove('wOff');sync(c);return}
+ c._lock=1;cur._anim=1;cur.classList.add('rollOut'+D);setTimeout(()=>{cur._anim=0;cur.classList.remove('rollOut'+D);cur.classList.add('wOff');nx.classList.remove('wOff');nx.classList.add('rollIn'+D);setTimeout(()=>{nx.classList.remove('rollIn'+D);c._lock=0},380);sync(c)},260);
+ const k=c._ctl;if(k)k.q('span').textContent=(l.indexOf(nx)+1)+' / '+l.length}
+function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);c.after(k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
+new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
 </script>
 </body>
 </html>

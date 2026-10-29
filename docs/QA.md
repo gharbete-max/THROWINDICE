@@ -125,3 +125,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Real-World and Token World coins are glossy Office-97-style smileys (yellow, blue), hand-drawn SVG.
 - Hugging Face generation (Qwen-Image, Wan 2.2) was tried but anonymous ZeroGPU quota is exhausted; needs an HF token in the environment.
 - qa.js clean; no console errors.
+
+## Round: Roll wheel (2026-10-29)
+- Tile rows no longer slide: only the current tile shows and the arrows (or a swipe) roll it out and the next in, lucky-wheel style, looping at the ends. Filters re-sync the roll. Reduced motion swaps instantly.
+- qa.js clean; no console errors.
