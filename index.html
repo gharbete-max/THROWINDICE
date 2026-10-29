@@ -480,13 +480,13 @@ body[data-view]:not(.token-world) .page{display:none}body[data-view]:not(.token-
 @keyframes vigIris{0%{--vr:0%}100%{--vr:68%}}@media(prefers-reduced-motion:reduce){#vig.go{animation:none}}
 body.token-world #vig{display:none}
 /* Investing bubbles: bigger pop, bob, sparkles */
-.invB{animation:invIn .65s cubic-bezier(.2,.9,.25,1) both,invBob 2.6s ease-in-out .8s infinite}.invB:nth-child(2){animation-delay:.09s,.9s}.invB:nth-child(3){animation-delay:.18s,1s}
-@keyframes invIn{0%{transform:translateY(70px) scale(.05) rotate(-30deg);opacity:0}55%{transform:translateY(-22px) scale(1.25) rotate(9deg);opacity:1}75%{transform:translateY(5px) scale(.92) rotate(-4deg)}100%{transform:none;opacity:1}}
+.invB{animation:invIn .65s cubic-bezier(.2,.9,.25,1) both}.invB:nth-child(2){animation-delay:.09s}.invB:nth-child(3){animation-delay:.18s}
+@keyframes invIn{0%{transform:scale(.05) rotate(-30deg);opacity:0}55%{transform:scale(1.25) rotate(9deg);opacity:1}75%{transform:scale(.92) rotate(-4deg)}100%{transform:none;opacity:1}}
 @keyframes invBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
 .invB span{display:inline-block;animation:invWig 1.8s ease-in-out infinite}@keyframes invWig{0%,100%{transform:rotate(-8deg) scale(1)}50%{transform:rotate(8deg) scale(1.15)}}
-.invB:hover,.invB:focus-visible{animation:none;transform:translateY(-6px) scale(1.14) rotate(-3deg)}
+.invB:hover,.invB:focus-visible{transform:scale(1.1)}
 .invB.pick{animation:invPick .3s ease-in forwards}.invB.drop{animation:invDrop .25s ease-in forwards}.invPop.out .invB{animation:invDrop .2s ease-in forwards}
-@keyframes invPick{to{transform:scale(1.7);opacity:0}}@keyframes invDrop{to{transform:translateY(30px) scale(.1);opacity:0}}
+@keyframes invPick{50%{transform:scale(1.25)}to{transform:scale(1.5);opacity:0}}@keyframes invDrop{to{transform:scale(.6);opacity:0}}
 .invSpark{position:absolute;left:0;top:0;font-size:20px;pointer-events:none;will-change:transform,opacity}
 .navbtn.open .ico{animation:icoBounce .7s}
 @media(prefers-reduced-motion:reduce){.invB,.invB span{animation:none}}
@@ -773,8 +773,9 @@ body.token-world #vig{display:none}
 <script>
 const pages=['dashboard','news','basics','fees','world','sectors','commodities','etfs','parallel'];
 function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);document.body.classList.remove('basics-open','calc-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
-function showView(id){const B=document.body;if(B.classList.contains('token-world')||B.dataset.view===id)return;B.dataset.view=id;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',x.id===id));const v=document.getElementById('vig');if(v){v.classList.toggle('on',id!=='dashboard');v.classList.remove('go');void v.offsetWidth;v.classList.add('go')}}
-function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==pg.id){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
+const INVP=['world','sectors','commodities'],viewOf=id=>INVP.includes(id)?'invest':id;
+function showView(id){const B=document.body,vw=viewOf(id);if(B.classList.contains('token-world')||B.dataset.view===vw)return;B.dataset.view=vw;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',viewOf(x.id)===vw));const v=document.getElementById('vig');if(v){v.classList.toggle('on',id!=='dashboard');v.classList.remove('go');void v.offsetWidth;v.classList.add('go')}}
+function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==viewOf(pg.id)){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
 function navAction(button,page,act){invClose();const T=document.body.classList.contains('token-world'),mark=()=>document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));
  if(T&&(act==='basics'||act==='feecalc')){const B=document.body;B.classList.toggle('basics-open',act==='basics');B.classList.toggle('calc-open',act==='feecalc');mark();window.scrollTo({top:0,behavior:'smooth'});return}
  if(T&&act==='news'){setPage('news');scrollToSection('news');return}
