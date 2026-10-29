@@ -408,7 +408,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 @keyframes alienBob{50%{transform:translateY(-5px) rotate(-4deg)}}@media(prefers-reduced-motion:reduce){.alienCat{animation:none}}
 @media(max-width:800px){.shell{zoom:1.12}}
 body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{font-size:19px}
-body.token-world:is(.basics-open,.calc-open) #parallel{display:none}body.token-world.basics-open #basics{display:block}body.token-world.calc-open #fees{display:block}
+body.token-world:is(.basics-open,.calc-open) #parallel{display:none}body.token-world:is(.basics-open,.calc-open) :is(#basics,#fees){display:block}
 .feeSticker{position:absolute;right:-6px;top:-24px;z-index:3;width:168px;height:168px;display:grid;place-items:center;text-align:center;padding:30px;font:800 11.5px/1.2 inherit;font-family:inherit;color:#000;background:var(--c3,#ffb000);clip-path:polygon(50% 0,60% 12%,74% 6%,78% 21%,93% 22%,89% 37%,100% 46%,90% 58%,97% 72%,82% 76%,80% 91%,65% 88%,55% 100%,45% 89%,31% 96%,26% 82%,10% 80%,14% 65%,0 54%,11% 44%,4% 29%,19% 25%,22% 10%,38% 14%);transform:rotate(9deg);animation:stickerWob 3.2s ease-in-out infinite;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
 @keyframes stickerWob{50%{transform:rotate(-4deg) scale(1.05)}}@media(prefers-reduced-motion:reduce){.feeSticker{animation:none}}
 #fees .card:has(.feeSticker){position:relative}@media(max-width:640px){.feeSticker{width:150px;height:150px;font-size:10px;padding:26px;top:-34px;right:-10px}}
@@ -475,9 +475,7 @@ body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,
 
 /* One page at a time, framed by a black vignette */
 body[data-view]:not(.token-world) .page{display:none}body[data-view]:not(.token-world) .page.cur{display:block}
-@property --vr{syntax:'<percentage>';inherits:false;initial-value:68%}
-#vig{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 42%,transparent var(--vr),rgba(0,0,0,.92) 118%);transition:opacity .45s}#vig.on{opacity:1}#vig.go{animation:vigIris .75s cubic-bezier(.2,.9,.25,1)}
-@keyframes vigIris{0%{--vr:0%}100%{--vr:68%}}@media(prefers-reduced-motion:reduce){#vig.go{animation:none}}
+#vig{position:fixed;inset:0;z-index:15;pointer-events:none;opacity:0;transition:opacity .35s}#vig.on{opacity:1}
 body.token-world #vig{display:none}
 /* Investing bubbles: bigger pop, bob, sparkles */
 .invB{animation:invIn .65s cubic-bezier(.2,.9,.25,1) both}.invB:nth-child(2){animation-delay:.09s}.invB:nth-child(3){animation-delay:.18s}
@@ -491,6 +489,7 @@ body.token-world #vig{display:none}
 .navbtn.open .ico{animation:icoBounce .7s}
 @media(prefers-reduced-motion:reduce){.invB,.invB span{animation:none}}
 .flatGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.flatGrid .fbox{padding:14px}.flatGrid .fbox b{display:block;font-size:17px;margin:4px 0}.flatGrid .fbox small{display:block;font-size:13px;line-height:1.4}.flatGrid.three{grid-template-columns:1fr}@media(min-width:760px){.flatGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.flatGrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.startNote{margin-bottom:14px}.startNote h2{margin:4px 0 10px}.noteList{list-style:none;padding:0;margin:0;display:grid;gap:8px}.noteList li{display:flex;gap:10px;align-items:flex-start}.noteList li>span{font-size:22px;line-height:1.3;flex:none}.noteList li p{margin:0;font-size:15px;line-height:1.45}.startNote .actions{margin-top:12px}.story li p{font-size:16px}.learnHead{margin:18px 4px 8px}
 </style>
 </head>
 <body>
@@ -534,6 +533,13 @@ body.token-world #vig{display:none}
 <main>
 <section class="page active" id="dashboard">
 <div class="pageTitle dashboardIntro"><div class="eyebrow">THROWINDICE · MARKET BRIEFING</div><h1>Read the news. Then explore.</h1><p>Short news first, then simple explainers on funds, countries, commodities and tokens. Educational only, not financial advice.</p></div>
+<section class="card startNote" aria-label="Start here"><div class="eyebrow">💡 START HERE</div><h2>Investing is not complicated</h2><ul class="noteList">
+<li><span>🏦</span><p>Treat a fund like a savings account you leave alone for a long time.</p></li>
+<li><span>😌</span><p>Passive funds are cheaper and need less worrying.</p></li>
+<li><span>🇺🇸</span><p>VOO follows the 500 biggest US companies, like Google and Microsoft. Your money grows with them.</p></li>
+<li><span>🧺</span><p>A fund holds many companies. If one falls, the others help carry it.</p></li>
+<li><span>⚠️</span><p>Single stocks, crypto and the latest trend can swing far harder.</p></li></ul>
+<div class="actions"><button class="btn small" type="button" onclick="openPage('basics')">Read the basics →</button></div></section>
 <section class="card dashboardNews" style="margin-bottom:8px">
 <div class="sectionHead"><div><div class="eyebrow">Read beyond the numbers</div><h2>Latest news</h2><p>Stories grouped by topic, with links intended to lead to original publishers.</p></div><button class="textlink" onclick="openPage('news')">All news →</button></div>
 <div class="grid" id="dashboardNewsGrid">
@@ -582,13 +588,22 @@ body.token-world #vig{display:none}
 </div>
 </section>
 <section class="page" id="basics">
-<div class="pageTitle"><div class="eyebrow">BASICS</div><h1>The 4 Fs</h1><p>Ask these four questions about any fund.</p></div>
+<div class="pageTitle"><div class="eyebrow">BASICS</div><h1>Basics</h1><p>Short and simple.</p></div>
+<div class="card"><div class="sectionHead"><div><h2>Investing in plain words</h2></div></div><ul class="noteList story">
+<li><span>🏦</span><p><b>A fund is like a savings account you do not touch.</b> You put money in, you leave it for a long time, and you do not need to read the news every day.</p></li>
+<li><span>🧺</span><p><b>ETF means exchange traded fund.</b> It is a basket of many companies that you buy and sell like one share. If one company falls, the others help carry it.</p></li>
+<li><span>😌</span><p><b>Passive means the fund just follows a list.</b> It does not pay experts to pick winners, so it costs less and asks less of you. For decades, studies such as the S&amp;P SPIVA reports have found that most actively managed funds trail their index over long periods. <a href="https://www.spglobal.com/spdji/en/research-insights/spiva/" target="_blank" rel="noopener noreferrer">SPIVA ↗</a></p></li>
+<li><span>🇺🇸</span><p><b>VOO is the benchmark many people use.</b> It follows the S&amp;P 500, the 500 biggest US companies, such as Alphabet (Google) and Microsoft. When those companies grow, VOO grows. When they fall, it falls.</p></li>
+<li><span>🌍</span><p><b>Pick your flavour.</b> You can choose other countries or sectors you like. Do not overthink it: a global fund works great too if you do not want to spend time on it.</p></li>
+<li><span>⚠️</span><p><b>Be careful with hype.</b> People may push single stocks, crypto or the latest trend. One company can fall a lot, even to zero. A fund spreads the risk over many companies, so one bad one hurts less.</p></li></ul>
+<p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
+<h2 class="learnHead">The 4 Fs</h2>
 <div class="card"><div class="flatGrid">
 <div class="fbox"><span class="letter">💸 FAIR PRICE</span><b>Is the price fair?</b><small>P/E = the price for €1 of yearly profit. Compare it with similar funds.</small></div>
 <div class="fbox"><span class="letter">🧾 FEES</span><b>What does it cost?</b><small>A small yearly cost that adds up. Lower is better for the same thing.</small></div>
 <div class="fbox"><span class="letter">🎢 FLUCTUATION</span><b>How much does it jump?</b><small>Many things inside means smaller jumps than one thing alone.</small></div>
 <div class="fbox"><span class="letter">🔄 FLOW</span><b>Easy to buy and sell?</b><small>More trading means a fair price and a small gap between buy and sell.</small></div>
-</div><div class="actions" style="margin-top:14px"><button class="btn" type="button" onclick="openPage('fees')">🧮 Try the fee calculator</button></div>
+</div><div class="actions" style="margin-top:14px"><button class="btn" type="button" onclick="scrollToSection('fees')">🧮 Try the fee calculator</button></div>
 <details class="moreFold" style="margin-top:14px"><summary>🎈 Why invest at all?</summary><div class="flatGrid three" style="margin-top:10px">
 <div class="fbox"><span class="letter">🎈 PRICES CREEP UP</span><small>Cash sitting still buys a little less each year. This is called inflation.</small></div>
 <div class="fbox"><span class="letter">🧩 ONE JOB</span><small>A euro can only do one job. Spending and saving are both trades.</small></div>
@@ -598,7 +613,7 @@ body.token-world #vig{display:none}
 </section>
 <section class="page" id="fees">
 <div class="pageTitle"><div class="eyebrow">FEE CALCULATOR</div><h1>What do fees cost?</h1><p>Slide the kittens to play.</p></div>
-<div class="card" id="feeCalc"><div class="feeSticker" role="note">This is why science has favored passive investing for over 50 years!</div><div class="sectionHead"><div><h2>🧮 What do fees really cost?</h2><p>A small yearly fee looks tiny. Over many years it adds up. Slide and see.</p></div></div><div class="calcgrid"><div>
+<div class="card" id="feeCalc"><div class="sectionHead"><div><h2>🧮 What do fees really cost?</h2><p>A small yearly fee looks tiny. Over many years it adds up. Slide and see.</p></div></div><div class="calcgrid"><div>
 <div class="control"><label for="ccy">Currency</label><select id="ccy" aria-label="Currency"></select></div>
 <div class="control"><label for="principal">Money you put in <output id="principalOut">€10,000</output></label><input id="principal" max="100000" min="1000" step="1000" type="range" value="10000"/></div>
 <div class="control"><label for="returnRate">Growth per year (a guess) <output id="returnOut">7.0%</output></label><input id="returnRate" max="12" min="0" step=".5" type="range" value="7"/></div>
@@ -773,11 +788,11 @@ body.token-world #vig{display:none}
 <script>
 const pages=['dashboard','news','basics','fees','world','sectors','commodities','etfs','parallel'];
 function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);document.body.classList.remove('basics-open','calc-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
-const INVP=['world','sectors','commodities'],viewOf=id=>INVP.includes(id)?'invest':id;
-function showView(id){const B=document.body,vw=viewOf(id);if(B.classList.contains('token-world')||B.dataset.view===vw)return;B.dataset.view=vw;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',viewOf(x.id)===vw));const v=document.getElementById('vig');if(v){v.classList.toggle('on',id!=='dashboard');v.classList.remove('go');void v.offsetWidth;v.classList.add('go')}}
+const INVP=['world','sectors','commodities'],LEARNP=['basics','fees'],viewOf=id=>INVP.includes(id)?'invest':LEARNP.includes(id)?'learn':id;
+function showView(id){const B=document.body,vw=viewOf(id);if(B.classList.contains('token-world')||B.dataset.view===vw)return;B.dataset.view=vw;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',viewOf(x.id)===vw));requestAnimationFrame(()=>window._vigUpd&&window._vigUpd())}
 function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==viewOf(pg.id)){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
 function navAction(button,page,act){invClose();const T=document.body.classList.contains('token-world'),mark=()=>document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));
- if(T&&(act==='basics'||act==='feecalc')){const B=document.body;B.classList.toggle('basics-open',act==='basics');B.classList.toggle('calc-open',act==='feecalc');mark();window.scrollTo({top:0,behavior:'smooth'});return}
+ if(T&&(act==='basics'||act==='feecalc')){const B=document.body;B.classList.toggle('basics-open',act==='basics');B.classList.toggle('calc-open',act==='feecalc');mark();if(act==='feecalc')setTimeout(()=>document.getElementById('fees').scrollIntoView({behavior:'smooth',block:'start'}),60);else window.scrollTo({top:0,behavior:'smooth'});return}
  if(T&&act==='news'){setPage('news');scrollToSection('news');return}
  if(T){document.body.classList.remove('basics-open','calc-open');if(act==='networks')showTokenDetail('networks');if(act==='issuance')showTokenDetail('settlement');mark();scrollToSection({assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow'}[act]||'parallel');return}
  mark();scrollToSection(page==='feecalc'?'fees':page)}
@@ -789,6 +804,13 @@ function invToggle(btn){const P=document.getElementById('invPop');if(!P.hidden&&
  const r=btn.getBoundingClientRect(),w=P.offsetWidth;P.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2))+'px';invSparks(P,r.left+r.width/2-parseFloat(P.style.left),P.offsetHeight,10);
  P.querySelectorAll('.invB').forEach(b=>b.onclick=()=>{const q=b.getBoundingClientRect(),pr=P.getBoundingClientRect();P.querySelectorAll('.invB').forEach(x=>x.classList.add(x===b?'pick':'drop'));invSparks(P,q.left-pr.left+q.width/2,q.top-pr.top+q.height/2,14);setTimeout(()=>{invClose(true);navAction(btn,b.dataset.k,T?b.dataset.k:'')},300)});P.querySelector('.invB').focus()}
 document.addEventListener('click',e=>{if(!e.target.closest('#invPop,#invBtn'))invClose()});document.addEventListener('keydown',e=>{if(e.key==='Escape')invClose()});
+(function(){const V=document.getElementById('vig');let raf=0;function upd(){raf=0;const B=document.body,w=B.dataset.view;if(B.classList.contains('token-world')||(w!=='invest'&&w!=='learn')){V.classList.remove('on');return}
+const pg=[...document.querySelectorAll('.page.cur')],H=innerHeight,mid=H*.45;let f=pg.find(p=>{const r=p.getBoundingClientRect();return r.top<=mid&&r.bottom>=mid});if(!f){let best=1e9;pg.forEach(p=>{const r=p.getBoundingClientRect(),d=Math.min(Math.abs(r.top-mid),Math.abs(r.bottom-mid));if(d<best){best=d;f=p}})}if(!f)return;
+const r=f.getBoundingClientRect(),F=70,c='rgba(0,0,0,.94)',top=Math.max(0,r.top),bot=Math.min(H,r.bottom),g=[];
+if(top>0)g.push(c+' 0px',c+' '+Math.max(0,top-F)+'px','transparent '+top+'px');else g.push('transparent 0px');
+if(bot<H)g.push('transparent '+bot+'px',c+' '+Math.min(H,bot+F)+'px',c+' 100%');else g.push('transparent 100%');
+V.style.background='linear-gradient(to bottom,'+g.join(',')+')';V.classList.add('on')}
+window._vigUpd=()=>{if(!raf)raf=requestAnimationFrame(upd)};addEventListener('scroll',window._vigUpd,{passive:true});addEventListener('resize',window._vigUpd)})();
 document.body.dataset.view='dashboard';document.getElementById('dashboard').classList.add('cur');
 function navGame(b){invClose();toast('🎮 A game is coming soon!')}
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}

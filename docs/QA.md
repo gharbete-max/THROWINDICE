@@ -199,3 +199,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Investing bubbles pop in once and then stay put (no bobbing, no vertical movement; hover and click only scale).
 - World, Sectors and Commodities now share one page, stacked in that order. The bubble you pick scrolls to its part.
 - Headless 390/1280: bubble positions identical 0.9 s and 2.4 s after opening; all three sections visible; no console errors.
+
+## Start-here note, longer Basics, one learning page, edge vignette
+- Fee sticker removed. Dashboard top has a short "Investing is not complicated" note (5 one-line points) linking to Basics.
+- Basics page: "Investing in plain words" (6 short points, SPIVA link as the source for "most active funds trail their index over long periods"), then the 4 Fs, then the fee calculator on the same page (Basics and Fee calc buttons scroll to their part).
+- Vignette is now directional: it darkens only above and below the tile in focus, on the two multi-tile views (Investing = World/Sectors/Commodities; Basics + Fee calc). No full-screen vignette any more.
+- Wording kept to checkable claims: the "casino" and "science says ignore the news" ideas were not used as stated; the note says single stocks, crypto and trends swing harder and funds spread risk.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
