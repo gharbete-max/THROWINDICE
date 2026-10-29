@@ -118,3 +118,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Round: TradingView CSP (2026-10-27)
 - The artifact preview blocks all third-party frames and scripts (ERR_BLOCKED_BY_CSP). Embeds now use TradingView's script loader, fall back to an s.tradingview.com iframe, and on a CSP violation show link buttons instead of an error page. Verified with a simulated CSP; live rendering still needs the hosted site or a local file.
+
+## Round: Carousels, balloon M, Office-style smileys (2026-10-29)
+- Every tile row is a one-tile swipe carousel with prev/next and a counter.
+- "More" is a red balloon with a white M: floats, wobbles on hover, bursts into confetti and red scraps, re-inflates on Less. Hand-built SVG/CSS.
+- Real-World and Token World coins are glossy Office-97-style smileys (yellow, blue), hand-drawn SVG.
+- Hugging Face generation (Qwen-Image, Wan 2.2) was tried but anonymous ZeroGPU quota is exhausted; needs an HF token in the environment.
+- qa.js clean; no console errors.
