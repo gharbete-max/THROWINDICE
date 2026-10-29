@@ -426,8 +426,9 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .wOff{display:none!important}
 .exploreRows h3,.tokenCategoryGrid h3,.tokenCaseGrid h3,.brokerGrid h3,.fgrid b{font-size:22px}
 .exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
-.carCtl{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}.carCtl span{font:800 14px/1 inherit;font-family:inherit;min-width:56px;text-align:center}
-.carCtl button{width:44px;height:44px;border:0;border-radius:50%;font:800 20px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}.carCtl button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.carWrap{position:relative}
+.carCtl{position:sticky;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:15;display:flex;align-items:center;justify-content:center;gap:16px;width:fit-content;margin:6px auto 16px;padding:8px 14px;border-radius:999px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.18)}.carCtl span{font:800 16px/1 inherit;font-family:inherit;min-width:64px;text-align:center}
+.carCtl button{width:60px;height:60px;border:0;border-radius:50%;font:800 28px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}.carCtl button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
 .grid{display:block}.grid>.card{margin-bottom:14px}
 .dgMore.balloon{display:inline-grid;place-items:center;width:52px;height:68px;margin:0 0 6px;padding:0;border-radius:0;background:none;box-shadow:none;animation:balFloat 3.4s ease-in-out infinite;transform-origin:50% 90%}
 .dgMore.balloon svg{color:#fff;overflow:visible;filter:drop-shadow(0 4px 5px rgba(120,0,16,.35))}.dgMore.balloon:hover{animation:balWobble .8s ease-in-out infinite}
@@ -439,6 +440,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 @keyframes balBurst{0%{transform:scale(1)}35%{transform:scale(1.5,1.7)}100%{transform:scale(1)}}
 .dgMore.balloon.inflate{animation:balInflate .6s cubic-bezier(.2,1.6,.4,1)}@keyframes balInflate{0%{transform:scale(.2)}100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.dgMore.balloon,.dgMore.balloon.popped,.dgMore.balloon.inflate{animation:none}}
+.spinning>*{transition:none!important;will-change:transform;backface-visibility:hidden}.spinning>*:hover{transform:none}
 </style>
 </head>
 <body>
@@ -1100,17 +1102,17 @@ document.addEventListener('click',e=>{if(e.target.id==='focusModal')closeFocus()
 
 (function(){const SEL='.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid';let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const elig=c=>[...c.children].filter(x=>x.style.display!=='none'&&!x.hidden);
-function sync(c){if(c._st)return;const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.children].forEach(x=>{if(x!==c._cur&&!x._anim)x.classList.add('wOff')});if(c._cur)c._cur.classList.remove('wOff');const k=c._ctl;if(k){k.q('span').textContent=(l.length?l.indexOf(c._cur)+1:0)+' / '+l.length;k.hidden=l.length<2}}
-function go(c,d){const L=elig(c);if(L.length<2)return;
+function sync(c){if(c._st)return;[...c.children].forEach(x=>x.classList.remove('reveal','in'));const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.children].forEach(x=>{if(x!==c._cur&&!x._anim)x.classList.add('wOff')});if(c._cur)c._cur.classList.remove('wOff');const k=c._ctl;if(k){k.q('span').textContent=(l.length?l.indexOf(c._cur)+1:0)+' / '+l.length;k.hidden=l.length<2}}
+function go(c,d){const L=elig(c);if(L.length<2)return;L.forEach(x=>x.classList.remove('reveal','in'));
  if(RM()||!document.body.animate){const cur=c._cur,nx=L[(L.indexOf(cur)+d+L.length)%L.length];cur.classList.add('wOff');nx.classList.remove('wOff');c._cur=nx;sync(c);return}
  let S=c._st;const now=performance.now();
  if(!S){const cur=c._cur,n=L.length,cs0=c.getAttribute('style');c.style.position='relative';const W=cur.offsetWidth,Hc=cur.offsetHeight,T=cur.offsetTop,pad=c.offsetHeight-Hc;
   S=c._st={L,n,p:L.indexOf(cur),target:L.indexOf(cur),v:0,clicks:[],saved:L.map(x=>x.getAttribute('style')),cs:c.getAttribute('style'),H:[],pad,last:now};
-  c.style.position='relative';c.style.height=c.offsetHeight+'px';
+  c.style.position='relative';c.style.height=c.offsetHeight+'px';c.classList.add('spinning');
   const abs='position:absolute;left:0;right:0;margin:0 auto;top:'+T+'px;width:'+W+'px!important;height:auto;';
   L.forEach((x,i)=>{x.classList.remove('wOff');x.style.cssText=(S.saved[i]||'')+';'+abs;S.H[i]=x.offsetHeight});
-  L.forEach(x=>x.classList.add('wOff'));S.raf=requestAnimationFrame(spin.bind(null,c))}
- S.target+=d;S.clicks.push(now)}
+  L.forEach(x=>{if(x!==cur)x.classList.add('wOff')});S._start=1}
+ S.target+=d;S.clicks.push(now);if(S._start){S._start=0;S.last=now-16;spin(c,now)}}
 function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
  S.clicks=S.clicks.filter(x=>t-x<650);const vmax=Math.min(6,2.2+1.1*S.clicks.length),dist=S.target-S.p;
  const want=Math.max(-vmax,Math.min(vmax,dist*3.4));S.v+=(want-S.v)*Math.min(1,dt*5);S.p+=S.v*dt;
@@ -1121,9 +1123,9 @@ function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1
  if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)'}else B.classList.add('wOff');
  c.style.height=(S.H[i]*(1-f)+S.H[(i+1)%n]*f+S.pad)+'px';
  const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
- if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c._cur=S.L[e];c._st=null;sync(c);return}
+ if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);return}
  S.raf=requestAnimationFrame(spin.bind(null,c))}
-function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);c.after(k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
+function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);const w=document.createElement('div');w.className='carWrap';c.parentNode.insertBefore(w,c);w.append(c,k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
 </script>
 </body>

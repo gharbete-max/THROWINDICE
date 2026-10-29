@@ -149,3 +149,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Calmer spin (2026-10-29)
 - Removed the opacity fades that made the roll blink; faces now hide through backface culling only. Top speed 6 tiles/s (was ~25), gentler acceleration. Sampled 150 frames of a 3-click spam: no frame without a visible tile, no container height jumps over 14 px.
 - qa.js clean; no console errors.
+
+## Round: Blink fix, bigger fixed spin buttons (2026-10-29)
+- Root causes of the blink: tiles had a bouncy 0.35 s CSS transform transition that lagged the per-frame rotation, and hidden tiles still carried the scroll-reveal class (opacity 0 plus a 0.7 s pop-in) the first time they were shown. Fixed with transition none while spinning and no reveal class on carousel tiles. Verified frame by frame.
+- Spin buttons are 60 px, in a pill that sticks above the bottom nav while the tile is on screen, so tall tiles cannot push them out of view (checked with an 1100 px tall tile).
+- qa.js clean; no console errors.
