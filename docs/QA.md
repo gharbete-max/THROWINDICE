@@ -206,3 +206,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Vignette is now directional: it darkens only above and below the tile in focus, on the two multi-tile views (Investing = World/Sectors/Commodities; Basics + Fee calc). No full-screen vignette any more.
 - Wording kept to checkable claims: the "casino" and "science says ignore the news" ideas were not used as stated; the note says single stocks, crypto and trends swing harder and funds spread risk.
 - Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## Inflation slider and stock-picking note
+- Fee calc page: new "Inflation eats money" card under the calculator (slider 0–10%, default 2% marked as an example). It uses the money and years above and shows cash in today's prices, the fund after fees in today's prices, and real growth per year. Checked by hand: 10,000 at 2% for 20 years buys 6,730 in today's money.
+- Basics: new "Why not pick single stocks?" card. Sources: Bessembinder (2018), J. Financial Economics, "Do stocks outperform Treasury bills?" (only ~4% of US stocks account for the net gains over T-bills, 1926–2016) and S&P SPIVA scorecards. Not used as stated: "close to 0 risk after decades". The text says the range of results has historically narrowed with longer holding, and that it is never risk-free.
+- Dashboard note's last point now says picking single stocks is very hard.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
