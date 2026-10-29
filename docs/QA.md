@@ -284,3 +284,11 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Valleys are more common (17% of climbing candles, 40 to 320 px deep).
 - Touching anything going down now costs score: any landing after a fall of 20 px or more takes depth/9 % (times the leverage), and the whole screen blinks red slightly. No text is shown for these penalties (the OUCH and VALLEY messages are gone; the hard-landing fuel loss also just blinks). Gold invulnerability still blocks them.
 - Headless: a 120 px drop cost about 11% of the score with the blink and no text; qa.js clean.
+
+## Coinpull: snappier jetpack, faster refill, easier gaps, surprise rugpull
+- Snappier: tap cooldown 50 ms (was 85), hold thrust starts after 80 ms (was 180), hold acceleration 2000 (was 1500).
+- Faster refill: green candles give 2% growing to 5% (was 1% to 3%), plus a slow passive refill (1.5% per second) while standing on the ground without pressing.
+- Gaps are easier to close: gap width factor 3.5 (was 6) and the extra cost of hovering high above the ground is at most +120% (was +300%). Scripted tapper: crossed 37% at 10% fuel, 83% at 25%, 100% from 40%.
+- Stronger uptrend: trend 6 px plus 1.0 px per candle (was 5 + 0.8).
+- The rugpull candle is now the normal red candle colour (solid body, dark cap, wick), not a see-through outline, and it is decided only 3 candles before you reach it (was 5), so it shows up close and by surprise.
+- Headless: rug decided 3 candles ahead in all runs that reached it; qa.js clean.
