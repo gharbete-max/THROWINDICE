@@ -235,3 +235,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - One-way gate: a ball that has fallen fully in can no longer leave through the top (ceiling clamp once inside; a throw straight up stays in). Checked: after throwing a ball up at 6000 px/s no ball is above the top edge.
 - Dough physics: balls hit with almost no bounce, stick when touching (separating speed is damped, tangential slip is dragged along), and may overlap a little under pressure. Pressed balls flatten along the contact direction (strain tensor per ball, quick to flatten and slow to recover, no springy overshoot); floor and wall hits flatten too.
 - Headless 390/1280: no console errors, all balls inside, qa.js clean.
+
+## Dough balls, falling from above, sliding
+- Balls are now irregular dough blobs: each ball's outline is a closed curve of 18 points (`blobPath`, applied as `clip-path`). Contacts (other balls, floor, walls, gate) push the outline in at the contact point and bulge it out to the sides; points move in quickly and recover slowly, plus a small constant wobble, so every ball stays lumpy and different. The element box is 1.34x the physics circle to leave room for the bulge; one drop-shadow is applied to the whole field.
+- Physics: friction between balls and on the floor is much lower (they slide and roll off each other); balls still stick a little when pulled apart and hit with almost no bounce.
+- The pit now spans the full screen height. Balls fall in from above the screen, behind the title bar; a dashed line at 150 px marks the one-way gate and nothing can climb back above it (a ball thrown up at 7000 px/s stayed below it).
+- Headless 390/1280: no NaN positions, no console errors, qa.js clean.
