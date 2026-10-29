@@ -169,3 +169,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - US-listed fees for 71 funds from Yahoo Finance fund profiles (fetched 2026-10-29, cross-checked against the 10 issuer-reported fees); volatility from data/facts.json. Europe-listed funds have no fee data and show grey.
 - P/E explained in plain words in the fund's four questions and on the Basics page. "What to check on those sites" list added under the fund links. Fluctuation "look at" line rewritten as "waves, like seasons".
 - qa.js clean; no console errors.
+
+## Round: Plain four Fs (2026-10-29)
+- No balloons inside the four-Fs boxes, lists (including "On those sites, check") or the P/E box.
+- All 16 fund-type profiles and the generic fee, flow and look-at lines rewritten in plain words: "bumps" instead of swings, "fewer people trade it" instead of "thinner", the buy price and sell price gap explained once, yield and P/E explained where used. Basics page four boxes simplified; Flow defined.
+- qa.js clean; no console errors.
