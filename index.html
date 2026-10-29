@@ -408,7 +408,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 .dgMore:focus-visible{outline:3px solid var(--text);outline-offset:2px}
 .alienRow{display:flex;align-items:center;gap:12px}.alienCat{width:64px;height:64px;flex:none;animation:alienBob 4s ease-in-out infinite}.alienRow h2{margin:0;font-size:26px}
 @keyframes alienBob{50%{transform:translateY(-5px) rotate(-4deg)}}@media(prefers-reduced-motion:reduce){.alienCat{animation:none}}
-.dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
+.dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}.mascot{position:relative;aspect-ratio:1;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.mascot i{position:absolute;inset:0;background-repeat:no-repeat;transition:opacity .09s ease-out}.mascot .mFx{opacity:0}.mascot.fx .mFx{opacity:1}.mascot.fx .mBase{opacity:0}
 .dogMascot{width:132px;margin:-14px -8px -10px -10px}.dogMascot img,.bubDog img{width:100%;height:auto;display:block}.bubDog{width:96px;margin:-10px 0}
 .alienCat{width:92px;height:92px;margin:-14px -12px -14px -14px;animation:none}
 .kCat img{position:absolute;left:-34px;top:-8px;width:68px;height:68px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2));transition:opacity .09s ease-out}.kCat .kScared{opacity:0}.kCat.scared .kScared{opacity:1}.kCat.scared picture img{opacity:0}
@@ -506,7 +506,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 <div class="pageTitle"><div class="eyebrow">Understand · ETFs</div><h1>ETF Explorer</h1><p>A simple list of popular funds. See what is inside, ask the four big questions, then read more on the linked sites.</p></div>
 <div class="grid">
 
-<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div class="dogMascot" aria-hidden="true"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/mascots/pug-still.webp"><img src="assets/mascots/pug-idle.webp" data-move="assets/mascots/pug-move.webp" alt="" width="240" height="240" draggable="false"></picture></div><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
+<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div class="dogMascot" aria-hidden="true"><div class="mascot" data-m="pug"><i class="mBase" style="background:url(assets/mascots/pug-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div></div><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
 <div id="pileGrid"></div>
 <p class="disclaimer">The 10 funds with a fee show the issuer-reported expense ratio, checked 26 Oct 2026. Other funds link to sites that show their current fee. Market price, share class, tax treatment and trading currency differ, so these funds are not direct substitutes. Not financial advice.</p>
 </section>
@@ -556,7 +556,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 </section>
 <section class="page" id="parallel">
 <div class="pageTitle"><div class="eyebrow">TOKEN WORLD / EXPLORER</div><h1>Tokenization &amp; blockchain</h1><p>Follow how an asset becomes a digital token, where it lives, who services it, and how ownership records move. Educational view only — no trading actions.</p></div>
-<section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><div class="alienRow"><picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/mascots/alien-still.webp"><img class="alienCat" aria-hidden="true" src="assets/mascots/alien-idle.webp" data-move="assets/mascots/alien-move.webp" alt="" width="240" height="240" draggable="false"></picture><h2>Pick a planet</h2></div><p data-dg="1">Tap a planet. Pop a bubble.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
+<section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><div class="alienRow"><div class="alienCat mascot" data-m="alien" aria-hidden="true"><i class="mBase" style="background:url(assets/mascots/alien-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div><h2>Pick a planet</h2></div><p data-dg="1">Tap a planet. Pop a bubble.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
 <details class="tokenWatch"><summary>🔭 What to watch (4 quick points)</summary><div class="tokenNotice"><strong>What is worth watching?</strong><span>Not just token prices: watch the asset behind the token, the network it uses, the legal rights it represents, and the institutions connecting the two worlds.</span></div>
 <div class="tokenMetrics">
 <article class="tokenMetric"><span>ASSET BACKING</span><strong>What does it represent?</strong><p>Fund units, government debt, private credit, property or a claim on something else.</p></article>
@@ -678,6 +678,27 @@ function setPage(id){const token=id==='parallel';document.body.classList.remove(
 function scrollToSection(id){const el=document.getElementById(id);if(el){const d=el.closest('details');if(d)d.open=true;}if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 function navAction(button,normalPage,tokenAction){if(document.body.classList.contains('token-world')){document.body.classList.toggle('basics-open',tokenAction==='basics');if(tokenAction==='basics'){document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));window.scrollTo({top:0,behavior:'smooth'});return}const targets={assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow',brokers:'brokerGrid',home:'parallel'};if(tokenAction==='networks')showTokenDetail('networks');if(tokenAction==='contracts')showTokenDetail('contracts');if(tokenAction==='issuance')showTokenDetail('settlement');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));scrollToSection(targets[tokenAction]||'parallel');return;}const targets={dashboard:'dashboard',news:'news',fees:'fees',world:'world',sectors:'sectors',commodities:'commodities'};document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));scrollToSection(targets[normalPage]||normalPage);}
 (()=>{const b=document.querySelector('.tokenCoin');if(!b)return;const imgs=[...b.querySelectorAll('img[data-spin]')];imgs.forEach(i=>{i._still=i.getAttribute('src');new Image().src=i.dataset.spin});b.addEventListener('mouseenter',()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;imgs.forEach(i=>i.src=i.dataset.spin)});b.addEventListener('mouseleave',()=>imgs.forEach(i=>i.src=i._still))})();
+(()=>{/* Mascot sprite player: default dance loop; hold = speed up; tap = special move (spin, flip, pose in turn),
+ cross-faded over the dance, which keeps running underneath. Sheets are 8 frames wide, 24 fps. */
+ const C=8,FPS=24,SP=24,M={pug:66,alien:66},MOVES=['spin','flip','pose'],u=(m,k)=>'assets/mascots/'+m+'-'+k+'.webp';
+ if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;  // the still frame in the markup stays
+ const frame=(el,m,k,n,f)=>{const r=Math.ceil(n/C),i=Math.floor(f)%n;el.style.background='url('+u(m,k)+') '+((i%C)/(C-1)*100)+'% '+(r>1?Math.floor(i/C)/(r-1)*100:0)+'% / '+C*100+'% '+r*100+'% no-repeat'};
+ let last=performance.now();
+ const tick=now=>{const dt=Math.min(.1,(now-last)/1000);last=now;
+  document.querySelectorAll('.mascot').forEach(el=>{const m=el.dataset.m,n=M[m];if(!n)return;const s=el._s||(el._s={t:0,v:1,k:0,fx:null});
+   s.v+=((s.hold?2.2:1)-s.v)*Math.min(1,dt*6);s.t=(s.t+dt*FPS*s.v)%n;frame(el.querySelector('.mBase'),m,'dance',n,s.t);
+   if(s.fx){s.fx.f+=dt*FPS*Math.max(1,s.v*.8);if(s.fx.f>=SP-1){s.fx=null;el.classList.remove('fx')}else frame(el.querySelector('.mFx'),m,s.fx.k,SP,s.fx.f)}});
+  requestAnimationFrame(tick)};
+ requestAnimationFrame(tick);
+ const st=e=>{const el=e.target.closest&&e.target.closest('.mascot');return el&&(el._s||(el._s={t:0,v:1,k:0,fx:null}))&&el};
+ document.addEventListener('pointerdown',e=>{const el=st(e);if(!el)return;const s=el._s;s.down=1;clearTimeout(s.tm);s.tm=setTimeout(()=>{if(s.down)s.hold=true},180);window._mHeld=el});
+ const up=()=>{const el=window._mHeld;if(!el)return;window._mHeld=null;const s=el._s;clearTimeout(s.tm);
+  if(s.down&&!s.hold&&!s.fx){const k=MOVES[s.k++%MOVES.length];s.fx={k,f:0};frame(el.querySelector('.mFx'),el.dataset.m,k,SP,0);el.classList.add('fx')}
+  s.down=0;s.hold=false};
+ document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
+ document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.mascot'))e.preventDefault()});
+ addEventListener('load',()=>Object.keys(M).forEach(m=>['dance',...MOVES].forEach(k=>{new Image().src=u(m,k)})));
+})();
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
 let portalBusy=false;
@@ -1009,7 +1030,6 @@ document.querySelectorAll('.topic,.exploreCard,.tokenCategory,.tokenTopic,.token
 
 /* Bubble pit: a theme's funds drop in as heavy bouncing balls. Pop one to open the fund. */
 const DOGSVG=document.querySelector('.dogMascot').innerHTML;let bub=null;
-document.addEventListener('click',e=>{const m=e.target.closest('.dogMascot,.bubDog,.alienCat');const i=m&&(m.tagName==='IMG'?m:m.querySelector('img'));if(!i||!i.dataset.move||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.src;(i._mv||(i._mv=fetch(i.dataset.move).then(r=>r.blob()))).then(b=>{const u=URL.createObjectURL(b);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},1000)}).catch(()=>{i._busy=0})});
 function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);const L=document.getElementById('bubbleLayer'),F=document.getElementById('bubField');lastFocus=document.activeElement;
  L.hidden=false;document.body.style.overflow='hidden';document.getElementById('bubTitle').textContent=T[1]+' '+T[0];
  const ids=T[2],n=ids.length;document.getElementById('bubNote').textContent=T[3]||(SMUG[Math.floor(Math.random()*SMUG.length)].replace('{n}',T[0]));document.getElementById('bubDog').innerHTML=DOGSVG;
