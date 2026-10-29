@@ -368,8 +368,8 @@ body.token-world #parallel{display:block}
 @keyframes portalIn{0%{transform:translate(-50%,-50%) scale(.08) rotate(-90deg)}65%{transform:translate(-50%,-50%) scale(1.15) rotate(250deg)}100%{transform:translate(-50%,-50%) scale(1.9) rotate(360deg)}}
 @keyframes portalOut{0%{transform:translate(-50%,-50%) scale(1.8) rotate(0)}100%{transform:translate(-50%,-50%) scale(.02) rotate(-360deg)}}
 .tokenCoin{position:fixed;z-index:40;right:12px;bottom:82px;width:104px;height:88px;padding:0;border:0;background:transparent;display:block;perspective:260px;transition:transform .18s cubic-bezier(.2,.9,.25,1.35)}
-.tokenCoin svg{position:absolute;left:19px;top:0;width:66px;height:66px;transform-style:preserve-3d;filter:drop-shadow(2px 4px 0 #7a4b00)}
-.tokenCoin .coin-token{display:none;image-rendering:pixelated;filter:drop-shadow(2px 4px 0 #123d76)}
+.tokenCoin svg{position:absolute;left:19px;top:0;width:66px;height:66px;transform-style:preserve-3d;filter:drop-shadow(0 4px 4px rgba(90,50,0,.35))}
+.tokenCoin .coin-token{display:none;filter:drop-shadow(0 4px 4px rgba(8,30,90,.4))}
 .tokenCoin.in-token-world .coin-normal{display:none}.tokenCoin.in-token-world .coin-token{display:block}
 .tokenCoin:hover svg{animation:pixelCoinSpin .72s steps(12,end) infinite}.tokenCoin:hover{transform:translateY(-3px) scale(1.06)}.tokenCoin:active{transform:scale(.88)}
 .tokenCoin .coinLabel{position:absolute;left:0;right:0;bottom:0;text-align:center;font:700 9px/1.2 monospace;text-transform:uppercase;background:var(--bg);color:var(--text);border:1px solid var(--line);padding:3px 1px;white-space:nowrap}
@@ -419,6 +419,25 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .popB{animation:balloonPop .45s cubic-bezier(.2,1.6,.4,1)}@keyframes balloonPop{0%{transform:scale(1)}30%{transform:scale(1.55,1.7)}55%{transform:scale(.8)}100%{transform:scale(1)}}
 .dgPop{animation:textPop .55s cubic-bezier(.2,1.5,.4,1)}@keyframes textPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 .tvBlocked{display:grid;gap:8px;padding:18px;border-radius:14px;background:var(--surface2);border:1px dashed var(--line)}.tvBlocked span{color:var(--muted)}
+
+/* ---- One tile at a time: every tile row is a swipe carousel (overrides earlier grids on purpose) ---- */
+.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid{display:flex!important;gap:12px!important;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 8px;margin-bottom:0}
+.exploreRows::-webkit-scrollbar,.tokenCategoryGrid::-webkit-scrollbar,.tokenCaseGrid::-webkit-scrollbar,.brokerGrid::-webkit-scrollbar,.fgrid::-webkit-scrollbar,.tokenMetrics::-webkit-scrollbar,.tokenDataGrid::-webkit-scrollbar{display:none}
+.exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{flex:0 0 min(86%,520px)!important;scroll-snap-align:center;min-width:0;padding:22px!important}
+.exploreRows h3,.tokenCategoryGrid h3,.tokenCaseGrid h3,.brokerGrid h3,.fgrid b{font-size:22px}
+.exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
+.carCtl{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}.carCtl span{font:800 14px/1 inherit;font-family:inherit;min-width:56px;text-align:center}
+.carCtl button{width:44px;height:44px;border:0;border-radius:50%;font:800 20px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}.carCtl button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.grid{display:block}.grid>.card{margin-bottom:14px}
+.dgMore.balloon{display:inline-grid;place-items:center;width:52px;height:68px;margin:0 0 6px;padding:0;border-radius:0;background:none;box-shadow:none;animation:balFloat 3.4s ease-in-out infinite;transform-origin:50% 90%}
+.dgMore.balloon svg{overflow:visible;filter:drop-shadow(0 4px 5px rgba(120,0,16,.35))}.dgMore.balloon:hover{animation:balWobble .8s ease-in-out infinite}
+@keyframes balFloat{50%{transform:translateY(-4px) rotate(3deg)}}@keyframes balWobble{25%{transform:rotate(-8deg) scale(1.06)}75%{transform:rotate(8deg) scale(1.06)}}
+.dgMore.balloon.popped{animation:balBurst .38s cubic-bezier(.2,1.5,.4,1) forwards;pointer-events:auto;width:52px}
+.dgMore.balloon.popped .bBody,.dgMore.balloon.popped text{opacity:0}.dgMore.balloon.popped::after{content:"✕";font:800 16px/1 inherit;font-family:inherit;color:var(--text);position:absolute}
+.dgMore.balloon.popped svg{opacity:.25;transform:scale(.55)}.dgMore.balloon{position:relative}
+@keyframes balBurst{0%{transform:scale(1)}35%{transform:scale(1.5,1.7)}100%{transform:scale(1)}}
+.dgMore.balloon.inflate{animation:balInflate .6s cubic-bezier(.2,1.6,.4,1)}@keyframes balInflate{0%{transform:scale(.2)}100%{transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.dgMore.balloon,.dgMore.balloon.popped,.dgMore.balloon.inflate{animation:none}}
 </style>
 </head>
 <body>
@@ -645,23 +664,32 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 <div class="footerNote">THROWINDICE concept prototype · sourced market snapshots are dated and may be delayed; illustrative teaching cases are labelled · not investment advice</div>
 </div>
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
-<svg aria-hidden="true" class="coin-normal" viewbox="0 0 48 48">
-<defs><radialgradient cx="32%" cy="25%" id="sunFace" r="78%"><stop offset="0" stop-color="#fff89a"></stop><stop offset=".48" stop-color="#ffe34d"></stop><stop offset="1" stop-color="#f5a900"></stop></radialgradient></defs>
-<ellipse cx="24" cy="26" fill="#c77800" rx="20" ry="20"></ellipse>
-<circle cx="23" cy="22" fill="url(#sunFace)" r="20" stroke="#ffbf19" stroke-width="2"></circle>
-<ellipse cx="16" cy="14" fill="#fff9c4" opacity=".8" rx="7" ry="3"></ellipse>
-<ellipse cx="17" cy="20" fill="#2a1900" rx="2.5" ry="3.4"></ellipse><ellipse cx="30" cy="20" fill="#2a1900" rx="2.5" ry="3.4"></ellipse>
-<path d="M12 26 Q22 39 34 26" fill="none" stroke="#2a1900" stroke-linecap="round" stroke-width="3.4"></path>
-</svg>
-<svg aria-hidden="true" class="coin-token" shape-rendering="crispEdges" viewbox="0 0 48 48">
-<path d="M16 3h16v2h5v3h3v5h2v16h-2v5h-3v4h-5v3H16v-3h-5v-3H8v-4H5v-5H3V13h2V8h3V5h3V3z" fill="#092b68" transform="translate(2 3)"></path>
-<path d="M16 3h16v2h5v3h3v5h2v16h-2v5h-3v4h-5v3H16v-3h-5v-3H8v-4H5v-5H3V13h2V8h3V5h3V3z" fill="#1268d9"></path>
-<path d="M16 5h16v2h5v3h2v5h2v14h-2v5h-3v3h-5v2H16v-2h-5v-3H8v-5H6V15h2v-5h3V7h5z" fill="#249bff"></path>
-<path d="M16 8h16v2h4v4h2v14h-2v4h-4v2H16v-2h-4v-4h-2V14h2v-4h4z" fill="#1459b8"></path>
-<path d="M16 8h16v2h4v4h2v3h-3v-3h-2v-3h-5v-1H16z" fill="#9edcff"></path>
-<rect fill="#fff" height="6" width="4" x="15" y="16"></rect><rect fill="#fff" height="6" width="4" x="29" y="16"></rect>
-<path d="M14 26h4v3h4v2h6v-2h4v-3h4v5h-3v3h-5v2h-6v-2h-5v-3h-3z" fill="#fff"></path>
-</svg>
+<svg aria-hidden="true" class="coin-normal" viewBox="0 0 100 100"><defs><radialGradient id="syF" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff7a8"/><stop offset=".5" stop-color="#ffe14a"/><stop offset="1" stop-color="#f2a100"/></radialGradient><radialGradient id="syE" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#dfe6f2"/></radialGradient><linearGradient id="syH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="52" cy="92" rx="30" ry="6" fill="#000" opacity=".22"/>
+<circle cx="50" cy="50" r="44" fill="#8c5600"/>
+<circle cx="50" cy="47" r="43" fill="url(#syF)" stroke="#b87400" stroke-width="3"/>
+<path d="M20 36C26 18 44 10 62 13C47 15 33 24 27 42Z" fill="url(#syH)" opacity=".85"/>
+<ellipse cx="28" cy="60" rx="7" ry="5" fill="#ff7a3a" opacity=".45"/><ellipse cx="72" cy="60" rx="7" ry="5" fill="#ff7a3a" opacity=".45"/>
+<path d="M27 31q8-6 16-1" fill="none" stroke="#b87400" stroke-width="3.2" stroke-linecap="round"/><path d="M57 30q8-5 16 1" fill="none" stroke="#b87400" stroke-width="3.2" stroke-linecap="round"/>
+<ellipse cx="36" cy="43" rx="8.5" ry="11" fill="url(#syE)" stroke="#1b1b2a" stroke-width="2"/><ellipse cx="64" cy="43" rx="8.5" ry="11" fill="url(#syE)" stroke="#1b1b2a" stroke-width="2"/>
+<ellipse cx="38" cy="45" rx="4.6" ry="6.6" fill="#15151f"/><ellipse cx="62" cy="45" rx="4.6" ry="6.6" fill="#15151f"/>
+<circle cx="39.8" cy="41.5" r="1.9" fill="#fff"/><circle cx="63.8" cy="41.5" r="1.9" fill="#fff"/>
+<path d="M27 64Q50 90 73 64Q50 70 27 64Z" fill="#7a1020" stroke="#1b1b2a" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M30 65Q50 71 70 65L68 70Q50 76 32 70Z" fill="#fff"/>
+<path d="M36 78Q50 86 64 78Q50 73 36 78Z" fill="#ff6f7d"/></svg>
+<svg aria-hidden="true" class="coin-token" viewBox="0 0 100 100"><defs><radialGradient id="sbF" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#bff4ff"/><stop offset=".5" stop-color="#4fb8ff"/><stop offset="1" stop-color="#1b5fd1"/></radialGradient><radialGradient id="sbE" cx="40%" cy="30%" r="80%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#dfe6f2"/></radialGradient><linearGradient id="sbH" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="52" cy="92" rx="30" ry="6" fill="#000" opacity=".22"/>
+<circle cx="50" cy="50" r="44" fill="#082a66"/>
+<circle cx="50" cy="47" r="43" fill="url(#sbF)" stroke="#0b3c91" stroke-width="3"/>
+<path d="M20 36C26 18 44 10 62 13C47 15 33 24 27 42Z" fill="url(#sbH)" opacity=".85"/>
+<ellipse cx="28" cy="60" rx="7" ry="5" fill="#ff7ad9" opacity=".45"/><ellipse cx="72" cy="60" rx="7" ry="5" fill="#ff7ad9" opacity=".45"/>
+<path d="M27 31q8-6 16-1" fill="none" stroke="#0b3c91" stroke-width="3.2" stroke-linecap="round"/><path d="M57 30q8-5 16 1" fill="none" stroke="#0b3c91" stroke-width="3.2" stroke-linecap="round"/>
+<ellipse cx="36" cy="43" rx="8.5" ry="11" fill="url(#sbE)" stroke="#1b1b2a" stroke-width="2"/><ellipse cx="64" cy="43" rx="8.5" ry="11" fill="url(#sbE)" stroke="#1b1b2a" stroke-width="2"/>
+<ellipse cx="38" cy="45" rx="4.6" ry="6.6" fill="#15151f"/><ellipse cx="62" cy="45" rx="4.6" ry="6.6" fill="#15151f"/>
+<circle cx="39.8" cy="41.5" r="1.9" fill="#fff"/><circle cx="63.8" cy="41.5" r="1.9" fill="#fff"/>
+<path d="M27 64Q50 90 73 64Q50 70 27 64Z" fill="#7a1020" stroke="#1b1b2a" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M30 65Q50 71 70 65L68 70Q50 76 32 70Z" fill="#fff"/>
+<path d="M36 78Q50 86 64 78Q50 73 36 78Z" fill="#ff6f7d"/></svg>
 <span class="coinLabel">REAL-WORLD ASSETS</span>
 </button>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
@@ -1047,7 +1075,10 @@ window.addEventListener('resize',()=>{if(!bub||bub.reduced)return;const F=docume
 document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-theme]:not([data-focus])');if(c)goTheme(c.dataset.theme)});
 
 /* digest: clamp long text, add a More pill */
-(function(){let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary,details'))return;e.dataset.dg=1;if(e.textContent.trim().length<60)return;e.classList.add('dgHide');const b=document.createElement('button');b.type='button';b.className='dgMore';b.textContent='🎈 More';b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const open=e.classList.contains('dgHide');e.classList.toggle('dgHide',!open);b.setAttribute('aria-expanded',open);if(open){if(!RM()){const r=b.getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2,46);b.classList.remove('popB');void b.offsetWidth;b.classList.add('popB');e.classList.remove('dgPop');void e.offsetWidth;e.classList.add('dgPop')}b.textContent='🎈 Less'}else b.textContent='🎈 More'};e.before(b)})}
+(function(){let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const BAL='<svg viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><defs><radialGradient id="balG" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#ff7a86"/><stop offset=".45" stop-color="#ff2438"/><stop offset="1" stop-color="#b3001a"/></radialGradient></defs><path class="bString" d="M32 66c-5 5 5 9 0 14" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linecap="round"/><path d="M32 61l-5 6h10z" fill="#c4001d"/><path class="bBody" d="M32 2C16 2 5 14 5 29c0 17 13 32 27 32s27-15 27-32C59 14 48 2 32 2z" fill="url(#balG)"/><ellipse cx="21" cy="17" rx="6" ry="9" transform="rotate(25 21 17)" fill="#fff" opacity=".55"/><text x="32" y="40" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="26" fill="#fff">M</text></svg>';
+function scraps(cx,cy){let C=document.getElementById('confetti');if(!C){C=document.createElement('div');C.id='confetti';C.setAttribute('aria-hidden','true');document.body.append(C)}for(let i=0;i<9;i++){const e=document.createElement('i'),a=i/9*6.283+Math.random()*.5,d=36+Math.random()*50;e.style.cssText='left:'+cx+'px;top:'+cy+'px;width:'+(10+Math.random()*8)+'px;height:'+(5+Math.random()*4)+'px;background:#ff2438;border-radius:50% 50% 50% 0;--dx:'+Math.cos(a)*d+'px;--dy:'+(Math.sin(a)*d-20)+'px;--rot:'+(Math.random()*540-270)+'deg';C.append(e);setTimeout(()=>e.remove(),1400)}}
+function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary,details'))return;e.dataset.dg=1;if(e.textContent.trim().length<60)return;e.classList.add('dgHide');const b=document.createElement('button');b.type='button';b.className='dgMore balloon';b.innerHTML=BAL;b.setAttribute('aria-label','More');b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const open=e.classList.contains('dgHide');e.classList.toggle('dgHide',!open);b.setAttribute('aria-expanded',open);b.classList.remove('popB','inflate');if(open){b.setAttribute('aria-label','Less');if(!RM()){const r=b.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;confetti(cx,cy,46);scraps(cx,cy);b.classList.add('popped');e.classList.remove('dgPop');void e.offsetWidth;e.classList.add('dgPop')}else b.classList.add('popped')}else{b.setAttribute('aria-label','More');b.classList.remove('popped');if(!RM()){void b.offsetWidth;b.classList.add('inflate')}}};e.before(b)})}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60)}).observe(document.body,{childList:true,subtree:true,characterData:true});run()})();
 
 const FOCUS_CC={SPY:'us',EWG:'de',EWQ:'fr',EWU:'gb',EWD:'se',EWJ:'jp',MCHI:'cn',INDA:'in',EWA:'au'};
@@ -1065,6 +1096,12 @@ function openFocus(c){const g=x=>document.getElementById(x),id=c.dataset.id,name
 function closeFocus(q){document.getElementById('focusModal').classList.remove('show');document.getElementById('focusBox').innerHTML='';if(!q&&lastFocus&&lastFocus.focus)lastFocus.focus()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFocus()});
 document.addEventListener('click',e=>{if(e.target.id==='focusModal')closeFocus();if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-focus]');if(c)openFocus(c)});
+
+(function(){const SEL='.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid';let t;
+function vis(c){return[...c.children].filter(x=>x.offsetParent!==null)}
+function upd(c){const k=c._ctl;if(!k)return;const v=vis(c),w=v[0]?v[0].getBoundingClientRect().width+12:1,i=Math.min(v.length-1,Math.max(0,Math.round(c.scrollLeft/w)));k.q('span').textContent=(v.length?i+1:0)+' / '+v.length;k.hidden=v.length<2}
+function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';const go=d=>{const v=vis(c),w=v[0]?v[0].getBoundingClientRect().width+12:300;c.scrollBy({left:d*w,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})};k.children[0].onclick=()=>go(-1);k.children[2].onclick=()=>go(1);c.after(k);c._ctl=k;c.addEventListener('scroll',()=>upd(c),{passive:true});upd(c)});document.querySelectorAll(SEL).forEach(upd)}
+new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class','style']});build();addEventListener('resize',build)})();
 </script>
 </body>
 </html>
