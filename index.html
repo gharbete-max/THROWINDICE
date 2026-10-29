@@ -493,10 +493,11 @@ body.token-world #vig{display:none}
 .vsBox{flex:1;min-width:0}.vsT{font-size:14px;font-weight:700;margin-bottom:6px}.vsRow{display:flex;align-items:center;gap:8px;margin:4px 0}.vsRow>span{flex:0 0 86px;font-size:13px;font-weight:800}.vsTrack{flex:1;min-width:0;display:flex;align-items:center;gap:8px}.vsBar{display:block;height:22px;border-radius:99px;flex:0 0 var(--w);min-width:10px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 55%),var(--bc);box-shadow:inset 0 -3px 5px rgba(0,0,0,.18);transform-origin:left;animation:vsGrow 1.1s cubic-bezier(.2,.9,.25,1) both}.vsTrack b{font-size:15px;white-space:nowrap}.vsNote{font-size:12px;color:var(--muted);margin-top:4px}@keyframes vsGrow{from{transform:scaleX(0)}}@media(prefers-reduced-motion:reduce){.vsBar{animation:none}}
 
 /* Lightning around the tile while a carousel spins faster */
-.flameLayer{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:7;opacity:calc(var(--heat,0)*1.4)}
+.flameLayer{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:7;opacity:calc(.35 + var(--heat,0)*1.2)}
 .bolt{position:absolute;left:0;top:0;overflow:visible}.bolt path{fill:none;stroke-linejoin:round;stroke-linecap:round}
-.bolt .bg{stroke:#7a5cff;stroke-opacity:.6;filter:blur(5px)}.bolt .bm{stroke:#62d4ff;filter:drop-shadow(0 0 4px #62d4ff)}.bolt .bc{stroke:#fff}.bolt .bb{stroke:#b8ecff;filter:drop-shadow(0 0 4px #7a5cff)}
+.bolt .bg{stroke:#8a6bff;stroke-opacity:.85;filter:blur(7px)}.bolt .bm{stroke:#7be0ff;filter:drop-shadow(0 0 7px #7be0ff) drop-shadow(0 0 14px #5a7bff)}.bolt .bc{stroke:#fff;filter:drop-shadow(0 0 3px #fff)}.bolt .bb{stroke:#e2f7ff;filter:drop-shadow(0 0 6px #8a6bff) drop-shadow(0 0 10px #7be0ff)}
 @media(prefers-reduced-motion:reduce){.flameLayer{display:none}}
+.bub .bmx{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px}.bub .bmet{font-size:.72em;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -807,7 +808,7 @@ body.token-world #vig{display:none}
 <div aria-labelledby="regTitle" aria-modal="true" class="modalShade" id="regionModal" role="dialog"><div class="modal" style="max-width:520px"><div class="eyebrow">📍 FIRST, PICK YOUR HOME</div><h2 id="regTitle" style="margin-top:8px">Where are you?</h2><p style="margin:6px 0 0">We show the funds people there can usually buy.</p><div class="regGrid" id="regGrid"></div><p class="disclaimer" style="margin:8px 0 0">Rules change. Ask your broker. Not advice.</p></div></div>
 <div aria-labelledby="focusTitle" aria-modal="true" class="modalShade" id="focusModal" role="dialog"><div class="modal wide" style="max-width:760px"><div class="eyebrow" id="focusEye">FOCUS</div><h2 id="focusTitle" style="margin-top:8px">Focus</h2><div class="actions" style="margin:10px 0"><button class="btn small" id="focusEtf" type="button">See ETFs →</button><a class="btn small secondary" id="focusNews" target="_blank" rel="noopener noreferrer">More news ↗</a><a class="btn small secondary" id="focusExch" target="_blank" rel="noopener noreferrer">Exchange news ↗</a><button class="btn secondary small" onclick="closeFocus()" type="button">Close</button></div><div id="focusBox" style="min-height:300px"></div><p class="disclaimer">News feeds are by TradingView, a third party, and load only when you open this page. Headlines are not advice.</p></div></div>
 <div aria-labelledby="chartTitle" aria-modal="true" class="modalShade" id="chartModal" role="dialog"><div class="modal wide" style="max-width:720px"><div class="eyebrow">CHART</div><h2 id="chartTitle" style="margin-top:8px">Chart</h2><div id="chartBox" style="min-height:300px;margin:12px 0"></div><p class="disclaimer" id="chartFallback" hidden>The chart could not load here. It may be blocked or you may be offline. Use the TradingView link instead.</p><div class="actions" style="margin-top:12px"><a class="btn small" id="chartLink" href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">Open on TradingView ↗</a><button class="btn secondary small" onclick="closeChart()" type="button">Close</button></div><p class="disclaimer">Charts are by TradingView, a third party, and load only when you ask. Past moves do not predict the future. Educational only, not financial advice.</p></div></div>
-<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Go back"><svg viewBox="0 0 90 56" aria-hidden="true"><path d="M82 30C66 4 50 54 26 30" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M36 12L14 30L38 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>go back!</span></button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div><div class="bubDog" id="bubDog" aria-hidden="true"></div></div><div class="bubModes" id="bubModes" role="group" aria-label="Colour the bubbles by"><button type="button" data-m="fun" class="on" onclick="bubMode('fun')">🎨 Fun</button><button type="button" data-m="fee" onclick="bubMode('fee')">💸 Fee</button><button type="button" data-m="calm" onclick="bubMode('calm')">🌊 Calm</button><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><span class="bubLegend" id="bubLegend" hidden><i></i><em id="bubLegTxt"></em></span></div><div class="bubField" id="bubField"></div></div>
+<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Go back"><svg viewBox="0 0 90 56" aria-hidden="true"><path d="M82 30C66 4 50 54 26 30" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M36 12L14 30L38 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>go back!</span></button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div><div class="bubDog" id="bubDog" aria-hidden="true"></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button></div><div class="bubField" id="bubField"></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const pages=['dashboard','news','basics','fees','world','sectors','commodities','etfs','parallel'];
@@ -1296,29 +1297,36 @@ function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);co
  F.innerHTML='';const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;F.classList.toggle('static',reduced);
  const W=F.clientWidth,H=F.clientHeight;const wts=ids.map(id=>TIERW[TIER[id]||2]),sw=wts.reduce((a,w)=>a+w*w,0),wm=Math.max(...wts);let r=Math.sqrt(W*H*.32/(Math.PI*sw));r=Math.min(r,190,Math.min(W,H)/3.2/wm);
  const items=ids.map((id,i)=>{const f=etfFacts[id],rr=Math.max(30,r*wts[i]),el=document.createElement('button');el.type='button';el.className='bub';el.style.cssText='--cc:var(--c'+colorOf(id)+');width:'+2*rr+'px;height:'+2*rr+'px;font-size:'+Math.max(11,rr*.22)+'px';
-  el.setAttribute('aria-label','Open '+id+': '+f.name);el.innerHTML='<span class="bi" aria-hidden="true">'+f.icon+'</span><b>'+id+'</b>'+(rr>=58?'<em>'+f.name.split(' ').slice(0,3).join(' ')+'</em>':'')+'<i class="bmet" hidden></i>'+regBadge(id);if(REGION&&regAvail(id)===0)el.classList.add('nope');
+  el.setAttribute('aria-label','Open '+id+': '+f.name);{const fe=feeOf(id),vo=VOLX[id];el.innerHTML='<span class="bi" aria-hidden="true">'+f.icon+'</span><b>'+id+'</b>'+(rr>=58?'<em>'+f.name.split(' ').slice(0,3).join(' ')+'</em>':'')+(rr>=44?'<span class="bmx">'+(fe!=null?'<i class="bmet">fee '+fe.toFixed(2)+'%</i>':'')+(rr>=62&&vo!=null?'<i class="bmet">swing '+Math.round(vo)+'%</i>':'')+'</span>':'')+regBadge(id)}if(REGION&&regAvail(id)===0)el.classList.add('nope');
   const b={id,el,r:rr,m:rr*rr,x:rr+Math.random()*Math.max(1,W-2*rr),y:-rr-i*rr*1.3,vx:(Math.random()-.5)*260,vy:0,delay:i*.14,popped:false,hit:0};wireBubble(b);F.append(el);return b});
  bub={items,W,H,raf:0,last:performance.now(),reduced,key};
  if(reduced){F.style.cssText='';items.forEach(b=>{b.el.style.position='relative';b.el.style.transform='none'})}else{items.forEach(b=>{b.el.style.opacity=0});bub.raf=requestAnimationFrame(bubStep)}
  {const A=document.getElementById('bubAll');A.hidden=!(RS.hidden||SHOWALL);A.textContent=SHOWALL?'Hide the ones not for me':'🌍 Show '+RS.hidden+' more';if(RS.none)document.getElementById('bubNote').textContent='None of these are sold in your region. Showing them so you can learn.'}
- bubMode('fun');document.getElementById('bubBack').focus()}
+ bubDetails();document.getElementById('bubBack').focus()}
 
 const pctl=(arr,v)=>arr.filter(x=>x<=v).length/arr.length;
-function bubMode(m){if(!bub)return;const fees=[...new Set(Object.keys(etfFacts).map(feeOf).filter(x=>x!=null))].sort((a,b)=>a-b),vols=Object.values(VOLX).sort((a,b)=>a-b);
- document.querySelectorAll('#bubModes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));const lg=document.getElementById('bubLegend');lg.hidden=m==='fun';document.getElementById('bubLegTxt').textContent=m==='fee'?'green = cheaper · red = pricier · grey = no data':'green = calmer · red = bouncier · grey = no data';
- bub.items.forEach(b=>{const bm=b.el.querySelector('.bmet');let v=null,arr=null,txt='';if(m==='fee'){v=feeOf(b.id);arr=fees;if(v!=null)txt=v.toFixed(2)+'%'}else if(m==='calm'){v=VOLX[b.id]!=null?VOLX[b.id]:null;arr=vols;if(v!=null)txt=Math.round(v)+'% swing'}
-  if(m==='fun'){b.el.style.setProperty('--cc','var(--c'+colorOf(b.id)+')');bm.hidden=true;return}
-  b.el.style.setProperty('--cc',v==null?'#cfcfcf':'hsl('+Math.round(120*(1-pctl(arr,v)))+' 85% 58%)');bm.textContent=v==null?'no data':txt;bm.hidden=false})}
-function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000||.016);B.last=t;B.age=(B.age||0)+dt;const G=1900,REST=.2,calm=B.age>3?Math.exp(-Math.min(20,(B.age-3)*4)*dt):1;const live=B.items.filter(b=>!b.popped);
- live.forEach(b=>{if(b.delay>0){b.delay-=dt;return}b.el.style.opacity=1;if(b.grab){b.vx=b.gvx||0;b.vy=b.gvy||0;b.gvx*=.88;b.gvy*=.88;return}b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=Math.exp(-.15*dt)*calm;if(calm<1)b.vy*=calm;
+function bubDetails(){if(!bub)return;bub.items.forEach(b=>{b.el.style.setProperty('--cc','var(--c'+colorOf(b.id)+')')})}
+function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000||.016);B.last=t;B.age=(B.age||0)+dt;const G=1900,REST=.03,calm=B.age>3?Math.exp(-Math.min(20,(B.age-3)*4)*dt):1;const live=B.items.filter(b=>!b.popped);
+ live.forEach(b=>{if(b.delay>0){b.delay-=dt;return}b.el.style.opacity=1;if(!b.T)b.T=[0,0,0];if(b.grab){b.vx=b.gvx||0;b.vy=b.gvy||0;b.gvx*=.88;b.gvy*=.88;return}b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=Math.exp(-.15*dt)*calm;if(calm<1)b.vy*=calm;
+  /* one-way gate at the top: once a ball has fallen in, it cannot leave */
+  if(!b.in&&b.y>=b.r)b.in=true;if(!b.in&&b.y>0&&b.vy<0)b.vy=0;if(b.in&&b.y<b.r){b.y=b.r;if(b.vy<0)b.vy=0}
   if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx)*REST}else if(b.x>B.W-b.r){b.x=B.W-b.r;b.vx=-Math.abs(b.vx)*REST}
-  if(b.y>B.H-b.r){const sp=Math.abs(b.vy);b.y=B.H-b.r;b.vy=sp<240?0:-sp*REST;b.vx*=.97;if(sp>380)bubSquash(b)}});
- const clampB=b=>{if(b.delay>0)return;b.x=Math.max(b.r,Math.min(B.W-b.r,b.x));if(b.y>B.H-b.r)b.y=B.H-b.r};
- for(let it=0;it<6;it++){for(let i=0;i<live.length;i++)for(let j=i+1;j<live.length;j++){const p=live[i],q=live[j];if(p.delay>0||q.delay>0)continue;let dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy),min=p.r+q.r;if(d>=min||d===0)continue;const nx=dx/d,ny=dy/d,ov=min-d,im=1/p.m,jm=1/q.m,tot=im+jm;p.x-=nx*ov*im/tot;p.y-=ny*ov*im/tot;q.x+=nx*ov*jm/tot;q.y+=ny*ov*jm/tot;const vn=(q.vx-p.vx)*nx+(q.vy-p.vy)*ny;if(vn<0){const j2=-(1+(-vn<240?0:REST))*vn/tot;p.vx-=j2*nx*im;p.vy-=j2*ny*im;q.vx+=j2*nx*jm;q.vy+=j2*ny*jm;if(-vn>380){bubSquash(p);bubSquash(q)}}}
+  if(b.y>B.H-b.r){const sp=Math.abs(b.vy);b.y=B.H-b.r;if(sp>260)b.T[2]+=Math.min(b.r*.45,sp/48);b.vy=sp<240?0:-sp*REST;b.vx*=Math.exp(-9*dt)}});
+ const clampB=b=>{if(b.delay>0)return;b.x=Math.max(b.r,Math.min(B.W-b.r,b.x));if(b.y>B.H-b.r)b.y=B.H-b.r;if(b.in&&b.y<b.r)b.y=b.r};
+ const tg=new Map();live.forEach(b=>tg.set(b,[0,0,0]));
+ for(let it=0;it<6;it++){for(let i=0;i<live.length;i++)for(let j=i+1;j<live.length;j++){const p=live[i],q=live[j];if(p.delay>0||q.delay>0)continue;let dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy),min=p.r+q.r;if(d>=min+5||d===0)continue;const nx=dx/d,ny=dy/d,im=1/p.m,jm=1/q.m,tot=im+jm,rvx=q.vx-p.vx,rvy=q.vy-p.vy,vn=rvx*nx+rvy*ny;
+   if(d<min){const ov=min-d,slop=Math.min(p.r,q.r)*.05,fix=Math.max(0,ov-slop)*.5;p.x-=nx*fix*im/tot;p.y-=ny*fix*im/tot;q.x+=nx*fix*jm/tot;q.y+=ny*fix*jm/tot;
+    if(it===0){const a=tg.get(p),c=tg.get(q);a[0]+=ov*nx*nx;a[1]+=ov*nx*ny;a[2]+=ov*ny*ny;c[0]+=ov*nx*nx;c[1]+=ov*nx*ny;c[2]+=ov*ny*ny}
+    if(vn<0){const j2=-vn*1.0/tot;p.vx-=j2*nx*im;p.vy-=j2*ny*im;q.vx+=j2*nx*jm;q.vy+=j2*ny*jm}}
+   /* gooey: touching balls stick and drag each other along */
+   if(it===0){const k=Math.exp(-11*dt),svx=rvx*(1-k)*.5,svy=rvy*(1-k)*.5;if(vn>0){const e=vn*.6/tot;p.vx+=e*nx*im;p.vy+=e*ny*im;q.vx-=e*nx*jm;q.vy-=e*ny*jm}
+    p.vx+=svx*jm/tot*2;p.vy+=svy*jm/tot*2;q.vx-=svx*im/tot*2;q.vy-=svy*im/tot*2}}
  live.forEach(clampB)}
+ live.forEach(b=>{if(b.delay>0||!b.T)return;const g=tg.get(b),up=Math.min(1,dt*14),dn=Math.min(1,dt*2.4);for(let k=0;k<3;k++){const tv=g[k],cur=b.T[k];b.T[k]=cur+(tv-cur)*(tv>cur?up:dn)}});
  live.forEach(b=>{if(b.delay>0)return;const sp=Math.hypot(b.vx,b.vy);if(b.y>=B.H-b.r-1)b.vx*=Math.exp(-5*dt);if(sp<130){b.vx*=.93;b.vy*=.96}});
- live.forEach(b=>{b.el.style.transform='translate3d('+(b.x-b.r).toFixed(1)+'px,'+(b.y-b.r).toFixed(1)+'px,0)'});B.raf=requestAnimationFrame(bubStep)}
-function bubSquash(b){if(b.hit>performance.now())return;b.hit=performance.now()+180;const e=b.el;e.classList.remove('squash');void e.offsetWidth;e.classList.add('squash')}
+ live.forEach(b=>{let tf='';const T=b.T;if(T){const xx=T[0],xy=T[1],yy=T[2],m=(xx+yy)/2,h=Math.sqrt(((xx-yy)/2)**2+xy*xy),l1=m+h;if(l1>.4){const s=Math.min(.42,l1/b.r*1.15),a=.5*Math.atan2(2*xy,xx-yy)*57.2958;tf=' rotate('+a.toFixed(1)+'deg) scale('+(1-s).toFixed(3)+','+(1+s*.45).toFixed(3)+') rotate('+(-a).toFixed(1)+'deg)'}}
+  b.el.style.transform='translate3d('+(b.x-b.r).toFixed(1)+'px,'+(b.y-b.r).toFixed(1)+'px,0)'+tf});B.raf=requestAnimationFrame(bubStep)}
+function bubSquash(b){}
 function wireBubble(b){const el=b.el;let down=false,drag=false,sx=0,sy=0,tm=null,lt=0;const fr=()=>document.getElementById('bubField').getBoundingClientRect();
  const pos=e=>{const r=fr();return [e.clientX-r.left,e.clientY-r.top]};
  const startDrag=()=>{if(drag||!bub||bub.reduced)return;drag=true;b.grab=true;b.m0=b.m;b.m=1e9;b.gvx=b.gvy=0;bub.age=0;el.classList.add('grab')};
@@ -1386,7 +1394,7 @@ function flame(c,S,dt,h){const w=c.parentNode;if(!w||!w.classList.contains('carW
  const A=3+H*15,N=S.N;let d0='';for(let i=0;i<=N;i++){const q=pt((i%N)/N*P,S.r[i%N]*A);d0+=(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1)}d0+='Z';
  let db='';const nb=Math.round(H*9);for(let k=0;k<nb;k++){const B=S.br[k],q=pt(B[0]*P,0),Ln=14+H*52*(.5+B[2]);let x=q.bx,y=q.by;db+='M'+x.toFixed(1)+' '+y.toFixed(1);for(let j=1;j<=4;j++){const f=j/4,sw=Math.sin(j*2.7+B[1]*9)*11*(.3+H);x=q.bx+q.nx*Ln*f+q.tx*sw;y=q.by+q.ny*Ln*f+q.ty*sw;db+='L'+x.toFixed(1)+' '+y.toFixed(1)}}
  const P4=S.pa;P4[0].setAttribute('d',d0);P4[1].setAttribute('d',d0);P4[2].setAttribute('d',d0);P4[3].setAttribute('d',db);
- P4[0].style.strokeWidth=(9+H*10)+'px';P4[1].style.strokeWidth=(2.8+H*2.6)+'px';P4[2].style.strokeWidth=(1.3+H)+'px';P4[3].style.strokeWidth=(1.4+H*1.3)+'px'}
+ P4[0].style.strokeWidth=(16+H*18)+'px';P4[1].style.strokeWidth=(5+H*5)+'px';P4[2].style.strokeWidth=(2.4+H*2)+'px';P4[3].style.strokeWidth=(2.6+H*2.6)+'px'}
 function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
  S.clicks=S.clicks.filter(x=>t-x<650);const vmax=Math.min(6,2.2+1.1*S.clicks.length),dist=S.target-S.p;
  const want=Math.max(-vmax,Math.min(vmax,dist*3.4));S.v+=(want-S.v)*Math.min(1,dt*5);S.p+=S.v*dt;
