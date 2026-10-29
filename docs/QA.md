@@ -154,3 +154,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Root causes of the blink: tiles had a bouncy 0.35 s CSS transform transition that lagged the per-frame rotation, and hidden tiles still carried the scroll-reveal class (opacity 0 plus a 0.7 s pop-in) the first time they were shown. Fixed with transition none while spinning and no reveal class on carousel tiles. Verified frame by frame.
 - Spin buttons are 60 px, in a pill that sticks above the bottom nav while the tile is on screen, so tall tiles cannot push them out of view (checked with an 1100 px tall tile).
 - qa.js clean; no console errors.
+
+## Round: Fun spin arrows (2026-10-29)
+- Spin buttons carry big chunky SVG arrows (40 px, 8 px stroke) that nudge in their direction, grow on hover and squash when pressed; reduced motion keeps them still. Spin behaviour re-verified.
+- qa.js clean; no console errors.

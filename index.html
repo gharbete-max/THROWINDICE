@@ -428,7 +428,7 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
 .carWrap{position:relative}
 .carCtl{position:sticky;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:15;display:flex;align-items:center;justify-content:center;gap:16px;width:fit-content;margin:6px auto 16px;padding:8px 14px;border-radius:999px;background:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.18)}.carCtl span{font:800 16px/1 inherit;font-family:inherit;min-width:64px;text-align:center}
-.carCtl button{width:60px;height:60px;border:0;border-radius:50%;font:800 28px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}.carCtl button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+.carCtl button{width:64px;height:64px;border:0;border-radius:50%;font:800 28px/1 inherit;font-family:inherit;color:var(--accent-ink);background:var(--accent);cursor:pointer}.carCtl button:focus-visible{outline:3px solid var(--text);outline-offset:2px}
 .grid{display:block}.grid>.card{margin-bottom:14px}
 .dgMore.balloon{display:inline-grid;place-items:center;width:52px;height:68px;margin:0 0 6px;padding:0;border-radius:0;background:none;box-shadow:none;animation:balFloat 3.4s ease-in-out infinite;transform-origin:50% 90%}
 .dgMore.balloon svg{color:#fff;overflow:visible;filter:drop-shadow(0 4px 5px rgba(120,0,16,.35))}.dgMore.balloon:hover{animation:balWobble .8s ease-in-out infinite}
@@ -441,6 +441,11 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .dgMore.balloon.inflate{animation:balInflate .6s cubic-bezier(.2,1.6,.4,1)}@keyframes balInflate{0%{transform:scale(.2)}100%{transform:scale(1)}}
 @media(prefers-reduced-motion:reduce){.dgMore.balloon,.dgMore.balloon.popped,.dgMore.balloon.inflate{animation:none}}
 .spinning>*{transition:none!important;will-change:transform;backface-visibility:hidden}.spinning>*:hover{transform:none}
+.carCtl button svg{display:block;margin:auto;pointer-events:none}.carCtl .arL svg{transform:scaleX(-1)}
+.carCtl .arR svg{animation:arNudgeR 1.3s ease-in-out infinite}.carCtl .arL svg{animation:arNudgeL 1.3s ease-in-out infinite}
+@keyframes arNudgeR{0%,100%{transform:translateX(-3px)}50%{transform:translateX(5px) scale(1.1)}}@keyframes arNudgeL{0%,100%{transform:scaleX(-1) translateX(-3px)}50%{transform:scaleX(-1) translateX(5px) scale(1.1)}}
+.carCtl button{transition:transform .15s cubic-bezier(.2,1.6,.4,1),box-shadow .2s;box-shadow:0 5px 0 rgba(0,0,0,.25)}.carCtl button:hover{transform:scale(1.12) rotate(-4deg)}.carCtl button:active{transform:scale(.88) translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+@media(prefers-reduced-motion:reduce){.carCtl .arR svg,.carCtl .arL svg{animation:none}}
 </style>
 </head>
 <body>
@@ -1125,7 +1130,7 @@ function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1
  const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
  if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);return}
  S.raf=requestAnimationFrame(spin.bind(null,c))}
-function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);const w=document.createElement('div');w.className='carWrap';c.parentNode.insertBefore(w,c);w.append(c,k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
+function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);const AR='<svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M8 24h28M25 11l13 13-13 13" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>';k.innerHTML='<button type="button" class="arL" aria-label="Previous">'+AR+'</button><span aria-live="polite"></span><button type="button" class="arR" aria-label="Next">'+AR+'</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);const w=document.createElement('div');w.className='carWrap';c.parentNode.insertBefore(w,c);w.append(c,k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
 </script>
 </body>
