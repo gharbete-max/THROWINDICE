@@ -272,3 +272,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Gap width = (random 0.1 to 1.0) x 6 x current speed in px (`RUGK`), so the fuel needed is spread evenly: with a full tank crossing is (almost) certain, at 50% it works about half the time. A perfect scripted tapper crossed about 33% with 10% fuel, 50% with 25–40%, 87–90% with 55–70% and 100% from 85%; a human will do worse. Taps cost up to 4x more when high above the ground (e.g. over the pit), so hovering across is not free.
 - Jetpack stronger: tap 520 px/s (was 360, about 97 px hop), hold thrust 1500 (was 900), max rise 650, terminal fall speed 2600.
 - Headless: no console errors, qa.js clean.
+
+## Coinpull: cash-out credit card, gold bounce, leverage levels
+- The far side of the rugpull gap is a giant credit card (26 candles long, magnetic stripe, chip, big 16-bit pixel letters "CASH OUT!"). Landing on it from the air bounces the player (-1700 px/s), turns the character gold for 3 s (invulnerable: no fall damage, no valley loss, no liquidation), adds +25% score, banks the score (best score is saved immediately) and starts the next level: background palette changes (5 palettes, cross-fade 1.6 s) and leverage goes up by one.
+- Leverage L: points x L; valley loss L times bigger (capped at 40% x L, max 90%) and each valley landing has a (L-1) x depth/640 chance of outright liquidation (e.g. L=2, 320 px valley = 50%).
+- Falling into the pit instead keeps the level and leverage as before (brake to survive).
+- Headless: forced scenario crossed the gap, bounced, went gold (gold 3 s, LEV 2x, background changed), card renders with the letters, no console errors, qa.js clean.
