@@ -424,8 +424,6 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid{display:block!important;perspective:900px;overflow:visible;padding:4px 2px 8px;margin-bottom:0}
 .exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{width:min(100%,560px)!important;margin:0 auto!important;padding:22px!important;backface-visibility:hidden;transform-origin:50% 50%}
 .wOff{display:none!important}
-.rolling{display:grid!important;transform-style:preserve-3d}.rolling>*{grid-area:1/1;border-radius:64px!important;transition:border-radius .2s}
-.exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{transition:border-radius .25s ease}
 .exploreRows h3,.tokenCategoryGrid h3,.tokenCaseGrid h3,.brokerGrid h3,.fgrid b{font-size:22px}
 .exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
 .carCtl{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}.carCtl span{font:800 14px/1 inherit;font-family:inherit;min-width:56px;text-align:center}
@@ -1106,11 +1104,15 @@ function sync(c){const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.childr
 function go(c,d){if(c._lock)return;const l=elig(c);if(l.length<2)return;const cur=c._cur,nx=l[(l.indexOf(cur)+d+l.length)%l.length];if(nx===cur)return;c._cur=nx;const sg=d>0?1:-1;
  const k=c._ctl;if(k)k.q('span').textContent=(l.indexOf(nx)+1)+' / '+l.length;
  if(RM()||!cur.animate){cur.classList.add('wOff');nx.classList.remove('wOff');sync(c);return}
- c._lock=1;cur._anim=1;nx.classList.remove('wOff');c.classList.add('rolling');
- const H=cur.getBoundingClientRect().height,R='50% 50% -'+Math.round(H/2)+'px',o={duration:760,easing:'cubic-bezier(.5,0,.25,1)',fill:'both'};
- cur.style.transformOrigin=nx.style.transformOrigin=R;
+ c._lock=1;cur._anim=1;const sc=cur.getAttribute('style'),sn=nx.getAttribute('style'),cc=c.getAttribute('style'),W=cur.offsetWidth,Hc=cur.offsetHeight,T=cur.offsetTop,pad=c.offsetHeight-Hc;
+ c.style.position='relative';c.style.height=c.offsetHeight+'px';
+ const abs='position:absolute;left:0;right:0;margin:0 auto;top:'+T+'px;width:'+W+'px!important;';cur.style.cssText=(sc||'')+';'+abs+'height:'+Hc+'px';
+ nx.classList.remove('wOff');nx.style.cssText=(sn||'')+';'+abs+'height:auto';const Hn=nx.offsetHeight;
+ c.style.transition='height .76s cubic-bezier(.5,0,.25,1)';void c.offsetHeight;c.style.height=(Hn+pad)+'px';
+ const o={duration:760,easing:'cubic-bezier(.5,0,.25,1)',fill:'both'},R=n=>'50% 50% -'+Math.round(n/2)+'px';
+ cur.style.transformOrigin=R(Hc);nx.style.transformOrigin=R(Hn);
  const a1=cur.animate([{transform:'rotateX(0deg)',opacity:1,offset:0},{opacity:1,offset:.7},{transform:'rotateX('+(-90*sg)+'deg)',opacity:0,offset:1}],o),a2=nx.animate([{transform:'rotateX('+(90*sg)+'deg)',opacity:0,offset:0},{opacity:1,offset:.3},{transform:'rotateX(0deg)',opacity:1,offset:1}],o);
- a2.onfinish=()=>{a1.cancel();a2.cancel();cur._anim=0;cur.classList.add('wOff');cur.style.transformOrigin=nx.style.transformOrigin='';c.classList.remove('rolling');c._lock=0;sync(c)}}
+ a2.onfinish=()=>{a1.cancel();a2.cancel();cur._anim=0;cur.classList.add('wOff');sc==null?cur.removeAttribute('style'):cur.setAttribute('style',sc);sn==null?nx.removeAttribute('style'):nx.setAttribute('style',sn);cc==null?c.removeAttribute('style'):c.setAttribute('style',cc);c._lock=0;sync(c)}}
 function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);c.after(k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
 </script>
