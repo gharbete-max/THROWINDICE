@@ -137,3 +137,11 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Hotdog roll (2026-10-29)
 - Tile changes now roll like a hotdog on a grill: the tile becomes a rounded capsule and turns about its long horizontal axis while the next one rolls in at the same time (Web Animations, 760 ms). Next and previous roll opposite ways. Reduced motion swaps instantly.
 - qa.js clean; no console errors.
+
+## Round: Roll keeps its shape (2026-10-29)
+- During a roll both tiles keep their exact size and corner radius (overlaid absolutely, container height eased between tiles); no grid or capsule re-layout. Verified by measuring both tiles at 30/200/400/600 ms.
+- qa.js clean; no console errors.
+
+## Round: Momentum spin (2026-10-29)
+- Arrow clicks add to a target; the roll chases it with a speed that grows with clicks in the last 650 ms, so spamming accelerates, and it locks on a tile about 0.3-0.5 s after the last click. Both directions, wrap-around and filters verified (12 clicks forward land 12 tiles ahead; 5 back land 5 behind).
+- qa.js clean; no console errors.

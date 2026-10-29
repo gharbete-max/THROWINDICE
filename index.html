@@ -424,8 +424,6 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 .exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid{display:block!important;perspective:900px;overflow:visible;padding:4px 2px 8px;margin-bottom:0}
 .exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{width:min(100%,560px)!important;margin:0 auto!important;padding:22px!important;backface-visibility:hidden;transform-origin:50% 50%}
 .wOff{display:none!important}
-.rolling{display:grid!important;transform-style:preserve-3d}.rolling>*{grid-area:1/1;border-radius:64px!important;transition:border-radius .2s}
-.exploreRows>*,.tokenCategoryGrid>*,.tokenCaseGrid>*,.brokerGrid>*,.fgrid>*,.tokenMetrics>*,.tokenDataGrid>*{transition:border-radius .25s ease}
 .exploreRows h3,.tokenCategoryGrid h3,.tokenCaseGrid h3,.brokerGrid h3,.fgrid b{font-size:22px}
 .exploreCard .big,.topic .symbol{width:64px;height:64px;font-size:30px}
 .carCtl{display:flex;align-items:center;justify-content:center;gap:14px;margin:2px 0 14px}.carCtl span{font:800 14px/1 inherit;font-family:inherit;min-width:56px;text-align:center}
@@ -1102,15 +1100,29 @@ document.addEventListener('click',e=>{if(e.target.id==='focusModal')closeFocus()
 
 (function(){const SEL='.exploreRows,.tokenCategoryGrid,.tokenCaseGrid,.brokerGrid,.fgrid,.tokenMetrics,.tokenDataGrid';let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const elig=c=>[...c.children].filter(x=>x.style.display!=='none'&&!x.hidden);
-function sync(c){const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.children].forEach(x=>{if(x!==c._cur&&!x._anim)x.classList.add('wOff')});if(c._cur)c._cur.classList.remove('wOff');const k=c._ctl;if(k){k.q('span').textContent=(l.length?l.indexOf(c._cur)+1:0)+' / '+l.length;k.hidden=l.length<2}}
-function go(c,d){if(c._lock)return;const l=elig(c);if(l.length<2)return;const cur=c._cur,nx=l[(l.indexOf(cur)+d+l.length)%l.length];if(nx===cur)return;c._cur=nx;const sg=d>0?1:-1;
- const k=c._ctl;if(k)k.q('span').textContent=(l.indexOf(nx)+1)+' / '+l.length;
- if(RM()||!cur.animate){cur.classList.add('wOff');nx.classList.remove('wOff');sync(c);return}
- c._lock=1;cur._anim=1;nx.classList.remove('wOff');c.classList.add('rolling');
- const H=cur.getBoundingClientRect().height,R='50% 50% -'+Math.round(H/2)+'px',o={duration:760,easing:'cubic-bezier(.5,0,.25,1)',fill:'both'};
- cur.style.transformOrigin=nx.style.transformOrigin=R;
- const a1=cur.animate([{transform:'rotateX(0deg)',opacity:1,offset:0},{opacity:1,offset:.7},{transform:'rotateX('+(-90*sg)+'deg)',opacity:0,offset:1}],o),a2=nx.animate([{transform:'rotateX('+(90*sg)+'deg)',opacity:0,offset:0},{opacity:1,offset:.3},{transform:'rotateX(0deg)',opacity:1,offset:1}],o);
- a2.onfinish=()=>{a1.cancel();a2.cancel();cur._anim=0;cur.classList.add('wOff');cur.style.transformOrigin=nx.style.transformOrigin='';c.classList.remove('rolling');c._lock=0;sync(c)}}
+function sync(c){if(c._st)return;const l=elig(c);if(!l.includes(c._cur))c._cur=l[0];[...c.children].forEach(x=>{if(x!==c._cur&&!x._anim)x.classList.add('wOff')});if(c._cur)c._cur.classList.remove('wOff');const k=c._ctl;if(k){k.q('span').textContent=(l.length?l.indexOf(c._cur)+1:0)+' / '+l.length;k.hidden=l.length<2}}
+function go(c,d){const L=elig(c);if(L.length<2)return;
+ if(RM()||!document.body.animate){const cur=c._cur,nx=L[(L.indexOf(cur)+d+L.length)%L.length];cur.classList.add('wOff');nx.classList.remove('wOff');c._cur=nx;sync(c);return}
+ let S=c._st;const now=performance.now();
+ if(!S){const cur=c._cur,n=L.length,cs0=c.getAttribute('style');c.style.position='relative';const W=cur.offsetWidth,Hc=cur.offsetHeight,T=cur.offsetTop,pad=c.offsetHeight-Hc;
+  S=c._st={L,n,p:L.indexOf(cur),target:L.indexOf(cur),v:0,clicks:[],saved:L.map(x=>x.getAttribute('style')),cs:c.getAttribute('style'),H:[],pad,last:now};
+  c.style.position='relative';c.style.height=c.offsetHeight+'px';
+  const abs='position:absolute;left:0;right:0;margin:0 auto;top:'+T+'px;width:'+W+'px!important;height:auto;';
+  L.forEach((x,i)=>{x.classList.remove('wOff');x.style.cssText=(S.saved[i]||'')+';'+abs;S.H[i]=x.offsetHeight});
+  L.forEach(x=>x.classList.add('wOff'));S.raf=requestAnimationFrame(spin.bind(null,c))}
+ S.target+=d;S.clicks.push(now)}
+function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
+ S.clicks=S.clicks.filter(x=>t-x<650);const vmax=3.5+2.4*S.clicks.length,dist=S.target-S.p;
+ const want=Math.max(-vmax,Math.min(vmax,dist*6));S.v+=(want-S.v)*Math.min(1,dt*9);S.p+=S.v*dt;
+ const n=S.n,fl=Math.floor(S.p),f=S.p-fl,i=((fl%n)+n)%n,A=S.L[i],B=S.L[(i+1)%n];
+ S.L.forEach(x=>{if(x!==A&&x!==B){x.classList.add('wOff');x.style.transform=''}});
+ const R=h=>'50% 50% -'+Math.round(h/2)+'px';
+ A.classList.remove('wOff');A.style.transformOrigin=R(S.H[i]);A.style.transform='rotateX('+(-90*f)+'deg)';A.style.opacity=f<.7?1:Math.max(0,1-(f-.7)/.3);
+ if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)';B.style.opacity=f>.3?1:f/.3}else B.classList.add('wOff');
+ c.style.height=(S.H[i]*(1-f)+S.H[(i+1)%n]*f+S.pad)+'px';
+ const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
+ if(Math.abs(dist)<.04&&Math.abs(S.v)<1.4){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c._cur=S.L[e];c._st=null;sync(c);return}
+ S.raf=requestAnimationFrame(spin.bind(null,c))}
 function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);c.after(k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
 </script>
