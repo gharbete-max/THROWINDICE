@@ -39,8 +39,8 @@ cam = stage(res=res, samples=samples, cam_loc=tuple(CAM), target=(0, 0, 0), lens
 vs = bpy.context.scene.view_settings; vs.view_transform = 'Standard'; vs.look = 'None'; vs.exposure = -0.2  # vivid toy colours
 pivot = link(bpy.data.objects.new('pivot', None))
 for o in face + [ball]: o.parent = pivot
-axis = (-CAM).normalized()            # the line of sight: spinning about it turns the face like a wheel, lights stay put
-sign = -1 if kind == 'yellow' else 1   # yellow clockwise, blue anticlockwise (as seen by the viewer)
+axis = Vector((0, 0, 1))               # turntable spin: the face turns to look around the ball, lights stay put
+sign = -1 if kind == 'yellow' else 1   # yellow clockwise, blue anticlockwise (seen from above)
 os.makedirs(out, exist_ok=True)
 from mathutils import Quaternion
 for i in range(nfr):
