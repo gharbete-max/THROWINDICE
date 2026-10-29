@@ -133,3 +133,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Deflated balloon (2026-10-29)
 - After the pop, the leftover is a limp deflated balloon (not an X); clicking it re-inflates the balloon and hides the text again.
 - qa.js clean; no console errors.
+
+## Round: Hotdog roll (2026-10-29)
+- Tile changes now roll like a hotdog on a grill: the tile becomes a rounded capsule and turns about its long horizontal axis while the next one rolls in at the same time (Web Animations, 760 ms). Next and previous roll opposite ways. Reduced motion swaps instantly.
+- qa.js clean; no console errors.
