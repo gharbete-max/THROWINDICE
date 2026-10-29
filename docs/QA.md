@@ -228,3 +228,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Lightning instead of flames
 - The ring of fire is now electric lightning: a jagged bolt (blue glow, bright core, white centre) runs in a closed loop around the whole tile and re-strikes every 45 ms. As the spin speeds up the bolt jitters wider, gets thicker and brighter, and up to 9 forked bolts shoot outward from the edge. Removed when the tile locks in; hidden with reduced motion.
 - Headless: heat 1.0 at full spin, layer gone after settling, no console errors; qa.js clean.
+
+## Thicker lightning, one bubble view, one-way gate, dough physics
+- Lightning: glow 16 to 34 px, bolt 5 to 10 px, white core and forks brighter; faintly visible even at low speed.
+- Bubble pit: the Fun / Fee / Calm switch is gone. Every ball always shows its details: flag, icon, ticker, short name, fee and 3-year swing (as many as fit its size). Size is still volume (TIER). Colours are the fixed candy colours.
+- One-way gate: a ball that has fallen fully in can no longer leave through the top (ceiling clamp once inside; a throw straight up stays in). Checked: after throwing a ball up at 6000 px/s no ball is above the top edge.
+- Dough physics: balls hit with almost no bounce, stick when touching (separating speed is damped, tangential slip is dragged along), and may overlap a little under pressure. Pressed balls flatten along the contact direction (strain tensor per ball, quick to flatten and slow to recover, no springy overshoot); floor and wall hits flatten too.
+- Headless 390/1280: no console errors, all balls inside, qa.js clean.
