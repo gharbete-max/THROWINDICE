@@ -24,3 +24,6 @@ Each quarter refresh `FEEX` (percent per year, US-listed ETFs) from Yahoo Financ
 
 ## Region rules (REG in index.html)
 `REG` maps each region to how US-listed funds and UCITS funds can usually be bought (2 yes, 1 ask broker, 0 mostly not). Re-check yearly against regulator and broker pages (EU/UK key-information-document rule, UCITS marketing rules, China capital controls). Domicile comes from the ISIN prefix; add `DOMFIX` entries for funds without an ISIN and a `FLAGS` drawing for any new country.
+
+## UCITS, ETC and ETP data
+Name, ISIN, domicile and fee come from `https://www.justetf.com/en/etf-profile.html?isin=<ISIN>` (title, "domiciled in …" text, total expense ratio). Put the fee in `FEEX`, the size guess in `TIER`, and add a `DOMFIX` entry when the ISIN prefix is not the domicile (ETPs).
