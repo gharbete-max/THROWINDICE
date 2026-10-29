@@ -264,3 +264,4 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Candles are decided only 5 candles before the player arrives. Until then they show as flickering dashed outlines in changing colours and heights, so the next shape, colour, valley or the cliff cannot be seen coming.
 - `tap(true)` bypasses the cooldown for tests.
 - Headless: no console errors, qa.js clean.
+- Game over now reads "LIQUIDATED 💀 — You are now in a lifetime of debt. This is not investing. This is speculation... oh right, gambling!" plus the score. Checked by forcing a fall in headless.
