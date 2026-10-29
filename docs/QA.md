@@ -224,3 +224,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Flames circle the whole tile
 - The corner flames became a ring of fire: 14 to 34 flames (by tile size) evenly spaced around the whole tile edge, each pointing outward, and the ring travels around the tile in the direction of the spin. Size and brightness follow the spin speed; the ring is removed when the tile locks in.
 - Headless: heat reaches 1.0, ring gone after settling, no console errors; qa.js clean.
+
+## Lightning instead of flames
+- The ring of fire is now electric lightning: a jagged bolt (blue glow, bright core, white centre) runs in a closed loop around the whole tile and re-strikes every 45 ms. As the spin speeds up the bolt jitters wider, gets thicker and brighter, and up to 9 forked bolts shoot outward from the edge. Removed when the tile locks in; hidden with reduced motion.
+- Headless: heat 1.0 at full spin, layer gone after settling, no console errors; qa.js clean.
