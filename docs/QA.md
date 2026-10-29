@@ -129,3 +129,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Roll wheel (2026-10-29)
 - Tile rows no longer slide: only the current tile shows and the arrows (or a swipe) roll it out and the next in, lucky-wheel style, looping at the ends. Filters re-sync the roll. Reduced motion swaps instantly.
 - qa.js clean; no console errors.
+
+## Round: Deflated balloon (2026-10-29)
+- After the pop, the leftover is a limp deflated balloon (not an X); clicking it re-inflates the balloon and hides the text again.
+- qa.js clean; no console errors.
