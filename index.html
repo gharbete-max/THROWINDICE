@@ -1009,7 +1009,7 @@ document.querySelectorAll('.topic,.exploreCard,.tokenCategory,.tokenTopic,.token
 
 /* Bubble pit: a theme's funds drop in as heavy bouncing balls. Pop one to open the fund. */
 const DOGSVG=document.querySelector('.dogMascot').innerHTML;let bub=null;
-document.addEventListener('click',e=>{const m=e.target.closest('.dogMascot,.bubDog,.alienCat');const i=m&&(m.tagName==='IMG'?m:m.querySelector('img'));if(!i||!i.dataset.move||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.src;(i._mv||(i._mv=fetch(i.dataset.move).then(r=>r.blob()))).then(b=>{const u=URL.createObjectURL(b);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},990)}).catch(()=>{i._busy=0})});
+document.addEventListener('click',e=>{const m=e.target.closest('.dogMascot,.bubDog,.alienCat');const i=m&&(m.tagName==='IMG'?m:m.querySelector('img'));if(!i||!i.dataset.move||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.src;(i._mv||(i._mv=fetch(i.dataset.move).then(r=>r.blob()))).then(b=>{const u=URL.createObjectURL(b);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},1000)}).catch(()=>{i._busy=0})});
 function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);const L=document.getElementById('bubbleLayer'),F=document.getElementById('bubField');lastFocus=document.activeElement;
  L.hidden=false;document.body.style.overflow='hidden';document.getElementById('bubTitle').textContent=T[1]+' '+T[0];
  const ids=T[2],n=ids.length;document.getElementById('bubNote').textContent=T[3]||(SMUG[Math.floor(Math.random()*SMUG.length)].replace('{n}',T[0]));document.getElementById('bubDog').innerHTML=DOGSVG;
