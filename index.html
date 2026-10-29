@@ -132,7 +132,7 @@ body{--cc:var(--c1)}
 .selTag{display:inline-block;padding:3px 11px;border-radius:999px;background:var(--sel);color:#000;font-size:12px;font-weight:900;letter-spacing:.08em}
 @media(max-width:560px){.selOrb{width:64px;height:64px;font-size:32px}}
 .page{display:block;scroll-margin-top:22px}.page+.page{margin-top:64px}
-body.token-world .page:not(#parallel){display:none}body:not(.token-world) #parallel{display:none}
+body.token-world .page:not(.tp){display:none}body:not(.token-world) .tp{display:none}body.token-world .tp{display:none}body.token-world .tp.tcur{display:block}
 :focus-visible{outline:3px solid var(--text);outline-offset:3px}
 .bounce-click{animation:clickBounce .45s cubic-bezier(.2,.9,.25,1.4)}
 @keyframes clickBounce{0%{transform:scale(1)}30%{transform:scale(.9)}60%{transform:scale(1.06)}80%{transform:scale(.98)}100%{transform:scale(1)}}
@@ -280,8 +280,7 @@ body.token-world .page:not(#parallel){display:none}body:not(.token-world) #paral
 @media(max-width:560px){.tokenMetric{padding:12px}}
 @media(max-width:560px){.tokenMetric strong{font-size:13px}}
 @media(max-width:560px){.tokenTopic{min-height:0}}
-body.token-world .page:not(#parallel){display:none}
-body.token-world #parallel{display:block}
+
 .tokenBrowse{margin:28px 0 24px}
 .tokenBrowseIntro{max-width:760px;margin:-5px 0 16px;font-size:13px}
 .tokenCategoryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -408,7 +407,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 @keyframes alienBob{50%{transform:translateY(-5px) rotate(-4deg)}}@media(prefers-reduced-motion:reduce){.alienCat{animation:none}}
 @media(max-width:800px){.shell{zoom:1.12}}
 body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{font-size:19px}
-body.token-world:is(.basics-open,.calc-open) #parallel{display:none}body.token-world:is(.basics-open,.calc-open) :is(#basics,#fees){display:block}
+
 .feeSticker{position:absolute;right:-6px;top:-24px;z-index:3;width:168px;height:168px;display:grid;place-items:center;text-align:center;padding:30px;font:800 11.5px/1.2 inherit;font-family:inherit;color:#000;background:var(--c3,#ffb000);clip-path:polygon(50% 0,60% 12%,74% 6%,78% 21%,93% 22%,89% 37%,100% 46%,90% 58%,97% 72%,82% 76%,80% 91%,65% 88%,55% 100%,45% 89%,31% 96%,26% 82%,10% 80%,14% 65%,0 54%,11% 44%,4% 29%,19% 25%,22% 10%,38% 14%);transform:rotate(9deg);animation:stickerWob 3.2s ease-in-out infinite;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
 @keyframes stickerWob{50%{transform:rotate(-4deg) scale(1.05)}}@media(prefers-reduced-motion:reduce){.feeSticker{animation:none}}
 #fees .card:has(.feeSticker){position:relative}@media(max-width:640px){.feeSticker{width:150px;height:150px;font-size:10px;padding:26px;top:-34px;right:-10px}}
@@ -502,6 +501,24 @@ body.token-world #vig{display:none}
 .bubField:not(.static)::before{content:"";position:absolute;left:0;right:0;top:150px;height:4px;background:repeating-linear-gradient(90deg,var(--c1) 0 16px,transparent 16px 28px);opacity:.55;pointer-events:none}
 .bubField:not(.static) .bub{box-shadow:none;background:radial-gradient(circle at 37% 30%,rgba(255,255,255,.8) 0 4.5%,transparent 5.5%),radial-gradient(ellipse 64% 64% at 41% 34%,color-mix(in srgb,var(--cc) 58%,#fff),var(--cc) 56%,color-mix(in srgb,var(--cc) 84%,#000) 100%),var(--cc)}
 .bubField:not(.static) .bub em{max-width:68%}.bubField:not(.static) .bub .bflag{top:16%;right:17%}.bubField:not(.static) .bub .bchk{bottom:15%}
+.navbtn [data-w="t"]{display:none}body.token-world .navbtn [data-w="r"]{display:none}body.token-world .navbtn [data-w="t"]{display:inline}
+.stageNote{margin-top:14px}.stageNote .eyebrow{margin-bottom:8px}
+/* Token World: the M balloon is a little Saturn; popping it blasts debris that is sucked back in */
+.dgMore.balloon .satSvg,.dgMore.balloon .satLimp{display:none;grid-area:1/1}
+body.token-world .dgMore.balloon>svg:not(.satSvg):not(.satLimp){display:none!important}
+body.token-world .dgMore.balloon .satSvg{display:block}
+body.token-world .dgMore.balloon.popped .satSvg,body.token-world .dgMore.balloon.blasting .satSvg{display:none}
+body.token-world .dgMore.balloon.popped .satLimp{display:block;animation:satBack .7s cubic-bezier(.2,1.5,.4,1)}
+body.token-world .dgMore.balloon.blasting{pointer-events:none}
+body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231,255,.7))}
+@keyframes satBack{0%{transform:scale(2.2);filter:brightness(2.5)}100%{transform:scale(1);filter:none}}
+/* Coinpull */
+.gameLayer{position:fixed;inset:0;z-index:520;background:#0b0820;touch-action:none;user-select:none;-webkit-user-select:none}.gameLayer[hidden]{display:none}#gameCv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.gameClose{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:2px solid #fff6;background:#0008;color:#fff;font-size:20px;cursor:pointer;z-index:3}
+.gameHud{position:absolute;top:12px;left:14px;right:70px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:#fff;pointer-events:none;z-index:2}.gameHud>b{font:900 28px/1 inherit;min-width:70px;text-shadow:0 2px 6px #000}
+.gFuel{position:relative;flex:0 1 240px;width:240px;max-width:56vw;height:22px;border-radius:99px;background:#ffffff22;border:2px solid #fff8;overflow:hidden}.gFuel i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ff9b2f,#ffe14d);transition:width .08s}.gFuel .zone{position:absolute;left:20%;width:40%;top:0;bottom:0;background:repeating-linear-gradient(135deg,#ff4d5e55 0 6px,#ff4d5e22 6px 12px);text-decoration:none;border-left:2px solid #ff4d5e;border-right:2px solid #ff4d5e}.gFuel em{position:absolute;inset:0;display:grid;place-items:center;font:800 12px/1 inherit;font-style:normal;text-shadow:0 1px 3px #000}.gameHud small{font-size:11px;opacity:.8}
+.gameMsg{position:absolute;left:0;right:0;top:34%;text-align:center;font:900 clamp(28px,7vw,64px)/1.1 inherit;color:#fff;text-shadow:0 4px 18px #000;pointer-events:none;opacity:0;z-index:2}.gameMsg.show{opacity:1}.gameMsg.rug{color:#ff4d5e;animation:rugShake .18s linear infinite}@keyframes rugShake{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
+.gameCard{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(380px,calc(100vw - 32px));padding:22px;border-radius:24px;background:#151036ee;border:2px solid #7ee7ff88;color:#fff;text-align:center;z-index:4}.gameCard[hidden]{display:none}.gameCard h2{font-size:34px;margin:0 0 6px}.gameCard p{margin:4px 0 10px}.gameCard ul{list-style:none;padding:0;margin:0 0 14px;text-align:left;display:grid;gap:6px;font-weight:700}.gameCard .actions{justify-content:center}
 </style>
 </head>
 <body>
@@ -668,9 +685,23 @@ body.token-world #vig{display:none}
 </div>
 <p class="disclaimer">Article summaries are paraphrased and attributed. Links open external sites and may require a subscription. No affiliate links are active.</p>
 </section>
-<section class="page" id="parallel">
-<div class="pageTitle"><div class="eyebrow">TOKEN WORLD / EXPLORER</div><h1>Tokenization &amp; blockchain</h1><p>Follow how an asset becomes a digital token, where it lives, who services it, and how ownership records move. Educational view only — no trading actions.</p></div>
+<section class="page tp tcur" id="parallel">
+<div class="pageTitle"><div class="eyebrow">TOKEN WORLD</div><h1>Tokens, in plain words</h1><p>Real things becoming digital tokens. Pick a planet to start.</p></div>
 <section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><div class="alienRow"><svg class="alienCat" viewBox="0 0 120 120" aria-hidden="true"><line x1="40" y1="30" x2="30" y2="8" stroke="#2fbf5b" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="8" r="6" fill="#ff7ad9"/><line x1="80" y1="30" x2="90" y2="8" stroke="#2fbf5b" stroke-width="4" stroke-linecap="round"/><circle cx="90" cy="8" r="6" fill="#ff7ad9"/><path d="M24 52 L30 22 L50 38 Z M96 52 L90 22 L70 38 Z" fill="#37d66b"/><ellipse cx="60" cy="68" rx="42" ry="40" fill="#4be37f"/><ellipse cx="42" cy="62" rx="11" ry="14" fill="#fff"/><ellipse cx="78" cy="62" rx="11" ry="14" fill="#fff"/><ellipse cx="42" cy="64" rx="5" ry="10" fill="#0a0a28"/><ellipse cx="78" cy="64" rx="5" ry="10" fill="#0a0a28"/><path d="M52 86 Q60 94 68 86" fill="none" stroke="#0a0a28" stroke-width="3" stroke-linecap="round"/><path d="M14 74h18M14 82l16-3M106 74H88M106 82l-16-3" stroke="#0a0a28" stroke-width="2" stroke-linecap="round"/></svg><h2>Pick a planet</h2></div><p data-dg="1">Tap a planet. Pop a bubble.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
+<div class="card stageNote"><div class="eyebrow">🌱 EARLY DAYS</div><ul class="noteList"><li><span>🧪</span><p>Tokenization is young. Few products exist, and many are only for professional investors.</p></li><li><span>📈</span><p>For most people, crypto and blockchain ETFs are the easiest way in today. A normal broker account is enough.</p></li><li><span>🧭</span><p>Use the menu below: Basics and Wallets to learn, Explore to see what exists.</p></li></ul></div>
+<p class="disclaimer">The issuer and network examples above are real projects. Market metrics are dated snapshots with source links; case studies marked fictional are teaching examples. This is an educational map of roles and mechanisms, not a broker recommendation. Brokers are placeholders; nothing is traded on this site.</p>
+
+</section>
+<section class="page tp" id="tBasics">
+<div class="pageTitle"><div class="eyebrow">BASICS</div><h1>What is tokenization?</h1><p>Short and simple.</p></div>
+<div class="card"><ul class="noteList story">
+<li><span>🪙</span><p><b>A token is a digital record on a blockchain.</b> It says who owns what, like a receipt that anyone can check.</p></li>
+<li><span>🧱</span><p><b>Tokenization means putting a real thing on that record.</b> A fund share, a government bill, gold or a dollar can each be represented by a token. A token is only as good as the promise behind it: who holds the real asset, and can you cash it in?</p></li>
+<li><span>⚡</span><p><b>Why people try it.</b> Backers talk about faster settlement, trading around the clock and smaller pieces. These are goals, not guarantees.</p></li>
+<li><span>🌱</span><p><b>We are early.</b> Few products exist, many are only for professional investors, and rules differ by country.</p></li>
+<li><span>⚠️</span><p><b>The risks are different from a fund.</b> The issuer can fail, the code can have bugs, and you can lose your wallet keys. Rules and protections may be weaker than for a normal ETF.</p></li>
+<li><span>🔎</span><p><b>Always ask what you really own.</b> Check the legal claim, who holds the real asset, and whether you can redeem it.</p></li></ul>
+<p class="disclaimer">Educational only, not financial advice.</p></div>
 <details class="tokenWatch"><summary>🔭 What to watch (4 quick points)</summary><div class="tokenNotice"><strong>What is worth watching?</strong><span>Not just token prices: watch the asset behind the token, the network it uses, the legal rights it represents, and the institutions connecting the two worlds.</span></div>
 <div class="tokenMetrics">
 <article class="tokenMetric"><span>ASSET BACKING</span><strong>What does it represent?</strong><p>Fund units, government debt, private credit, property or a claim on something else.</p></article>
@@ -679,6 +710,22 @@ body.token-world #vig{display:none}
 <article class="tokenMetric"><span>ADOPTION</span><strong>Is it actually being used?</strong><p>Outstanding value, active wallets, transaction activity and repeat institutional use.</p></article>
 </div>
 </details>
+</section>
+<section class="page tp" id="tWallets">
+<div class="pageTitle"><div class="eyebrow">WALLETS</div><h1>Digital wallets</h1><p>Where your tokens live, and how to keep them safe.</p></div>
+<div class="card"><ul class="noteList story">
+<li><span>🔑</span><p><b>A wallet holds keys, not coins.</b> Your tokens stay on the blockchain. The wallet keeps the secret key that proves they are yours.</p></li>
+<li><span>🏦</span><p><b>Two kinds of custody.</b> With a custodial wallet, an exchange or broker keeps the keys for you: easier, but you trust them. With self-custody you keep the keys: full control and full responsibility.</p></li>
+<li><span>🔥</span><p><b>Hot or cold.</b> A hot wallet is online, like a phone app: handy but easier to attack. A cold wallet is an offline device: safer for larger amounts.</p></li>
+<li><span>📝</span><p><b>The seed phrase is everything.</b> 12 or 24 words that can rebuild your wallet. Anyone who has them can take everything. Never share them or type them into a website. Nobody can reset them for you.</p></li>
+<li><span>📮</span><p><b>An address is like an account number.</b> You can share it. Check every character before you send, because transfers usually cannot be undone.</p></li>
+<li><span>⛽</span><p><b>Sending costs a network fee.</b> It goes to the network, not to the app, and it changes with how busy the network is.</p></li>
+<li><span>🎣</span><p><b>Watch out for scams.</b> Fake support, fake giveaways and urgent messages are common. Real support never asks for your seed phrase.</p></li>
+<li><span>🧺</span><p><b>ETFs need no wallet.</b> Crypto and blockchain ETFs sit in a normal broker account, so the broker handles the keys.</p></li></ul>
+<p class="disclaimer">Educational only, not financial advice.</p></div>
+</section>
+<section class="page tp" id="tToday">
+<div class="pageTitle"><div class="eyebrow">EXPLORE</div><h1>What exists today</h1><p>The options are limited, but they are growing.</p></div>
 <section class="tokenBrowse" id="tokenCategories">
 <div class="sectionHead tokenSectionHead"><div><div class="eyebrow">BROWSE TOKEN MARKETS</div><h2>Three connected worlds</h2><p>Start with the type of digital asset, then inspect what supports it.</p></div><span class="tag blue">EDUCATIONAL MAP</span></div>
 <p class="tokenBrowseIntro">Token markets are not one single asset class. A cryptoasset, a stablecoin and a tokenized fund can use similar technology while representing very different rights, risks and economic purposes.</p>
@@ -741,6 +788,10 @@ body.token-world #vig{display:none}
 </div>
 <div class="caseLesson"><strong>Quick lesson</strong><p>A token's price chart cannot tell the whole story. For a cryptoasset, inspect utility and supply; for a stablecoin, reserves and redemption; for a tokenized fund, legal rights, underlying holdings and the official ownership record.</p></div>
 </section></details>
+
+</section>
+<section class="page tp" id="tNetworks">
+<div class="pageTitle"><div class="eyebrow">EXPLORE</div><h1>Where tokens live</h1><p>Networks, smart contracts and the firms around them.</p></div>
 <div class="sectionHead tokenSectionHead"><div><h2>Explore the system</h2><p>Pick a layer to see the questions that matter.</p></div><span class="tag">ILLUSTRATIVE GUIDE</span></div>
 <div class="exploreRows tokenTopicRows">
 <button class="exploreCard tokenTopic" onclick="showTokenDetail('assets')"><div class="big">▣</div><h3>Tokenized assets</h3><p>Funds, bonds, credit, property and commodities represented digitally.</p><small>Mock watchlist: backing · issuer · redemption · legal rights</small></button>
@@ -758,13 +809,21 @@ body.token-world #vig{display:none}
 <article class="brokerCard" data-role="issuance"><div class="brokerType">03 / PRODUCT &amp; RECORDS</div><h3>Issuer or transfer agent</h3><p>Defines the product and rights, creates or authorizes tokens, and may maintain the official ownership register or reconcile on-chain records with legal records.</p><div class="brokerFacts"><span>Useful to inspect</span><b>Prospectus · redemption · register · legal venue</b></div><button class="textlink" onclick="toggleBrokerDetail(this)">What to check +</button><div class="brokerMore">What exactly does the token represent? Which record is legally authoritative? Who can freeze, burn or reissue tokens? What are the redemption terms?</div></article>
 <article class="brokerCard" data-role="infrastructure"><div class="brokerType">04 / TECHNICAL RAILS</div><h3>Network &amp; settlement provider</h3><p>Provides blockchain infrastructure, transaction validation, wallet connectivity, token standards or links between traditional payment systems and on-chain records.</p><div class="brokerFacts"><span>Useful to inspect</span><b>Uptime · network fees · interoperability · resilience</b></div><button class="textlink" onclick="toggleBrokerDetail(this)">What to check +</button><div class="brokerMore">Is the network public or permissioned? Can assets move to another network? Who pays transaction fees? What is the recovery plan during an outage or bridge failure?</div></article>
 </div></details>
-<details class="moreFold" id="flowFold"><summary>🔄 Issuance</summary><div class="tokenFlow card" id="tokenFlow"><div class="sectionHead"><div><h2>Follow one token through its lifecycle</h2><p>Select a stage to see what to investigate.</p></div></div><div aria-label="Token lifecycle stages" class="lifecycle" role="group"><button class="lifeStep active" onclick="showLifeStage(this,0)"><b>1</b><span>Asset &amp; rights</span></button><button class="lifeStep" onclick="showLifeStage(this,1)"><b>2</b><span>Issuance</span></button><button class="lifeStep" onclick="showLifeStage(this,2)"><b>3</b><span>Access &amp; custody</span></button><button class="lifeStep" onclick="showLifeStage(this,3)"><b>4</b><span>Transfer &amp; settlement</span></button><button class="lifeStep" onclick="showLifeStage(this,4)"><b>5</b><span>Redemption</span></button></div><p class="lifeDescription" id="lifeDescription">Start with the legal claim: what asset or right exists, who owes the obligation, and which documents define the holder's rights?</p></div></details>
-<p class="disclaimer">The issuer and network examples above are real projects. Market metrics are dated snapshots with source links; case studies marked fictional are teaching examples. This is an educational map of roles and mechanisms, not a broker recommendation. Brokers are placeholders; nothing is traded on this site.</p>
+
+</section>
+<section class="page tp" id="tIssuance">
+<div class="pageTitle"><div class="eyebrow">EXPLORE</div><h1>How an asset becomes a token</h1><p>From the real asset to the digital record.</p></div>
+<div class="tokenFlow card" id="tokenFlow"><div class="sectionHead"><div><h2>Follow one token through its lifecycle</h2><p>Select a stage to see what to investigate.</p></div></div><div aria-label="Token lifecycle stages" class="lifecycle" role="group"><button class="lifeStep active" onclick="showLifeStage(this,0)"><b>1</b><span>Asset &amp; rights</span></button><button class="lifeStep" onclick="showLifeStage(this,1)"><b>2</b><span>Issuance</span></button><button class="lifeStep" onclick="showLifeStage(this,2)"><b>3</b><span>Access &amp; custody</span></button><button class="lifeStep" onclick="showLifeStage(this,3)"><b>4</b><span>Transfer &amp; settlement</span></button><button class="lifeStep" onclick="showLifeStage(this,4)"><b>5</b><span>Redemption</span></button></div><p class="lifeDescription" id="lifeDescription">Start with the legal claim: what asset or right exists, who owes the obligation, and which documents define the holder's rights?</p></div>
 </section>
 </main>
 <div class="footerNote">THROWINDICE concept prototype · sourced market snapshots are dated and may be delayed; illustrative teaching cases are labelled · not investment advice</div>
 </div>
 
+<div class="gameLayer" id="gameLayer" role="dialog" aria-modal="true" aria-label="Coinpull game" hidden><canvas id="gameCv"></canvas>
+<button class="gameClose" type="button" onclick="coinpullClose()" aria-label="Close game">✕</button>
+<div class="gameHud"><b id="gScore">0</b><div class="gFuel" aria-label="Jetpack charge"><i id="gFuelBar"></i><u class="zone"></u><em id="gFuelTxt">0%</em></div><small>rug zone 20–60%</small></div>
+<div class="gameMsg" id="gMsg" aria-live="polite"></div>
+<div class="gameCard" id="gameCard"><h2 id="gcTitle">Coinpull</h2><p id="gcText">Run on the candles. Climb the green hill.</p><ul><li>🖱️ Hold = jetpack</li><li>🟩 Green candles charge it</li><li>📉 Keep 20–60% for the rugpull</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
@@ -797,10 +856,10 @@ body.token-world #vig{display:none}
 <span class="coinLabel">REAL-WORLD ASSETS</span>
 </button>
 <button class="navbtn" data-page="news" onclick="navAction(this,'news','news')"><span class="ico">▣</span><span class="navLabel">News</span></button>
-<button aria-controls="invPop" aria-expanded="false" aria-haspopup="true" class="navbtn" data-pages="world sectors commodities" id="invBtn" onclick="invToggle(this)"><span class="ico">📈</span><span class="navLabel">Investing</span></button>
-<button aria-label="Dashboard home" class="navbtn home active" data-page="dashboard" onclick="navAction(this,'dashboard','home')"><span class="ico">⌂</span><span class="navLabel">Dashboard</span></button>
+<button aria-controls="invPop" aria-expanded="false" aria-haspopup="true" class="navbtn" data-pages="world sectors commodities" id="invBtn" onclick="invToggle(this)"><span class="ico"><span data-w="r">📈</span><span data-w="t">🔭</span></span><span class="navLabel"><span data-w="r">Investing</span><span data-w="t">Explore</span></span></button>
+<button aria-label="Dashboard home" class="navbtn home active" data-page="dashboard" onclick="navAction(this,'dashboard','home')"><span class="ico">⌂</span><span class="navLabel"><span data-w="r">Dashboard</span><span data-w="t">Home</span></span></button>
 <button class="navbtn" data-page="basics" onclick="navAction(this,'basics','basics')"><span class="ico">✦</span><span class="navLabel">Basics</span></button>
-<button class="navbtn" data-page="fees feecalc" onclick="navAction(this,'feecalc','feecalc')"><span class="ico">🧮</span><span class="navLabel">Fee calc</span></button>
+<button class="navbtn" data-page="fees feecalc" onclick="navAction(this,'feecalc','feecalc')"><span class="ico"><span data-w="r">🧮</span><span data-w="t">👛</span></span><span class="navLabel"><span data-w="r">Fee calc</span><span data-w="t">Wallets</span></span></button>
 <button class="navbtn" data-page="game" onclick="navGame(this)"><span class="ico">🎮</span><span class="navLabel">Game</span></button>
 </div></nav>
 <div id="vig" aria-hidden="true"></div>
@@ -816,16 +875,17 @@ body.token-world #vig{display:none}
 <div class="toast" id="toast"></div>
 <script>
 const pages=['dashboard','news','basics','fees','world','sectors','commodities','etfs','parallel'];
-function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);document.body.classList.remove('basics-open','calc-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
+function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);if(token){document.body.dataset.tview='';showTView('parallel')}document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
+const TVG={parallel:'home',tBasics:'learn',tWallets:'learn',tToday:'explore',tNetworks:'explore',tIssuance:'explore'};
+function showTView(id){const B=document.body,g=TVG[id]||'home';if(B.dataset.tview===g)return;B.dataset.tview=g;document.querySelectorAll('.tp').forEach(x=>x.classList.toggle('tcur',TVG[x.id]===g));window.scrollTo(0,0)}
 const INVP=['world','sectors','commodities'],LEARNP=['basics','fees'],viewOf=id=>INVP.includes(id)?'invest':LEARNP.includes(id)?'learn':id;
 function showView(id){const B=document.body,vw=viewOf(id);if(B.classList.contains('token-world')||B.dataset.view===vw)return;B.dataset.view=vw;document.querySelectorAll('.page').forEach(x=>x.classList.toggle('cur',viewOf(x.id)===vw));requestAnimationFrame(()=>window._vigUpd&&window._vigUpd())}
-function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==viewOf(pg.id)){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
+function scrollToSection(id){const el=document.getElementById(id);if(!el)return;const d=el.closest('details');if(d)d.open=true;const pg=el.classList.contains('page')?el:el.closest('.page');if(pg&&pg.classList.contains('tp')&&document.body.classList.contains('token-world')){showTView(pg.id)}else if(pg&&!document.body.classList.contains('token-world')&&document.body.dataset.view!==viewOf(pg.id)){showView(pg.id);window.scrollTo(0,0)}el.scrollIntoView({behavior:'smooth',block:'start'})}
 function navAction(button,page,act){invClose();const T=document.body.classList.contains('token-world'),mark=()=>document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));
- if(T&&(act==='basics'||act==='feecalc')){const B=document.body;B.classList.toggle('basics-open',act==='basics');B.classList.toggle('calc-open',act==='feecalc');mark();if(act==='feecalc')setTimeout(()=>document.getElementById('fees').scrollIntoView({behavior:'smooth',block:'start'}),60);else window.scrollTo({top:0,behavior:'smooth'});return}
  if(T&&act==='news'){setPage('news');scrollToSection('news');return}
- if(T){document.body.classList.remove('basics-open','calc-open');if(act==='networks')showTokenDetail('networks');if(act==='issuance')showTokenDetail('settlement');mark();scrollToSection({assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow'}[act]||'parallel');return}
+ if(T){const id={basics:'tBasics',feecalc:'tWallets',today:'tToday',networks:'tNetworks',issuance:'tIssuance'}[act]||'parallel';if(act==='networks')showTokenDetail('networks');if(act==='issuance')showTokenDetail('settlement');mark();scrollToSection(id);return}
  mark();scrollToSection(page==='feecalc'?'fees':page)}
-const INV={real:[['world','🌍','World','var(--c2)'],['sectors','🏭','Sectors','var(--c1)'],['commodities','🥇','Commodities','var(--c3)']],token:[['assets','🪙','Assets','var(--c2)'],['networks','⛓️','Networks','var(--c1)'],['issuance','📜','Issuance','var(--c3)']]};
+const INV={real:[['world','🌍','World','var(--c2)'],['sectors','🏭','Sectors','var(--c1)'],['commodities','🥇','Commodities','var(--c3)']],token:[['today','🪙','Options','var(--c2)'],['networks','⛓️','Networks','var(--c1)'],['issuance','📜','Issuance','var(--c3)']]};
 let invT=0;
 function invClose(now){const P=document.getElementById('invPop');if(!P||P.hidden)return;document.getElementById('invBtn').setAttribute('aria-expanded','false');document.getElementById('invBtn').classList.remove('open');const done=()=>{P.hidden=true;P.innerHTML='';P.classList.remove('out')};clearTimeout(invT);if(now||matchMedia('(prefers-reduced-motion: reduce)').matches)done();else{P.classList.add('out');invT=setTimeout(done,210)}}
 function invSparks(P,cx,cy,n){if(matchMedia('(prefers-reduced-motion: reduce)').matches||!P.animate)return;const E=['✨','⭐','💫','🎈','🪙','✦'];for(let i=0;i<n;i++){const e=document.createElement('i');e.className='invSpark';e.textContent=E[i%E.length];e.style.cssText='left:'+cx+'px;top:'+cy+'px;font-style:normal';P.append(e);const a=Math.random()*Math.PI*2,d=60+Math.random()*90;e.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:1},{transform:'translate('+(Math.cos(a)*d-10)+'px,'+(Math.sin(a)*d-40)+'px) scale(1.3) rotate('+(Math.random()*240-120)+'deg)',opacity:0}],{duration:650+Math.random()*350,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>e.remove()}}
@@ -843,8 +903,8 @@ window._vigUpd=()=>{if(!raf)raf=requestAnimationFrame(upd)};addEventListener('sc
 /* VOO from its first trading day to the end of 2025 vs a 2% savings account. Yahoo Finance adjusted close (dividends reinvested), fetched 2026-10-29. Savings = 1.02^years compounded. Refresh quarterly (docs/UPDATING.md). */
 const VS={from:'9 Sep 2010',to:'31 Dec 2025',voo:717,price:519,sav:35.4};
 document.querySelectorAll('[data-vs]').forEach(e=>{const k=.8,wv=k*100,ws=Math.max(1.5,k*100*VS.sav/VS.voo);e.innerHTML='<div class="vsT">Since '+VS.from+': VOO vs a 2% savings account</div><div class="vsRow"><span>VOO</span><div class="vsTrack"><i class="vsBar" style="--w:'+wv+'%;--bc:var(--c2)"></i><b>+'+VS.voo+'%</b></div></div><div class="vsRow"><span>2% savings</span><div class="vsTrack"><i class="vsBar" style="--w:'+ws.toFixed(1)+'%;--bc:var(--c5)"></i><b>+'+Math.round(VS.sav)+'%</b></div></div><div class="vsNote">Dividends reinvested, in US dollars, before tax (price only: +'+VS.price+'%). Past results do not predict the future. Source: Yahoo Finance, data to '+VS.to+'.</div>'});
-document.body.dataset.view='dashboard';document.getElementById('dashboard').classList.add('cur');
-function navGame(b){invClose();toast('🎮 A game is coming soon!')}
+document.body.dataset.view='dashboard';document.body.dataset.tview='home';document.getElementById('dashboard').classList.add('cur');
+function navGame(b){invClose();if(document.body.classList.contains('token-world'))coinpullOpen();else toast('🎮 A game is coming soon!')}
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
 let portalBusy=false;
@@ -1359,11 +1419,87 @@ document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))re
 
 regLabel();if(!REGION)regOpen();
 
+
+/* Coinpull: a runner on trading candles. Hold = jetpack. Green candles charge it; the rugpull needs 20-60% to land softly. */
+(function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
+const CW=46,SPD=170,G=1400,BR=700,VS=550,DR=.52,MAXRISE=430;let W=0,H=0,dpr=1,R=null,raf=0,hold=false,best=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
+const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
+function fuelNeed(h){const v1=Math.sqrt((h+VS*VS/(2*BR))/(1/(2*G)+1/(2*BR)));return v1<VS?0:DR*(v1-VS)/BR}
+function dropFor(f){let lo=200,hi=6000;for(let i=0;i<40;i++){const m=(lo+hi)/2;if(fuelNeed(m)<f)lo=m;else hi=m}return(lo+hi)/2}
+function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+function fresh(){return{sx:0,y:0,vy:0,fuel:.1,score:0,dead:false,t:0,cam:0,px:Math.max(70,Math.min(200,W*.24)),C:[],gen:{top:0,phase:'flat',left:16,k:0},lastIdx:-1,msg:0,parts:[],ground:true,cliffAt:-1,landed:0,need:0}}
+function gen(){const g=R.gen,i=R.C.length;let green=Math.random()<.8,top=g.top,rug=false;
+ if(g.phase==='up'){if(green){top-=Math.random()<.11?rnd(34,60):rnd(3,13)}else top+=rnd(2,9);if(--g.left<=0)g.phase='cliff';g.k++}
+ else if(g.phase==='cliff'){const f=rnd(.2,.6);R.need=f;top+=dropFor(f*.85);green=false;rug=true;R.cliffAt=i;g.phase='flat';g.left=10}
+ else{top+=rnd(-5,5);if(--g.left<=0){g.phase='up';g.left=ri(80,130);g.k=0}}
+ g.top=top;R.C.push({top,green,rug,wick:rnd(6,22),k:g.k})}
+const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};
+function reset(){R=fresh();for(let i=0;i<30;i++)gen();R.y=R.C[Math.floor(R.px/CW)].top;R.cam=R.y-H*.58;msg('')}
+function msg(t,c){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')+(c?' '+c:'')}
+function ground(x){const a=cand(Math.floor((x-9)/CW)).top,b=cand(Math.floor((x+9)/CW)).top;return Math.min(a,b)}
+function step(dt){if(R.dead)return;R.t+=dt;const px=R.sx+R.px,gnd=ground(px),front=cand(Math.floor((px+14)/CW)).top;let sp=SPD;const boost=hold&&R.fuel>0,air=R.y<gnd-.5;
+ let u=0;if(boost){if(air&&R.vy>0){if(R.vy>VS)u=1;else if(R.vy>VS-40)u=G/(G+BR)}else u=1}
+ R.vy+=(G-(G+BR)*u)*dt;if(R.vy<-MAXRISE)R.vy=-MAXRISE;if(u>0)R.fuel=Math.max(0,R.fuel-DR*u*dt);
+ if(air&&!R.wasAir){R.wasAir=true;R.fallFrom=R.y}
+ R.y+=R.vy*dt;
+ const wall=front<R.y-12;if(wall){sp=SPD*.22;if(!boost){R.y-=110*dt;R.vy=0}}else if(boost&&R.vy<0)sp=SPD*1.6;
+ const g2=ground(px);
+ if(R.y>=g2){const imp=R.vy;if(R.wasAir){if(imp>VS*1.08){R.dead=true;R.y=g2;R.vy=0;die();return}const idx=Math.floor(px/CW);if(R.cliffAt>=0&&idx>=R.cliffAt&&idx<=R.cliffAt+10&&R.y-R.fallFrom>300){R.score+=250;msg('SOFT LANDING +250');R.msgT=1.4;R.cliffAt=-1}}R.wasAir=false;R.y=g2;R.vy=0;R.ground=true}else R.ground=false;
+ R.sx+=sp*dt;R.score+=sp*dt/10;
+ const idx=Math.floor((R.sx+R.px)/CW);if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.03,.008+c.k*.00015))}
+ const ahead=R.cliffAt-(R.sx+R.px)/CW;if(R.cliffAt>=0&&ahead>0&&ahead<20)msg('⚠ RUGPULL!','rug');else if(R.msgT>0){R.msgT-=dt;if(R.msgT<=0)msg('')}else if(document.getElementById('gMsg').classList.contains('rug'))msg('');
+ if(R.cliffAt>=0&&idx>R.cliffAt+10)R.cliffAt=-1;
+ R.cam+=((R.y-H*.58)-R.cam)*Math.min(1,dt*5);
+ document.getElementById('gFuelBar').style.width=R.fuel*100+'%';document.getElementById('gFuelTxt').textContent=Math.round(R.fuel*100)+'%';document.getElementById('gScore').textContent=Math.floor(R.score)}
+function die(){msg('');for(let i=0;i<30;i++)R.parts.push({x:R.px,y:R.y,vx:rnd(-260,260),vy:rnd(-520,-60),c:i%2?'#ff4d5e':'#ffd93b'});best=Math.max(best,Math.floor(R.score));try{localStorage.setItem('cp-best',best)}catch(e){}
+ document.getElementById('gcTitle').textContent='REKT 💥';document.getElementById('gcText').textContent='You hit the ground too hard. Score '+Math.floor(R.score)+'.';document.getElementById('gcBest').textContent='Best '+best;document.getElementById('gcGo').textContent='Try again';setTimeout(()=>{if(R&&R.dead)document.getElementById('gameCard').hidden=false},700)}
+function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0b0820');bg.addColorStop(1,'#1d1250');g.fillStyle=bg;g.fillRect(0,0,W,H);
+ g.strokeStyle='#ffffff10';g.lineWidth=1;const gy=80;for(let y=-((cam%gy)+gy)%gy;y<H;y+=gy){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}for(let x=-(s.sx*.5%gy);x<W;x+=gy){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}
+ const i0=Math.floor(s.sx/CW)-1,i1=Math.floor((s.sx+W)/CW)+2;
+ for(let i=Math.max(0,i0);i<=i1;i++){const c=cand(i),x=i*CW-s.sx,y=c.top-cam;const col=c.green?'#19c37d':'#ff4d5e',dk=c.green?'#0c7a50':'#a82437';g.fillStyle=col;g.fillRect(x+3,y,CW-6,H-y+10);g.fillStyle=dk;g.fillRect(x+3,y,CW-6,5);g.fillStyle='#ffffff22';g.fillRect(x+6,y+6,5,H);g.fillStyle=col;g.fillRect(x+CW/2-1.5,y-c.wick,3,c.wick)}
+ const fy=s.y-cam;player(s.px,fy,s);
+ s.parts.forEach(p=>{g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y-cam,4,0,6.3);g.fill()})}
+function player(x,y,s){const g=cx,t=s.t,run=s.ground&&!s.dead,bob=run?Math.sin(t*16)*2:0,thr=hold&&s.fuel>0&&!s.dead;g.save();g.translate(x,y);
+ if(thr){const fl=14+Math.random()*10;g.fillStyle='#ffb347';g.beginPath();g.moveTo(-26,-26);g.lineTo(-20,-26);g.lineTo(-23,-26+fl+10);g.closePath();g.fill();g.fillStyle='#fff3a0';g.beginPath();g.moveTo(-25,-26);g.lineTo(-21,-26);g.lineTo(-23,-26+fl);g.closePath();g.fill()}
+ g.fillStyle='#8c93a8';g.fillRect(-30,-50,10,26);g.fillStyle='#ff7a3a';g.fillRect(-30,-30,10,4);
+ /* feet */
+ g.fillStyle='#2a2140';const f1=run?Math.sin(t*16)*7:0;g.beginPath();g.ellipse(-6+f1,-2,8,4,0,0,6.3);g.fill();g.beginPath();g.ellipse(8-f1,-2,8,4,0,0,6.3);g.fill();
+ /* robe */
+ g.translate(0,bob);g.fillStyle='#7a4bd6';g.beginPath();g.moveTo(-12,-52);g.lineTo(12,-52);g.lineTo(22,-8);g.lineTo(-22,-8);g.closePath();g.fill();g.fillStyle='#b99bff';g.fillRect(-22,-12,44,5);g.fillStyle='#5a33a8';g.fillRect(-2,-50,4,40);
+ /* head */
+ const hx=2,hy=-66;g.fillStyle='#ffd93b';g.strokeStyle='#b8860b';g.lineWidth=2.5;g.beginPath();g.arc(hx,hy,22,0,6.3);g.fill();g.stroke();
+ /* huge popping eyes */
+ [[-9,-9],[11,-9]].forEach(([ex,ey],k)=>{g.fillStyle='#fff';g.strokeStyle='#222';g.lineWidth=2;g.beginPath();g.arc(hx+ex,hy+ey,12.5,0,6.3);g.fill();g.stroke();g.fillStyle='#111';g.beginPath();g.arc(hx+ex+3+Math.sin(t*9+k)*1.2,hy+ey+1,5,0,6.3);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(hx+ex+5,hy+ey-2,1.7,0,6.3);g.fill()});
+ /* smile */
+ g.strokeStyle='#7a3b00';g.lineWidth=3;g.lineCap='round';g.beginPath();g.arc(hx+2,hy+6,11,.15*Math.PI,.85*Math.PI);g.stroke();
+ /* tongue flapping behind like a flag */
+ const mx=hx-7,my=hy+15;g.strokeStyle='#ff5a8a';g.lineWidth=7;g.beginPath();g.moveTo(mx,my);for(let k=1;k<=10;k++){const u=k/10,sp=s.ground?1:.6+Math.min(1,Math.abs(s.vy)/600);g.lineTo(mx-u*(36+sp*14),my+Math.sin(t*22-u*7)*(3+u*8)*sp+u*5)}g.stroke();
+ g.strokeStyle='#d63a6c';g.lineWidth=2;g.beginPath();g.moveTo(mx,my);for(let k=1;k<=10;k++){const u=k/10,sp=s.ground?1:.6+Math.min(1,Math.abs(s.vy)/600);g.lineTo(mx-u*(36+sp*14),my+Math.sin(t*22-u*7)*(3+u*8)*sp+u*5)}g.stroke();
+ g.restore()}
+let last=0;function loop(t){raf=requestAnimationFrame(loop);const dt=Math.min(.033,(t-last)/1000||.016);last=t;if(!R)return;if(!document.getElementById('gameCard').hidden){R.t+=dt;draw();return}
+ step(dt);R.parts.forEach(p=>{p.vy+=1200*dt;p.x+=p.vx*dt;p.y+=p.vy*dt});draw()}
+function start(){document.getElementById('gameCard').hidden=true;document.getElementById('gcTitle').textContent='Coinpull';reset();document.getElementById('gcBest').textContent=best?'Best '+best:''}
+window.coinpullOpen=function(){size();L.hidden=false;document.body.style.overflow='hidden';reset();const c=document.getElementById('gameCard');c.hidden=false;document.getElementById('gcTitle').textContent='Coinpull';document.getElementById('gcText').textContent='Run on the candles. Climb the green hill.';document.getElementById('gcGo').textContent='Start';document.getElementById('gcBest').textContent=best?'Best '+best:'';cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);document.getElementById('gcGo').focus()};
+window.coinpullClose=function(){L.hidden=true;document.body.style.overflow='';cancelAnimationFrame(raf);R=null;hold=false};
+window._cp={ground,get R(){return R},set hold(v){hold=v},fuelNeed,dropFor,step,reset};
+document.getElementById('gcGo').onclick=start;
+L.addEventListener('pointerdown',e=>{if(e.target.closest('button,.gameCard'))return;hold=true});L.addEventListener('pointerup',()=>hold=false);L.addEventListener('pointercancel',()=>hold=false);
+addEventListener('keydown',e=>{if(L.hidden)return;if(e.key==='Escape')coinpullClose();if(e.key===' '||e.key==='ArrowUp'||e.key==='w'){hold=true;if(e.key===' ')e.preventDefault()}});addEventListener('keyup',e=>{if(e.key===' '||e.key==='ArrowUp'||e.key==='w')hold=false});
+addEventListener('resize',()=>{if(!L.hidden)size()})})();
 /* digest: clamp long text, add a More pill */
 (function(){let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const BAL='<svg viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><defs><radialGradient id="balG" cx="38%" cy="30%" r="75%"><stop class="g0" offset="0"/><stop class="g1" offset=".45"/><stop class="g2" offset="1"/></radialGradient></defs><path class="bString" d="M32 66c-5 5 5 9 0 14" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linecap="round"/><path class="bKnot" d="M32 61l-5 6h10z"/><path class="bBody" d="M32 2C16 2 5 14 5 29c0 17 13 32 27 32s27-15 27-32C59 14 48 2 32 2z" fill="url(#balG)"/><ellipse cx="21" cy="17" rx="6" ry="9" transform="rotate(25 21 17)" fill="#fff" opacity=".55"/><text x="32" y="40" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="26" fill="#fff">M</text></svg><svg class="balLimp" viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><path d="M14 60c-4-8 2-14 12-13 6-5 16-4 21 2 6-1 11 4 8 10-3 7-14 8-22 6-8 3-17 1-19-5z" class="bLimp" stroke-width="1.2" stroke-linejoin="round"/><path d="M22 54c4-3 9-3 13-1M34 62c5 1 9 0 12-3" fill="none" stroke="#8c0014" stroke-width="1.4" stroke-linecap="round" opacity=".7"/><path class="bKnot" d="M13 61l-7 2 5 4z"/><path d="M7 64c-4 3 2 6-1 10" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="4" ry="2" fill="#fff" opacity=".5"/></svg>';
+const SAT='<svg class="satSvg" viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><defs><radialGradient id="satG" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#fff0b8"/><stop offset=".5" stop-color="#ffb347"/><stop offset="1" stop-color="#b8520f"/></radialGradient></defs><g transform="rotate(-18 32 42)"><path d="M3 42A29 8.5 0 0 1 61 42" fill="none" stroke="#7ee7ff" stroke-width="4" stroke-linecap="round"/></g><circle cx="32" cy="42" r="17" fill="url(#satG)"/><ellipse cx="25" cy="34" rx="5" ry="7" transform="rotate(25 25 34)" fill="#fff" opacity=".5"/><g transform="rotate(-18 32 42)"><path d="M3 42A29 8.5 0 0 0 61 42" fill="none" stroke="#bff5ff" stroke-width="4" stroke-linecap="round"/></g><text x="32" y="48" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="17" fill="#fff" stroke="#8a3a08" stroke-width=".6">M</text></svg><svg class="satLimp" viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><g transform="rotate(-18 32 42)"><ellipse cx="32" cy="42" rx="22" ry="6" fill="none" stroke="#5aa8c0" stroke-width="2.4"/></g><circle cx="32" cy="42" r="10" fill="#9c7a52"/><ellipse cx="29" cy="38" rx="3" ry="4" fill="#fff" opacity=".3"/></svg>';
+
 function scraps(cx,cy){let C=document.getElementById('confetti');if(!C){C=document.createElement('div');C.id='confetti';C.setAttribute('aria-hidden','true');document.body.append(C)}for(let i=0;i<9;i++){const e=document.createElement('i'),a=i/9*6.283+Math.random()*.5,d=36+Math.random()*50;e.style.cssText='left:'+cx+'px;top:'+cy+'px;width:'+(10+Math.random()*8)+'px;height:'+(5+Math.random()*4)+'px;background:var(--bal);border-radius:50% 50% 50% 0;--dx:'+Math.cos(a)*d+'px;--dy:'+(Math.sin(a)*d-20)+'px;--rot:'+(Math.random()*540-270)+'deg';C.append(e);setTimeout(()=>e.remove(),1400)}}
-window._dgRun=run;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary,details'))return;if(!e.getClientRects().length)return;e.dataset.dg=1;if(e.matches('.flook,.disclaimer,.pageTitle p,.sectionHead p,.peExp,.tokenNotice span')||e.closest('.fbox,li,.lookFor'))return;{const cs=getComputedStyle(e),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.45;if(Math.round(e.getBoundingClientRect().height/lh)<2)return}e.classList.add('dgHide');const b=document.createElement('button');b.type='button';b.className='dgMore balloon';b.innerHTML=BAL;b.setAttribute('aria-label','More');b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const open=e.classList.contains('dgHide');e.classList.toggle('dgHide',!open);b.setAttribute('aria-expanded',open);b.classList.remove('popB','inflate');if(open){b.setAttribute('aria-label','Less');if(!RM()){const r=b.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;confetti(cx,cy,46);scraps(cx,cy);b.classList.add('popped');e.classList.remove('dgPop');void e.offsetWidth;e.classList.add('dgPop')}else b.classList.add('popped')}else{b.setAttribute('aria-label','More');b.classList.remove('popped');if(!RM()){void b.offsetWidth;b.classList.add('inflate')}}};e.before(b)})}
+function blast(b,cx,cy){let C=document.getElementById('confetti');if(!C){C=document.createElement('div');C.id='confetti';C.setAttribute('aria-hidden','true');document.body.append(C)}
+ b.classList.add('blasting');const fl=document.createElement('i');fl.style.cssText='position:absolute;left:'+cx+'px;top:'+cy+'px;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:radial-gradient(circle,#fff 0,#ffe08a 35%,rgba(255,120,40,.6) 60%,transparent 72%)';C.append(fl);
+ fl.animate([{transform:'scale(.2)',opacity:1},{transform:'scale(5.5)',opacity:0}],{duration:520,easing:'ease-out'}).onfinish=()=>fl.remove();
+ const T=2500,cols=['#ffd27a','#ffb347','#cfa070','#7ee7ff','#bff5ff','#fff0b8'];
+ for(let k=0;k<30;k++){const e=document.createElement('i'),a=Math.random()*6.283,d=50+Math.random()*95,sh=k%3===0,w=sh?16:5+Math.random()*7,h=sh?3:w*(.7+Math.random()*.6);e.style.cssText='position:absolute;left:'+cx+'px;top:'+cy+'px;width:'+w+'px;height:'+h+'px;margin:-'+h/2+'px 0 0 -'+w/2+'px;border-radius:'+(sh?'3px':'30%')+';background:'+cols[sh?3+(k%3):k%3]+';box-shadow:0 0 6px rgba(255,190,90,.8)';C.append(e);const dx=Math.cos(a)*d,dy=Math.sin(a)*d,rot=Math.random()*400-200;
+  e.animate([{transform:'translate(0,0) rotate(0deg) scale(.4)',opacity:1,easing:'cubic-bezier(.1,.7,.3,1)'},{transform:'translate('+dx+'px,'+dy+'px) rotate('+rot+'deg) scale(1)',opacity:1,offset:.5,easing:'cubic-bezier(.55,0,1,.6)'},{transform:'translate(0,0) rotate('+rot*2+'deg) scale(.1)',opacity:.9}],{duration:T-Math.random()*250}).onfinish=()=>e.remove()}
+ setTimeout(()=>{b.classList.remove('blasting');b.classList.add('popped')},T)}
+window._dgRun=run;function run(){document.querySelectorAll('.page p,.page small,.page .tokenNotice span,.disclaimer').forEach(e=>{if(e.dataset.dg||e.closest('.bubbleLayer,.modal,button,summary,details'))return;if(!e.getClientRects().length)return;e.dataset.dg=1;if(e.matches('.flook,.disclaimer,.pageTitle p,.sectionHead p,.peExp,.tokenNotice span')||e.closest('.fbox,li,.lookFor'))return;{const cs=getComputedStyle(e),lh=parseFloat(cs.lineHeight)||parseFloat(cs.fontSize)*1.45;if(Math.round(e.getBoundingClientRect().height/lh)<2)return}e.classList.add('dgHide');const b=document.createElement('button');b.type='button';b.className='dgMore balloon';b.innerHTML=BAL+SAT;b.setAttribute('aria-label','More');b.setAttribute('aria-expanded','false');b.onclick=ev=>{ev.stopPropagation();const open=e.classList.contains('dgHide');e.classList.toggle('dgHide',!open);b.setAttribute('aria-expanded',open);b.classList.remove('popB','inflate');if(open){b.setAttribute('aria-label','Less');if(!RM()){const r=b.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;if(document.body.classList.contains('token-world')&&b.animate&&!b.classList.contains('blasting')){blast(b,cx,cy)}else{confetti(cx,cy,46);scraps(cx,cy);b.classList.add('popped')}e.classList.remove('dgPop');void e.offsetWidth;e.classList.add('dgPop')}else b.classList.add('popped')}else{b.setAttribute('aria-label','More');b.classList.remove('popped');if(!RM()){void b.offsetWidth;b.classList.add('inflate')}}};e.before(b)})}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,60)}).observe(document.body,{childList:true,subtree:true,characterData:true});run()})();
 
 const FOCUS_CC={SPY:'us',EWG:'de',EWQ:'fr',EWU:'gb',EWD:'se',EWJ:'jp',MCHI:'cn',INDA:'in',EWA:'au',EWC:'ca',EWW:'mx',EWZ:'br',EWY:'kr',EWT:'tw',EWL:'ch',EWI:'it',KSA:'sa',EWS:'sg'};
