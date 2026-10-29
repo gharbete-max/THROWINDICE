@@ -21,3 +21,6 @@ Everything lives in `index.html`.
 
 ## Fee and volatility maps (FEEX, VOLX in index.html)
 Each quarter refresh `FEEX` (percent per year, US-listed ETFs) from Yahoo Finance fund profiles (quoteSummary `fundProfile.feesExpensesInvestment`, needs a crumb from `query1.finance.yahoo.com/v1/test/getcrumb` after loading `fc.yahoo.com` cookies) and `VOLX` from `data/facts.json` `volatility3y`. Funds with an issuer-reported fee in `etfFacts` keep that value. Update the source/date line above `FEEX` and the disclaimer text.
+
+## Region rules (REG in index.html)
+`REG` maps each region to how US-listed funds and UCITS funds can usually be bought (2 yes, 1 ask broker, 0 mostly not). Re-check yearly against regulator and broker pages (EU/UK key-information-document rule, UCITS marketing rules, China capital controls). Domicile comes from the ISIN prefix; add `DOMFIX` entries for funds without an ISIN and a `FLAGS` drawing for any new country.

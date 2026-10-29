@@ -174,3 +174,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - No balloons inside the four-Fs boxes, lists (including "On those sites, check") or the P/E box.
 - All 16 fund-type profiles and the generic fee, flow and look-at lines rewritten in plain words: "bumps" instead of swings, "fewer people trade it" instead of "thinner", the buy price and sell price gap explained once, yield and P/E explained where used. Basics page four boxes simplified; Flow defined.
 - qa.js clean; no console errors.
+
+## Region presets (where are you?)
+- First visit shows a "Where are you?" picker (16 choices); choice saved in localStorage `td-region`; header chip reopens it.
+- Funds not usually sold in the chosen region are hidden in bubble piles; "Show N more" reveals them greyed with a 🚫 mark; "ask" mark = check your broker.
+- Each ball carries a small flag for the fund's home country (from ISIN prefix; US for US-listed); selected fund shows "Made in X" and a region status line.
+- Added XACT OMXS30 (SE0000693293, Swedish) as an example of a Sweden-domiciled fund. Sources disagree on plain vs ESG index naming; verify on the provider site.
+- Checked headless at 390/1280: no console errors, no overflow, qa.js clean.
