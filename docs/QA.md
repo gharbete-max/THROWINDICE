@@ -256,3 +256,12 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - The rugpull has no warning and no marker on the fuel bar: a 4000 to 9000 px drop that comes after 26 to 42 s of climbing; terminal speed 1700 px/s; landing faster than about 594 px/s is death. Best play lets speed build and pumps taps at the end; pumping the whole way burns far more fuel. Soft landing after a big fall: +500.
 - Character: front-facing, one big black eye with no white, a small tongue sticking out forward, robe, big twin jetpack tanks with large flames, glow, smoke and sparks.
 - Simulated: careful and moderately greedy policies with late taps survive and score millions; a policy that taps constantly runs dry and dies at the rug. Headless: no console errors, qa.js clean.
+
+## Coinpull: fall damage, steeper candles, candles decided late
+- Fall damage now has three bands by impact speed: under 800 px/s nothing, 800 to 1150 px/s "OUCH" (lose 25% fuel, stumble at 45% speed for 0.7 s, screen shake), above 1150 px/s you die. Before, anything over about 594 px/s killed, which meant a valley deeper than about 126 px was deadly (speed after a drop h is sqrt(2 x 1400 x h)). Terminal speed is now 2300 px/s so the rugpull still needs a few late taps.
+- Climbing gets harder: trend per green candle 5 + 0.8 px per candle climbed, 14% double-size wall candles, and 7% unpredictable valleys (80 to 320 px dips as a long red candle). Crawling without the jetpack is slower (70 px/s) so steep sections need it.
+- Green candles recharge less (0.4% growing to 1.4% per candle) so fuel is a real budget. Simulated at the rug: careful play arrives with about 48% fuel, greedy play with about 15%, and an all-in policy with 0% and dies; no-jetpack play barely scores.
+- Candles are decided only 5 candles before the player arrives. Until then they show as flickering dashed outlines in changing colours and heights, so the next shape, colour, valley or the cliff cannot be seen coming.
+- `tap(true)` bypasses the cooldown for tests.
+- Headless: no console errors, qa.js clean.
+- Game over now reads "LIQUIDATED 💀 — You are now in a lifetime of debt. This is not investing. This is speculation... oh right, gambling!" plus the score. Checked by forcing a fall in headless.
