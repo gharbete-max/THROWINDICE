@@ -292,3 +292,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Stronger uptrend: trend 6 px plus 1.0 px per candle (was 5 + 0.8).
 - The rugpull candle is now the normal red candle colour (solid body, dark cap, wick), not a see-through outline, and it is decided only 3 candles before you reach it (was 5), so it shows up close and by surprise.
 - Headless: rug decided 3 candles ahead in all runs that reached it; qa.js clean.
+
+## Coinpull: dollar score, level speed-up, zero-dollar liquidation, END EARLY
+- The score is drawn as `$` plus the number in a 16-bit pixel font (own digits, `$`, `,` and `.` added to the pixel table next to "CASH OUT!"), yellow with a black shadow.
+- Each cash-out and surviving the rugpull speeds the game up: level 2 runs 1.2x faster, level 3 1.3x, and so on (1 + 0.1 x level). Points are still multiplied by the level.
+- From level 2 up, touching down loses level x depth/600 of the score; if that reaches 100% the score is $0 and you are liquidated (e.g. level 2 and a 300 px valley). Level 1 keeps the old rule (depth/900, at most 40%). Fixed a bug where valleys deeper than about 230 px cost fuel but no score.
+- Cash-out is now a choice: landing on the card stops the game, banks the score (+25%, best score saved) and shows "CASHED OUT: keep speculating >:)" or END EARLY! Ending early shows "YOU WALKED AWAY" with the score ("the only winning move"). Continuing bounces, goes gold for 3 s and starts the next level. Offered at every cash-out.
+- Headless: the choice card, both buttons, gold bounce into level 2, end early, level-2 liquidation at $0 all worked; qa.js clean.
