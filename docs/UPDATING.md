@@ -27,3 +27,6 @@ Each quarter refresh `FEEX` (percent per year, US-listed ETFs) from Yahoo Financ
 
 ## UCITS, ETC and ETP data
 Name, ISIN, domicile and fee come from `https://www.justetf.com/en/etf-profile.html?isin=<ISIN>` (title, "domiciled in …" text, total expense ratio). Put the fee in `FEEX`, the size guess in `TIER`, and add a `DOMFIX` entry when the ISIN prefix is not the domicile (ETPs).
+
+## VOO vs savings chart (`VS` in index.html)
+Period: VOO's first trading day (2010-09-09) to the last trading day of 2025 (2025-12-31), a fixed, complete period. Numbers: Yahoo Finance daily chart (`query1.finance.yahoo.com/v8/finance/chart/VOO?period1=…&period2=…&interval=1d`). `voo` = adjusted-close growth in % (dividends reinvested) = 716.8, `price` = close-only growth = 519.0, `sav` = (1.02^15.31 − 1) × 100 = 35.4. Move the end date forward only when you want a newer year.

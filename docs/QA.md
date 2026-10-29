@@ -212,3 +212,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Basics: new "Why not pick single stocks?" card. Sources: Bessembinder (2018), J. Financial Economics, "Do stocks outperform Treasury bills?" (only ~4% of US stocks account for the net gains over T-bills, 1926–2016) and S&P SPIVA scorecards. Not used as stated: "close to 0 risk after decades". The text says the range of results has historically narrowed with longer holding, and that it is never risk-free.
 - Dashboard note's last point now says picking single stocks is very hard.
 - Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## VOO vs 2% savings chart
+- Dashboard note and Basics each have a bar chart: VOO from its first trading day (9 Sep 2010) to 31 Dec 2025 is +717% with dividends reinvested (+519% price only); a 2% savings account over the same 15.3 years is +35%. Source: Yahoo Finance daily data fetched 2026-10-29. See `VS` in index.html and docs/UPDATING.md.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
