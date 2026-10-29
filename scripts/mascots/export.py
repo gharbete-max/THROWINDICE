@@ -35,3 +35,20 @@ for char, idle, special in (('pug', 'pug_idle', 'pug_special'), ('alien', 'alien
     gif(big, f'{OUT}/{char}-dance.gif', 16)
     print(char, {f: os.path.getsize(f'{SITE}/{f}') // 1024 for f in os.listdir(SITE) if f.startswith(char)})
 print(json.load(open('/home/claude/bl/kitten_frame.json')))
+
+def sheet(frames, path, cols=8, size=200):
+    """Pack frames into a grid (cols wide) for the site's sprite player, which can vary playback speed."""
+    rows = -(-len(frames) // cols); S = Image.new('RGBA', (cols * size, rows * size), (0, 0, 0, 0))
+    for i, f in enumerate(frames): S.alpha_composite(f.resize((size, size), Image.LANCZOS), ((i % cols) * size, (i // cols) * size))
+    S.save(path, quality=84, method=6); return len(frames), rows
+
+def export_dancers():
+    """Dance loop + three tap specials per dancer, as sprite sheets, plus a still and a preview GIF."""
+    for c in ('pug', 'alien'):
+        dance = load(f'{c}_idle', 240); dance[0].save(f'{SITE}/{c}-still.webp', quality=88, method=6)
+        info = {'dance': sheet(dance, f'{SITE}/{c}-dance.webp')}
+        for mode, name in (('special', 'spin'), ('flip', 'flip'), ('pose', 'pose')):
+            info[name] = sheet(load(f'{c}_{mode}', 240), f'{SITE}/{c}-{name}.webp')
+        big = load(f'{c}_idle', 360)
+        gif(big + load(f'{c}_special', 360) + load(f'{c}_flip', 360) + load(f'{c}_pose', 360), f'{OUT}/{c}-dance.gif', 24)
+        print(c, info, {f: os.path.getsize(f'{SITE}/{f}') // 1024 for f in os.listdir(SITE) if f.startswith(c)})
