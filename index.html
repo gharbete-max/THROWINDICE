@@ -824,7 +824,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <button class="gameClose" type="button" onclick="coinpullClose()" aria-label="Close game">✕</button>
 <div class="gameHud"><b id="gScore">0</b><span class="gMult" id="gMult">×1.0</span><div class="gFuel" aria-label="Jetpack charge"><i id="gFuelBar"></i><em id="gFuelTxt">0%</em></div></div>
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
-<div class="gameCard" id="gameCard"><h2 id="gcTitle">Coinpull</h2><p id="gcText">Climb the candles. Do not hit the ground hard.</p><ul><li>👆 Tap or click = jet burst</li><li>✋ Hold = faster, but burns much more</li><li>🟩 Green candles charge the jetpack</li><li>📈 Points grow faster the higher you climb</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button></div><p class="disclaimer" id="gcBest"></p></div></div>
+<div class="gameCard" id="gameCard"><h2 id="gcTitle">Coinpull</h2><p id="gcText">Climb the candles. Do not hit the ground hard.</p><ul><li>👆 Tap or click = jet burst</li><li>✋ Hold = faster, but burns much more</li><li>🟩 Green candles charge the jetpack slowly</li><li>📈 Points grow faster the higher you climb</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
@@ -1423,35 +1423,33 @@ regLabel();if(!REGION)regOpen();
 
 /* Coinpull: climb ever steeper, uneven candles. Tap = jet burst (cheap), hold = continuous thrust (burns a lot). Green candles recharge. The rugpull is a massive drop: pump the brake to land softly. */
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
-const CW=46,G=1400,BR=900,VS=550,TERM=1700,TAPV=360,TAPC=.05,TAPCD=.085,HOLDD=1.15,MAXRISE=450;let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
+const CW=46,G=1400,BR=900,VS=550,TERM=2300,HURT=800,DEAD=1150,LOOK=5,TAPV=360,TAPC=.05,TAPCD=.085,HOLDD=1.15,MAXRISE=450;let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
-/* fuel a player who pumps the brake the whole way down would burn, for a drop of h px */
-function pumpFuel(h){let y=0,v=0,f=0,cd=0;const dt=1/120;while(y<h){v=Math.min(TERM,v+G*dt);cd-=dt;if(v>VS-60&&cd<=0){v-=TAPV;f+=TAPC;cd=TAPCD}y+=Math.max(0,v)*dt;if(f>2)break}return f}
-function dropFor(f){let lo=600,hi=14000;for(let i=0;i<24;i++){const m=(lo+hi)/2;if(pumpFuel(m)<f)lo=m;else hi=m}return(lo+hi)/2}
 const fmt=n=>{n=Math.floor(n);return n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(2)+'M':n.toLocaleString('en')};
 function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
 function fresh(){return{sx:0,y:0,vy:0,fuel:.45,score:0,dead:false,t:0,cam:0,px:Math.max(90,Math.min(210,W*.24)),C:[],gen:{top:0,phase:'flat',left:14,k:0,t0:0,Tup:30},lastIdx:-1,parts:[],fx:[],ground:true,cliffAt:-1,wasAir:false,flash:0,speed:170,msgT:0}}
-function gen(){const g=R.gen;let green=Math.random()<.8,top=g.top,rug=false;
- if(g.phase==='up'){const trend=3+g.k*.42;if(green){let rise=rnd(.5,1.5)*trend+rnd(0,8);if(Math.random()<.12)rise*=2.2;top-=rise}else top+=rnd(2,8+g.k*.25);if(R.t-g.t0>=g.Tup)g.phase='cliff';g.k++}
+function gen(){const g=R.gen;let green=Math.random()<.8,top=g.top,rug=false,dip=false;
+ if(g.phase==='up'){const trend=5+g.k*.8;if(Math.random()<.07){/* an unpredictable valley */top+=rnd(80,320);green=false;dip=true}else if(green){let rise=rnd(.4,1.6)*trend+rnd(0,10);if(Math.random()<.14)rise*=2.4;top-=rise}else top+=rnd(3,10+g.k*.4);if(R.t-g.t0>=g.Tup)g.phase='cliff';g.k++}
  else if(g.phase==='cliff'){top+=rnd(4000,9000);green=false;rug=true;R.cliffAt=R.C.length;g.phase='flat';g.left=14}
  else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0}}
- const inUp=g.phase==='up';g.top=top;R.C.push({top,green,rug,wu:rnd(2,50)*(Math.random()<.2?1.8:1),wl:rnd(2,40),bh:rnd(34,110),k:inUp?g.k:0})}
-const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};
-function reset(){R=fresh();for(let i=0;i<30;i++)gen();R.y=R.C[Math.floor(R.px/CW)].top;R.cam=R.y-H*.58;msg('')}
+ const inUp=g.phase==='up';g.top=top;R.C.push({top,green,rug,wu:rnd(2,50)*(Math.random()<.2?1.8:1),wl:rnd(2,40),bh:dip?rnd(90,170):rnd(34,110),k:inUp?g.k:0})}
+const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};/* candles are decided only LOOK candles before the player arrives */
+
+function reset(){R=fresh();for(let i=0;i<LOOK+4;i++)gen();R.y=R.C[Math.floor(R.px/CW)].top;R.cam=R.y-H*.58;msg('')}
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
 function ground(x){const a=cand(Math.floor((x-9)/CW)).top,b=cand(Math.floor((x+9)/CW)).top;return Math.min(a,b)}
-function tap(){if(!R||R.dead||!document.getElementById('gameCard').hidden)return;const n=performance.now();if(n-lastTap<TAPCD*1000||R.fuel<=0)return;lastTap=n;R.vy=Math.max(-MAXRISE,R.vy-TAPV);R.fuel=Math.max(0,R.fuel-TAPC);R.flash=.24;for(let i=0;i<6;i++)R.fx.push({k:'s',x:R.px+rnd(-26,26),y:R.y-30,vx:rnd(-90,90),vy:rnd(180,420),l:.5})}
-function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;const px=R.sx+R.px,gnd=ground(px),front=cand(Math.floor((px+14)/CW)).top,air=R.y<gnd-.5;
- R.speed=Math.min(560,170+R.t*5.5);let sp=R.speed;
- const hot=hold&&holdT>.18&&R.fuel>0;let u=0;if(hot){if(air&&R.vy>0){if(R.vy>VS)u=1;else if(R.vy>VS-40)u=G/(G+BR)}else u=1}
+function tap(force){if(!R||R.dead||(!force&&!document.getElementById('gameCard').hidden))return;const n=performance.now();if((!force&&n-lastTap<TAPCD*1000)||R.fuel<=0)return;lastTap=n;R.vy=Math.max(-MAXRISE,R.vy-TAPV);R.fuel=Math.max(0,R.fuel-TAPC);R.flash=.24;for(let i=0;i<6;i++)R.fx.push({k:'s',x:R.px+rnd(-26,26),y:R.y-30,vx:rnd(-90,90),vy:rnd(180,420),l:.5})}
+function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0)R.shake-=dt;if(R.stumble>0)R.stumble-=dt;cand(Math.floor((R.sx+R.px)/CW)+LOOK);const px=R.sx+R.px,gnd=ground(px),front=cand(Math.floor((px+14)/CW)).top,air=R.y<gnd-.5;
+ R.speed=Math.min(560,170+R.t*5.5);let sp=R.speed*(R.stumble>0?.45:1);
+ const hot=hold&&holdT>.18&&R.fuel>0;let u=0;if(hot){if(air&&R.vy>0){if(R.vy>HURT)u=1;else if(R.vy>HURT-40)u=G/(G+BR)}else u=1}
  R.vy+=(G-(G+BR)*u)*dt;if(R.vy<-MAXRISE)R.vy=-MAXRISE;if(R.vy>TERM)R.vy=TERM;if(u>0)R.fuel=Math.max(0,R.fuel-HOLDD*u*dt);R.u=u;
  if(air&&!R.wasAir){R.wasAir=true;R.fallFrom=R.y}
  const py=R.y;R.y+=R.vy*dt;
- const wall=front<R.y-12;if(wall){sp*=.22;if(!(hot||R.vy<-40)){R.y-=110*dt;R.vy=Math.min(0,R.vy)}}else if(R.vy<-40)sp*=1.3;
+ const wall=front<R.y-12;if(wall){sp*=.22;if(!(hot||R.vy<-40)){R.y-=70*dt;R.vy=Math.min(0,R.vy)}}else if(R.vy<-40)sp*=1.3;
  const g2=ground(px);
- if(R.y>=g2){const imp=R.vy;if(R.wasAir){if(imp>VS*1.08){R.dead=true;R.y=g2;R.vy=0;die();return}if(R.y-R.fallFrom>1200){R.score+=500;msg('SOFT LANDING +500');R.msgT=1.6}}R.wasAir=false;R.y=g2;R.vy=0;R.ground=true}else R.ground=false;
+ if(R.y>=g2){const imp=R.vy;if(R.wasAir){if(imp>DEAD){R.dead=true;R.y=g2;R.vy=0;die();return}if(imp>HURT){R.fuel=Math.max(0,R.fuel-.25);R.stumble=.7;R.shake=.4;msg('OUCH! −25% fuel');R.msgT=1.2}else if(R.y-R.fallFrom>1200){R.score+=500;msg('SOFT LANDING +500');R.msgT=1.6}}R.wasAir=false;R.y=g2;R.vy=0;R.ground=true}else R.ground=false;
  const kk=cand(Math.floor((R.sx+R.px)/CW)).k||0,mult=Math.pow(1.03,Math.min(300,kk));R.mult=mult;const up=R.vy<0?-R.vy*dt:0;R.sx+=sp*dt;R.score+=(sp*dt/10+up*.4)*mult;
- const idx=Math.floor((R.sx+R.px)/CW);if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.04,.012+c.k*.0003))}
+ const idx=Math.floor((R.sx+R.px)/CW);if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.014,.004+c.k*.00009))}
  if(R.msgT>0){R.msgT-=dt;if(R.msgT<=0)msg('')}
  /* jet effects */
  if(u>0||R.flash>0){const n=u>0?3:1;for(let i=0;i<n;i++){const sd=Math.random()<.5?-1:1;R.fx.push({k:Math.random()<.5?'k':'s',x:R.px+sd*26+rnd(-5,5),y:R.y-24,vx:rnd(-60,60)-(R.ground?60:0),vy:rnd(220,520),l:rnd(.35,.8)})}}
@@ -1462,17 +1460,17 @@ function die(){msg('');for(let i=0;i<34;i++)R.parts.push({x:R.px,y:R.y,vx:rnd(-3
  document.getElementById('gcTitle').textContent='REKT 💥';document.getElementById('gcText').textContent='You hit the ground too hard. Score '+fmt(R.score)+'.';document.getElementById('gcBest').textContent='Best '+fmt(best);document.getElementById('gcGo').textContent='Try again';setTimeout(()=>{if(R&&R.dead)document.getElementById('gameCard').hidden=false},700)}
 function flameAt(g,x,y,len,w,t){const fl=len*(.82+Math.random()*.36);const gr=g.createRadialGradient(x,y+4,2,x,y+4,w*3.2);gr.addColorStop(0,'rgba(255,220,120,.85)');gr.addColorStop(1,'rgba(255,120,30,0)');g.fillStyle=gr;g.beginPath();g.arc(x,y+4,w*3.2,0,6.3);g.fill();
  [['#ff3b1d',1,1],['#ff9a1f',.72,.8],['#ffe36a',.5,.58],['#ffffff',.28,.36]].forEach(([c,wf,lf])=>{g.fillStyle=c;g.beginPath();g.moveTo(x-w*wf,y);g.quadraticCurveTo(x-w*wf*.8+Math.sin(t*40)*3,y+fl*lf*.55,x+Math.sin(t*31)*4,y+fl*lf);g.quadraticCurveTo(x+w*wf*.8+Math.sin(t*37)*3,y+fl*lf*.55,x+w*wf,y);g.closePath();g.fill()})}
-function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0b0820');bg.addColorStop(1,'#1d1250');g.fillStyle=bg;g.fillRect(0,0,W,H);
+function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);g.save();if(s.shake>0)g.translate(rnd(-6,6)*s.shake*2,rnd(-6,6)*s.shake*2);const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0b0820');bg.addColorStop(1,'#1d1250');g.fillStyle=bg;g.fillRect(0,0,W,H);
  g.strokeStyle='#ffffff10';g.lineWidth=1;const gy=80;for(let y=-((cam*.4%gy)+gy)%gy;y<H;y+=gy){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}for(let x=-((s.sx*.7)%gy);x<W;x+=gy){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}
  /* speed streaks: the faster the run, the more and longer they are */
  const sf=Math.max(0,(s.speed-200)/360);if(sf>0){g.strokeStyle='rgba(255,255,255,'+(.08+sf*.2)+')';g.lineWidth=2;for(let i=0;i<14;i++){const yy=(i*97+(s.t*40))%H,xx=((i*211-s.sx*(1.6+i%3*.5))%(W+200)+W+200)%(W+200)-100,ln=30+sf*160;g.beginPath();g.moveTo(xx,yy);g.lineTo(xx+ln,yy);g.stroke()}}
  const i0=Math.floor(s.sx/CW)-1,i1=Math.floor((s.sx+W)/CW)+2;
- for(let i=Math.max(0,i0);i<=i1;i++){const c=cand(i),x=i*CW-s.sx,y=c.top-cam;const col=c.green?'#19c37d':'#ff4d5e',dk=c.green?'#0c7a50':'#a82437';
+ const lastTop=s.C[s.C.length-1].top;for(let i=Math.max(0,i0);i<=i1;i++){const c=s.C[i];if(!c){const x=i*CW-s.sx,gh=Math.floor(s.t*8)+i*7,wob=((gh*2654435761>>>0)%1000)/1000-.5,y=lastTop-cam+wob*120*Math.min(1,(i-s.C.length+1)/3),fl=((gh*40503>>>0)%2)?'#19c37d':'#ff4d5e';g.save();g.globalAlpha=.28;g.strokeStyle=fl;g.setLineDash([6,5]);g.lineWidth=2;g.strokeRect(x+4,y,CW-8,50+((gh*977>>>0)%50));g.beginPath();g.moveTo(x+CW/2,y-18);g.lineTo(x+CW/2,y);g.stroke();g.restore();continue}const x=i*CW-s.sx,y=c.top-cam;const col=c.green?'#19c37d':'#ff4d5e',dk=c.green?'#0c7a50':'#a82437';
   if(c.rug){const pt=cand(i-1).top-cam;g.fillStyle='rgba(255,77,94,.22)';g.fillRect(x+3,pt,CW-6,y-pt);g.strokeStyle='rgba(255,77,94,.7)';g.lineWidth=3;g.strokeRect(x+3,pt,CW-6,y-pt)}
   g.fillStyle=col;g.fillRect(x+CW/2-1.5,y-c.wu,3,c.wu+c.bh+c.wl);g.fillStyle=col;g.fillRect(x+4,y,CW-8,c.bh);g.fillStyle=dk;g.fillRect(x+4,y,CW-8,5);g.fillStyle='#ffffff26';g.fillRect(x+8,y+6,4,Math.max(0,c.bh-8))}
  s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*1.6));g.fillStyle=f.k==='k'?'#9aa3b8':'#ffd25a';g.beginPath();g.arc(f.x,f.y-cam,f.k==='k'?6+(1-f.l)*8:2.6,0,6.3);g.fill()});g.globalAlpha=1;
  player(s.px,s.y-cam,s);
- s.parts.forEach(p=>{g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y-cam,4,0,6.3);g.fill()})}
+ s.parts.forEach(p=>{g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y-cam,4,0,6.3);g.fill()});g.restore()}
 function player(x,y,s){const g=cx,t=s.t,run=s.ground&&!s.dead,bob=run?Math.abs(Math.sin(t*14))*3:0;g.save();g.translate(x,y);
  /* big jet effects behind everything */
  const u=s.u||0,fa=Math.max(u>0?1:0,s.flash>0?s.flash/.24*.9:0);if(!s.dead&&fa>0){[-26,26].forEach(sx=>flameAt(g,sx,-22,(u>0?150:100)*fa+30,u>0?15:12,t))}
@@ -1494,7 +1492,7 @@ let last=0;function loop(t){raf=requestAnimationFrame(loop);const dt=Math.min(.0
 function start(){document.getElementById('gameCard').hidden=true;document.getElementById('gcTitle').textContent='Coinpull';reset();document.getElementById('gcBest').textContent=best?'Best '+fmt(best):''}
 window.coinpullOpen=function(){size();L.hidden=false;document.body.style.overflow='hidden';reset();const c=document.getElementById('gameCard');c.hidden=false;document.getElementById('gcTitle').textContent='Coinpull';document.getElementById('gcText').textContent='Climb the candles. Do not hit the ground hard.';document.getElementById('gcGo').textContent='Start';document.getElementById('gcBest').textContent=best?'Best '+fmt(best):'';cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);document.getElementById('gcGo').focus()};
 window.coinpullClose=function(){L.hidden=true;document.body.style.overflow='';cancelAnimationFrame(raf);R=null;hold=false;holdT=0};
-window._cp={ground,cand,tap,get R(){return R},set hold(v){hold=v;if(!v)holdT=0},set holdT(v){holdT=v},pumpFuel,dropFor,step,reset};
+window._cp={ground,cand,tap,get R(){return R},set hold(v){hold=v;if(!v)holdT=0},set holdT(v){holdT=v},step,reset};
 document.getElementById('gcGo').onclick=start;
 L.addEventListener('pointerdown',e=>{if(e.target.closest('button,.gameCard'))return;hold=true;holdT=0;tap()});L.addEventListener('pointerup',()=>{hold=false;holdT=0});L.addEventListener('pointercancel',()=>{hold=false;holdT=0});
 addEventListener('keydown',e=>{if(L.hidden)return;if(e.key==='Escape')coinpullClose();if((e.key===' '||e.key==='ArrowUp'||e.key==='w')&&!e.repeat){hold=true;holdT=0;tap();if(e.key===' ')e.preventDefault()}});addEventListener('keyup',e=>{if(e.key===' '||e.key==='ArrowUp'||e.key==='w'){hold=false;holdT=0}});
