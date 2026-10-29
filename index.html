@@ -490,6 +490,7 @@ body.token-world #vig{display:none}
 @media(prefers-reduced-motion:reduce){.invB,.invB span{animation:none}}
 .flatGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.flatGrid .fbox{padding:14px}.flatGrid .fbox b{display:block;font-size:17px;margin:4px 0}.flatGrid .fbox small{display:block;font-size:13px;line-height:1.4}.flatGrid.three{grid-template-columns:1fr}@media(min-width:760px){.flatGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.flatGrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .startNote{margin-bottom:14px}.startNote h2{margin:4px 0 10px}.noteList{list-style:none;padding:0;margin:0;display:grid;gap:8px}.noteList li{display:flex;gap:10px;align-items:flex-start}.noteList li>span{font-size:22px;line-height:1.3;flex:none}.noteList li p{margin:0;font-size:15px;line-height:1.45}.startNote .actions{margin-top:12px}.story li p{font-size:16px}.learnHead{margin:18px 4px 8px}
+.vsBox{flex:1;min-width:0}.vsT{font-size:14px;font-weight:700;margin-bottom:6px}.vsRow{display:flex;align-items:center;gap:8px;margin:4px 0}.vsRow>span{flex:0 0 86px;font-size:13px;font-weight:800}.vsTrack{flex:1;min-width:0;display:flex;align-items:center;gap:8px}.vsBar{display:block;height:22px;border-radius:99px;flex:0 0 var(--w);min-width:10px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 55%),var(--bc);box-shadow:inset 0 -3px 5px rgba(0,0,0,.18);transform-origin:left;animation:vsGrow 1.1s cubic-bezier(.2,.9,.25,1) both}.vsTrack b{font-size:15px;white-space:nowrap}.vsNote{font-size:12px;color:var(--muted);margin-top:4px}@keyframes vsGrow{from{transform:scaleX(0)}}@media(prefers-reduced-motion:reduce){.vsBar{animation:none}}
 </style>
 </head>
 <body>
@@ -537,6 +538,7 @@ body.token-world #vig{display:none}
 <li><span>🏦</span><p>Treat a fund like a savings account you leave alone for a long time.</p></li>
 <li><span>😌</span><p>Passive funds are cheaper and need less worrying.</p></li>
 <li><span>🇺🇸</span><p>VOO follows the 500 biggest US companies, like Google and Microsoft. Your money grows with them.</p></li>
+<li><span>📈</span><div class="vsBox" data-vs></div></li>
 <li><span>🧺</span><p>A fund holds many companies. If one falls, the others help carry it.</p></li>
 <li><span>🎯</span><p>Picking single stocks is very hard. Most pickers, even experts, lose to a simple fund.</p></li></ul>
 <div class="actions"><button class="btn small" type="button" onclick="openPage('basics')">Read the basics →</button></div></section>
@@ -594,6 +596,7 @@ body.token-world #vig{display:none}
 <li><span>🧺</span><p><b>ETF means exchange traded fund.</b> It is a basket of many companies that you buy and sell like one share. If one company falls, the others help carry it.</p></li>
 <li><span>😌</span><p><b>Passive means the fund just follows a list.</b> It does not pay experts to pick winners, so it costs less and asks less of you. For decades, studies such as the S&amp;P SPIVA reports have found that most actively managed funds trail their index over long periods. <a href="https://www.spglobal.com/spdji/en/research-insights/spiva/" target="_blank" rel="noopener noreferrer">SPIVA ↗</a></p></li>
 <li><span>🇺🇸</span><p><b>VOO is the benchmark many people use.</b> It follows the S&amp;P 500, the 500 biggest US companies, such as Alphabet (Google) and Microsoft. When those companies grow, VOO grows. When they fall, it falls.</p></li>
+<li><span>📈</span><div class="vsBox" data-vs></div></li>
 <li><span>🌍</span><p><b>Pick your flavour.</b> You can choose other countries or sectors you like. Do not overthink it: a global fund works great too if you do not want to spend time on it.</p></li>
 <li><span>⚠️</span><p><b>Be careful with hype.</b> People may push single stocks, crypto or the latest trend. One company can fall a lot, even to zero. A fund spreads the risk over many companies, so one bad one hurts less.</p></li></ul>
 <p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
@@ -826,6 +829,9 @@ if(top>0)g.push(c+' 0px',c+' '+Math.max(0,top-F)+'px','transparent '+top+'px');e
 if(bot<H)g.push('transparent '+bot+'px',c+' '+Math.min(H,bot+F)+'px',c+' 100%');else g.push('transparent 100%');
 V.style.background='linear-gradient(to bottom,'+g.join(',')+')';V.classList.add('on')}
 window._vigUpd=()=>{if(!raf)raf=requestAnimationFrame(upd)};addEventListener('scroll',window._vigUpd,{passive:true});addEventListener('resize',window._vigUpd)})();
+/* VOO from its first trading day to the end of 2025 vs a 2% savings account. Yahoo Finance adjusted close (dividends reinvested), fetched 2026-10-29. Savings = 1.02^years compounded. Refresh quarterly (docs/UPDATING.md). */
+const VS={from:'9 Sep 2010',to:'31 Dec 2025',voo:717,price:519,sav:35.4};
+document.querySelectorAll('[data-vs]').forEach(e=>{const k=.8,wv=k*100,ws=Math.max(1.5,k*100*VS.sav/VS.voo);e.innerHTML='<div class="vsT">Since '+VS.from+': VOO vs a 2% savings account</div><div class="vsRow"><span>VOO</span><div class="vsTrack"><i class="vsBar" style="--w:'+wv+'%;--bc:var(--c2)"></i><b>+'+VS.voo+'%</b></div></div><div class="vsRow"><span>2% savings</span><div class="vsTrack"><i class="vsBar" style="--w:'+ws.toFixed(1)+'%;--bc:var(--c5)"></i><b>+'+Math.round(VS.sav)+'%</b></div></div><div class="vsNote">Dividends reinvested, in US dollars, before tax (price only: +'+VS.price+'%). Past results do not predict the future. Source: Yahoo Finance, data to '+VS.to+'.</div>'});
 document.body.dataset.view='dashboard';document.getElementById('dashboard').classList.add('cur');
 function navGame(b){invClose();toast('🎮 A game is coming soon!')}
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
