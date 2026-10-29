@@ -306,3 +306,11 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Fewer rug deaths: terminal fall speed 2200 (was 2600), hard-landing penalty from 1000 px/s (was 800), death from 1500 px/s (was 1150), and the camera shows more ground below while falling. Gap width factor retuned to 10 for the faster forward speed.
 - Scripted checks: a tapper crossed 30% at 10% fuel and every time from 25%; when it fell in, it survived the pit every time (0 deaths); the careful, greedy and all-in policies all survived the first rug.
 - Headless: no console errors, qa.js clean.
+
+## Coinpull: only a cash out counts, gold vs hollow buttons, second card, half rugpulls
+- Best score is only saved by END EARLY (a real cash out). Dying (fall damage or liquidation) scores nothing: the game over text says "You lost $X. Only a cash out counts." Continuing after a cash-out no longer saves anything.
+- "KEEP SPECULATING >:)" is a gold shiny button with a moving glint; "END EARLY!" is hollow, white, normal weight.
+- A second cash-out card now exists on the pit floor of every full rugpull: raised 480 px above the floor, 30 candles long, starting 6 candles past the gap start. Reaching it needs jetpack fuel (walls taller than 260 px can only be climbed with the jetpack). Landing on it from the air gives the same choice. The old far-side card is kept.
+- Half rugpulls (35% of rugpulls): no gap and no card, just a 1500 to 3200 px drop with a flat landing; a soft landing earns +500.
+- Zone after the gap is now 44 candles long. `HALFP` and `RUGK` can be set from tests.
+- Headless: choice card with gold/hollow buttons, END EARLY, level-2 liquidation, scripted bots reached the pit-floor card in 14 of 24 forced pit falls (crude bots), half rugpulls survived 16 of 16; qa.js clean.
