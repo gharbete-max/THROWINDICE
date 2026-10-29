@@ -181,3 +181,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Each ball carries a small flag for the fund's home country (from ISIN prefix; US for US-listed); selected fund shows "Made in X" and a region status line.
 - Added XACT OMXS30 (SE0000693293, Swedish) as an example of a Sweden-domiciled fund. Sources disagree on plain vs ESG index naming; verify on the provider site.
 - Checked headless at 390/1280: no console errors, no overflow, qa.js clean.
+
+## Wider fund list, domicile wording, new bottom menu
+- Wording is "Domiciled in X" (not "made in"): iShares funds are run by BlackRock but domiciled in Ireland. Domicile = ISIN prefix, except `DOMFIX` (ETPs: WisdomTree Bitcoin/Ether are Jersey, VanEck Bitcoin ETN is Liechtenstein); checked against justETF "domiciled in" text 2026-10-29.
+- Added ~100 funds: single-country piles (Canada, Mexico, Brazil, Korea, Taiwan, Switzerland, Italy, more), regional piles, sector/theme piles, metals, S&P 500 sector UCITS, European-listed ETCs/ETPs for metals and crypto. US-listed names/fees from Yahoo fund profiles, UCITS/ETC/ETP names/ISINs/fees from justETF (both 2026-10-29). New funds have no volatility data yet (grey in Calm mode); tiers are estimates.
+- Commodities page trimmed to gold, silver, platinum & palladium, oil. Natural gas, copper and farm funds all exist, but they hold futures and can drift from the price; their piles are removed from the menu (data kept in THEMES).
+- Bottom menu: token coin (far left), News, Investing (pops World / Sectors / Commodities bubbles; in Token World Assets / Networks / Issuance), Dashboard, Basics, Fee calc, Game (placeholder toast).
+- Headless 390/1280: no console errors, nav clicks scroll to the right sections, qa.js clean.
