@@ -265,3 +265,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - `tap(true)` bypasses the cooldown for tests.
 - Headless: no console errors, qa.js clean.
 - Game over now reads "LIQUIDATED 💀 — You are now in a lifetime of debt. This is not investing. This is speculation... oh right, gambling!" plus the score. Checked by forcing a fall in headless.
+
+## Coinpull: valley penalty, jumpable rugpull, stronger jetpack
+- Landing in a valley (a fall of 60 to 1200 px) now costs score: −depth/9 % (at most −40%), shown as "VALLEY −x% SCORE".
+- The rugpull is now a gap: a pit of 4000 to 9000 px with a plateau on the far side at the old height and a floor far below, both lasting 30 candles. A candle has two surfaces (`top` and `low`); the player is on the lower one once it is more than 600 px under the old peak. Flying across ends with "MADE IT ACROSS! +25% SCORE"; falling in means braking as before ("SOFT LANDING +500"), or death.
+- Gap width = (random 0.1 to 1.0) x 6 x current speed in px (`RUGK`), so the fuel needed is spread evenly: with a full tank crossing is (almost) certain, at 50% it works about half the time. A perfect scripted tapper crossed about 33% with 10% fuel, 50% with 25–40%, 87–90% with 55–70% and 100% from 85%; a human will do worse. Taps cost up to 4x more when high above the ground (e.g. over the pit), so hovering across is not free.
+- Jetpack stronger: tap 520 px/s (was 360, about 97 px hop), hold thrust 1500 (was 900), max rise 650, terminal fall speed 2600.
+- Headless: no console errors, qa.js clean.
