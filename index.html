@@ -63,7 +63,7 @@ body{--cc:var(--c1)}
 .exploreCard .big,.topic .symbol,.catIcon{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;font-size:34px;line-height:1;margin-bottom:12px;animation:bob 3.6s ease-in-out infinite}
 .topic:nth-child(2n) .symbol,.exploreCard:nth-child(2n) .big,.tokenCategory:nth-child(2n) .catIcon{animation-delay:-1.4s}
 .topic:hover .symbol,.exploreCard:hover .big,.tokenCategory:hover .catIcon{animation:jelly .7s}
-.tokenCoin svg{animation:coinFloat 3.2s ease-in-out infinite}
+.tokenCoin img{animation:coinFloat 3.2s ease-in-out infinite}
 .saveStar.on{animation:starPop .55s cubic-bezier(.2,.9,.25,1.8)}
 .reveal:not(.in){opacity:0;transform:translateY(26px) scale(.95)}
 .reveal.in{animation:popIn .7s cubic-bezier(.2,.9,.25,1.3) var(--d,0ms) backwards}
@@ -370,16 +370,16 @@ body.token-world #parallel{display:block}
 @keyframes portalIn{0%{transform:translate(-50%,-50%) scale(.08) rotate(-90deg)}65%{transform:translate(-50%,-50%) scale(1.15) rotate(250deg)}100%{transform:translate(-50%,-50%) scale(1.9) rotate(360deg)}}
 @keyframes portalOut{0%{transform:translate(-50%,-50%) scale(1.8) rotate(0)}100%{transform:translate(-50%,-50%) scale(.02) rotate(-360deg)}}
 .tokenCoin{position:fixed;z-index:40;right:12px;bottom:82px;width:104px;height:88px;padding:0;border:0;background:transparent;display:block;perspective:260px;transition:transform .18s cubic-bezier(.2,.9,.25,1.35)}
-.tokenCoin svg{position:absolute;left:19px;top:0;width:66px;height:66px;transform-style:preserve-3d;filter:drop-shadow(2px 4px 0 #7a4b00)}
-.tokenCoin .coin-token{display:none;image-rendering:pixelated;filter:drop-shadow(2px 4px 0 #123d76)}
+.tokenCoin img{position:absolute;left:19px;top:0;width:66px;height:66px;filter:drop-shadow(0 5px 6px rgba(60,40,0,.3))}
+.tokenCoin .coin-token{display:none;filter:drop-shadow(0 5px 6px rgba(10,40,110,.35))}
 .tokenCoin.in-token-world .coin-normal{display:none}.tokenCoin.in-token-world .coin-token{display:block}
-.tokenCoin:hover svg{animation:pixelCoinSpin .72s steps(12,end) infinite}.tokenCoin:hover{transform:translateY(-3px) scale(1.06)}.tokenCoin:active{transform:scale(.88)}
+.tokenCoin:hover{transform:translateY(-3px) scale(1.06)}.tokenCoin:active{transform:scale(.88)}
 .tokenCoin .coinLabel{position:absolute;left:0;right:0;bottom:0;text-align:center;font:700 9px/1.2 monospace;text-transform:uppercase;background:var(--bg);color:var(--text);border:1px solid var(--line);padding:3px 1px;white-space:nowrap}
 .coinBubble{position:fixed;z-index:39;right:124px;bottom:100px;width:min(235px,calc(100vw - 150px));padding:10px 12px;background:var(--surface);color:var(--text);border:1px solid var(--accent-line);font-size:12px;line-height:1.5;pointer-events:none;opacity:0;transform:translateY(5px) scale(.97);transition:opacity .18s,transform .18s}
 .coinBubble:after{content:"";position:absolute;right:-7px;bottom:14px;width:12px;height:12px;background:var(--surface);border-top:1px solid var(--accent-line);border-right:1px solid var(--accent-line);transform:rotate(45deg)}
 .coinBubble.show{opacity:1;transform:none}.coinBubble strong{display:block;text-transform:uppercase;font-size:11px;margin-bottom:3px}
 @keyframes pixelCoinSpin{0%{transform:rotateY(0) rotateZ(-5deg)}25%{transform:rotateY(90deg) scale(.96)}50%{transform:rotateY(180deg) rotateZ(5deg)}75%{transform:rotateY(270deg) scale(.96)}100%{transform:rotateY(360deg) rotateZ(-5deg)}}
-@media(max-width:520px){.tokenCoin{right:4px;bottom:73px;width:94px;height:82px}.tokenCoin svg{left:17px;width:60px;height:60px}}
+@media(max-width:520px){.tokenCoin{right:4px;bottom:73px;width:94px;height:82px}.tokenCoin img{left:17px;width:60px;height:60px}}
 @media(max-width:640px){.top .pill,.brand .tag{display:none}.top{gap:8px}.brand{font-size:12px;letter-spacing:.06em}}
 .fgrid{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:1100px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){*,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
@@ -651,23 +651,8 @@ body.token-world.basics-open #parallel{display:none}body.token-world.basics-open
 <div class="footerNote">THROWINDICE concept prototype · sourced market snapshots are dated and may be delayed; illustrative teaching cases are labelled · not investment advice</div>
 </div>
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
-<svg aria-hidden="true" class="coin-normal" viewbox="0 0 48 48">
-<defs><radialgradient cx="32%" cy="25%" id="sunFace" r="78%"><stop offset="0" stop-color="#fff89a"></stop><stop offset=".48" stop-color="#ffe34d"></stop><stop offset="1" stop-color="#f5a900"></stop></radialgradient></defs>
-<ellipse cx="24" cy="26" fill="#c77800" rx="20" ry="20"></ellipse>
-<circle cx="23" cy="22" fill="url(#sunFace)" r="20" stroke="#ffbf19" stroke-width="2"></circle>
-<ellipse cx="16" cy="14" fill="#fff9c4" opacity=".8" rx="7" ry="3"></ellipse>
-<ellipse cx="17" cy="20" fill="#2a1900" rx="2.5" ry="3.4"></ellipse><ellipse cx="30" cy="20" fill="#2a1900" rx="2.5" ry="3.4"></ellipse>
-<path d="M12 26 Q22 39 34 26" fill="none" stroke="#2a1900" stroke-linecap="round" stroke-width="3.4"></path>
-</svg>
-<svg aria-hidden="true" class="coin-token" shape-rendering="crispEdges" viewbox="0 0 48 48">
-<path d="M16 3h16v2h5v3h3v5h2v16h-2v5h-3v4h-5v3H16v-3h-5v-3H8v-4H5v-5H3V13h2V8h3V5h3V3z" fill="#092b68" transform="translate(2 3)"></path>
-<path d="M16 3h16v2h5v3h3v5h2v16h-2v5h-3v4h-5v3H16v-3h-5v-3H8v-4H5v-5H3V13h2V8h3V5h3V3z" fill="#1268d9"></path>
-<path d="M16 5h16v2h5v3h2v5h2v14h-2v5h-3v3h-5v2H16v-2h-5v-3H8v-5H6V15h2v-5h3V7h5z" fill="#249bff"></path>
-<path d="M16 8h16v2h4v4h2v14h-2v4h-4v2H16v-2h-4v-4h-2V14h2v-4h4z" fill="#1459b8"></path>
-<path d="M16 8h16v2h4v4h2v3h-3v-3h-2v-3h-5v-1H16z" fill="#9edcff"></path>
-<rect fill="#fff" height="6" width="4" x="15" y="16"></rect><rect fill="#fff" height="6" width="4" x="29" y="16"></rect>
-<path d="M14 26h4v3h4v2h6v-2h4v-3h4v5h-3v3h-5v2h-6v-2h-5v-3h-3z" fill="#fff"></path>
-</svg>
+<img aria-hidden="true" class="coin-normal" src="assets/mascots/smiley-yellow.webp" data-spin="assets/mascots/smiley-yellow-spin.webp" alt="" width="192" height="192" draggable="false">
+<img aria-hidden="true" class="coin-token" src="assets/mascots/smiley-blue.webp" data-spin="assets/mascots/smiley-blue-spin.webp" alt="" width="192" height="192" draggable="false">
 <span class="coinLabel">REAL-WORLD ASSETS</span>
 </button>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
@@ -692,6 +677,7 @@ const pages=['dashboard','news','fees','world','sectors','commodities','etfs','p
 function setPage(id){const token=id==='parallel';document.body.classList.remove('basics-open');if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'TOKEN & BLOCKCHAIN':'REAL-WORLD ASSETS';document.querySelectorAll('.navbtn').forEach(b=>{const label=b.querySelector('.navLabel');if(label)label.textContent=token?b.dataset.token:b.dataset.normal;b.classList.toggle('active',token?b.dataset.token==='Token Home':b.dataset.normal===({news:'News',fees:'Basics',world:'World',dashboard:'Dashboard',sectors:'Sectors',commodities:'Commodities'}[id]||'Dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
 function scrollToSection(id){const el=document.getElementById(id);if(el){const d=el.closest('details');if(d)d.open=true;}if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
 function navAction(button,normalPage,tokenAction){if(document.body.classList.contains('token-world')){document.body.classList.toggle('basics-open',tokenAction==='basics');if(tokenAction==='basics'){document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));window.scrollTo({top:0,behavior:'smooth'});return}const targets={assets:'tokenCategories',networks:'tokenDetail',issuance:'tokenFlow',brokers:'brokerGrid',home:'parallel'};if(tokenAction==='networks')showTokenDetail('networks');if(tokenAction==='contracts')showTokenDetail('contracts');if(tokenAction==='issuance')showTokenDetail('settlement');document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));scrollToSection(targets[tokenAction]||'parallel');return;}const targets={dashboard:'dashboard',news:'news',fees:'fees',world:'world',sectors:'sectors',commodities:'commodities'};document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active',b===button));scrollToSection(targets[normalPage]||normalPage);}
+(()=>{const b=document.querySelector('.tokenCoin');if(!b)return;const imgs=[...b.querySelectorAll('img[data-spin]')];imgs.forEach(i=>{i._still=i.getAttribute('src');new Image().src=i.dataset.spin});b.addEventListener('mouseenter',()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;imgs.forEach(i=>i.src=i.dataset.spin)});b.addEventListener('mouseleave',()=>imgs.forEach(i=>i.src=i._still))})();
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
 let portalBusy=false;
@@ -920,7 +906,7 @@ function kTarget(w){return KR+kP(w)*(w.clientWidth-2*KR)}
 function kRender(w){const k=w._k,d=57.296,f=(n)=>n.toFixed(2),st=w.style;st.setProperty('--bx',f(k.x));st.setProperty('--rot',f(k.x/KR*d)+'deg');st.setProperty('--phi',f(k.phi*d)+'deg');st.setProperty('--tail',f(k.tail*d)+'deg');st.setProperty('--legs',f(k.legs*d)+'deg');st.setProperty('--head',f(-k.phi*d*.45)+'deg')}
 function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=false;
  document.querySelectorAll('.kitty').forEach(w=>{const k=w._k;if(!k||!w.clientWidth)return;const tx=kTarget(w);if(!k.init){k.x=k.px=tx;k.vf=k.vp=0;k.init=1;kRender(w)}
-  const raw=(tx-k.px)/dt;k.vf+=(raw-k.vf)*Math.min(1,dt*18);const af=(k.vf-k.vp)/dt;k.vp=k.vf;k.px=k.x=tx;
+  const raw=(tx-k.px)/dt,pe=kP(w),end=pe<=.001||pe>=.999;if(end&&!k.end&&Math.abs(raw)>120)kScare(w);k.end=end;k.vf+=(raw-k.vf)*Math.min(1,dt*18);const af=(k.vf-k.vp)/dt;k.vp=k.vf;k.px=k.x=tx;
   const a=Math.max(-3500,Math.min(3500,af*.16)),wb=Math.max(-40,Math.min(40,k.vf/KR)),n=4,h=dt/n;
   for(let s=0;s<n;s++){
    let acc=-(KG/KL)*Math.sin(k.phi)-(a/KL)*Math.cos(k.phi)+1.5*(-wb-k.om)-5.5*k.om;const over=Math.abs(k.phi)-.85;if(over>0)acc-=Math.sign(k.phi)*110*over;
@@ -930,6 +916,7 @@ function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=
   const moving=Math.abs(k.vf)>.5||Math.abs(k.phi)>.004||Math.abs(k.om)>.03||Math.abs(k.tail)>.004;
   w.classList.toggle('moving',moving);kRender(w);if(moving)busy=true});
  kRaf=busy?requestAnimationFrame(kStep):0}
+function kScare(w){const i=w.querySelector('.kCat img');if(!i||i._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;i._busy=1;const idle=i.getAttribute('src');(window._kScare||(window._kScare=fetch('assets/mascots/kitten-scared.webp').then(r=>{if(!r.ok)throw 0;return r.blob()}))).then(bl=>{const u=URL.createObjectURL(bl);i.src=u;setTimeout(()=>{i.src=idle;URL.revokeObjectURL(u);i._busy=0},870)}).catch(()=>{i._busy=0;window._kScare=null})}
 function kWake(){if(!kRaf){kLast=performance.now();kRaf=requestAnimationFrame(kStep)}}
 function kittySync(){document.querySelectorAll('.kitty').forEach(w=>w.style.setProperty('--p',kP(w)));kWake()}
 document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);w._k={x:22,v:0,phi:0,om:0,tail:0,tailv:0,legs:0,legsv:0};const b=document.createElement('span'),c=document.createElement('span');b.className='kBall';b.setAttribute('aria-hidden','true');b.innerHTML='<i></i>';c.className='kCat';c.setAttribute('aria-hidden','true');c.innerHTML=KITTEN;w.append(b,c)});
