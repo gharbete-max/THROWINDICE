@@ -158,3 +158,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Fun spin arrows (2026-10-29)
 - Spin buttons carry big chunky SVG arrows (40 px, 8 px stroke) that nudge in their direction, grow on hover and squash when pressed; reduced motion keeps them still. Spin behaviour re-verified.
 - qa.js clean; no console errors.
+
+## Round: Candy spin buttons (2026-10-29)
+- Arrow animation removed. The spin circles are glossy candy balls: radial gel gradient, fine dot texture, white gloss spot and arc, inner shading. Colour follows the world accent.
+- qa.js clean; no console errors.
