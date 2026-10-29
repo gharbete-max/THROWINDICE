@@ -118,3 +118,199 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Round: TradingView CSP (2026-10-27)
 - The artifact preview blocks all third-party frames and scripts (ERR_BLOCKED_BY_CSP). Embeds now use TradingView's script loader, fall back to an s.tradingview.com iframe, and on a CSP violation show link buttons instead of an error page. Verified with a simulated CSP; live rendering still needs the hosted site or a local file.
+
+## Round: Carousels, balloon M, Office-style smileys (2026-10-29)
+- Every tile row is a one-tile swipe carousel with prev/next and a counter.
+- "More" is a red balloon with a white M: floats, wobbles on hover, bursts into confetti and red scraps, re-inflates on Less. Hand-built SVG/CSS.
+- Real-World and Token World coins are glossy Office-97-style smileys (yellow, blue), hand-drawn SVG.
+- Hugging Face generation (Qwen-Image, Wan 2.2) was tried but anonymous ZeroGPU quota is exhausted; needs an HF token in the environment.
+- qa.js clean; no console errors.
+
+## Round: Roll wheel (2026-10-29)
+- Tile rows no longer slide: only the current tile shows and the arrows (or a swipe) roll it out and the next in, lucky-wheel style, looping at the ends. Filters re-sync the roll. Reduced motion swaps instantly.
+- qa.js clean; no console errors.
+
+## Round: Deflated balloon (2026-10-29)
+- After the pop, the leftover is a limp deflated balloon (not an X); clicking it re-inflates the balloon and hides the text again.
+- qa.js clean; no console errors.
+
+## Round: Hotdog roll (2026-10-29)
+- Tile changes now roll like a hotdog on a grill: the tile becomes a rounded capsule and turns about its long horizontal axis while the next one rolls in at the same time (Web Animations, 760 ms). Next and previous roll opposite ways. Reduced motion swaps instantly.
+- qa.js clean; no console errors.
+
+## Round: Roll keeps its shape (2026-10-29)
+- During a roll both tiles keep their exact size and corner radius (overlaid absolutely, container height eased between tiles); no grid or capsule re-layout. Verified by measuring both tiles at 30/200/400/600 ms.
+- qa.js clean; no console errors.
+
+## Round: Momentum spin (2026-10-29)
+- Arrow clicks add to a target; the roll chases it with a speed that grows with clicks in the last 650 ms, so spamming accelerates, and it locks on a tile about 0.3-0.5 s after the last click. Both directions, wrap-around and filters verified (12 clicks forward land 12 tiles ahead; 5 back land 5 behind).
+- qa.js clean; no console errors.
+
+## Round: Calmer spin (2026-10-29)
+- Removed the opacity fades that made the roll blink; faces now hide through backface culling only. Top speed 6 tiles/s (was ~25), gentler acceleration. Sampled 150 frames of a 3-click spam: no frame without a visible tile, no container height jumps over 14 px.
+- qa.js clean; no console errors.
+
+## Round: Blink fix, bigger fixed spin buttons (2026-10-29)
+- Root causes of the blink: tiles had a bouncy 0.35 s CSS transform transition that lagged the per-frame rotation, and hidden tiles still carried the scroll-reveal class (opacity 0 plus a 0.7 s pop-in) the first time they were shown. Fixed with transition none while spinning and no reveal class on carousel tiles. Verified frame by frame.
+- Spin buttons are 60 px, in a pill that sticks above the bottom nav while the tile is on screen, so tall tiles cannot push them out of view (checked with an 1100 px tall tile).
+- qa.js clean; no console errors.
+
+## Round: Fun spin arrows (2026-10-29)
+- Spin buttons carry big chunky SVG arrows (40 px, 8 px stroke) that nudge in their direction, grow on hover and squash when pressed; reduced motion keeps them still. Spin behaviour re-verified.
+- qa.js clean; no console errors.
+
+## Round: Candy spin buttons (2026-10-29)
+- Arrow animation removed. The spin circles are glossy candy balls: radial gel gradient, fine dot texture, white gloss spot and arc, inner shading. Colour follows the world accent.
+- qa.js clean; no console errors.
+
+## Round: Smarter balloons, fee/calm colours, what-to-look-for (2026-10-29)
+- A balloon only appears when text wraps to 2+ lines at the current width; one-liners stay visible. Headers (intros, section blurbs), footers (disclaimers, "Look at" lines) and the P/E box never get balloons. Token World balloons are blue.
+- Bubble pit has Fun / Fee / Calm colouring: green (cheap or calm) through yellow to red, relative to all funds, grey where there is no data; each bubble shows its number. Size still follows volume.
+- US-listed fees for 71 funds from Yahoo Finance fund profiles (fetched 2026-10-29, cross-checked against the 10 issuer-reported fees); volatility from data/facts.json. Europe-listed funds have no fee data and show grey.
+- P/E explained in plain words in the fund's four questions and on the Basics page. "What to check on those sites" list added under the fund links. Fluctuation "look at" line rewritten as "waves, like seasons".
+- qa.js clean; no console errors.
+
+## Round: Plain four Fs (2026-10-29)
+- No balloons inside the four-Fs boxes, lists (including "On those sites, check") or the P/E box.
+- All 16 fund-type profiles and the generic fee, flow and look-at lines rewritten in plain words: "bumps" instead of swings, "fewer people trade it" instead of "thinner", the buy price and sell price gap explained once, yield and P/E explained where used. Basics page four boxes simplified; Flow defined.
+- qa.js clean; no console errors.
+
+## Region presets (where are you?)
+- First visit shows a "Where are you?" picker (16 choices); choice saved in localStorage `td-region`; header chip reopens it.
+- Funds not usually sold in the chosen region are hidden in bubble piles; "Show N more" reveals them greyed with a 🚫 mark; "ask" mark = check your broker.
+- Each ball carries a small flag for the fund's home country (from ISIN prefix; US for US-listed); selected fund shows "Made in X" and a region status line.
+- Added XACT OMXS30 (SE0000693293, Swedish) as an example of a Sweden-domiciled fund. Sources disagree on plain vs ESG index naming; verify on the provider site.
+- Checked headless at 390/1280: no console errors, no overflow, qa.js clean.
+
+## Wider fund list, domicile wording, new bottom menu
+- Wording is "Domiciled in X" (not "made in"): iShares funds are run by BlackRock but domiciled in Ireland. Domicile = ISIN prefix, except `DOMFIX` (ETPs: WisdomTree Bitcoin/Ether are Jersey, VanEck Bitcoin ETN is Liechtenstein); checked against justETF "domiciled in" text 2026-10-29.
+- Added ~100 funds: single-country piles (Canada, Mexico, Brazil, Korea, Taiwan, Switzerland, Italy, more), regional piles, sector/theme piles, metals, S&P 500 sector UCITS, European-listed ETCs/ETPs for metals and crypto. US-listed names/fees from Yahoo fund profiles, UCITS/ETC/ETP names/ISINs/fees from justETF (both 2026-10-29). New funds have no volatility data yet (grey in Calm mode); tiers are estimates.
+- Commodities page trimmed to gold, silver, platinum & palladium, oil. Natural gas, copper and farm funds all exist, but they hold futures and can drift from the price; their piles are removed from the menu (data kept in THEMES).
+- Bottom menu: token coin (far left), News, Investing (pops World / Sectors / Commodities bubbles; in Token World Assets / Networks / Issuance), Dashboard, Basics, Fee calc, Game (placeholder toast).
+- Headless 390/1280: no console errors, nav clicks scroll to the right sections, qa.js clean.
+
+## One page at a time, fun Investing bubbles, own Basics page
+- Real world shows one page at a time (`body[data-view]`, `showView`, called from `scrollToSection`), framed by a black vignette (`#vig`, iris animation) on every page except the dashboard.
+- Investing bubbles: bouncy pop with stagger, idle bob, wiggling icons, sparkle bursts on open and on pick, shrink-out on close.
+- Basics is its own page (`#basics`): the 4 Fs in one short line each, a button to the fee calculator, and a folded "Why invest at all?". The fee calculator page (`#fees`) now holds only the calculator.
+- Headless 390/1280: every nav path shows only its page; no console errors; qa.js clean.
+
+## Steady Investing bubbles, one Investing page
+- Investing bubbles pop in once and then stay put (no bobbing, no vertical movement; hover and click only scale).
+- World, Sectors and Commodities now share one page, stacked in that order. The bubble you pick scrolls to its part.
+- Headless 390/1280: bubble positions identical 0.9 s and 2.4 s after opening; all three sections visible; no console errors.
+
+## Start-here note, longer Basics, one learning page, edge vignette
+- Fee sticker removed. Dashboard top has a short "Investing is not complicated" note (5 one-line points) linking to Basics.
+- Basics page: "Investing in plain words" (6 short points, SPIVA link as the source for "most active funds trail their index over long periods"), then the 4 Fs, then the fee calculator on the same page (Basics and Fee calc buttons scroll to their part).
+- Vignette is now directional: it darkens only above and below the tile in focus, on the two multi-tile views (Investing = World/Sectors/Commodities; Basics + Fee calc). No full-screen vignette any more.
+- Wording kept to checkable claims: the "casino" and "science says ignore the news" ideas were not used as stated; the note says single stocks, crypto and trends swing harder and funds spread risk.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## Inflation slider and stock-picking note
+- Fee calc page: new "Inflation eats money" card under the calculator (slider 0–10%, default 2% marked as an example). It uses the money and years above and shows cash in today's prices, the fund after fees in today's prices, and real growth per year. Checked by hand: 10,000 at 2% for 20 years buys 6,730 in today's money.
+- Basics: new "Why not pick single stocks?" card. Sources: Bessembinder (2018), J. Financial Economics, "Do stocks outperform Treasury bills?" (only ~4% of US stocks account for the net gains over T-bills, 1926–2016) and S&P SPIVA scorecards. Not used as stated: "close to 0 risk after decades". The text says the range of results has historically narrowed with longer holding, and that it is never risk-free.
+- Dashboard note's last point now says picking single stocks is very hard.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## VOO vs 2% savings chart
+- Dashboard note and Basics each have a bar chart: VOO from its first trading day (9 Sep 2010) to 31 Dec 2025 is +717% with dividends reinvested (+519% price only); a 2% savings account over the same 15.3 years is +35%. Source: Yahoo Finance daily data fetched 2026-10-29. See `VS` in index.html and docs/UPDATING.md.
+- Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## Corner flames on spinning tiles
+- While a carousel spins, a small flame (three layered flames plus two sparks) sits on each of the four tile corners. Heat follows the spin speed: it grows as the tile accelerates when you keep clicking, leans against the direction of travel, and dies down as it slows. The layer is removed when the tile locks in. Hidden with reduced motion (the spin is already off then).
+- Headless: heat reached 1.0 at full spin, layer and `.spinning` class removed after settling, no console errors; qa.js clean.
+
+## Flames circle the whole tile
+- The corner flames became a ring of fire: 14 to 34 flames (by tile size) evenly spaced around the whole tile edge, each pointing outward, and the ring travels around the tile in the direction of the spin. Size and brightness follow the spin speed; the ring is removed when the tile locks in.
+- Headless: heat reaches 1.0, ring gone after settling, no console errors; qa.js clean.
+
+## Lightning instead of flames
+- The ring of fire is now electric lightning: a jagged bolt (blue glow, bright core, white centre) runs in a closed loop around the whole tile and re-strikes every 45 ms. As the spin speeds up the bolt jitters wider, gets thicker and brighter, and up to 9 forked bolts shoot outward from the edge. Removed when the tile locks in; hidden with reduced motion.
+- Headless: heat 1.0 at full spin, layer gone after settling, no console errors; qa.js clean.
+
+## Thicker lightning, one bubble view, one-way gate, dough physics
+- Lightning: glow 16 to 34 px, bolt 5 to 10 px, white core and forks brighter; faintly visible even at low speed.
+- Bubble pit: the Fun / Fee / Calm switch is gone. Every ball always shows its details: flag, icon, ticker, short name, fee and 3-year swing (as many as fit its size). Size is still volume (TIER). Colours are the fixed candy colours.
+- One-way gate: a ball that has fallen fully in can no longer leave through the top (ceiling clamp once inside; a throw straight up stays in). Checked: after throwing a ball up at 6000 px/s no ball is above the top edge.
+- Dough physics: balls hit with almost no bounce, stick when touching (separating speed is damped, tangential slip is dragged along), and may overlap a little under pressure. Pressed balls flatten along the contact direction (strain tensor per ball, quick to flatten and slow to recover, no springy overshoot); floor and wall hits flatten too.
+- Headless 390/1280: no console errors, all balls inside, qa.js clean.
+
+## Dough balls, falling from above, sliding
+- Balls are now irregular dough blobs: each ball's outline is a closed curve of 18 points (`blobPath`, applied as `clip-path`). Contacts (other balls, floor, walls, gate) push the outline in at the contact point and bulge it out to the sides; points move in quickly and recover slowly, plus a small constant wobble, so every ball stays lumpy and different. The element box is 1.34x the physics circle to leave room for the bulge; one drop-shadow is applied to the whole field.
+- Physics: friction between balls and on the floor is much lower (they slide and roll off each other); balls still stick a little when pulled apart and hit with almost no bounce.
+- The pit now spans the full screen height. Balls fall in from above the screen, behind the title bar; a dashed line at 150 px marks the one-way gate and nothing can climb back above it (a ball thrown up at 7000 px/s stayed below it).
+- Headless 390/1280: no NaN positions, no console errors, qa.js clean.
+
+## Token World revamp, Saturn buttons, Coinpull
+- Token World is now six short views like the real world: Home (planets + early-days note), Basics (what is tokenization, six short points, "what to watch" fold), Wallets (keys, custody, hot/cold, seed phrase, address, fees, scams, "ETFs need no wallet"), and an Explore group stacked in order: Options (what exists today + examples + market fold), Networks (explore the system, details, brokers fold), Issuance. Bottom menu: coin, News, Explore (Options / Networks / Issuance bubbles), Home, Basics, Wallets (replaces Fee calc, not relevant here), Game. News from Token World returns to the real news page.
+- The M balloon is a small Saturn in Token World. Popping it reveals the text, flashes, and throws about 30 pieces of debris and ring shards outward slowly; they are then pulled back into the spot (2.5 s) and a dimmed Saturn is left as the "close" button (click to re-inflate). Real world keeps the red balloon with confetti.
+- Coinpull (Game button in Token World; real world still shows a placeholder): runner on candles, hold = jetpack. 80% of candles are green and each charges the jetpack a little (more as the climb goes on); walls climb slowly unless boosting; boosting costs fuel (a full tank lasts about 2 s). After 80 to 130 candles a rugpull cliff appears, sized so that landing softly needs 20 to 60% fuel (formula `fuelNeed`/`dropFor`; a 15% margin is built in). Holding while falling brakes only above 510 px/s, so braking too early wastes fuel. Landing faster than about 590 px/s ends the game (one life). Soft landing gives +250. Best score is kept in localStorage. Simulated: perfect timing without boosting survives; burning the fuel before the cliff dies.
+- Headless 390/1280: no console errors, qa.js clean.
+
+## Coinpull rework (greed vs fuel)
+- Candles are uneven and volatile: green candles climb more and more per step (trend 3 px plus 0.42 px per candle, with random spikes and 12% double-height wall candles), red ones fall; wicks above and below differ in length.
+- The run speeds up over time (170 to 560 px/s) and the background grid and speed streaks move faster with it.
+- Controls: a tap or click is a jet burst (cheap: 5% fuel, about 46 px hop, max about 11 per second); holding gives continuous thrust but burns 1.15 fuel per second, so it is much more expensive. Holding while falling only brakes above 510 px/s.
+- Score grows exponentially: points = (distance + 0.4 x height gained while thrusting) x 1.03^candles climbed, shown as a multiplier next to the score. The faster you climb, the more candles you pass before the rug, so greed pays, but fuel burned climbing is not there for the fall.
+- The rugpull has no warning and no marker on the fuel bar: a 4000 to 9000 px drop that comes after 26 to 42 s of climbing; terminal speed 1700 px/s; landing faster than about 594 px/s is death. Best play lets speed build and pumps taps at the end; pumping the whole way burns far more fuel. Soft landing after a big fall: +500.
+- Character: front-facing, one big black eye with no white, a small tongue sticking out forward, robe, big twin jetpack tanks with large flames, glow, smoke and sparks.
+- Simulated: careful and moderately greedy policies with late taps survive and score millions; a policy that taps constantly runs dry and dies at the rug. Headless: no console errors, qa.js clean.
+
+## Coinpull: fall damage, steeper candles, candles decided late
+- Fall damage now has three bands by impact speed: under 800 px/s nothing, 800 to 1150 px/s "OUCH" (lose 25% fuel, stumble at 45% speed for 0.7 s, screen shake), above 1150 px/s you die. Before, anything over about 594 px/s killed, which meant a valley deeper than about 126 px was deadly (speed after a drop h is sqrt(2 x 1400 x h)). Terminal speed is now 2300 px/s so the rugpull still needs a few late taps.
+- Climbing gets harder: trend per green candle 5 + 0.8 px per candle climbed, 14% double-size wall candles, and 7% unpredictable valleys (80 to 320 px dips as a long red candle). Crawling without the jetpack is slower (70 px/s) so steep sections need it.
+- Green candles recharge less (0.4% growing to 1.4% per candle) so fuel is a real budget. Simulated at the rug: careful play arrives with about 48% fuel, greedy play with about 15%, and an all-in policy with 0% and dies; no-jetpack play barely scores.
+- Candles are decided only 5 candles before the player arrives. Until then they show as flickering dashed outlines in changing colours and heights, so the next shape, colour, valley or the cliff cannot be seen coming.
+- `tap(true)` bypasses the cooldown for tests.
+- Headless: no console errors, qa.js clean.
+- Game over now reads "LIQUIDATED 💀 — You are now in a lifetime of debt. This is not investing. This is speculation... oh right, gambling!" plus the score. Checked by forcing a fall in headless.
+
+## Coinpull: valley penalty, jumpable rugpull, stronger jetpack
+- Landing in a valley (a fall of 60 to 1200 px) now costs score: −depth/9 % (at most −40%), shown as "VALLEY −x% SCORE".
+- The rugpull is now a gap: a pit of 4000 to 9000 px with a plateau on the far side at the old height and a floor far below, both lasting 30 candles. A candle has two surfaces (`top` and `low`); the player is on the lower one once it is more than 600 px under the old peak. Flying across ends with "MADE IT ACROSS! +25% SCORE"; falling in means braking as before ("SOFT LANDING +500"), or death.
+- Gap width = (random 0.1 to 1.0) x 6 x current speed in px (`RUGK`), so the fuel needed is spread evenly: with a full tank crossing is (almost) certain, at 50% it works about half the time. A perfect scripted tapper crossed about 33% with 10% fuel, 50% with 25–40%, 87–90% with 55–70% and 100% from 85%; a human will do worse. Taps cost up to 4x more when high above the ground (e.g. over the pit), so hovering across is not free.
+- Jetpack stronger: tap 520 px/s (was 360, about 97 px hop), hold thrust 1500 (was 900), max rise 650, terminal fall speed 2600.
+- Headless: no console errors, qa.js clean.
+
+## Coinpull: cash-out credit card, gold bounce, leverage levels
+- The far side of the rugpull gap is a giant credit card (26 candles long, magnetic stripe, chip, big 16-bit pixel letters "CASH OUT!"). Landing on it from the air bounces the player (-1700 px/s), turns the character gold for 3 s (invulnerable: no fall damage, no valley loss, no liquidation), adds +25% score, banks the score (best score is saved immediately) and starts the next level: background palette changes (5 palettes, cross-fade 1.6 s) and leverage goes up by one.
+- Leverage L: points x L; valley loss L times bigger (capped at 40% x L, max 90%) and each valley landing has a (L-1) x depth/640 chance of outright liquidation (e.g. L=2, 320 px valley = 50%).
+- Falling into the pit instead keeps the level and leverage as before (brake to survive).
+- Headless: forced scenario crossed the gap, bounced, went gold (gold 3 s, LEV 2x, background changed), card renders with the letters, no console errors, qa.js clean.
+
+## Coinpull: more fuel, more valleys, silent red blink
+- Fuel is more generous: green candles recharge 1% growing to 3% per candle (was 0.4% to 1.4%), taps cost 3.5% (was 5%), holding burns 0.8 per second (was 1.15), start fuel 60%.
+- Valleys are more common (17% of climbing candles, 40 to 320 px deep).
+- Touching anything going down now costs score: any landing after a fall of 20 px or more takes depth/9 % (times the leverage), and the whole screen blinks red slightly. No text is shown for these penalties (the OUCH and VALLEY messages are gone; the hard-landing fuel loss also just blinks). Gold invulnerability still blocks them.
+- Headless: a 120 px drop cost about 11% of the score with the blink and no text; qa.js clean.
+
+## Coinpull: snappier jetpack, faster refill, easier gaps, surprise rugpull
+- Snappier: tap cooldown 50 ms (was 85), hold thrust starts after 80 ms (was 180), hold acceleration 2000 (was 1500).
+- Faster refill: green candles give 2% growing to 5% (was 1% to 3%), plus a slow passive refill (1.5% per second) while standing on the ground without pressing.
+- Gaps are easier to close: gap width factor 3.5 (was 6) and the extra cost of hovering high above the ground is at most +120% (was +300%). Scripted tapper: crossed 37% at 10% fuel, 83% at 25%, 100% from 40%.
+- Stronger uptrend: trend 6 px plus 1.0 px per candle (was 5 + 0.8).
+- The rugpull candle is now the normal red candle colour (solid body, dark cap, wick), not a see-through outline, and it is decided only 3 candles before you reach it (was 5), so it shows up close and by surprise.
+- Headless: rug decided 3 candles ahead in all runs that reached it; qa.js clean.
+
+## Coinpull: dollar score, level speed-up, zero-dollar liquidation, END EARLY
+- The score is drawn as `$` plus the number in a 16-bit pixel font (own digits, `$`, `,` and `.` added to the pixel table next to "CASH OUT!"), yellow with a black shadow.
+- Each cash-out and surviving the rugpull speeds the game up: level 2 runs 1.2x faster, level 3 1.3x, and so on (1 + 0.1 x level). Points are still multiplied by the level.
+- From level 2 up, touching down loses level x depth/600 of the score; if that reaches 100% the score is $0 and you are liquidated (e.g. level 2 and a 300 px valley). Level 1 keeps the old rule (depth/900, at most 40%). Fixed a bug where valleys deeper than about 230 px cost fuel but no score.
+- Cash-out is now a choice: landing on the card stops the game, banks the score (+25%, best score saved) and shows "CASHED OUT: keep speculating >:)" or END EARLY! Ending early shows "YOU WALKED AWAY" with the score ("the only winning move"). Continuing bounces, goes gold for 3 s and starts the next level. Offered at every cash-out.
+- Headless: the choice card, both buttons, gold bounce into level 2, end early, level-2 liquidation at $0 all worked; qa.js clean.
+
+## Coinpull: forward thrust, longer and snappier fuel, fewer rug deaths
+- Pressing now tilts the character forward (up to about 15 degrees, flames trail behind) and adds up to +50% forward speed while thrusting (taps and hold), so crossing the gap is realistic.
+- Fuel lasts longer: a tap costs 2.5% (was 3.5%), holding burns 0.55 per second (was 0.8). Snappier: tap lift 640 px/s (was 520), hold thrust starts after 30 ms (was 80) with acceleration 2600 (was 2000), max rise 760.
+- Fewer rug deaths: terminal fall speed 2200 (was 2600), hard-landing penalty from 1000 px/s (was 800), death from 1500 px/s (was 1150), and the camera shows more ground below while falling. Gap width factor retuned to 10 for the faster forward speed.
+- Scripted checks: a tapper crossed 30% at 10% fuel and every time from 25%; when it fell in, it survived the pit every time (0 deaths); the careful, greedy and all-in policies all survived the first rug.
+- Headless: no console errors, qa.js clean.
+
+## Coinpull: only a cash out counts, gold vs hollow buttons, second card, half rugpulls
+- Best score is only saved by END EARLY (a real cash out). Dying (fall damage or liquidation) scores nothing: the game over text says "You lost $X. Only a cash out counts." Continuing after a cash-out no longer saves anything.
+- "KEEP SPECULATING >:)" is a gold shiny button with a moving glint; "END EARLY!" is hollow, white, normal weight.
+- A second cash-out card now exists on the pit floor of every full rugpull: raised 480 px above the floor, 30 candles long, starting 6 candles past the gap start. Reaching it needs jetpack fuel (walls taller than 260 px can only be climbed with the jetpack). Landing on it from the air gives the same choice. The old far-side card is kept.
+- Half rugpulls (35% of rugpulls): no gap and no card, just a 1500 to 3200 px drop with a flat landing; a soft landing earns +500.
+- Zone after the gap is now 44 candles long. `HALFP` and `RUGK` can be set from tests.
+- Headless: choice card with gold/hollow buttons, END EARLY, level-2 liquidation, scripted bots reached the pit-floor card in 14 of 24 forced pit falls (crude bots), half rugpulls survived 16 of 16; qa.js clean.
