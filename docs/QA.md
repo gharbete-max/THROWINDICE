@@ -145,3 +145,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Momentum spin (2026-10-29)
 - Arrow clicks add to a target; the roll chases it with a speed that grows with clicks in the last 650 ms, so spamming accelerates, and it locks on a tile about 0.3-0.5 s after the last click. Both directions, wrap-around and filters verified (12 clicks forward land 12 tiles ahead; 5 back land 5 behind).
 - qa.js clean; no console errors.
+
+## Round: Calmer spin (2026-10-29)
+- Removed the opacity fades that made the roll blink; faces now hide through backface culling only. Top speed 6 tiles/s (was ~25), gentler acceleration. Sampled 150 frames of a 3-click spam: no frame without a visible tile, no container height jumps over 14 px.
+- qa.js clean; no console errors.

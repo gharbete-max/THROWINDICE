@@ -1112,16 +1112,16 @@ function go(c,d){const L=elig(c);if(L.length<2)return;
   L.forEach(x=>x.classList.add('wOff'));S.raf=requestAnimationFrame(spin.bind(null,c))}
  S.target+=d;S.clicks.push(now)}
 function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
- S.clicks=S.clicks.filter(x=>t-x<650);const vmax=3.5+2.4*S.clicks.length,dist=S.target-S.p;
- const want=Math.max(-vmax,Math.min(vmax,dist*6));S.v+=(want-S.v)*Math.min(1,dt*9);S.p+=S.v*dt;
+ S.clicks=S.clicks.filter(x=>t-x<650);const vmax=Math.min(6,2.2+1.1*S.clicks.length),dist=S.target-S.p;
+ const want=Math.max(-vmax,Math.min(vmax,dist*3.4));S.v+=(want-S.v)*Math.min(1,dt*5);S.p+=S.v*dt;
  const n=S.n,fl=Math.floor(S.p),f=S.p-fl,i=((fl%n)+n)%n,A=S.L[i],B=S.L[(i+1)%n];
  S.L.forEach(x=>{if(x!==A&&x!==B){x.classList.add('wOff');x.style.transform=''}});
  const R=h=>'50% 50% -'+Math.round(h/2)+'px';
- A.classList.remove('wOff');A.style.transformOrigin=R(S.H[i]);A.style.transform='rotateX('+(-90*f)+'deg)';A.style.opacity=f<.7?1:Math.max(0,1-(f-.7)/.3);
- if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)';B.style.opacity=f>.3?1:f/.3}else B.classList.add('wOff');
+ A.classList.remove('wOff');A.style.transformOrigin=R(S.H[i]);A.style.transform='rotateX('+(-90*f)+'deg)';
+ if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)'}else B.classList.add('wOff');
  c.style.height=(S.H[i]*(1-f)+S.H[(i+1)%n]*f+S.pad)+'px';
  const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
- if(Math.abs(dist)<.04&&Math.abs(S.v)<1.4){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c._cur=S.L[e];c._st=null;sync(c);return}
+ if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c._cur=S.L[e];c._st=null;sync(c);return}
  S.raf=requestAnimationFrame(spin.bind(null,c))}
 function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);k.innerHTML='<button type="button" aria-label="Previous">‹</button><span aria-live="polite"></span><button type="button" aria-label="Next">›</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);c.after(k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
