@@ -6,9 +6,9 @@ char, mode, n, res, samples = sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sy
 only = int(sys.argv[6]) if len(sys.argv) > 6 else None
 if char == 'kitten' and os.path.exists('/home/claude/bl/skip_kitten') and only is None: sys.exit(0)  # kitten rendered separately
 if char == 'pug':
-    import pug; rig, parts = pug.build(); pose = anim.pug_pose; exp = 0.45
+    import pug; rig, parts = pug.build(); pose = anim.pug_pose; exp = 0.0
 else:
-    import cat; rig, parts = cat.build(char); pose = anim.alien_pose if char == 'alien' else anim.kitten_hang; exp = 0.0 if char == 'alien' else 0.15
+    import cat; rig, parts = cat.build(char); pose = anim.alien_pose if char == 'alien' else (anim.kitten_scared if mode == 'scared' else anim.kitten_hang); exp = 0.0 if char == 'alien' else 0.15
 if char == 'kitten':  # front-on orthographic framing around the hanging pose
     import numpy as np, json
     pose(rig, parts, 0); bpy.context.view_layer.update()

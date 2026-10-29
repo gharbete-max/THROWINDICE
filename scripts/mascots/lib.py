@@ -101,8 +101,8 @@ def smooth_mask(nt, socket, lo, hi):
 def mult(nt, a, b):
     m = nt.nodes.new('ShaderNodeMath'); m.operation = 'MULTIPLY'; nt.links.new(a, m.inputs[0]); nt.links.new(b, m.inputs[1]); return m.outputs[0]
 
-def eye_mat(name, iris=(0.12, 0.07, 0.04), r=1.0):
-    """Big glossy cartoon eye: dark iris ring around a black pupil under a clear coat."""
+def eye_mat(name, iris=(0.12, 0.07, 0.04), r=1.0, pupil=0.42):
+    """Glossy eye: dark limbal ring, streaky iris brightening toward the pupil, black pupil, clear coat."""
     m = principled(name, (0, 0, 0), 0.4, coat=1.0, coat_rough=0.0, spec=0.0)
     nt = m.node_tree; b = nt.nodes['Principled BSDF']
     tc = nt.nodes.new('ShaderNodeTexCoord'); g = nt.nodes.new('ShaderNodeTexGradient'); g.gradient_type = 'SPHERICAL'
@@ -111,10 +111,17 @@ def eye_mat(name, iris=(0.12, 0.07, 0.04), r=1.0):
     nt.links.new(tc.outputs['Object'], mp.inputs['Vector']); nt.links.new(mp.outputs['Vector'], g.inputs['Vector'])
     ramp = nt.nodes.new('ShaderNodeValToRGB'); r = ramp.color_ramp
     r.elements[0].position = 0.0; r.elements[0].color = (0.004, 0.003, 0.003, 1)
-    r.elements[1].position = 0.2; r.elements[1].color = (*iris, 1)
-    e = r.elements.new(0.36); e.color = (*[c * 1.8 for c in iris], 1)
-    e = r.elements.new(0.42); e.color = (0.006, 0.004, 0.004, 1)
-    nt.links.new(g.outputs['Fac'], ramp.inputs['Fac']); nt.links.new(ramp.outputs['Color'], b.inputs['Base Color'])
+    r.elements[1].position = 0.12; r.elements[1].color = (*[c * 0.35 for c in iris], 1)   # limbal ring
+    e = r.elements.new(0.2); e.color = (*iris, 1)
+    e = r.elements.new(pupil - 0.03); e.color = (*[min(1, c * 2.2) for c in iris], 1)
+    e = r.elements.new(pupil); e.color = (0.004, 0.003, 0.003, 1)
+    # radial streaks in the iris
+    wv = nt.nodes.new('ShaderNodeTexWave'); wv.wave_type = 'RINGS'; wv.rings_direction = 'SPHERICAL'
+    nz = nt.nodes.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 40; nz.inputs['Detail'].default_value = 4
+    nt.links.new(mp.outputs['Vector'], nz.inputs['Vector'])
+    mx = nt.nodes.new('ShaderNodeMix'); mx.data_type = 'RGBA'; mx.blend_type = 'MULTIPLY'; mx.inputs['Factor'].default_value = 0.45
+    nt.links.new(g.outputs['Fac'], ramp.inputs['Fac']); nt.links.new(ramp.outputs['Color'], mx.inputs['A']); nt.links.new(nz.outputs['Color'], mx.inputs['B'])
+    nt.links.new(mx.outputs['Result'], b.inputs['Base Color'])
     return m
 
 # ---------- rig ----------
@@ -210,7 +217,7 @@ def hair_mat(name, melanin=0.9, redness=0.3, rough=0.32, color=None, region=None
         nt.links.new(fn(nt, sx), mix.inputs['Factor']); nt.links.new(mix.outputs['Result'], h.inputs['Color'])
     return m
 
-def fur(obj, mat, count=9000, length=0.035, children=14, clump=0.15, rough=0.004, droop=(0, 0, -0.35), avoid=(), short=(), kink=0.0, radius=0.0035):
+def fur(obj, mat, count=9000, length=0.035, children=14, clump=0.15, rough=0.004, droop=(0, 0, -0.35), avoid=(), short=(), kink=0.0, radius=0.0035, lift=0.3, comb=True):
     """Particle-hair fur. avoid: [(centre, r)] bald zones (eyes/nose); short: [(centre, r, factor)] shorter fur zones."""
     P = np.array([v.co for v in obj.data.vertices]) @ np.array(obj.matrix_world.to_3x3()).T + np.array(obj.matrix_world.translation)
     dens = np.ones(len(P)); ln = np.ones(len(P))
@@ -222,7 +229,10 @@ def fur(obj, mat, count=9000, length=0.035, children=14, clump=0.15, rough=0.004
     obj.data.materials.append(mat); slot = len(obj.data.materials)
     obj.modifiers.new('fur', 'PARTICLE_SYSTEM'); ps = obj.particle_systems[-1]; s = ps.settings
     s.type = 'HAIR'; s.count = count; s.hair_length = length; s.use_advanced_hair = True
-    s.normal_factor = length; s.object_align_factor = tuple(d * length for d in droop)  # advanced hair: length comes from these
+    if comb:  # combed fur: lies along the body and flows downward (tangent phase 0.25 = meridians), with a little lift
+        s.tangent_factor = length; s.tangent_phase = 0.25; s.normal_factor = length * lift; s.object_align_factor = tuple(d * length * 0.3 for d in droop)
+    else:
+        s.normal_factor = length; s.object_align_factor = tuple(d * length for d in droop)  # advanced hair: length comes from these
     s.hair_step = 5; s.display_step = 3; s.render_step = 4
     s.material = slot; s.child_type = 'INTERPOLATED'; s.rendered_child_count = children; s.child_percent = 2
     s.clump_factor = clump; s.clump_shape = 0.3; s.roughness_1 = rough; s.roughness_1_size = 1.0; s.roughness_endpoint = rough * 0.6
@@ -251,3 +261,44 @@ def flap(name, base, tip, normal, w, l, t, mat):
 def normal_at(obj, x, z, y0=-5.0):
     ok, loc, n, i = obj.ray_cast(obj.matrix_world.inverted() @ Vector((x, y0, z)), Vector((0, 1, 0)))
     return (obj.matrix_world @ loc), (obj.matrix_world.to_3x3() @ n).normalized()
+
+def rest_coords(obj, mats):
+    """Make object-space colour masks stick to the body when it deforms. The rest position is baked into two UV
+    maps (fur strands inherit their root's UVs), and masks read those instead of the live Object coordinates."""
+    P = np.array([v.co for v in obj.data.vertices]); lo, hi = P.min(0), P.max(0); n = (P - lo) / (hi - lo)
+    me = obj.data; a = me.uv_layers.new(name='restXZ'); b = me.uv_layers.new(name='restY')
+    vi = np.array([l.vertex_index for l in me.loops])
+    a.data.foreach_set('uv', np.c_[n[vi, 0], n[vi, 2]].ravel()); b.data.foreach_set('uv', np.c_[n[vi, 1], np.zeros(len(vi))].ravel())
+    for m in mats:
+        nt = m.node_tree
+        for tc in [x for x in nt.nodes if x.type == 'TEX_COORD']:
+            links = [l for l in nt.links if l.from_socket == tc.outputs['Object']]
+            if not links: continue
+            ua = nt.nodes.new('ShaderNodeUVMap'); ua.uv_map = 'restXZ'; ub = nt.nodes.new('ShaderNodeUVMap'); ub.uv_map = 'restY'
+            sa = nt.nodes.new('ShaderNodeSeparateXYZ'); sb = nt.nodes.new('ShaderNodeSeparateXYZ'); cm = nt.nodes.new('ShaderNodeCombineXYZ')
+            nt.links.new(ua.outputs['UV'], sa.inputs[0]); nt.links.new(ub.outputs['UV'], sb.inputs[0])
+            nt.links.new(sa.outputs['X'], cm.inputs['X']); nt.links.new(sb.outputs['X'], cm.inputs['Y']); nt.links.new(sa.outputs['Y'], cm.inputs['Z'])
+            mp = nt.nodes.new('ShaderNodeMapping'); mp.inputs['Location'].default_value = tuple(lo); mp.inputs['Scale'].default_value = tuple(hi - lo)
+            nt.links.new(cm.outputs[0], mp.inputs['Vector'])
+            for l in links: to = l.to_socket; nt.links.remove(l); nt.links.new(mp.outputs['Vector'], to)
+
+def catchlights(c, er, ys=0.85, big=0.2, small=0.09):
+    """Two bright reflections on the front of an eye (big upper-left, small lower-right): what makes eyes look alive."""
+    m = bpy.data.materials.get('catch') or principled('catch', (1, 1, 1), 0.2, emit=(1, 1, 1), emit_str=3.0)
+    out = []
+    for dx, dz, r in ((-0.36, 0.36, big), (0.3, -0.3, small)):
+        y = c[1] - er * ys * math.sqrt(max(0.0, 1 - dx * dx - dz * dz)) - er * 0.02
+        o = uv_sphere('hl', er * r, (c[0] + dx * er, y, c[2] + dz * er), (1, 0.25, 1)); o.data.materials.append(m); out.append(o)
+    return out
+
+def hair_tint(mat, color, mask_fn, amount=0.6):
+    """Blend an extra colour (e.g. cheek blush) into a COLOR-mode hair material where mask_fn is high."""
+    nt = mat.node_tree; h = [n for n in nt.nodes if n.type == 'BSDF_HAIR_PRINCIPLED'][0]
+    src = [l.from_socket for l in nt.links if l.to_socket == h.inputs['Color']]
+    tc = nt.nodes.new('ShaderNodeTexCoord'); sx = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Object'], sx.inputs[0])
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'
+    if src: nt.links.new(src[0], mix.inputs['A'])
+    else: mix.inputs['A'].default_value = h.inputs['Color'].default_value[:]
+    mix.inputs['B'].default_value = (*color, 1)
+    f = nt.nodes.new('ShaderNodeMath'); f.operation = 'MULTIPLY'; f.inputs[1].default_value = amount; nt.links.new(mask_fn(nt, sx), f.inputs[0])
+    nt.links.new(f.outputs[0], mix.inputs['Factor']); nt.links.new(mix.outputs['Result'], h.inputs['Color'])
