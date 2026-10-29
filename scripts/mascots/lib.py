@@ -143,14 +143,18 @@ def seg_dist(P, a, b, limb=False):
     if limb: d = np.where(t < 0.08, d + 10 * (0.08 - t), d)  # limbs only own what lies past the shoulder/hip joint
     return d
 
-def skin(obj, rig, bones, power=4.0, only=None):
+def skin(obj, rig, bones, power=4.0, only=None, band=0.16):
     """Smooth automatic weights from distance to each bone segment (robust replacement for bone-heat)."""
     P = np.array([v.co for v in obj.data.vertices]) @ np.array(obj.matrix_world.to_3x3()).T + np.array(obj.matrix_world.translation)
     names = [b[0] for b in bones if (only is None or b[0] in only)]
-    D = np.stack([seg_dist(P, b[1], b[2], b[0].startswith(('arm.', 'leg.'))) for b in bones if b[0] in names], 1) + 1e-4
-    W = D ** -power
-    W[D > np.sort(D, 1)[:, [2]] + 1e-9] = 0  # at most three nearest bones per vertex
-    W /= W.sum(1, keepdims=True)
+    # distance to each bone's *surface* (bone line minus a rough thickness): a wide head owns its cheeks, not the arms
+    thick = lambda n: {'head': 0.4, 'spine': 0.28, 'hips': 0.28}.get(n, 0.08)
+    D = np.stack([np.maximum(seg_dist(P, b[1], b[2], b[0].startswith(('arm.', 'leg.', 'fore.', 'shin.', 'foot.'))) - thick(b[0]), 0) for b in bones if b[0] in names], 1) + 1e-4
+    # near-rigid segments: each vertex follows its nearest bone; only within `band` of the boundary between the two
+    # nearest bones does it blend (a narrow seam at the joint), so heads, torsos and limbs keep their shape
+    order = np.argsort(D, 1); i1, i2 = order[:, 0], order[:, 1]; r = np.arange(len(D))
+    x = np.clip((D[r, i2] - D[r, i1]) / band, 0, 1); x = x * x * (3 - 2 * x)
+    W = np.zeros_like(D); W[r, i1] = 0.5 + 0.5 * x; W[r, i2] = 0.5 - 0.5 * x
     for j, n in enumerate(names):
         vg = obj.vertex_groups.new(name=n)
         for i in np.nonzero(W[:, j] > 0.01)[0]: vg.add([int(i)], float(W[i, j]), 'REPLACE')

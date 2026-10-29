@@ -77,7 +77,6 @@ def kitten_hang(rig, parts, t, special=False):
     arms(rig, 0, 0, 0, 0, 0, 0)
     rot(rig, 'spine', 0.05 + 0.03 * w(0.2, 2), 0, 0.04 * w(0.8))  # no sideways bend here: it would drag the paws off the ball
     rot(rig, 'hips', 0.08 + 0.05 * w(0.5, 2), 0, 0.06 * w(1.2))  # belly jiggle
-    rig.pose.bones['spine'].scale = (1, 1 + 0.035 * w(0.3, 2), 1)
     rot(rig, 'head', -0.1 + 0.07 * w(0.9, 2), 0.1 * w(-0.4), 0.14 * w(-0.6))
     for n, ph, sg in (('L', 0.0, 1), ('R', math.pi, -1)):  # bicycle kicks + dangling lag
         k = math.sin(p * 2 + ph)
@@ -96,7 +95,115 @@ def kitten_scared(rig, parts, t, special=False):
     PZ = PIVOT_Z; th = shake
     rot(rig, 'root', 0, th, 0); move(rig, 'root', -PZ * math.sin(th), 0, PZ * (1 - math.cos(th)))
     rot(rig, 'head', -0.1 + 0.35 * hit, 0, 0.08 * hit)              # duck the head
-    rig.pose.bones['spine'].scale = (1, 1 - 0.06 * hit, 1)            # cringe
     for n, sg in (('L', 1), ('R', -1)):                               # tuck the legs up
         rot(rig, f'leg.{n}', -0.2 - 0.9 * hit, 0, sg * 0.06); rot(rig, f'shin.{n}', 0.35 + 1.0 * hit, 0, 0); rot(rig, f'foot.{n}', 0.45 + 0.4 * hit, 0, 0)
     rot(rig, 'tail', 0.6 * hit, 0, -0.4 * hit)                        # tail whips up
+
+# ---------------- choreography: a sequence of different moves, ~140 bpm ----------------
+# Every move returns offsets from the neutral stance that are zero at its start and end, so moves chain and the
+# whole sequence loops seamlessly. Feet stay planted unless a move lifts them.
+NEUTRAL = dict(yaw=0, lift=0, dx=0, dip=0, lean=0, twist=0, hx=0, hy=0, hz=0, aL=0, aR=0, fL=0, fR=0, bL=0.15, bR=0.15, stepL=0, stepR=0, glow=1.6)
+S = math.sin; PI = math.pi
+def frac(x): return x - math.floor(x)
+def env(u, k=0.18): return ease(u / k) * ease((1 - u) / k)          # fade a move in and out at its edges
+
+def mv_shuffle(u):      # quick side shuffle, two steps each way, paw on the weight side waves, head bobs on every beat
+    sw = S(4 * PI * u); e = env(u, 0.08)
+    return dict(dx=0.07 * sw * e, dip=0.04 * (1 - math.cos(8 * PI * u)) / 2, lean=0.06 * sw * e, twist=0.15 * sw * e,
+                stepL=max(0, -sw) ** 2 * e, stepR=max(0, sw) ** 2 * e, aL=(0.55 * max(0, sw) ** 1.3 - 0.1 * max(0, -sw)) * e,
+                aR=(0.55 * max(0, -sw) ** 1.3 - 0.1 * max(0, sw)) * e, hx=0.08 * S(8 * PI * u), hz=-0.15 * sw * e, fL=0.2 * sw * e, fR=-0.2 * sw * e)
+
+def mv_roof(u):         # "raise the roof": both arms shoot up and pump four times, knees bounce, head nods
+    e = env(u, 0.15); pump = S(8 * PI * u)
+    return dict(aL=e * (0.4 + 0.1 * pump), aR=e * (0.4 + 0.1 * pump), bL=e * (0.42 + 0.12 * pump), bR=e * (0.42 + 0.12 * pump),  # V arms, forearms up and out
+                dip=e * 0.06 * (1 - math.cos(8 * PI * u)) / 2, dx=0.05 * S(4 * PI * u) * e, hx=e * 0.16 * pump, hz=0.12 * S(4 * PI * u) * e)
+
+def mv_spin_point(u):   # fast 360 spin with arms out, then a disco point: one arm up high, the other down, hip pop
+    out = {}
+    if u < 0.5:
+        v = u / 0.5; out['yaw'] = 2 * PI * ease(v); a = S(PI * v); out.update(aL=0.1 * a, aR=0.1 * a, dip=0.05 * a, lift=0.05 * a)
+    else:
+        v = S(PI * (u - 0.5) / 0.5)
+        out.update(aL=0.75 * v, aR=-0.45 * v, bL=-0.15 * v, fL=-0.1 * v, dx=0.06 * v, lean=0.12 * v, hz=0.15 * v, hy=-0.12 * v, twist=-0.2 * v, stepR=0.5 * v)
+    return out
+
+def mv_hops(u):         # two quick hops: crouch, spring up with legs tucked and arms flapping, land
+    h = frac(2 * u); air = S(PI * ease((h - 0.2) / 0.6)) if 0.2 < h < 0.8 else 0.0
+    crouch = (1 - ease(h / 0.2)) * 0.6 if h < 0.2 else ((ease((h - 0.8) / 0.2)) * 0.6 if h > 0.8 else 0.0)
+    e = env(u, 0.1)
+    return dict(lift=0.24 * air, dip=0.08 * crouch * e, stepL=0.7 * air, stepR=0.7 * air, aL=0.6 * air - 0.15 * crouch * e,
+                aR=0.6 * air - 0.15 * crouch * e, hx=-0.12 * air + 0.1 * crouch * e, twist=0.2 * S(2 * PI * u) * e)
+
+def mv_wiggle(u):       # butt wiggle: hips swing fast left-right while the head stays steady, arms bent like a boxer
+    e = env(u, 0.15); w = S(8 * PI * u)
+    return dict(dx=0.05 * w * e, twist=0.35 * w * e, lean=0.1 * w * e, dip=0.05 * e, hy=-0.2 * w * e,
+                aL=-0.25 * e, aR=-0.25 * e, fL=-0.6 * e, fR=-0.6 * e, bL=1.1 * e, bR=1.1 * e)
+
+def choreo(t, moves):
+    """moves: [(fn, beats)]; returns the pose dict at loop time t in [0,1)."""
+    total = sum(b for _, b in moves); x = t * total; P = dict(NEUTRAL)
+    for fn, b in moves:
+        if x < b or fn is moves[-1][0]:
+            for k, v in fn(min(1, x / b)).items(): P[k] = P.get(k, 0) + v
+            return P
+        x -= b
+    return P
+
+def apply_pose(rig, parts, P, base_yaw=-0.3, glow_mat=None):
+    move(rig, 'root', 0, 0, P['lift']); rot(rig, 'root', 0, 0, base_yaw + P['yaw'])
+    move(rig, 'hips', P['dx'], 0, -P['dip']); rot(rig, 'hips', 0, 0.6 * P['lean'], 0)
+    rot(rig, 'spine', 0.04, -P['lean'], P['twist'])
+    rot(rig, 'head', P['hx'], P['hy'], 0.1 + P['hz'])                           # 0.1 = a curious tilt
+    arms(rig, P['aL'], P['aR'], P['fL'], P['fR'], P['bL'], P['bR'])
+    L = 0.56; sway = math.asin(max(-0.9, min(0.9, P['dx'] / L))); knee = math.acos(max(0.6, (L - P['dip']) / L))
+    leg_bend(rig, 'L', knee + 0.55 * P['stepL'], sway); leg_bend(rig, 'R', knee + 0.55 * P['stepR'], sway)
+    m = parts.get('orb_m')
+    if m: m.node_tree.nodes['Principled BSDF'].inputs['Emission Strength'].default_value = P['glow'] + 6 * max(P['lift'] * 4, P['aL'] * 0.6 if P['aL'] > 1 else 0)
+
+ALIEN_DANCE = [(mv_shuffle, 2), (mv_roof, 1.5), (mv_spin_point, 1.5), (mv_hops, 1.5)]
+PUG_DANCE = [(mv_roof, 1.5), (mv_wiggle, 2), (mv_hops, 1.5), (mv_spin_point, 1.5)]
+
+_alien_special, _pug_special = alien_pose, pug_pose
+def alien_pose(rig, parts, t, special=False):
+    if special: return _alien_special(rig, parts, t, True)
+    apply_pose(rig, parts, choreo(t, ALIEN_DANCE))
+
+def pug_pose(rig, parts, t, special=False):
+    if special: return _pug_special(rig, parts, t, True)
+    apply_pose(rig, parts, choreo(t, PUG_DANCE), base_yaw=-0.25)
+
+# ---------------- tap specials: spin jump, backflip, superstar pose (each starts and ends neutral) ----------------
+def sp_spin(t):
+    air = bump(t, 0.18, 0.8); cr = 0.6 * bump(t, 0, 0.22) + bump(t, 0.75, 0.97)
+    return dict(lift=0.38 * air, yaw=2 * PI * ease((t - 0.18) / 0.6), dip=0.1 * cr, aL=0.25 * air - 0.2 * cr, aR=0.25 * air - 0.2 * cr,
+                stepL=0.6 * air, stepR=0.6 * air, hx=0.12 * cr - 0.1 * air, glow=9 * air)
+
+def sp_flip(t):
+    air = bump(t, 0.16, 0.82); cr = 0.7 * bump(t, 0, 0.2) + bump(t, 0.78, 0.98); tuck = bump(t, 0.25, 0.72)
+    return dict(lift=0.6 * air, flip=-2 * PI * ease((t - 0.2) / 0.56), dip=0.12 * cr, aL=0.5 * bump(t, 0.1, 0.3) - 0.35 * tuck, aR=0.5 * bump(t, 0.1, 0.3) - 0.35 * tuck,
+                fL=-0.6 * tuck, fR=-0.6 * tuck, bL=0.9 * tuck, bR=0.9 * tuck, stepL=1.0 * tuck, stepR=1.0 * tuck, hx=0.25 * tuck, glow=9 * air)
+
+def sp_pose(t):
+    v = ease(t / 0.12) * ease((1 - t) / 0.22); beat = 0.5 + 0.5 * S(2 * PI * 3 * t)  # snap in, hold with a little hip bounce, release
+    return dict(aL=0.8 * v, bL=-0.15 * v, aR=-0.55 * v, fR=-0.55 * v, bR=1.25 * v, dx=0.07 * v, lean=0.15 * v, twist=-0.3 * v,
+                hz=0.18 * v, hy=-0.12 * v, stepR=0.35 * v, yaw=0.35 * v, dip=0.03 * v * beat, glow=6 * v)
+
+SPECIALS = {'special': sp_spin, 'flip': sp_flip, 'pose': sp_pose}
+
+def apply_pose2(rig, parts, P, base_yaw):
+    """apply_pose plus an optional flip (rotation about the character's own side axis, pivoting at mid-body)."""
+    apply_pose(rig, parts, P, base_yaw)
+    a = P.get('flip', 0.0)
+    if a:
+        c = 1.0; yaw = base_yaw + P['yaw']; ty, tz = c * math.sin(a), c * (1 - math.cos(a))
+        rot(rig, 'root', a, 0, yaw); move(rig, 'root', -math.sin(yaw) * ty, math.cos(yaw) * ty, P['lift'] + tz)
+
+def alien_pose(rig, parts, t, special=False):
+    if special: P = dict(NEUTRAL); [P.__setitem__(k, P.get(k, 0) + v) for k, v in SPECIALS[special if isinstance(special, str) else 'special'](t).items()]
+    else: P = choreo(t, ALIEN_DANCE)
+    apply_pose2(rig, parts, P, -0.3)
+
+def pug_pose(rig, parts, t, special=False):
+    if special: P = dict(NEUTRAL); [P.__setitem__(k, P.get(k, 0) + v) for k, v in SPECIALS[special if isinstance(special, str) else 'special'](t).items()]
+    else: P = choreo(t, PUG_DANCE)
+    apply_pose2(rig, parts, P, -0.25)

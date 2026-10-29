@@ -24,4 +24,4 @@ else:
 out = f'/home/claude/bl/frames/{char}_{mode}'; os.makedirs(out, exist_ok=True)
 for i in range(n):
     if only is not None and i != only: continue
-    pose(rig, parts, i / n, special=(mode == 'special')); render(f'{out}/{i:03d}.png')
+    pose(rig, parts, i / n, special=(mode if mode in ('special', 'flip', 'pose') else False)); render(f'{out}/{i:03d}.png')
