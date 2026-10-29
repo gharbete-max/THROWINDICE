@@ -194,3 +194,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Investing bubbles: bouncy pop with stagger, idle bob, wiggling icons, sparkle bursts on open and on pick, shrink-out on close.
 - Basics is its own page (`#basics`): the 4 Fs in one short line each, a button to the fee calculator, and a folded "Why invest at all?". The fee calculator page (`#fees`) now holds only the calculator.
 - Headless 390/1280: every nav path shows only its page; no console errors; qa.js clean.
+
+## Steady Investing bubbles, one Investing page
+- Investing bubbles pop in once and then stay put (no bobbing, no vertical movement; hover and click only scale).
+- World, Sectors and Commodities now share one page, stacked in that order. The bubble you pick scrolls to its part.
+- Headless 390/1280: bubble positions identical 0.9 s and 2.4 s after opening; all three sections visible; no console errors.
