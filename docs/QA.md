@@ -162,3 +162,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Round: Candy spin buttons (2026-10-29)
 - Arrow animation removed. The spin circles are glossy candy balls: radial gel gradient, fine dot texture, white gloss spot and arc, inner shading. Colour follows the world accent.
 - qa.js clean; no console errors.
+
+## Round: Smarter balloons, fee/calm colours, what-to-look-for (2026-10-29)
+- A balloon only appears when text wraps to 2+ lines at the current width; one-liners stay visible. Headers (intros, section blurbs), footers (disclaimers, "Look at" lines) and the P/E box never get balloons. Token World balloons are blue.
+- Bubble pit has Fun / Fee / Calm colouring: green (cheap or calm) through yellow to red, relative to all funds, grey where there is no data; each bubble shows its number. Size still follows volume.
+- US-listed fees for 71 funds from Yahoo Finance fund profiles (fetched 2026-10-29, cross-checked against the 10 issuer-reported fees); volatility from data/facts.json. Europe-listed funds have no fee data and show grey.
+- P/E explained in plain words in the fund's four questions and on the Basics page. "What to check on those sites" list added under the fund links. Fluctuation "look at" line rewritten as "waves, like seasons".
+- qa.js clean; no console errors.
