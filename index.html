@@ -491,6 +491,16 @@ body.token-world #vig{display:none}
 .flatGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.flatGrid .fbox{padding:14px}.flatGrid .fbox b{display:block;font-size:17px;margin:4px 0}.flatGrid .fbox small{display:block;font-size:13px;line-height:1.4}.flatGrid.three{grid-template-columns:1fr}@media(min-width:760px){.flatGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.flatGrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .startNote{margin-bottom:14px}.startNote h2{margin:4px 0 10px}.noteList{list-style:none;padding:0;margin:0;display:grid;gap:8px}.noteList li{display:flex;gap:10px;align-items:flex-start}.noteList li>span{font-size:22px;line-height:1.3;flex:none}.noteList li p{margin:0;font-size:15px;line-height:1.45}.startNote .actions{margin-top:12px}.story li p{font-size:16px}.learnHead{margin:18px 4px 8px}
 .vsBox{flex:1;min-width:0}.vsT{font-size:14px;font-weight:700;margin-bottom:6px}.vsRow{display:flex;align-items:center;gap:8px;margin:4px 0}.vsRow>span{flex:0 0 86px;font-size:13px;font-weight:800}.vsTrack{flex:1;min-width:0;display:flex;align-items:center;gap:8px}.vsBar{display:block;height:22px;border-radius:99px;flex:0 0 var(--w);min-width:10px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 55%),var(--bc);box-shadow:inset 0 -3px 5px rgba(0,0,0,.18);transform-origin:left;animation:vsGrow 1.1s cubic-bezier(.2,.9,.25,1) both}.vsTrack b{font-size:15px;white-space:nowrap}.vsNote{font-size:12px;color:var(--muted);margin-top:4px}@keyframes vsGrow{from{transform:scaleX(0)}}@media(prefers-reduced-motion:reduce){.vsBar{animation:none}}
+
+/* Flames around the tile corners while a carousel spins faster */
+.flameLayer{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:7}
+.fcorner{position:absolute;left:0;top:0;width:0;height:0;opacity:calc(var(--heat,0)*1.25)}
+.fcorner i{position:absolute;left:-20px;bottom:-4px;width:40px;height:60px;transform-origin:50% 100%;animation:flick .2s ease-in-out infinite alternate;animation-delay:var(--d)}
+.fcorner i svg{display:block;width:100%;height:100%;transform-origin:50% 100%;transform:rotate(calc(var(--r) + var(--lean,0deg))) scale(calc(var(--sz)*(.45 + var(--heat,0)*.95)),calc(var(--sz)*(.4 + var(--heat,0)*1.3)));filter:drop-shadow(0 0 8px rgba(255,120,20,.8))}
+@keyframes flick{0%{transform:scale(.92,1.06) skewX(-5deg)}100%{transform:scale(1.06,.9) skewX(6deg)}}
+.fcorner b{position:absolute;left:-2px;top:-6px;width:5px;height:5px;border-radius:50%;background:#ffd24a;box-shadow:0 0 6px #ff8a14;animation:spark .6s ease-out infinite}.fcorner b+b{animation-delay:.3s;left:6px}
+@keyframes spark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(8px,-46px) scale(.2);opacity:0}}
+@media(prefers-reduced-motion:reduce){.flameLayer{display:none}}
 </style>
 </head>
 <body>
@@ -1365,12 +1375,19 @@ function go(c,d){const L=elig(c);if(L.length<2)return;L.forEach(x=>x.classList.r
  if(RM()||!document.body.animate){const cur=c._cur,nx=L[(L.indexOf(cur)+d+L.length)%L.length];cur.classList.add('wOff');nx.classList.remove('wOff');c._cur=nx;sync(c);return}
  let S=c._st;const now=performance.now();
  if(!S){const cur=c._cur,n=L.length,cs0=c.getAttribute('style');c.style.position='relative';const W=cur.offsetWidth,Hc=cur.offsetHeight,T=cur.offsetTop,pad=c.offsetHeight-Hc;
-  S=c._st={L,n,p:L.indexOf(cur),target:L.indexOf(cur),v:0,clicks:[],saved:L.map(x=>x.getAttribute('style')),cs:c.getAttribute('style'),H:[],pad,last:now};
+  S=c._st={W,T,L,n,p:L.indexOf(cur),target:L.indexOf(cur),v:0,heat:0,clicks:[],saved:L.map(x=>x.getAttribute('style')),cs:c.getAttribute('style'),H:[],pad,last:now};
   c.style.position='relative';c.style.height=c.offsetHeight+'px';c.classList.add('spinning');
   const abs='position:absolute;left:0;right:0;margin:0 auto;top:'+T+'px;width:'+W+'px!important;height:auto;';
   L.forEach((x,i)=>{x.classList.remove('wOff');x.style.cssText=(S.saved[i]||'')+';'+abs;S.H[i]=x.offsetHeight});
   L.forEach(x=>{if(x!==cur)x.classList.add('wOff')});S._start=1}
  S.target+=d;S.clicks.push(now);if(S._start){S._start=0;S.last=now-16;spin(c,now)}}
+const FL='<svg viewBox="0 0 40 60" aria-hidden="true"><path d="M20 1C25 14 37 22 35 39C34 51 28 59 20 59C12 59 5 51 5 41C5 30 14 26 16 16C17 10 18 6 20 1Z" fill="#e8280c"/><path d="M20 14C24 24 31 30 30 40C29 48 25 54 20 54C14 54 10 48 10 41C10 34 16 31 17 24C18 20 19 17 20 14Z" fill="#ff8a14"/><path d="M20 30C23 35 26 39 25 44C24 49 22 52 20 52C17 52 15 49 15 45C15 40 19 38 20 30Z" fill="#ffe55a"/></svg>';
+function flame(c,S,dt,h){const w=c.parentNode;if(!w||!w.classList.contains('carWrap'))return;
+ if(!S.fl){const L=document.createElement('div');L.className='flameLayer';L.setAttribute('aria-hidden','true');L.innerHTML=[0,1,2,3].map(()=>'<div class="fcorner">'+[-16,0,16].map((r,j)=>'<i style="--r:'+r+'deg;--d:'+(j*.07)+'s;--sz:'+(j===1?1:.7)+'">'+FL+'</i>').join('')+'<b></b><b></b></div>').join('');w.append(L);S.fl=L}
+ const tgt=Math.max(0,Math.min(1,(Math.abs(S.v)-.4)/4.6));S.heat+=(tgt-S.heat)*Math.min(1,dt*(tgt>S.heat?7:3));
+ const x0=c.offsetLeft+(c.offsetWidth-S.W)/2,y0=c.offsetTop+S.T,P=[[x0,y0],[x0+S.W,y0],[x0,y0+h],[x0+S.W,y0+h]];
+ S.fl.style.setProperty('--heat',S.heat.toFixed(3));S.fl.style.setProperty('--lean',(S.v>0?-1:1)*Math.min(26,Math.abs(S.v)*5)+'deg');
+ [...S.fl.children].forEach((e,i)=>e.style.transform='translate('+Math.round(P[i][0])+'px,'+Math.round(P[i][1])+'px)')}
 function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
  S.clicks=S.clicks.filter(x=>t-x<650);const vmax=Math.min(6,2.2+1.1*S.clicks.length),dist=S.target-S.p;
  const want=Math.max(-vmax,Math.min(vmax,dist*3.4));S.v+=(want-S.v)*Math.min(1,dt*5);S.p+=S.v*dt;
@@ -1380,8 +1397,9 @@ function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1
  A.classList.remove('wOff');A.style.transformOrigin=R(S.H[i]);A.style.transform='rotateX('+(-90*f)+'deg)';
  if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)'}else B.classList.add('wOff');
  c.style.height=(S.H[i]*(1-f)+S.H[(i+1)%n]*f+S.pad)+'px';
+ flame(c,S,dt,S.H[i]*(1-f)+S.H[(i+1)%n]*f);
  const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
- if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);setTimeout(()=>window._dgRun&&window._dgRun(),40);return}
+ if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){if(S.fl){S.fl.remove();S.fl=null}const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);setTimeout(()=>window._dgRun&&window._dgRun(),40);return}
  S.raf=requestAnimationFrame(spin.bind(null,c))}
 function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);const AR='<svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M8 24h28M25 11l13 13-13 13" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>';k.innerHTML='<button type="button" class="arL" aria-label="Previous">'+AR+'</button><span aria-live="polite"></span><button type="button" class="arR" aria-label="Next">'+AR+'</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);const w=document.createElement('div');w.className='carWrap';c.parentNode.insertBefore(w,c);w.append(c,k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();

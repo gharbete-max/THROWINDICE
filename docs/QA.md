@@ -216,3 +216,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## VOO vs 2% savings chart
 - Dashboard note and Basics each have a bar chart: VOO from its first trading day (9 Sep 2010) to 31 Dec 2025 is +717% with dividends reinvested (+519% price only); a 2% savings account over the same 15.3 years is +35%. Source: Yahoo Finance daily data fetched 2026-10-29. See `VS` in index.html and docs/UPDATING.md.
 - Headless 390/1280: no console errors, no overflow, qa.js clean.
+
+## Corner flames on spinning tiles
+- While a carousel spins, a small flame (three layered flames plus two sparks) sits on each of the four tile corners. Heat follows the spin speed: it grows as the tile accelerates when you keep clicking, leans against the direction of travel, and dies down as it slows. The layer is removed when the tile locks in. Hidden with reduced motion (the spin is already off then).
+- Headless: heat reached 1.0 at full spin, layer and `.spinning` class removed after settling, no console errors; qa.js clean.
