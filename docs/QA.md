@@ -340,3 +340,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **Parachute:** open canopy = +10% on all gains; HUD shows "CHUTE +10%"; added to the help card.
 - **Patterns:** up phase = biased random walk, plus ~10% chance per candle to play a pattern: bull flag, ascending triangle, double bottom, head and shoulders (bearish), cup and handle, V reversal, stairs.
 - Headless Chromium: hands-off 28 s run never stuck (avg ~230 px/s) with slaps both ways; full rugpull crossing identical to before (30/30 from 25% fuel); game7/rug/choice scripts pass; no console errors, desktop + phone.
+
+## Coinpull: ping-pong cat, auto-float over walls, slower scoring, bubbly %
+- Cat animation plays forward, then reversed, then forward (frame = triangle wave over 2·101−2 steps) and its frame rate also scales ×1.2 / ×1.3 … per level (phase accumulated, no jumps when the rate changes).
+- Any candle/wall more than 300 px above the feet within the next 5 candles makes the cat float up automatically (1800 px/s) until it is level with the top, so scroll speed never changes (wall test: 900 px wall, scroll 205→225 px/s steadily, no slowdown or stop). The old hard stop at big walls is gone. Moderate steps are still climbed along the smooth line at the normal climbing speed.
+- Score growth much slower: height % now scaled by 1/5000 px (was 1/1500) and the candle multiplier is 1.015^k (was 1.03^k). Hands-off 28 s run: ~$2.5k (was ~$27k). Slap threshold lowered to 2% (shake at 8%) to match.
+- % pop-ups use a bubbly rounded font (Baloo 2 from Google Fonts, falling back to rounded system fonts) with white outline, gradient fill and drop shadow.
+- Headless Chromium over http: full-rug crossing still 30/30 from 25% fuel, game7 policies unchanged, no console errors.
