@@ -398,3 +398,12 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Coinpull: flame shape and colour sequence
 - Flames are drawn behind the cat and start inside its paws with a rounded top and a fireball at each nozzle, so nothing is cut off at the feet. Sequence every time: ignition explosion (bright fireball + spikes, first 0.32 s) → weak small blue flame → grows longer/wider and shifts blue → yellow-white → orange/red over ~1.4 s of holding. A tap shows the explosion and a short blue flame; flames fade ~0.18 s after release. Reduced motion: no spikes or flicker. Verified by frame captures at 60/200/500/900/1400 ms, desktop and phone; fuzz, choice and pause scripts clean.
+
+## Coinpull: balancing audit, cash-out compass, rename, leverage that bites
+- **Game is now called DEAD CAT BOUNCE.** The title on the start card pulses green↔red and bounces; the other cards (cash out, liquidated…) keep their own titles. Reduced motion: static green.
+- **Bigger gaps:** 5–7 candles at low speed up to 13 at full speed (a single tap is no longer always enough). Simulated: one tap at the edge falls in 31% of pits at 200 px/s, ~15% at 300–560; a tap plus a second tap when short: ~0%; no jump: 77–98%.
+- **Leverage scaling:** a mistake (falling into a gap) costs `25% + 20%·level` of your money: 45% at level 1, 65% at 2, 85% at 3, everything from level 4 (one mistake and you are liquidated; verified 10/10 at levels 4 and 5). The level-up banner shows the current price ("LEVERAGE 1.3× · A MISTAKE NOW COSTS 65%"). Gains are still scaled by the leverage too, and the ZERO line gets closer (3600/L).
+- **Cash-out compass:** once the ground has vanished, a bobbing gold arrow sits over the card when it is on screen; when it is off screen a gold 💳 pointer on the screen edge points toward it with the distance ("CASH OUT · 320 m"). The card is drawn at its full width even before all its candles exist.
+- **Flames** follow the paws of the current dance frame (anchor table read from the sprite sheet at load, falls back to the middle when the canvas is not readable) and are ~30% wider with a bigger fireball.
+- **Rule: the cat is never under the line.** Verified over 154k frames of five random input styles: 0 frames below the invisible line. A steep climb now slows the scroll instead of letting the cat sink into the candle; touching a wall from the air snaps onto it.
+- Rug survival (human.js): holding from the edge 37–40/40, tapping 40/40. Fuzz, choice, pause and glide scripts clean.
