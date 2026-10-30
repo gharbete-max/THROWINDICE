@@ -1471,7 +1471,13 @@ function gen(){const g=R.gen;let green=Math.random()<.8,top=g.top,dip=false,cd;
  if(g.phase==='up'){const trend=6+g.k*1.0;if(!(g.q&&g.q.length)&&g.k>=5&&Math.random()<.1)g.q=pattern(trend);
   if(g.q&&g.q.length){const d=g.q.shift();top+=d+rnd(-2,2);green=d<0;dip=d>45}else if(Math.random()<.12){/* an unpredictable valley */top+=rnd(40,320);green=false;dip=true}else if(green){let rise=rnd(.4,1.6)*trend+rnd(0,10);if(Math.random()<.14)rise*=2.4;top-=rise}else top+=rnd(3,10+g.k*.4);if(R.t-g.t0>=g.Tup){g.phase='cliff';g.q=null}g.k++}
  else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0;g.q=null}}
- const inUp=g.phase==='up';g.top=top;R.C.push({top,low:null,green,rug:false,wu:rnd(2,50)*(Math.random()<.2?1.8:1),wl:rnd(2,40),bh:dip?rnd(90,170):rnd(34,110),k:inUp?g.k:0})}
+ const inUp=g.phase==='up';let bh=dip?rnd(90,170):rnd(34,110),wu=rnd(2,50)*(Math.random()<.2?1.8:1),wl=rnd(2,40);
+ if(inUp){/* no candle may jump more than ~2 cat heights from the last one (only the rugpulls gap down; a gap up beyond that is a 0.1% rarity) */
+  let d=Math.max(-300,Math.min(300,top-g.top));if(Math.random()<.001)d=-rnd(320,460);top=g.top+d;green=d<0;
+  /* very varied candles: tiny dojis to long bodies, short wicks to long ones */
+  bh=Math.max(12,Math.min(240,Math.abs(d)*rnd(.6,1.4)+rnd(6,80)));if(Math.random()<.08)bh=Math.min(260,bh*1.8);if(Math.random()<.1)bh=rnd(10,22);
+  wu=rnd(0,36)*(Math.random()<.22?3.2:1);wl=rnd(0,36)*(Math.random()<.22?3.2:1)}
+ g.top=top;R.C.push({top,low:null,green,rug:false,wu,wl,bh,k:inUp?g.k:0})}
 const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};/* candles are decided only LOOK candles before the player arrives */
 
 const surf=c=>R.layer==='low'&&c.low!=null?c.low:(c.top!=null?c.top:Infinity);

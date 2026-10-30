@@ -356,3 +356,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **Liquidated:** title LIQUIDATED, text "You lost everything including your house. But you got some vibes left to cope with.", button "(Start speculating again?)". The cat dances at 2x and orbits the tile, slowly accelerating; the tile has an animated rainbow glow (static under reduced motion).
 - **Pause:** ⏸ button (and P key / tab hidden) shows a PAUSED tile with Resume/Quit; game, timers and music freeze (AudioContext suspended). Esc resumes when paused.
 - Headless Chromium desktop + phone: pause freezes and resumes, liquidation tile + orbiting cat render, no console errors; game7 / rug (30/30 crossing from 25% fuel) / choice scripts pass.
+
+## Coinpull: candle step limit and more varied candles
+- No candle may differ from the previous one by more than 300 px (about 2 cat heights) up or down in the normal up phase, so the cat no longer has to fly up; only rugpull/half rugpull gap down. A 0.1% rarity can gap up 320–460 px (measured over 15,960 candles: max step down 300, gaps up >300 on 0.21%).
+- Candle bodies now range from tiny dojis (10 px) to long ones (up to 260 px), tied loosely to the size of the move, with 0–36 px wicks and 22% of wicks 3x longer.
+- Headless: hands-off run, game7, rug (30/30 from 25% fuel) and choice scripts pass, no console errors.
