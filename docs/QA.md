@@ -319,3 +319,6 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Jetpack tanks and flames removed from `player()`; a yellow/purple canvas parachute is drawn behind the kitten. It unfolds from a packed bundle to a full canopy in ~0.25 s while boosting (`s.u>0`) and folds away on release; no sway under `prefers-reduced-motion`, open/closed snaps.
 - HUD/help text says "Parachute"; gameplay and fuel bar unchanged.
 - Headless Chromium (900×700 and 390×800): `pc` eased 0→1 within ~0.3 s on hold, back to 0 after release, screenshots show canopy behind the kitten, no console errors.
+
+## Smiley label under the coin
+- Bottom-nav smiley now shows a label underneath: "Tokenized investments" in the real world, "Real world investments" in Token World (headless Chromium, 1000px and 390px, no errors).
