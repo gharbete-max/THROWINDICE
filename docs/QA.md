@@ -450,3 +450,12 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **HUD:** next to the $ only the total gain/loss and leverage ("▲ 12.3% · 5.0× LEV").
 - **Cash-out checkpoint:** touching the card sends three purple shockwave rings out from the cat, shakes the screen briefly (no shake or vibration with reduced motion) and plays the cash-out jingle.
 - Checks: fuzz, choice, pause, liquidation and quit scripts clean, no console errors.
+
+## Dead Cat Bounce: vertical fuel tank, full-tank jump, boost-then-hover thrust
+**Brainstorm:** a runner needs three distinct "gears": a tap (cheap hop), a hold (turn around fast, then stay up cheaply) and a rare big move you earn. Holding used to climb at a constant, ever-faster rate and only ended when the fuel did, which made it hard to stop at a height and slow to reverse a fall; and the tank was a horizontal bar nobody could read at a glance.
+- **Fuel meter:** a vertical tank at the left edge that fills from the bottom up with the purple-blue-red-orange-yellow flowing flame gradient; when it is full a real flame burns on top of it (static with reduced motion).
+- **Full tank = big jump:** the first tap while the tank is full (≥98%) is a mega jump: 739 px high, 2.0 s of air (a normal tap now rises 282 px for 1.3 s; both were roughly half of that), costs 30% of the tank, bigger explosion and flames, screen shake and a different jingle. The incentive: don't burn the tank, collect the big jump for the rugpull gap or a high pit.
+- **Taps are stronger:** impulse 900 px/s (was 640), cap 1050 px/s.
+- **Hold = boost, then hover:** for the first 0.38 s the thrust is hard (up to 1250 px/s, +300 px) so a hold turns a fall around at once (from 1500 px/s down to hovering in 0.45 s); after that the thrust is regulated to hold a gentle climb of 40 px/s, burning about 15% of the tank per second instead of 55%. The boost itself costs ~20% of the tank. Flames: explosion, a quick strong flame during the boost, then a steady flame for the hover.
+- **Re-tuned the world for the stronger jump:** gap holes up to speed/45 + 4 candles wide (one tap clears 80–94%, a second tap 100%), rugpull survival: holding from the edge 40/40, holding 0.5 s after the fall starts 40/40, 1 s after only 11–16/40, tapping 40/40; idle still liquidated at the rug.
+- Checks: fuzz (60 random runs), 143k frames with the cat never under the line, choice/pause scripts, no console errors.
