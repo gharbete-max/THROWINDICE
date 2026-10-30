@@ -314,3 +314,8 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Half rugpulls (35% of rugpulls): no gap and no card, just a 1500 to 3200 px drop with a flat landing; a soft landing earns +500.
 - Zone after the gap is now 44 candles long. `HALFP` and `RUGK` can be set from tests.
 - Headless: choice card with gold/hollow buttons, END EARLY, level-2 liquidation, scripted bots reached the pit-floor card in 14 of 24 forced pit falls (crude bots), half rugpulls survived 16 of 16; qa.js clean.
+
+## Coinpull: parachute replaces the jetpack
+- Jetpack tanks and flames removed from `player()`; a yellow/purple canvas parachute is drawn behind the kitten. It unfolds from a packed bundle to a full canopy in ~0.25 s while boosting (`s.u>0`) and folds away on release; no sway under `prefers-reduced-motion`, open/closed snaps.
+- HUD/help text says "Parachute"; gameplay and fuel bar unchanged.
+- Headless Chromium (900×700 and 390×800): `pc` eased 0→1 within ~0.3 s on hold, back to 0 after release, screenshots show canopy behind the kitten, no console errors.
