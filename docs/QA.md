@@ -442,3 +442,11 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **Pace like a runner game:** the scroll speed breathes with the stage (bull 1.0×, blow-off 1.12×, first leg 1.08×, bounce 0.95×, chop 1.0×).
 - **No more nagging:** removed the "DEAD CAT BOUNCE" banner, the gap hints, the idle reminder, the "doing nothing loses" and "jump the gaps" lines and the tips about jumping; liquidation tips are now only market facts. The first-run controls hint stays.
 - Checks: idle player still liquidated at the rug (27/30), holding the flames from the edge 40/40, 0 frames under the line, random-run fuzz, choice and pause scripts clean.
+
+## Dead Cat Bounce: near-miss reward, liquidated copy, flame bar, cleaner HUD, cash-out shockwave
+- **Greed is paid, until it bites:** the closer you skim the ZERO line in the rugpull void before still reaching the cash-out card, the bigger the near-miss bonus (up to +50% of your equity when the margin to ZERO is nearly gone, margin under 55% of the way), multiplied by `(1 + 15% per level)` and by `(1 + 20%)` for every near-miss in a row; a clean crossing resets the streak. The bonus shows as a green % chip. More risk means more reward until the line wins and you are liquidated. (Simulated 80 low-fuel crossings: bonuses are rare but they happen, 6 deaths.)
+- **Liquidated screen:** "Liquidated", "You lost everything including your house. But your cat doesn't care at all.", buttons "Speculate again!" and "Quit the game and take a walk.", small print "Best: x." and the tip "Every bull run ends, when investing starts to get too exciting it is time to quit."
+- **Fuel bar:** no text any more; a luminous flame gradient (purple, blue, red, orange, yellow) that flows and pulses (static with reduced motion).
+- **HUD:** next to the $ only the total gain/loss and leverage ("▲ 12.3% · 5.0× LEV").
+- **Cash-out checkpoint:** touching the card sends three purple shockwave rings out from the cat, shakes the screen briefly (no shake or vibration with reduced motion) and plays the cash-out jingle.
+- Checks: fuzz, choice, pause, liquidation and quit scripts clean, no console errors.
