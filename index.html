@@ -835,7 +835,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div class="gameHud"><b id="gScore" aria-label="Score"><canvas id="gScoreCv" height="28"></canvas></b><span class="gMult" id="gMult">×1.0</span><div class="gFuel" aria-label="Fuel"><i id="gFuelBar"></i><em id="gFuelTxt">0%</em></div></div>
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
 <div class="gameCard slim" id="gamePause" role="dialog" aria-label="Paused" hidden><h2>PAUSED</h2><p>Take a breath. The candles will wait.</p><div class="actions"><button class="btn" type="button" id="gpResume">Resume</button><button class="btn secondary" type="button" id="gpQuit">Quit</button></div></div>
-<div class="gameCard" id="gameCard"><h2 id="gcTitle" class="gname">DEAD CAT BOUNCE</h2><p id="gcText">Ride the uptrend, jump the gaps, cash out at the rugpull.</p><ul><li>👆 Tap or click = instant jump</li><li>✋ Hold = flames at the feet, stronger the longer you hold (burns more)</li><li>🟩 Green candles and uphill gains charge the fuel</li><li>🔥 Flames lit = +10% points</li><li>⚠️ Doing nothing loses: gaps cost you money and the rugpull wipes you out</li><li>🕳️ Jump the gaps: every fall is a price drop, multiplied by your leverage</li><li>📊 Read the chart: classic patterns show up and usually work (about 3 times in 4), but not always</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
+<div class="gameCard" id="gameCard"><h2 id="gcTitle" class="gname">DEAD CAT BOUNCE</h2><p id="gcText">Ride the uptrend, jump the gaps, cash out at the rugpull.</p><ul><li>👆 Tap or click = instant jump</li><li>✋ Hold = flames at the feet, stronger the longer you hold (burns more)</li><li>🟩 Green candles and uphill gains charge the fuel</li><li>🔥 Flames lit = +10% points</li><li>📊 Read the chart: classic patterns show up and usually work (about 3 times in 4), but not always</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
@@ -1444,16 +1444,16 @@ regLabel();if(!REGION)regOpen();
 
 /* Coinpull: climb ever steeper, uneven candles. Tap = jump (cheap), hold = flames, continuous thrust (burns a lot). Green candles recharge. The rugpull is a massive drop: pump the brake to land softly. */
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
-const CW=46,G=1400,BR=2600,VS=550,TERM=2200,HURT=1000,DEAD=1500,LOOK=5,TAPV=640,TAPC=.025,TAPCD=.05,HOLDD=.55,MAXRISE=760,CLIMBV=1100,DESC=1100,STEP=520,PY=5500,KOD=3600;/* PY: px per e-fold of the price; KOD: depth of the rugpull void in which the price goes to zero */
+const CW=46,G=1400,BR=2600,VS=550,TERM=2200,HURT=1000,DEAD=1500,LOOK=5,TAPV=640,TAPC=.025,TAPCD=.05,HOLDD=.55,MAXRISE=760,CLIMBV=1100,DESC=1100,STEP=520,PY=5500,KOD=1500;/* PY: px per e-fold of the price; KOD: depth of the rugpull void in which the price goes to zero */
 const levL=lv=>[1.1,2,3,5,8,10,15,20,30,50][Math.min(9,Math.max(0,lv-1))];/* leverage ladder */let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const RMQ=matchMedia('(prefers-reduced-motion: reduce)');const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
 let coached=false,coachGaps=false;try{coached=localStorage.getItem('cp-coach')==='1';coachGaps=localStorage.getItem('cp-gaps')==='1'}catch(e){}
 let RUGK=2.5,HALFP=.35;const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#171004','#4a3608'],['#0a0a2a','#3a0a4a']];
 const fmt=n=>{n=Math.floor(n);return n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(2)+'M':n.toLocaleString('en')};
 function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-function fresh(){return{sx:0,y:0,vy:0,fuel:.6,score:1000,dead:false,t:0,cam:0,px:Math.max(90,Math.min(210,W*.24)),C:[],gen:{top:0,phase:'flat',left:14,k:0,t0:0,Tup:30,gap:null,lastGap:-99,lastUp:-99,v:1,lastBear:false,U:40},layer:'up',peakY:1e9,lv:1,gold:0,bgIdx:0,bgPrev:0,bgBlend:1,cardA:-1,cardB:-1,card2A:-1,card2B:-1,cashed:-1,lastIdx:-1,parts:[],fx:[],ground:true,cliffAt:-1,wasAir:false,flash:0,speed:170,msgT:0,tilt:0,tr:0,fellVoid:false,lastIn:0,afkT:-99,gapTips:0,entryY:0,E0:1000,extra:0,lastE:1000,zeroY:1e9,cardI0:-1,cardY:0,fuelFloor:.55,bounceAt:-1,fallAcc:0,rugBase:null,ko:1600,chute:false,acc:0,accIdle:0,slap:null}}
+function fresh(){return{sx:0,y:0,vy:0,fuel:.6,score:1000,dead:false,t:0,cam:0,px:Math.max(90,Math.min(210,W*.24)),C:[],gen:{top:0,phase:'flat',left:14,k:0,t0:0,Tup:30,gap:null,lastGap:-99,lastUp:-99,v:1,lastBear:false,U:40,stage:0,sk:0,bullLen:ri(120,150),chopLen:30,topRoll:0,legSum:600,sh:null},layer:'up',peakY:1e9,lv:1,gold:0,bgIdx:0,bgPrev:0,bgBlend:1,cardA:-1,cardB:-1,card2A:-1,card2B:-1,cashed:-1,lastIdx:-1,parts:[],fx:[],ground:true,cliffAt:-1,wasAir:false,flash:0,speed:170,msgT:0,tilt:0,tr:0,fellVoid:false,lastIn:0,afkT:-99,gapTips:0,entryY:0,E0:1000,extra:0,lastE:1000,zeroY:1e9,cardI0:-1,cardY:0,fuelFloor:.55,bounceAt:-1,fallAcc:0,rugBase:null,ko:1600,chute:false,acc:0,accIdle:0,slap:null}}
 const rp=(n,v)=>Array(n).fill(v);
-/* A small library of real chart patterns, in units of U (a typical candle move; negative = up). Every pattern is a set-up followed by its textbook outcome, which happens 75% of the time (15% nothing happens, 10% the opposite). BEAR marks the patterns whose textbook outcome is down. */
+/* Real chart patterns in units of U (a typical candle move; negative = up). Each is a set-up and its textbook outcome, which happens 75% of the time (15% nothing, 10% the opposite). */
 const PAT={
  flag:{s:[...rp(4,-1.8),.3,.4,.3,.4,.3,.4],o:rp(3,-1.8)},
  pennant:{s:[...rp(4,-1.8),.9,-.7,.6,-.45,.35,-.2],o:[-1.8,-1.8,-1.4]},
@@ -1462,22 +1462,38 @@ const PAT={
  riseWedge:{s:[-1.5,1,-1.2,.9,-.9,.7,-.6,.5],o:[2.2,2,1.5]},
  fallWedge:{s:[1.5,-1,1.2,-.9,.9,-.7,.6,-.5],o:[-2,-1.8,-1.4]},
  dblBottom:{s:[...rp(3,1.2),...rp(3,-1.2),...rp(3,1.2),...rp(3,-1.2)],o:rp(3,-1.6)},
- dblTop:{s:[...rp(3,-1.2),...rp(3,1.2),...rp(3,-1.2),...rp(2,1.2)],o:rp(3,1.8)},
+ dblTop:{s:[...rp(3,-1.2),...rp(3,1.2),...rp(3,-1.2),...rp(3,1.2)],o:rp(3,1.8)},
+ tripleTop:{s:[...rp(3,-1.5),...rp(3,1.1),...rp(3,-1.1),...rp(3,1.1),...rp(3,-1.1),...rp(2,1)],o:rp(4,1.9)},
+ tripleBottom:{s:[...rp(3,1.5),...rp(3,-1.1),...rp(3,1.1),...rp(3,-1.1),...rp(3,1.1),...rp(2,-1)],o:rp(4,-1.9)},
  hs:{s:[-1.2,-1.2,1.2,1.2,-2,-2,2,2,-1.2,-1.2,1.2,1.2],o:rp(3,1.6)},
  invHs:{s:[1.2,1.2,-1.2,-1.2,2,2,-2,-2,1.2,1.2,-1.2,-1.2],o:rp(3,-1.6)},
  cup:{s:[...rp(4,.5),0,0,...rp(4,-.7),.4,.4],o:rp(3,-1.6)},
  saucer:{s:[.7,.6,.5,.3,.1,0,-.1,-.3,-.5,-.6,-.7],o:[-1.4,-1.4]},
  vBottom:{s:rp(3,2.8),o:rp(4,-2.4)},
- channel:{s:[-1.4,-1.4,.7,-1.4,-1.4,.7,-1.4,-1.4,.7],o:[-1.4,-1.4]}};
-const BEAR={descTri:1,riseWedge:1,dblTop:1,hs:1};
+ channel:{s:[-1.4,-1.4,.7,-1.4,-1.4,.7,-1.4,-1.4,.7],o:[-1.4,-1.4]},
+ bearFlag:{s:[...rp(4,1.8),-.35,-.4,-.35,-.4,-.35,-.4],o:rp(3,1.8)}};
+const BULLP=['flag','pennant','ascTri','fallWedge','invHs','cup','dblBottom','saucer','vBottom','channel','tripleBottom'],BEARP=['descTri','riseWedge','dblTop','hs','tripleTop','bearFlag'];
 const boxRange=n=>{const a=[];let q=0;for(let i=0;i<n;i++){const d=-.45*q+rnd(-.9,.9);a.push(d);q+=d}return a};
-/* the next stretch of the chart, as a list of candle moves in px: a trend impulse, a pullback, a range with a breakout, or one of the chart patterns above */
-function newSeg(g){const U=g.U,r=Math.random();let a;
- if(r<.40){a=Array.from({length:ri(4,9)},()=>Math.random()<.8?-rnd(.8,1.8):rnd(.1,.5));g.lastBear=false}
- else if(r<.50){a=Array.from({length:ri(3,7)},()=>Math.random()<.78?rnd(.2,.9):-rnd(.1,.5));g.lastBear=false}
- else if(r<.61){a=boxRange(ri(8,15));a.push(...(Math.random()<.75?rp(3,-1.7):Math.random()<.6?rp(3,0):rp(3,1.7)));g.lastBear=false}
- else{const ks=Object.keys(PAT).filter(k=>!(g.lastBear&&BEAR[k])),k=ks[ri(0,ks.length-1)],p=PAT[k],o=Math.random(),out=o<.75?p.o:o<.9?p.o.map(()=>0):p.o.map(d=>-d);a=[...p.s,...out];g.lastBear=!!BEAR[k]&&o<.75}
- return a.map(m=>m*U)}
+const imp=()=>Array.from({length:ri(4,9)},()=>Math.random()<.8?-rnd(.8,1.8):rnd(.1,.5)),pull=()=>Array.from({length:ri(3,7)},()=>Math.random()<.78?rnd(.2,.9):-rnd(.1,.5)),bearImp=()=>Array.from({length:ri(3,6)},()=>Math.random()<.75?rnd(.8,1.6):-rnd(.1,.5)),relief=()=>Array.from({length:ri(3,6)},()=>Math.random()<.7?-rnd(.5,1.1):rnd(.1,.4));
+const box=dir=>{const a=boxRange(ri(8,15)),r=Math.random();a.push(...(r<.75?rp(3,dir*1.7):r<.9?rp(3,0):rp(3,-dir*1.7)));return a};
+const pat=names=>{const p=PAT[names[ri(0,names.length-1)]],o=Math.random(),out=o<.75?p.o:o<.9?p.o.map(()=>0):p.o.map(d=>-d);return [...p.s,...out]};
+/* a market cycle: 0 bull run, 1 blow-off and topping formation, 2 first leg down, 3 dead cat bounce, 4 choppy bear market, then the rugpull. Entries are px moves, or {d,sh} for candles with a telling shape (star, hammer, doji, big). */
+const U_=(g,a)=>a.map(m=>typeof m==='number'?m*g.U:{d:m.d*g.U,sh:m.sh});
+function segBull(g){const r=Math.random();return U_(g,r<.5?imp():r<.6?pull():r<.68?box(-1):pat(BULLP))}
+function segBear(g){const r=Math.random();return U_(g,r<.28?bearImp():r<.5?relief():r<.72?box(1):pat(BEARP))}
+function buildTop(g){/* parabolic blow-off, then a topping formation that is easy to read */
+ const a=[];const n=ri(6,9);for(let i=0;i<n;i++)a.push(-(1+.25*i)*rnd(.9,1.1));
+ const k=ri(0,4);
+ if(k===0)a.push(...PAT.tripleTop.s);else if(k===1)a.push(...PAT.dblTop.s);else if(k===2)a.push(...PAT.hs.s);
+ else if(k===3)a.push({d:-1.2,sh:'big'},{d:-.25,sh:'doji'},{d:1.6,sh:'big'},.5,.4);/* evening star */
+ else a.push(-.8,{d:-.2,sh:'star'},.5,-.3,{d:-.15,sh:'star'},{d:1.4,sh:'big'});/* shooting stars then a bearish engulfing */
+ const r=Math.random();g.topRoll=r<.75?0:r<.9?1:2;return U_(g,a)}
+function buildLeg(g){const r=g.topRoll,a=[];
+ if(r===0){a.push({d:1.9,sh:'big'});const n=ri(7,11);for(let i=0;i<n;i++)a.push(Math.random()<.78?rnd(.7,2):-rnd(.2,.6));a.push({d:.3,sh:'hammer'})}
+ else if(r===1){const n=ri(4,6);for(let i=0;i<n;i++)a.push(Math.random()<.7?rnd(.4,1):-rnd(.2,.5))}
+ else{const n=ri(5,8);for(let i=0;i<n;i++)a.push(-rnd(.6,1.4))}/* bull trap: the top fails and the market keeps going */
+ const o=U_(g,a);g.legSum=o.reduce((t,e)=>t+Math.max(0,typeof e==='number'?e:e.d),0);return o}
+function buildBounce(g){const n=ri(6,9),tot=-.5*(g.legSum||600),a=[{d:tot/n*1.2,sh:'hammer'}];for(let i=1;i<n-2;i++)a.push(tot/n*rnd(.7,1.3));a.push({d:g.U*.4,sh:'star'},g.U*.9);return a}
 function gen(){const g=R.gen;let green=Math.random()<.86,top=g.top,dip=false,pit=false,gs=false,cd;
  if(g.phase==='cliff'&&Math.random()<HALFP){/* mini rugpull: a sudden drop of 500-1000 px, brake it with the flames */g.phase='half'}
  if(g.phase==='half'){const from=g.top;top=from+rnd(500,1000);g.top=top;R.peakY=1e9;R.cliffAt=R.C.length;g.phase='flat';g.left=14;R.C.push({top,low:null,green:false,rug:true,half:true,from,wu:rnd(2,30),wl:rnd(2,30),bh:rnd(90,160),k:0});return}
@@ -1485,23 +1501,29 @@ function gen(){const g=R.gen;let green=Math.random()<.86,top=g.top,dip=false,pit
  if(g.phase==='rug'){/* the rugpull: the ground vanishes under a huge red candle, a credit card hangs in the void below the old high (always reachable with fuel), and the market restarts at the card's height. Below the knock-out line you are liquidated. */
   const q=g.rug,i=q.i++;let t=null;const card=i>=q.wg&&i<q.wg+q.cw;if(i===q.wg)R.cardA=R.C.length;if(card){t=q.cy;R.cardB=R.C.length}
   const cd={top:t,low:i===0?q.peak+R.ko:null,green:false,card,card2:false,rug:i===0,wu:rnd(2,30),wl:rnd(2,30),bh:t==null?rnd(120,260):rnd(34,110),k:0};
-  if(q.i>=q.wg+q.cw){/* dead cat bounce: after the crash a sharp relief rally, then a bull trap, then the normal climb */g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0;g.top=q.cy;g.q=[...Array(7).fill(-104),...Array(4).fill(80)];R.bounceAt=R.C.length+1}R.C.push(cd);return}
- if(g.phase==='up'){g.U=Math.min(90,54+g.k*.3)*(1+.05*(R.lv-1));const lvf=Math.min(6,R.lv-1);
+  if(q.i>=q.wg+q.cw){/* the market restarts at the card's height: a fresh cycle begins with a bull run */g.phase='up';g.t0=R.t;g.k=0;g.top=q.cy;g.q=null;g.stage=0;g.sk=0;g.bullLen=ri(120,150);g.gap=null}R.C.push(cd);return}
+ if(g.phase==='up'){g.U=Math.min(105,64+g.k*.15)*(1+.05*(R.lv-1));const lvf=Math.min(6,R.lv-1);g.sh=null;
   if(g.gap){gs=true;if(g.gap.n>0){g.gap.n--;top=g.gap.base+450;green=false;pit=true}else{top=g.gap.base;g.gap=null;green=true}}
   else{
    if(!(g.q&&g.q.length)){
-    if(g.k>=18&&g.k-g.lastGap>30&&Math.random()<.07+.02*lvf){/* a gap down (no trading between the candles): a hole of 5-7 candles at low speed up to 13 at full speed; jump it or fall in. Rare, and a little less rare at higher levels */g.gap={n:ri(5,Math.max(5,Math.round(4+R.speed/60))),base:top,id:R.C.length};g.lastGap=g.k;g.gap.n--;top+=450;green=false;pit=true;gs=true}
-    else if(g.k>=12&&g.k-g.lastUp>25&&Math.random()<.06){g.lastUp=g.k;g.q=[-rnd(150,260)]}/* a news gap up: free height */
-    else g.q=newSeg(g)}
-   if(!gs){const d=g.q.shift(),dy=d+rnd(-.35,.35)*g.U*(g.v||1);g.v=Math.max(.7,Math.min(2,.75*(g.v||1)+.25*(.8+Math.abs(dy)/g.U*.5)));/* volatility clusters: big moves make the next ones bigger */top+=dy;green=dy<0}}
-  if(R.t-g.t0>=g.Tup&&!g.gap){g.phase='cliff';g.q=null}g.k++}
- else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0;g.q=null;g.gap=null;g.lastGap=-99;g.lastUp=-99}}
+    if(g.stage===1){if(g.topRoll===2){g.stage=0;g.sk=0;g.bullLen=ri(22,36);g.q=buildLeg(g)}else{g.stage=2;g.q=buildLeg(g)}}
+    else if(g.stage===2){g.stage=3;g.q=buildBounce(g)}
+    else if(g.stage===3){g.stage=4;g.sk=0;g.chopLen=ri(24,36);g.q=segBear(g)}
+    else if(g.stage===0&&g.sk>=g.bullLen){g.stage=1;g.q=buildTop(g)}
+    else if(g.stage===4&&g.sk>=g.chopLen){g.phase='cliff';g.q=null}
+    else if((g.stage===0||g.stage===4)&&g.k>=18&&g.k-g.lastGap>30&&Math.random()<.07+.02*lvf){/* a gap down (no trading between the candles): a hole of 5-7 candles at low speed up to 13 at full speed. Rare, and a little less rare at higher levels */g.gap={n:ri(5,Math.max(5,Math.round(4+R.speed/60))),base:top,id:R.C.length};g.lastGap=g.k;g.gap.n--;top+=450;green=false;pit=true;gs=true}
+    else if(g.stage===0&&g.k>=12&&g.k-g.lastUp>25&&Math.random()<.06){g.lastUp=g.k;g.q=[-rnd(150,260)]}/* a news gap up: free height */
+    else g.q=g.stage===4?segBear(g):segBull(g)}
+   if(!gs&&g.phase==='up'){const e=g.q.shift(),d=typeof e==='number'?e:e.d;g.sh=typeof e==='number'?null:e.sh;const calm=!!g.sh,dy=d+rnd(-.35,.35)*g.U*(g.v||1)*(calm?.2:1);g.v=Math.max(.7,Math.min(2,.75*(g.v||1)+.25*(.8+Math.abs(dy)/g.U*.5)));/* volatility clusters: big moves make the next ones bigger */top+=dy;green=dy<0}}
+  g.sk++;g.k++}
+ else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.k=0;g.q=null;g.gap=null;g.lastGap=-99;g.lastUp=-99;g.stage=0;g.sk=0;g.bullLen=ri(120,150)}}
  const inUp=g.phase==='up';let bh=dip?rnd(90,170):rnd(34,110),wu=rnd(2,50)*(Math.random()<.2?1.8:1),wl=rnd(2,40);
  if(inUp){/* candle moves are limited to ~2 cat heights (gap holes excepted) */
   let d=top-g.top;if(!gs)d=Math.max(-300,Math.min(300,d));top=g.top+d;green=d<0;
   /* real-looking candles: dojis on small moves, bodies that follow the move, wicks that follow the volatility, now and then a long one */
-  const ad=Math.abs(d),U=g.U||40;bh=ad<.25*U?rnd(6,14):Math.max(12,Math.min(240,ad*rnd(.7,1.15)+rnd(4,14)));if(Math.random()<.07)bh=Math.min(260,bh*1.6);wu=rnd(0,.55)*U*(Math.random()<.18?2.4:1);wl=rnd(0,.55)*U*(Math.random()<.18?2.4:1)}
- g.top=top;R.C.push({top,low:null,green,rug:false,pit,pg:g.gap?g.gap.id:-1,wu,wl,bh,k:inUp?g.k:0})}
+  const ad=Math.abs(d),U=g.U||40;bh=ad<.25*U?rnd(6,14):Math.max(12,Math.min(240,ad*rnd(.7,1.15)+rnd(4,14)));if(Math.random()<.07)bh=Math.min(260,bh*1.6);wu=rnd(0,.55)*U*(Math.random()<.18?2.4:1);wl=rnd(0,.55)*U*(Math.random()<.18?2.4:1);
+  const sh=g.sh;if(sh==='star'){bh=rnd(7,12);wu=U*rnd(2.4,3.4);wl=rnd(0,4)}else if(sh==='hammer'){bh=rnd(7,12);wl=U*rnd(2.4,3.4);wu=rnd(0,4)}else if(sh==='doji'){bh=rnd(5,8);wu=U*rnd(.8,1.3);wl=U*rnd(.8,1.3)}else if(sh==='big'){bh=Math.min(260,ad*1.15+20);wu=rnd(0,8);wl=rnd(0,8)}}
+ g.top=top;const pe=R.C.length?R.C[R.C.length-1].ema:undefined,em=top!=null&&pe!=null&&isFinite(pe)?pe+.2*(top-pe):top;R.C.push({top,low:null,green,rug:false,pit,pg:g.gap?g.gap.id:-1,wu,wl,bh,k:inUp?g.k:0,stg:g.stage,ema:em})}
 const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};/* candles are decided only LOOK candles before the player arrives */
 
 const surf=c=>c.top!=null?c.top:Infinity;
@@ -1517,7 +1539,7 @@ function slap(p){R.slap={p,t0:R.t};sfx(p>0?'up':'down');if(Math.abs(p)>=.08){if(
 function tryCash(cc){if(cc.card&&R.cashed!==R.cliffAt){sfx('cash');R.cashed=R.cliffAt;R.peakY=1e9;R.score*=1.25;R.E0*=1.25;R.extra*=1.25;R.lastE*=1.25;R.vy=0;R.wasAir=false;R.ground=true;R.pending=true;showCash();return true}return false}
 function tap(force){if(R)R.lastIn=R.t;if(!R||R.dead||paused||(!force&&!document.getElementById('gameCard').hidden))return;const n=performance.now();if((!force&&n-lastTap<TAPCD*1000)||R.fuel<=0)return;lastTap=n;const gd=ground(R.sx+R.px)-R.y,mul=1+Math.min(1.2,Math.max(0,((isFinite(gd)?gd:800)-150)/300));sfx('jump');R.vy=Math.max(-MAXRISE,R.vy-TAPV);R.fuel=Math.max(0,R.fuel-TAPC*mul);R.flash=.24;for(let i=0;i<6;i++)R.fx.push({k:'s',x:R.px+rnd(-26,26),y:R.y-30,vx:rnd(-90,90),vy:rnd(180,420),l:.5})}
 function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0)R.shake-=dt;if(R.stumble>0)R.stumble-=dt;if(R.gold>0)R.gold-=dt;if(R.blink>0)R.blink-=dt;if(R.bgBlend<1)R.bgBlend=Math.min(1,R.bgBlend+dt/1.6);{const ix=Math.floor((R.sx+R.px)/CW);while(R.C.length<=ix+LOOK){if(R.gen.phase==='cliff'&&R.C.length>ix+3)break;gen()}}const px=R.sx+R.px;R.layer='up';const gnd=ground(px),front=surf(cand(Math.floor((px+14)/CW))),air=R.y<gnd-.5;
- R.speed=Math.min(560,170+R.t*5.5);let sp=R.speed*(R.lv>=2?1+.1*R.lv:1)*(R.stumble>0?.45:1);
+ R.speed=Math.min(560,170+R.t*5.5);const stg0=(cand(Math.floor(px/CW)).stg||0),pt=[1,1.12,1.08,.95,1][stg0];R.pace=(R.pace||1)+(pt-(R.pace||1))*Math.min(1,dt*.8);let sp=R.speed*R.pace*(R.lv>=2?1+.1*R.lv:1)*(R.stumble>0?.45:1);
  const hot=hold&&holdT>.03&&R.fuel>0;let u=0;if(hot){if(air&&R.vy>0){if(R.vy>HURT)u=1;else if(R.vy>HURT-40)u=G/(G+BR)}else u=1}
  R.vy+=(G-(G+BR)*u)*dt;if(R.vy<-MAXRISE)R.vy=-MAXRISE;if(R.vy>TERM)R.vy=TERM;if(u>0)R.fuel=Math.max(0,R.fuel-HOLDD*u*(air&&R.vy>0?.45:1)*(R.peakY<1e8&&R.cashed!==R.cliffAt?.6:1)*dt);else if(R.ground&&!hold)R.fuel=Math.min(1,R.fuel+(R.fuel<.3?.05:.015)*dt);R.u=u;
  if(air&&!R.wasAir){R.wasAir=true;R.fallFrom=R.y}
@@ -1543,33 +1565,32 @@ function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0
  {const gF=ground(R.sx+R.px);if(!R.pending&&!(R.fellVoid&&R.y>gF+60)&&isFinite(gF)&&R.y>gF)R.y=gF}
  /* the score is a leveraged position: equity = E0·(1 + L·(P/P0 − 1)), P being the price (it follows the chart height, e-fold every PY px) and P0 the entry price of this level. No made-up penalties: a drop of 1/L from the entry price wipes the equity out and you are liquidated; profit builds a cushion. In the rugpull void the price collapses to zero at KOD px. */
  const dh=py-R.y,rugOn=R.peakY<1e8&&R.cashed!==R.cliffAt;let hh=(R.entryY-R.y)/PY;
- if(rugOn&&R.y>R.peakY+4){const fr=Math.min(1,(R.y-R.peakY)/R.ko);hh=(R.entryY-R.peakY)/PY+(fr>=1?-12:1.4*Math.log(1-fr))}
- if(rugOn){const hp=(R.entryY-R.peakY)/PY,fs=1-Math.exp((Math.log(Math.max(1e-6,1-1/L))-hp)/1.4);R.zeroY=R.peakY+Math.max(0,Math.min(1,fs))*R.ko}else R.zeroY=1e9;
+ const dpt=R.y-R.peakY,qv=d=>Math.max(.02,1-.98*Math.pow(Math.min(1,d/R.ko),.8));/* the void is a crash: -27% at 300 px down, -98% at 1500 px */
+ if(rugOn&&dpt>4)hh=(R.entryY-R.peakY)/PY+Math.log(qv(dpt))
+ if(rugOn){const hp=(R.entryY-R.peakY)/PY,qs=Math.max(0,1-1/L)/Math.exp(hp),ds=qs>=1?0:qs<=.02?1.1*R.ko:R.ko*Math.pow((1-qs)/.98,1/.8);R.zeroY=R.peakY+Math.min(1.1*R.ko,ds)}else R.zeroY=1e9
  if(R.gold>0){R.entryY=R.y;R.E0=Math.max(1,R.score-R.extra);hh=0}
  const E=Math.max(0,R.E0*(1+L*(Math.exp(hh)-1))),prevS=R.score;if(E>R.lastE&&R.chute)R.extra+=(E-R.lastE)*.1;R.lastE=E;R.score=E+R.extra;
  {const dp=(R.score-prevS)/Math.max(1,prevS);R.acc+=dp;if(dp>0&&R.ground)R.fuel=Math.min(1,R.fuel+dp*.35)}
- if(E<=.5){R.score=0;R.dead=true;slap(-1);die();return}
+ if(E<=.5||(rugOn&&dpt>=1.1*R.ko)){R.score=0;R.dead=true;slap(-1);die();return}
  if(Math.abs(dh)<.3)R.accIdle+=dt;else R.accIdle=0;if((R.accIdle>.12&&Math.abs(R.acc)>=.02)||Math.abs(R.acc)>=.12){slap(R.acc);R.acc=0}else if(R.accIdle>.12)R.acc=0;
- const idx=Math.floor((R.sx+R.px)/CW);if(R.peakY<1e8&&R.cashed!==R.cliffAt&&R.cardB>R.cliffAt&&idx>R.cardB+1&&R.y<R.cardY+100){/* flew over the card without touching it: the rug is behind you, nothing banked */R.cashed=R.cliffAt;R.peakY=1e9;R.rugBase=null}if(R.bounceAt>=0&&idx>=R.bounceAt){msg('DEAD CAT BOUNCE');R.msgT=2.4;R.bounceAt=-1}if(R.cliffAt>=0&&idx>=R.cliffAt&&idx<R.cliffAt+3&&R.layer==='up')R.crossing=true;if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.03,.01+c.k*.0003))}
- /* onboarding: first-ever run explains the gaps as they come; anyone who has not touched anything for 7 s is told to */
- {const ix2=Math.floor((R.sx+R.px)/CW),n1=R.C[ix2+1],n2=R.C[ix2+2],n3=R.C[ix2+3];if(!coachGaps&&R.ground&&R.gapTips<2&&R.t>2&&[n1,n2,n3].some(c=>c&&c.pit&&!(R.C[ix2]&&R.C[ix2].pit))&&R.msgT<=0){R.gapTips++;msg('GAP AHEAD! TAP TO JUMP');R.msgT=2.2;if(R.gapTips>=2){coachGaps=true;try{localStorage.setItem('cp-gaps','1')}catch(e){}}}
-  if(R.t>7&&R.t-R.lastIn>7&&R.t-R.afkT>14&&R.msgT<=0&&!R.pending){R.afkT=R.t;msg('TAP TO JUMP · THE MARKET WILL NOT WAIT');R.msgT=2.6}}
+ const idx=Math.floor((R.sx+R.px)/CW);if(R.peakY<1e8&&R.cashed!==R.cliffAt&&R.cardB>R.cliffAt&&idx>R.cardB+1&&R.y<R.cardY+100){/* flew over the card without touching it: the rug is behind you, nothing banked */R.cashed=R.cliffAt;R.peakY=1e9;R.rugBase=null}if(R.cliffAt>=0&&idx>=R.cliffAt&&idx<R.cliffAt+3&&R.layer==='up')R.crossing=true;if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.03,.01+c.k*.0003))}
  if(R.msgT>0){R.msgT-=dt;if(R.msgT<=0)msg('')}
  for(let i=R.fx.length-1;i>=0;i--){const f=R.fx[i];f.l-=dt;f.x+=f.vx*dt-sp*dt;f.y+=f.vy*dt;f.vy*=.96;if(f.l<=0)R.fx.splice(i,1)}
  R.cam+=((R.y-H*(R.vy>350?.14:.58))-R.cam)*Math.min(1,dt*(R.vy>350?9:5));
  document.getElementById('gFuelBar').style.width=R.fuel*100+'%';document.getElementById('gFuelTxt').textContent=Math.round(R.fuel*100)+'% · '+Math.floor(R.fuel/TAPC)+' jumps';R.tr+=((dh/dt)-R.tr)*Math.min(1,dt*3);paintScore(R.score,R.tr>40?'#2dff9a':R.tr<-40?'#ff6b7a':'#ffe14d');const pl=(R.score/1000-1)*100;document.getElementById('gMult').textContent=(pl>=0?'▲ ':'▼ ')+Math.abs(pl).toFixed(1)+'% · '+L.toFixed(1)+'× LEV · LIQ −'+Math.max(0,Math.round(100*(1-(1-1/L)/Math.exp(hh))))+'%'+(R.chute?' · FLAMES +10%':'')+(R.gold>0?' · GOLD '+R.gold.toFixed(1)+'s':'')}
-function die(){sfx('ko');msg('');R.quit=true;{const e=document.getElementById('gcEnd');e.textContent='Quit the game and take a long walk...please.';e.hidden=false}document.getElementById('gameCard').classList.add('slim');for(let i=0;i<34;i++)R.parts.push({x:R.px,y:R.y,vx:rnd(-300,300),vy:rnd(-560,-60),c:i%2?'#ff4d5e':'#ffd93b'});setGT('LIQUIDATED');document.getElementById('gcText').textContent='You lost everything including your house. But you got some vibes left to cope with.';{const tips=['The ground vanishes at the rugpull: aim for the gold 💳 arrow and hold the flames.','Tap to jump the gaps, hold for stronger flames (flames also pay +10%).','Every cash-out raises the leverage: the price can only fall 1/leverage before you are liquidated.','Chart patterns work about 3 times in 4. Not 4 in 4.','Doing nothing loses: gaps cost money and the rugpull wipes you out.'];document.getElementById('gcBest').textContent='Best '+fmt(best)+' · Tip: '+tips[Math.floor(Math.random()*tips.length)]}document.getElementById('gcGo').textContent='START SPECULATING AGAIN!!! :D';setTimeout(()=>{if(R&&R.dead){const c=document.getElementById('gameCard');c.classList.add('liq');c.hidden=false;R.liq={t0:R.t,s:{t:R.t,u:0,lv:1,rate:2,dead:true,ground:false,gold:0,tilt:0,flash:0,chute:false}}}},700)}
+function die(){sfx('ko');msg('');R.quit=true;{const e=document.getElementById('gcEnd');e.textContent='Quit the game and take a long walk...please.';e.hidden=false}document.getElementById('gameCard').classList.add('slim');for(let i=0;i<34;i++)R.parts.push({x:R.px,y:R.y,vx:rnd(-300,300),vy:rnd(-560,-60),c:i%2?'#ff4d5e':'#ffd93b'});setGT('LIQUIDATED');document.getElementById('gcText').textContent='You lost everything including your house. But you got some vibes left to cope with.';{const tips=['A 50% loss needs a 100% gain to get back to even.','With 5x leverage a 20% drop wipes you out.','Every bull run ends. The only question is who is holding it.','Patterns work most of the time. Most.','Leverage is a loan: it multiplies the good days and the bad ones.','The crash is always bigger than the pullbacks that came before it.'];document.getElementById('gcBest').textContent='Best '+fmt(best)+' · Tip: '+tips[Math.floor(Math.random()*tips.length)]}document.getElementById('gcGo').textContent='START SPECULATING AGAIN!!! :D';setTimeout(()=>{if(R&&R.dead){const c=document.getElementById('gameCard');c.classList.add('liq');c.hidden=false;R.liq={t0:R.t,s:{t:R.t,u:0,lv:1,rate:2,dead:true,ground:false,gold:0,tilt:0,flash:0,chute:false}}}},700)}
 function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);g.save();if(s.shake>0&&!RMQ.matches)g.translate(rnd(-6,6)*s.shake*2,rnd(-6,6)*s.shake*2);const pbg=BGS[s.bgPrev],nbg=BGS[s.bgIdx];[[pbg,1],[nbg,s.bgBlend]].forEach(([pl,al])=>{const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,pl[0]);bg.addColorStop(1,pl[1]);g.globalAlpha=al;g.fillStyle=bg;g.fillRect(0,0,W,H)});g.globalAlpha=1;
  g.strokeStyle='#ffffff10';g.lineWidth=1;const gy=80;for(let y=-((cam*.4%gy)+gy)%gy;y<H;y+=gy){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}for(let x=-((s.sx*.7)%gy);x<W;x+=gy){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}
  /* speed streaks: the faster the run, the more and longer they are */
  const sf=Math.max(0,(s.speed-200)/360);if(sf>0){g.strokeStyle='rgba(255,255,255,'+(.08+sf*.2)+')';g.lineWidth=2;for(let i=0;i<14;i++){const yy=(i*97+(s.t*40))%H,xx=((i*211-s.sx*(1.6+i%3*.5))%(W+200)+W+200)%(W+200)-100,ln=30+sf*160;g.beginPath();g.moveTo(xx,yy);g.lineTo(xx+ln,yy);g.stroke()}}
  /* zoomed-out world: the cat sits in the middle of the screen with history on the left and the (unknown) future on the right */
- const Z=Math.max(.38,Math.min(.62,W/1100)),ay=H*.58,hw=W/(2*Z),xl=s.px-hw-50,xr=s.px+hw+50,VT=ay-ay/Z-400,VB=ay+(H-ay)/Z+300,i0=Math.floor((s.sx+s.px-hw)/CW)-1,i1=Math.floor((s.sx+s.px+hw)/CW)+2;
+ const Z=Math.max(.26,Math.min(.4,W/1700)),ay=H*.58,hw=W/(2*Z),xl=s.px-hw-50,xr=s.px+hw+50,VT=ay-ay/Z-400,VB=ay+(H-ay)/Z+300,i0=Math.floor((s.sx+s.px-hw)/CW)-1,i1=Math.floor((s.sx+s.px+hw)/CW)+2;
  g.save();g.translate(W/2,ay);g.scale(Z,Z);g.translate(-s.px,-ay);
  if(s.cardA>=0&&s.C[s.cardA]){const cx0=s.cardA*CW-s.sx,cw=Math.max(s.cardB-s.cardA+1,s.cardI0===s.cardA?32:0)*CW;if(cx0<xr&&cx0+cw>xl)drawCard(g,cx0,s.C[s.cardA].top-cam,cw,s.t)}
  const lt=s.C[s.C.length-1],lastTop=lt.top!=null?lt.top:lt.low;for(let i=Math.max(0,i0);i<=i1;i++){const c=s.C[i];if(!c){const x=i*CW-s.sx,gh=Math.floor(s.t*8)+i*7,wob=((gh*2654435761>>>0)%1000)/1000-.5,y=lastTop-cam+wob*120*Math.min(1,(i-s.C.length+1)/3),fl=((gh*40503>>>0)%2)?'#19c37d':'#ff4d5e';g.save();g.globalAlpha=.28;g.strokeStyle=fl;g.setLineDash([6,5]);g.lineWidth=2;g.strokeRect(x+4,y,CW-8,50+((gh*977>>>0)%50));g.beginPath();g.moveTo(x+CW/2,y-18);g.lineTo(x+CW/2,y);g.stroke();g.restore();continue}const x=i*CW-s.sx;if(c.card){if(c.low!=null&&!c.card2){const y=c.low-cam;if(y<VB&&y>VT){g.fillStyle='#ff4d5e';g.fillRect(x+4,y,CW-8,c.bh)}}continue}const col=c.green?'#19c37d':'#ff4d5e',dk=c.green?'#0c7a50':'#a82437';
   if(c.rug){const pt=(c.half?c.from:s.peakY)-cam,lo=(c.half?c.top:c.low)-cam;g.fillStyle='#ff4d5e';g.fillRect(x+CW/2-1.5,pt-30,3,lo-pt+60);g.fillRect(x+4,pt,CW-8,lo-pt);g.fillStyle='#a82437';g.fillRect(x+4,pt,CW-8,5);g.fillStyle='#ffffff26';g.fillRect(x+8,pt+6,4,Math.max(0,lo-pt-8))}
   [c.top,c.low].forEach(tp=>{if(tp==null||(c.card2&&tp===c.low))return;const y=tp-cam;if(y>VB||y<VT)return;g.fillStyle=col;g.fillRect(x+CW/2-1.5,y-c.wu,3,c.wu+c.bh+c.wl);g.fillStyle=col;g.fillRect(x+4,y,CW-8,c.bh);g.fillStyle=dk;g.fillRect(x+4,y,CW-8,5);g.fillStyle='#ffffff26';g.fillRect(x+8,y+6,4,Math.max(0,c.bh-8))})}
+ {g.save();g.strokeStyle='rgba(255,255,255,.26)';g.lineWidth=2.2/Z;g.beginPath();let pen=false;for(let i=Math.max(0,i0);i<=Math.min(i1,s.C.length-1);i++){const c=s.C[i];if(!c||c.top==null||c.ema==null){pen=false;continue}const x=i*CW-s.sx+CW/2,y=c.ema-cam;if(pen)g.lineTo(x,y);else{g.moveTo(x,y);pen=true}}g.stroke();g.restore()}
  s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*1.6));g.fillStyle=f.k==='k'?'#9aa3b8':'#ffd25a';g.beginPath();g.arc(f.x,f.y-cam,f.k==='k'?6+(1-f.l)*8:2.6,0,6.3);g.fill()});g.globalAlpha=1;
  if(s.peakY<1e8&&s.cashed!==s.cliffAt&&s.y>s.peakY-150){const ky=s.zeroY-cam;if(ky>VT&&ky<VB){g.save();g.setLineDash([14,10]);g.strokeStyle='#ff4d5e';g.lineWidth=3/Z;g.beginPath();g.moveTo(xl,ky);g.lineTo(xr,ky);g.stroke();g.setLineDash([]);g.fillStyle='#ff4d5e';g.font='700 '+(14/Z)+'px -apple-system,BlinkMacSystemFont,Roboto,Inter,Arial,sans-serif';g.fillText('ZERO',s.px-hw+14,ky-8/Z);g.restore()}}
  if(!s.liq){const cs=105/(150*Z);g.save();g.translate(s.px,s.y-cam);g.scale(cs,cs);player(0,0,s);g.restore()}
