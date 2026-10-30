@@ -1445,7 +1445,7 @@ regLabel();if(!REGION)regOpen();
 /* Coinpull: climb ever steeper, uneven candles. Tap = jump (cheap), hold = flames, continuous thrust (burns a lot). Green candles recharge. The rugpull is a massive drop: pump the brake to land softly. */
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
 const CW=46,G=1400,BR=2600,VS=550,TERM=2200,HURT=1000,DEAD=1500,LOOK=5,TAPV=900,TAPC=.025,TAPCD=.05,HOLDD=.45,MAXRISE=1050,CLIMBV=1100,DESC=1100,STEP=520,PY=5500,KOD=1500;/* PY: px per e-fold of the price; KOD: depth of the rugpull void in which the price goes to zero */
-const levL=lv=>[1.1,2,3,5,8,10,15,20,30,50][Math.min(9,Math.max(0,lv-1))];/* leverage ladder */let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
+const levL=lv=>[1.1,1.5,2,3,5,8,10,15,20,30][Math.min(9,Math.max(0,lv-1))];/* leverage ladder */let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const RMQ=matchMedia('(prefers-reduced-motion: reduce)');const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
 let coached=false,coachGaps=false;try{coached=localStorage.getItem('cp-coach')==='1';coachGaps=localStorage.getItem('cp-gaps')==='1'}catch(e){}
 let RUGK=2.5,HALFP=.35;const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#171004','#4a3608'],['#0a0a2a','#3a0a4a']];
@@ -1478,9 +1478,9 @@ const imp=()=>Array.from({length:ri(4,9)},()=>Math.random()<.8?-rnd(.8,1.8):rnd(
 const box=dir=>{const a=boxRange(ri(8,15)),r=Math.random();a.push(...(r<.75?rp(3,dir*1.7):r<.9?rp(3,0):rp(3,-dir*1.7)));return a};
 const pat=names=>{const p=PAT[names[ri(0,names.length-1)]],o=Math.random(),out=o<.75?p.o:o<.9?p.o.map(()=>0):p.o.map(d=>-d);return [...p.s,...out]};
 /* a market cycle: 0 bull run, 1 blow-off and topping formation, 2 first leg down, 3 dead cat bounce, 4 choppy bear market, then the rugpull. Entries are px moves, or {d,sh} for candles with a telling shape (star, hammer, doji, big). */
-const U_=(g,a)=>a.map(m=>typeof m==='number'?m*g.U:{d:m.d*g.U,sh:m.sh});
+const U_=(g,a,k=1)=>a.map(m=>typeof m==='number'?m*g.U*k:{d:m.d*g.U*k,sh:m.sh});
 function segBull(g){const r=Math.random();return U_(g,r<.5?imp():r<.6?pull():r<.68?box(-1):pat(BULLP))}
-function segBear(g){const r=Math.random();return U_(g,r<.28?bearImp():r<.5?relief():r<.72?box(1):pat(BEARP))}
+function segBear(g){const r=Math.random();return U_(g,r<.28?bearImp():r<.5?relief():r<.72?box(1):pat(BEARP),.75)}
 function buildTop(g){/* parabolic blow-off, then a topping formation that is easy to read */
  const a=[];const n=ri(6,9);for(let i=0;i<n;i++)a.push(-(1+.25*i)*rnd(.9,1.1));
  const k=ri(0,4);
@@ -1492,7 +1492,7 @@ function buildLeg(g){const r=g.topRoll,a=[];
  if(r===0){a.push({d:1.9,sh:'big'});const n=ri(7,11);for(let i=0;i<n;i++)a.push(Math.random()<.78?rnd(.7,2):-rnd(.2,.6));a.push({d:.3,sh:'hammer'})}
  else if(r===1){const n=ri(4,6);for(let i=0;i<n;i++)a.push(Math.random()<.7?rnd(.4,1):-rnd(.2,.5))}
  else{const n=ri(5,8);for(let i=0;i<n;i++)a.push(-rnd(.6,1.4))}/* bull trap: the top fails and the market keeps going */
- const o=U_(g,a);g.legSum=o.reduce((t,e)=>t+Math.max(0,typeof e==='number'?e:e.d),0);return o}
+ const o=U_(g,a,g.topRoll===2?1:.8);g.legSum=o.reduce((t,e)=>t+Math.max(0,typeof e==='number'?e:e.d),0);return o}
 function buildBounce(g){const n=ri(6,9),tot=-.5*(g.legSum||600),a=[{d:tot/n*1.2,sh:'hammer'}];for(let i=1;i<n-2;i++)a.push(tot/n*rnd(.7,1.3));a.push({d:g.U*.4,sh:'star'},g.U*.9);return a}
 function gen(){const g=R.gen;let green=Math.random()<.86,top=g.top,dip=false,pit=false,gs=false,cd;
  if(g.phase==='cliff'&&Math.random()<HALFP){/* mini rugpull: a sudden drop of 500-1000 px, brake it with the flames */g.phase='half'}
@@ -1572,6 +1572,7 @@ function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0
  if(rugOn&&dpt>4)hh=(R.entryY-R.peakY)/PY+Math.log(qv(dpt))
  if(rugOn){const hp=(R.entryY-R.peakY)/PY,qs=Math.max(0,1-1/L)/Math.exp(hp),ds=qs>=1?0:qs<=.02?1.1*R.ko:R.ko*Math.pow((1-qs)/.98,1/.8);R.zeroY=R.peakY+Math.min(1.1*R.ko,ds)}else R.zeroY=1e9
  if(rugOn&&dpt>4&&R.zeroY<1e8){const zd=R.zeroY-R.peakY;if(zd>0)R.nm=Math.min(R.nm,Math.max(0,(zd-dpt)/zd))}
+ if(!(rugOn&&dpt>4)&&hh>0){/* a new high: the leveraged position is re-sized to the equity (so a drawdown is always measured from the last high: at 4x a 12% drop is -48%, at 10x a 10% drop wipes you out) */R.E0=Math.max(0,R.E0*(1+L*(Math.exp(hh)-1)));R.entryY=R.y;hh=0}
  if(R.gold>0){R.entryY=R.y;R.E0=Math.max(1,R.score-R.extra);hh=0}
  const E=Math.max(0,R.E0*(1+L*(Math.exp(hh)-1))),prevS=R.score;if(E>R.lastE&&R.chute)R.extra+=(E-R.lastE)*.1;R.lastE=E;R.score=E+R.extra;
  {const dp=(R.score-prevS)/Math.max(1,prevS);R.acc+=dp;if(dp>0&&R.ground)R.fuel=Math.min(1,R.fuel+dp*.35)}
