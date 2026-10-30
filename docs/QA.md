@@ -347,3 +347,12 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Score growth much slower: height % now scaled by 1/5000 px (was 1/1500) and the candle multiplier is 1.015^k (was 1.03^k). Hands-off 28 s run: ~$2.5k (was ~$27k). Slap threshold lowered to 2% (shake at 8%) to match.
 - % pop-ups use a bubbly rounded font (Baloo 2 from Google Fonts, falling back to rounded system fonts) with white outline, gradient fill and drop shadow.
 - Headless Chromium over http: full-rug crossing still 30/30 from 25% fuel, game7 policies unchanged, no console errors.
+
+## Coinpull: feet always on the candles, 10% valley cap, chute on hold only, liquidation tile, pause
+- **Feet on the candles:** the auto-float is gone. The line follows each candle's top exactly and only eases over a narrow band (30% of a candle) at the borders. When the line rises (wall or very high candle) the cat climbs it at a steady 900 px/s while the scroll keeps its pace (900 px wall test: scroll 199–220 px/s, 0 frames floating above the line). Landing on a wall side also just climbs, with no damage.
+- **Valleys:** score follows height as % (1/10000 px, x leverage) but the drawdown from the last high is capped at 10% (x leverage) so no valley costs more than ~10%; winning it back only pays above the old high (no free ratchet). Candle multiplier 1.01^k. First rug now arrives at about $8k (was $330k before the % changes).
+- **Parachute only while holding:** the canopy opens after ~0.2 s of holding with fuel (and only then the +10%); a press is just a jump.
+- **Cat loop:** frames 94–100 of the sheet are a ghosted crossfade, so the cat uses frames 0–92 played forward/reverse (no fade, no chop).
+- **Liquidated:** title LIQUIDATED, text "You lost everything including your house. But you got some vibes left to cope with.", button "(Start speculating again?)". The cat dances at 2x and orbits the tile, slowly accelerating; the tile has an animated rainbow glow (static under reduced motion).
+- **Pause:** ⏸ button (and P key / tab hidden) shows a PAUSED tile with Resume/Quit; game, timers and music freeze (AudioContext suspended). Esc resumes when paused.
+- Headless Chromium desktop + phone: pause freezes and resumes, liquidation tile + orbiting cat render, no console errors; game7 / rug (30/30 crossing from 25% fuel) / choice scripts pass.
