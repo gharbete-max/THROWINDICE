@@ -330,3 +330,6 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 ## Coinpull soundtrack
 - `assets/audio/gaming-loop.wav`: supplied 192 kHz FLAC resampled to 44.1 kHz/16-bit WAV (4.4 MB, WAV because the artifact host does not serve FLAC, 24.78 s) with a 12 ms fade-in so the wrap from the faded tail to the start has no click. Played via WebAudio `AudioBufferSourceNode.loop=true` (sample-exact, no `<audio loop>` gap), started from the Game tap, stopped on close. 🔊/🔇 button next to ✕, remembered in `cp-mute`.
 - Headless Chromium over http: file decodes (24.78 s, 44.1 kHz, stereo), mute toggles, no console errors. (Not fetchable from file://.)
+
+## Soundtrack speeds up with the level
+- Song `playbackRate` = 1× on level 1, then 1.2× on level 2, 1.3× on level 3 and so on (same factor as the run speed); resets to 1× on a new run. Tape-style: pitch rises with speed. Verified in headless Chromium over http.
