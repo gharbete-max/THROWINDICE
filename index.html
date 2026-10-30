@@ -1520,16 +1520,16 @@ function player(x,y,s){const g=cx,t=s.t,run=s.ground&&!s.dead,bob=run?Math.abs(M
  /* parachute behind the kitten: packed bundle on its back (pc=0) unfolds to a full canopy (pc=1) while boosting, ~0.25 s eased */
  const u=s.u||0,dtp=Math.min(.1,Math.max(0,t-(s._pt==null?t:s._pt)));s._pt=t;const rm=matchMedia('(prefers-reduced-motion: reduce)').matches;s.pc=Math.max(0,Math.min(1,(s.pc||0)+(!s.dead&&(u>0||s.flash>0)?1:-1)*(rm?1:dtp/.25)));
  const pe=s.pc*s.pc*(3-2*s.pc),sw=rm?0:Math.sin(t*5)*.05*pe;
- if(!s.dead){const cy=-70-bob+(-150)*pe,hw=14+68*pe,ch=10+52*pe,sh=[[-18,-66-bob],[18,-66-bob]],cols=['#ffd93b','#8e5bd6'];g.save();g.translate(0,0);g.rotate(sw);
+ if(!s.dead){const cy=-70-bob+(-150)*pe,hw=14+68*pe,ch=10+52*pe,sh=[[-18,-92-bob],[18,-92-bob]],cols=['#ffd93b','#8e5bd6'];g.save();g.translate(0,0);g.rotate(sw);
   if(pe>.04){g.strokeStyle='rgba(255,255,255,.85)';g.lineWidth=1.6;[-1,-.5,0,.5,1].forEach((f,i)=>{const sx=sh[i<2.5?0:1][0],sy=sh[0][1];g.beginPath();g.moveTo(f*hw,cy);g.lineTo(i===2?0:sx,sy);g.stroke()})}
   for(let i=0;i<5;i++){const x0=-hw+i*hw*.4,x1=x0+hw*.4;g.save();g.beginPath();g.rect(x0,cy-ch-2,x1-x0,ch+2);g.clip();g.fillStyle=cols[i%2];g.beginPath();g.ellipse(0,cy,hw,ch,0,Math.PI,0);g.closePath();g.fill();g.restore()}
   g.strokeStyle='#0003';g.lineWidth=1.5;g.beginPath();g.ellipse(0,cy,hw,ch,0,Math.PI,0);g.closePath();g.stroke();g.restore()}
  /* gold aura (kept) */
  const gd=s.gold>0;if(gd){const ar=g.createRadialGradient(0,-50,10,0,-50,120);ar.addColorStop(0,'rgba(255,225,80,.55)');ar.addColorStop(1,'rgba(255,225,80,0)');g.fillStyle=ar;g.beginPath();g.arc(0,-50,120,0,6.3);g.fill()}
- /* the dancing kitten from the basics page: 420-frame sheet, 8 frames wide, played at 24 fps (faster while boosting) */
- const im=window._dancerSheet||(window._dancerSheet=Object.assign(new Image(),{src:'assets/mascots/dancer-dance.webp'}));
- g.translate(0,-bob);if(im.complete&&im.naturalWidth){const C=8,N=420,fw=im.naturalWidth/C,fi=Math.floor(t*(u>0?36:24))%N,S=150;
-  g.drawImage(im,(fi%C)*fw,Math.floor(fi/C)*fw,fw,fw,-S/2,-S*.9,S,S)}
+ /* the cut-out dancing cat: 101-frame sheet, 8 frames wide, 10 fps (14 while boosting); paws sit at the bottom edge of each frame */
+ const im=window._catSheet||(window._catSheet=Object.assign(new Image(),{src:'assets/mascots/catdance.webp'}));
+ g.translate(0,-bob);if(im.complete&&im.naturalWidth){const C=8,N=101,fw=im.naturalWidth/C,fi=Math.floor(t*(u>0?14:10))%N,S=150;
+  g.drawImage(im,(fi%C)*fw,Math.floor(fi/C)*fw,fw,fw,-S/2,-S*.97,S,S)}
  g.restore()}
 let last=0;function loop(t){raf=requestAnimationFrame(loop);const dt=Math.min(.033,(t-last)/1000||.016);last=t;if(!R)return;if(hold)holdT+=dt;else holdT=0;if(!document.getElementById('gameCard').hidden){R.t+=dt;draw();return}
  step(dt);R.parts.forEach(p=>{p.vy+=1200*dt;p.x+=p.vx*dt;p.y+=p.vy*dt});draw()}

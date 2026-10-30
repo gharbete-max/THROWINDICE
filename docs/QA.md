@@ -322,3 +322,7 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Smiley label under the coin
 - Bottom-nav smiley now shows a label underneath: "Tokenized investments" in the real world, "Real world investments" in Token World (headless Chromium, 1000px and 390px, no errors).
+
+## Coinpull: cut-out dancing cat
+- `player()` now draws `assets/mascots/catdance.webp` (101 frames, 8 per row, 10 fps / 14 while boosting) via its own `window._catSheet`; `dancer-dance.webp` is untouched for other uses. Bottom edge anchored just under the feet (dy = -S·0.97, S=150); parachute shoulder anchor raised to y=-92 only, canopy unchanged.
+- Headless Chromium (900×700, 390×800): cat animates, parachute opens on hold and folds on release, no console errors.
