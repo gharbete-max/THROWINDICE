@@ -379,3 +379,9 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **Terrain slope cap** (trend ≤ 70 px/candle) so long runs do not explode the score.
 - **Audit:** 60 randomised runs of up to 200 s with five different input styles: no exceptions, no NaN/negative score, no fuel out of range, no stuck run (min distance 1,100 px); deaths 21 knock-outs, 27 falls. Removed dead pit/second-card code. Pause, liquidation tile, choice card and glide tests re-run clean on desktop and phone width.
 - Ideas left for later: ghost of your best run, daily seed, near-miss bonus for skimming the knock-out line, share card.
+
+## Coinpull: stronger uptrend, jumpable gaps, fairer knock-out
+- **Uptrend:** mostly green candles (86%), bigger rises (x1.5), rarer/shallower valleys (8%, 30–220 px), smaller red candles, score scale 6000 px. Terrain rises ~32 px/candle; the first up phase now ends around $2.2k (median) hands-off and ~$3k for a player who jumps the gaps (best runs $7–10k).
+- **Gaps to jump:** in the up phase (after candle 6, ~7% per candle, at least 9 apart) a 3–4 candle pit 300 px deep appears; a tap clears it, walking in costs ~13% (fall beyond 200 px is the strong -%) and a red blink, then the cat climbs out.
+- **Knock-out is fairer:** knock-out line is now 4800/L px under the old high (was 1800/L), silently at least 55% fuel when the rug arrives (rubber band), card 32 candles wide, gap factor 8 (was 10), braking a fall burns 45% less fuel. Bot that holds the parachute when the fall starts survives ~85%, one that does nothing still survives ~45% (lands on the card); 10% fuel tapper crosses 73% of the time, 100% from 25%.
+- Fuzz (60 randomised runs) clean again: no NaN/negative, no stuck run; pause/choice/glide checks pass.
