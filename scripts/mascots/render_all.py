@@ -8,7 +8,7 @@ if char == 'kitten' and os.path.exists('/home/claude/bl/skip_kitten') and only i
 if char == 'pug':
     import pug; rig, parts = pug.build(); pose = anim.pug_pose; exp = 0.0
 else:
-    import cat; rig, parts = cat.build(char); pose = anim.alien_pose if char == 'alien' else (anim.kitten_scared if mode == 'scared' else anim.kitten_hang); exp = 0.0 if char == 'alien' else 0.15
+    import cat; rig, parts = cat.build(char); pose = anim.dancer_pose if char == 'dancer' else anim.alien_pose if char == 'alien' else (anim.kitten_scared if mode == 'scared' else anim.kitten_hang); exp = 0.0 if char in ('alien', 'dancer') else 0.15
 if char == 'kitten':  # front-on orthographic framing around the hanging pose
     import numpy as np, json
     pose(rig, parts, 0); bpy.context.view_layer.update()
@@ -21,6 +21,7 @@ if char == 'kitten':  # front-on orthographic framing around the hanging pose
 else:
     stage(res=res, samples=samples, cam_loc=(-1.7, -7.4, 1.9), target=(0, 0, 1.3), lens=74 if char != 'pug' else 78, exposure=exp)
     shadow_catcher()
+if char == 'dancer': vs = bpy.context.scene.view_settings; vs.view_transform = 'Standard'; vs.look = 'None'; vs.exposure = -0.35  # vivid clothes
 out = f'/home/claude/bl/frames/{char}_{mode}'; os.makedirs(out, exist_ok=True)
 for i in range(n):
     if only is not None and i != only: continue

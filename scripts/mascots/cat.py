@@ -19,8 +19,12 @@ def maxs(nt, a, b):
 
 def build(kind='alien'):
     reset()
-    alien = kind == 'alien'
-    if alien:
+    dancer = kind == 'dancer'; alien = kind in ('alien', 'dancer')  # the dancer shares the alien's arms-out body and rig
+    if dancer:
+        c1, c2 = (0.42, 0.42, 0.47), (0.95, 0.94, 0.92)  # silver-grey kitten, white muzzle
+        mask = lambda nt, sx: oval(nt, sx, 0, 1.56, 0.2, 0.11, -0.3)
+        flen, iris = 0.024, (0.55, 0.45, 0.12)
+    elif alien:
         c1, c2 = (0.025, 0.34, 0.09), (0.42, 0.8, 0.5)  # green body, pale belly / muzzle
         mask = lambda nt, sx: maxs(nt, oval(nt, sx, 0, 0.9, 0.2, 0.24), oval(nt, sx, 0, 1.56, 0.2, 0.1, -0.3))
         flen, iris = 0.02, (0.32, 0.14, 0.5)
@@ -29,6 +33,13 @@ def build(kind='alien'):
         mask = lambda nt, sx: maxs(nt, oval(nt, sx, 0, 1.57, 0.2, 0.12, -0.3), oval(nt, sx, 0, 1.05, 0.24, 0.42, -0.12))
         flen, iris = 0.026, (0.22, 0.42, 0.62)
     skin_m = region_mix(principled('catSkin', c1, 0.6, sss=0.15, sss_radius=(1, 0.4, 0.3), sss_scale=0.04), c2, mask)
+    if dancer:  # knit sweater over torso and sleeves, trousers on the legs; paws, head and tail stay furry
+        def ax(nt, sx):
+            n = nt.nodes.new('ShaderNodeMath'); n.operation = 'ABSOLUTE'; nt.links.new(sx.outputs['X'], n.inputs[0]); return n.outputs[0]
+        nopaw = lambda nt, sx: smooth_mask(nt, ax(nt, sx), 0.88, 0.82)
+        region_mix(skin_m, (1.0, 0.42, 0.0), lambda nt, sx: mult(nt, mult(nt, smooth_mask(nt, sx.outputs['Z'], 0.62, 0.68), smooth_mask(nt, sx.outputs['Z'], 1.44, 1.38)), nopaw(nt, sx)))
+        region_mix(skin_m, (0.16, 0.06, 0.48), lambda nt, sx: mult(nt, smooth_mask(nt, sx.outputs['Z'], 0.14, 0.19), smooth_mask(nt, sx.outputs['Z'], 0.66, 0.6)))
+        fur_bump(skin_m, 140, 0.35, 0.6); skin_m.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = 0.85
     pink = principled('pink', (0.95, 0.42, 0.52), 0.42, sss=0.4, sss_radius=(1, 0.3, 0.3), sss_scale=0.03)
     line_m = principled('mouth', (0.05, 0.02, 0.03), 0.7, spec=0.1)
     whisk_m = principled('whisker', (0.95, 0.95, 0.95), 0.35)
@@ -38,8 +49,8 @@ def build(kind='alien'):
     for s in (-1, 1):
         els += [EL((s * 0.17, 0, 0.55), 0.14, 0.15, 0.19)] + chain((s * 0.18, -0.02, 0.42), (s * 0.19, -0.04, 0.15), 0.18, 0.16, 5)
         els += [EL((s * 0.19, -0.11, 0.07), 0.1, 0.15, 0.065)]
-        el, wr, pw = ((0.48, 1.27), (0.68, 1.31), (0.73, 1.31)) if alien else ((0.64, 1.72), (0.82, 2.22), (0.86, 2.34))  # kitten: arms already up around the head, hanging
-        nseg = 6 if alien else 13  # the kitten's long arms need more, denser segments or they look beaded
+        el, wr, pw = ((0.56, 1.27), (0.88, 1.3), (0.94, 1.3)) if dancer else ((0.48, 1.27), (0.68, 1.31), (0.73, 1.31)) if alien else ((0.64, 1.72), (0.82, 2.22), (0.86, 2.34))  # kitten: arms already up around the head, hanging
+        nseg = 9 if dancer else 6 if alien else 13  # the kitten's long arms need more, denser segments or they look beaded
         els += chain((s * 0.25, -0.03, 1.22), (s * el[0], -0.05, el[1]), 0.15, 0.12, nseg) + chain((s * el[0], -0.05, el[1]), (s * wr[0], -0.07, wr[1]), 0.12, 0.1, nseg)
         els += [EL((s * pw[0], -0.09, pw[1]), 0.08, 0.09, 0.075)]
         els += [EL((s * 0.2, -0.22, 1.6), 0.2, 0.18, 0.16), EL((s * 0.065, -0.37, 1.575), 0.075, 0.055, 0.055, 2.5), EL((s * 0.11, -0.36, 1.93), 0.06, 0.035, 0.03), EL((s * 0.25, -0.31, 1.88), 0.06, 0.035, 0.028)]  # cheeks, whisker pads, softly raised brows
@@ -104,14 +115,15 @@ def build(kind='alien'):
             for b in grp_: b.data.materials.append(bean_m)
             beans.append(grp_)
     extra = []
-    if alien:
+    if alien and not dancer:
         orb_m = principled('orb', (1.0, 0.25, 0.75), 0.15, emit=(1.0, 0.12, 0.6), emit_str=1.6, coat=1.0, coat_rough=0.0)
         for s in (-1, 1):
             x0 = s * 0.13; z0 = 2.12; y0 = S(x0, z0) + 0.03
             extra.append(tube(f'ant{s}', [(x0, y0, z0 - 0.04), (x0 + s * 0.06, y0 - 0.02, z0 + 0.2), (x0 + s * 0.17, y0 - 0.06, z0 + 0.42)], [0.026, 0.021, 0.017], skin_m))
             o = uv_sphere(f'orb{s}', 0.075, (x0 + s * 0.175, y0 - 0.065, z0 + 0.48)); o.data.materials.append(orb_m); extra.append(o)
 
-    if alien: hm = hair_mat('catHair', color=c1, rough=0.32, region=(c2, mask))
+    if dancer: hm = hair_mat('catHair', color=(0.2, 0.2, 0.23), rough=0.4, region=((0.9, 0.89, 0.87), mask))  # silver grey, white muzzle
+    elif alien: hm = hair_mat('catHair', color=c1, rough=0.32, region=(c2, mask))
     else:  # ginger fur via melanin (plain colours render pale): cream where the mask is, soft tabby stripes elsewhere
         hm = hair_mat('catHair', melanin=0.32, redness=0.97, rough=0.42); nt = hm.node_tree
         h = [n for n in nt.nodes if n.type == 'BSDF_HAIR_PRINCIPLED'][0]
@@ -125,9 +137,10 @@ def build(kind='alien'):
         amt = nt.nodes.new('ShaderNodeMath'); amt.operation = 'MULTIPLY'; amt.inputs[1].default_value = 0.2; nt.links.new(mult(nt, st, inv.outputs[0]), amt.inputs[0])
         mel = nt.nodes.new('ShaderNodeMath'); mel.operation = 'ADD'; nt.links.new(base.outputs['Result'], mel.inputs[0]); nt.links.new(amt.outputs[0], mel.inputs[1])
         nt.links.new(mel.outputs[0], h.inputs['Melanin'])
-    if alien: hair_tint(hm, (1.0, 0.38, 0.55), lambda nt, sx: maxs(nt, oval(nt, sx, 0.3, 1.6, 0.11, 0.075, -0.1), oval(nt, sx, -0.3, 1.6, 0.11, 0.075, -0.1)), 1.0)  # blush
+    if alien and not dancer: hair_tint(hm, (1.0, 0.38, 0.55), lambda nt, sx: maxs(nt, oval(nt, sx, 0.3, 1.6, 0.11, 0.075, -0.1), oval(nt, sx, -0.3, 1.6, 0.11, 0.075, -0.1)), 1.0)  # blush
     eyec = [tuple(c) for c in ecs]
-    fur(body, hm, count=30000, length=flen, children=14, droop=(0, 0, -0.5), radius=0.0022, clump=0.12, rough=0.003, lift=0.25,
+    clothes = (lambda P: 1 - (((P[:, 2] > 0.13) & (P[:, 2] < 1.44) & (np.abs(P[:, 0]) < 0.86)).astype(float))) if dancer else None
+    fur(body, hm, keep=clothes, count=30000, length=flen, children=14, droop=(0, 0, -0.5), radius=0.0022, clump=0.12, rough=0.003, lift=0.25,
         avoid=[(c, er * 1.02) for c in eyec] + [((0, ny, nz), 0.06), ((0, ny, 1.565), 0.05)] + ([] if alien else [((s * 0.85, S(s * 0.85, 2.33), 2.33), 0.085) for s in (-1, 1)]),
         short=[((0, -0.38, 1.62), 0.2, 0.3)] + [(c, 0.22, 0.4) for c in eyec] + [((s * 0.4, 0, 2.3), 0.25, 0.35) for s in (-1, 1)]
               + ([] if alien else [((s * 0.32, -0.2, 1.52), 0.2, 1.35) for s in (-1, 1)]))  # kitten: a little cheek ruff

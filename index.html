@@ -407,7 +407,7 @@ body.token-world .topic.pile .symbol::after{content:"";position:absolute;left:-3
 .dgMore:focus-visible{outline:3px solid var(--text);outline-offset:2px}
 .alienRow{display:flex;align-items:center;gap:12px}.alienCat{width:64px;height:64px;flex:none;animation:alienBob 4s ease-in-out infinite}.alienRow h2{margin:0;font-size:26px}
 @keyframes alienBob{50%{transform:translateY(-5px) rotate(-4deg)}}@media(prefers-reduced-motion:reduce){.alienCat{animation:none}}
-.dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}.mascot{position:relative;aspect-ratio:1;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.mascot i{position:absolute;inset:0;background-repeat:no-repeat;transition:opacity .09s ease-out}.mascot .mFx{opacity:0}.mascot.fx .mFx{opacity:1}.mascot.fx .mBase{opacity:0}
+.dogMascot,.bubDog,.alienCat{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}.basicsHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.basicsDancer{width:118px;flex:none;margin:-22px -6px -18px 0}.mascot{position:relative;aspect-ratio:1;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.mascot i{position:absolute;inset:0;background-repeat:no-repeat;transition:opacity .09s ease-out}.mascot .mFx{opacity:0}.mascot.fx .mFx{opacity:1}.mascot.fx .mBase{opacity:0}
 .dogMascot{width:132px;margin:-14px -8px -10px -10px}.dogMascot img,.bubDog img{width:100%;height:auto;display:block}.bubDog{width:96px;margin:-10px 0}
 .alienCat{width:92px;height:92px;margin:-14px -12px -14px -14px;animation:none}
 .kCat img{position:absolute;left:-34px;top:-8px;width:68px;height:68px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.2));transition:opacity .09s ease-out}.kCat .kScared{opacity:0}.kCat.scared .kScared{opacity:1}.kCat.scared picture img{opacity:0}
@@ -630,7 +630,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 </section>
 <section class="page" id="basics">
 <div class="pageTitle"><div class="eyebrow">BASICS</div><h1>Basics</h1><p>Short and simple.</p></div>
-<div class="card"><div class="sectionHead"><div><h2>Investing in plain words</h2></div></div><ul class="noteList story">
+<div class="card"><div class="sectionHead basicsHead"><div><h2>Investing in plain words</h2></div><div class="basicsDancer mascot" data-m="dancer" data-moves="none" aria-hidden="true"><i class="mBase" style="background:url(assets/mascots/dancer-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div></div><ul class="noteList story">
 <li><span>🏦</span><p><b>A fund is like a savings account you do not touch.</b> You put money in, you leave it for a long time, and you do not need to read the news every day.</p></li>
 <li><span>🧺</span><p><b>ETF means exchange traded fund.</b> It is a basket of many companies that you buy and sell like one share. If one company falls, the others help carry it.</p></li>
 <li><span>😌</span><p><b>Passive means the fund just follows a list.</b> It does not pay experts to pick winners, so it costs less and asks less of you. For decades, studies such as the S&amp;P SPIVA reports have found that most actively managed funds trail their index over long periods. <a href="https://www.spglobal.com/spdji/en/research-insights/spiva/" target="_blank" rel="noopener noreferrer">SPIVA ↗</a></p></li>
@@ -895,7 +895,7 @@ function navGame(b){invClose();if(document.body.classList.contains('token-world'
 (()=>{const b=document.querySelector('.tokenCoin');if(!b)return;const imgs=[...b.querySelectorAll('img[data-spin]')];imgs.forEach(i=>{i._still=i.getAttribute('src');new Image().src=i.dataset.spin});b.addEventListener('mouseenter',()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;imgs.forEach(i=>i.src=i.dataset.spin)});b.addEventListener('mouseleave',()=>imgs.forEach(i=>i.src=i._still))})();
 (()=>{/* Mascot sprite player: default dance loop; hold = speed up; tap = special move (spin, flip, pose in turn),
  cross-faded over the dance, which keeps running underneath. Sheets are 8 frames wide, 24 fps. */
- const C=8,FPS=24,SP=24,M={pug:66,alien:66},MOVES=['spin','flip','pose'],u=(m,k)=>'assets/mascots/'+m+'-'+k+'.webp';
+ const C=8,FPS=24,SP=24,M={pug:66,alien:66,dancer:420},MOVES=['spin','flip','pose'],u=(m,k)=>'assets/mascots/'+m+'-'+k+'.webp';
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;  // the still frame in the markup stays
  const frame=(el,m,k,n,f)=>{const r=Math.ceil(n/C),i=Math.floor(f)%n;el.style.background='url('+u(m,k)+') '+((i%C)/(C-1)*100)+'% '+(r>1?Math.floor(i/C)/(r-1)*100:0)+'% / '+C*100+'% '+r*100+'% no-repeat'};
  let last=performance.now();
@@ -908,11 +908,11 @@ function navGame(b){invClose();if(document.body.classList.contains('token-world'
  const st=e=>{const el=e.target.closest&&e.target.closest('.mascot');return el&&(el._s||(el._s={t:0,v:1,k:0,fx:null}))&&el};
  document.addEventListener('pointerdown',e=>{const el=st(e);if(!el)return;const s=el._s;s.down=1;clearTimeout(s.tm);s.tm=setTimeout(()=>{if(s.down)s.hold=true},180);window._mHeld=el});
  const up=()=>{const el=window._mHeld;if(!el)return;window._mHeld=null;const s=el._s;clearTimeout(s.tm);
-  if(s.down&&!s.hold&&!s.fx){const k=MOVES[s.k++%MOVES.length];s.fx={k,f:0};frame(el.querySelector('.mFx'),el.dataset.m,k,SP,0);el.classList.add('fx')}
+  if(s.down&&!s.hold&&!s.fx&&el.dataset.moves!=='none'){const k=MOVES[s.k++%MOVES.length];s.fx={k,f:0};frame(el.querySelector('.mFx'),el.dataset.m,k,SP,0);el.classList.add('fx')}
   s.down=0;s.hold=false};
  document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
  document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.mascot'))e.preventDefault()});
- addEventListener('load',()=>Object.keys(M).forEach(m=>['dance',...MOVES].forEach(k=>{new Image().src=u(m,k)})));
+ addEventListener('load',()=>Object.keys(M).forEach(m=>(m==='dancer'?['dance']:['dance',...MOVES]).forEach(k=>{new Image().src=u(m,k)})));
 })();
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
@@ -1526,16 +1526,12 @@ function player(x,y,s){const g=cx,t=s.t,run=s.ground&&!s.dead,bob=run?Math.abs(M
  /* big jetpack tanks */
  [-26,26].forEach(sx=>{g.fillStyle='#8c93a8';g.beginPath();g.roundRect(sx-13,-86-bob,26,66,9);g.fill();g.fillStyle='#c9cfe0';g.fillRect(sx-9,-82-bob,6,54);g.fillStyle='#ff7a3a';g.fillRect(sx-13,-62-bob,26,7);g.fillStyle='#ff7a3a';g.fillRect(sx-13,-40-bob,26,5);g.fillStyle='#3b3f55';g.beginPath();g.moveTo(sx-9,-20-bob);g.lineTo(sx+9,-20-bob);g.lineTo(sx+12,-12-bob);g.lineTo(sx-12,-12-bob);g.closePath();g.fill()});
  g.fillStyle='#5a5f78';g.fillRect(-26,-70-bob,52,7);
- /* feet */
- g.fillStyle='#2a2140';const f1=run?Math.sin(t*14)*7:0;g.beginPath();g.ellipse(-12+f1,-2,10,5,0,0,6.3);g.fill();g.beginPath();g.ellipse(12-f1,-2,10,5,0,0,6.3);g.fill();
- /* robe */
+ /* gold aura (kept) */
  const gd=s.gold>0;if(gd){const ar=g.createRadialGradient(0,-50,10,0,-50,120);ar.addColorStop(0,'rgba(255,225,80,.55)');ar.addColorStop(1,'rgba(255,225,80,0)');g.fillStyle=ar;g.beginPath();g.arc(0,-50,120,0,6.3);g.fill()}
- g.translate(0,-bob);g.fillStyle=gd?'#ffc400':'#7a4bd6';g.beginPath();g.moveTo(-17,-62);g.lineTo(17,-62);g.lineTo(31,-8);g.lineTo(-31,-8);g.closePath();g.fill();g.fillStyle=gd?'#fff2a8':'#b99bff';g.fillRect(-31,-13,62,6);g.fillStyle=gd?'#fff':'#ffd93b';g.fillRect(-18,-40,36,5);g.fillStyle=gd?'#c88a00':'#5a33a8';g.fillRect(-2,-62,4,50);
- /* head: front-facing, one big black eye, small tongue */
- const hy=-84;g.fillStyle=gd?'#ffe680':'#ffd93b';g.strokeStyle='#b8860b';g.lineWidth=3;g.beginPath();g.arc(0,hy,26,0,6.3);g.fill();g.stroke();
- g.fillStyle='#121018';g.beginPath();g.arc(0,hy-5,13.5,0,6.3);g.fill();g.fillStyle='#fff';g.beginPath();g.arc(4.5,hy-9.5,3.6,0,6.3);g.fill();g.beginPath();g.arc(-4,hy-1,1.6,0,6.3);g.fill();
- g.strokeStyle='#7a3b00';g.lineWidth=3.2;g.lineCap='round';g.beginPath();g.arc(0,hy+8,12,.12*Math.PI,.88*Math.PI);g.stroke();
- const tw=Math.sin(t*9)*1.2;g.fillStyle='#ff5a8a';g.beginPath();g.roundRect(-3.5+tw,hy+17,8,9,4);g.fill();g.strokeStyle='#d63a6c';g.lineWidth=1.4;g.beginPath();g.moveTo(.5+tw,hy+18);g.lineTo(.5+tw,hy+24);g.stroke();
+ /* the dancing kitten from the basics page: 420-frame sheet, 8 frames wide, played at 24 fps (faster while boosting) */
+ const im=window._dancerSheet||(window._dancerSheet=Object.assign(new Image(),{src:'assets/mascots/dancer-dance.webp'}));
+ g.translate(0,-bob);if(im.complete&&im.naturalWidth){const C=8,N=420,fw=im.naturalWidth/C,fi=Math.floor(t*(u>0?36:24))%N,S=150;
+  g.drawImage(im,(fi%C)*fw,Math.floor(fi/C)*fw,fw,fw,-S/2,-S*.9,S,S)}
  g.restore()}
 let last=0;function loop(t){raf=requestAnimationFrame(loop);const dt=Math.min(.033,(t-last)/1000||.016);last=t;if(!R)return;if(hold)holdT+=dt;else holdT=0;if(!document.getElementById('gameCard').hidden){R.t+=dt;draw();return}
  step(dt);R.parts.forEach(p=>{p.vy+=1200*dt;p.x+=p.vx*dt;p.y+=p.vy*dt});draw()}

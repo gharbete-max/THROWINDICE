@@ -207,3 +207,25 @@ def pug_pose(rig, parts, t, special=False):
     if special: P = dict(NEUTRAL); [P.__setitem__(k, P.get(k, 0) + v) for k, v in SPECIALS[special if isinstance(special, str) else 'special'](t).items()]
     else: P = choreo(t, PUG_DANCE)
     apply_pose2(rig, parts, P, -0.25)
+
+_DANCE = None
+def dancer_pose(rig, parts, t, special=False):
+    """Frame-for-frame dance retargeted from the reference video (see retarget.py)."""
+    global _DANCE
+    import numpy as np, bpy
+    if _DANCE is None:
+        d = np.load('/home/claude/bl/dance.npz'); _DANCE = {k: d[k] for k in d.files}
+        _DANCE['msL'] = np.median(_DANCE['sL']); _DANCE['msR'] = np.median(_DANCE['sR']); _DANCE['mhip'] = np.median(_DANCE['hipt'])
+    D = _DANCE; n = int(D['n']); i = int(round(t * n)) % n; g = lambda k: float(D[k][i])
+    for pb in rig.pose.bones: pb.location = (0, 0, 0)
+    rot(rig, 'root', 0, 0, -0.22 + 0.85 * g('yaw'))
+    rot(rig, 'hips', 0, -0.6 * (g('hipt') - D['mhip']), 0)
+    rot(rig, 'spine', 0, 0.8 * g('lean'), 0)
+    rot(rig, 'head', 0, 0.8 * g('tilt'), g('look'))
+    arms(rig, g('aL'), g('aR'), 0, 0, g('bL'), g('bR'))
+    for n_, s_, k_ in (('L', 'sL', 'kL'), ('R', 'sR', 'kR')):
+        a = g(k_); side = -(g(s_) - D['m' + s_])
+        rot(rig, f'leg.{n_}', -a, side, 0); rot(rig, f'shin.{n_}', 2 * a, 0, 0); rot(rig, f'foot.{n_}', -a, 0, 0)
+    bpy.context.view_layer.update()                      # keep the lowest foot on the floor
+    low = min(min((rig.matrix_world @ rig.pose.bones[f'foot.{x}'].head).z, (rig.matrix_world @ rig.pose.bones[f'foot.{x}'].tail).z) for x in 'LR')
+    move(rig, 'root', 0, 0, 0.05 - low)

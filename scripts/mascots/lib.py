@@ -88,7 +88,10 @@ def region_mix(mat, color2, expr):
     nt = mat.node_tree; b = nt.nodes['Principled BSDF']
     tc = nt.nodes.new('ShaderNodeTexCoord'); sx = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Object'], sx.inputs[0])
     mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'
-    mix.inputs['A'].default_value = b.inputs['Base Color'].default_value[:]; mix.inputs['B'].default_value = (*color2, 1)
+    prev = [l.from_socket for l in nt.links if l.to_socket == b.inputs['Base Color']]  # chain onto an earlier region_mix
+    if prev: nt.links.new(prev[0], mix.inputs['A'])
+    else: mix.inputs['A'].default_value = b.inputs['Base Color'].default_value[:]
+    mix.inputs['B'].default_value = (*color2, 1)
     nt.links.new(expr(nt, sx), mix.inputs['Factor']); nt.links.new(mix.outputs['Result'], b.inputs['Base Color'])
     return mat
 
@@ -221,11 +224,12 @@ def hair_mat(name, melanin=0.9, redness=0.3, rough=0.32, color=None, region=None
         nt.links.new(fn(nt, sx), mix.inputs['Factor']); nt.links.new(mix.outputs['Result'], h.inputs['Color'])
     return m
 
-def fur(obj, mat, count=9000, length=0.035, children=14, clump=0.15, rough=0.004, droop=(0, 0, -0.35), avoid=(), short=(), kink=0.0, radius=0.0035, lift=0.3, comb=True):
+def fur(obj, mat, count=9000, length=0.035, children=14, clump=0.15, rough=0.004, droop=(0, 0, -0.35), avoid=(), short=(), kink=0.0, radius=0.0035, lift=0.3, comb=True, keep=None):
     """Particle-hair fur. avoid: [(centre, r)] bald zones (eyes/nose); short: [(centre, r, factor)] shorter fur zones."""
     P = np.array([v.co for v in obj.data.vertices]) @ np.array(obj.matrix_world.to_3x3()).T + np.array(obj.matrix_world.translation)
     dens = np.ones(len(P)); ln = np.ones(len(P))
     for c, r in avoid: d = np.linalg.norm(P - np.array(c), axis=1); dens *= np.clip((d - r) / (0.35 * r), 0, 1)
+    if keep is not None: dens *= keep(P)  # e.g. no fur where clothes are
     for c, r, f in short: d = np.linalg.norm(P - np.array(c), axis=1); ln *= 1 - (1 - f) * np.clip(1 - d / r, 0, 1)
     for nm, w in (('fur_density', dens), ('fur_length', ln)):
         vg = obj.vertex_groups.new(name=nm)
