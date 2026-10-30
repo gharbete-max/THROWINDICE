@@ -333,3 +333,10 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 
 ## Soundtrack speeds up with the level
 - Song `playbackRate` = 1× on level 1, then 1.2× on level 2, 1.3× on level 3 and so on (same factor as the run speed); resets to 1× on a new run. Tape-style: pitch rises with speed. Verified in headless Chromium over http.
+
+## Coinpull: smooth gliding line, % scoring, parachute bonus, chart patterns
+- **Glide:** `ground(x)` is now an invisible smooth line (smoothstep between neighbouring candle tops); feet sit exactly on it (max offset 0.000 px in a 28 s hands-off run). Walls no longer stop the run: steeper than climb speed (`CLIMB`=1000 px/s) just slows the scroll so the cat climbs at its normal speed; only a step over 520 px (pit walls) blocks. A drop steeper than `DESC` (1100 px/s) or a gap makes the cat leave the line and fall (landing damage rules unchanged). Walking onto the raised pit-floor card now also triggers the cash out.
+- **Scoring as chart %:** rising height = + %, falling = − %, `lv · Δy / 1500` (so a 150 px gap up ≈ +10%, ×level for leverage); landing penalty uses the same scale (`lv·(1−e^(−depth/1500))`, ≥100% still liquidates). The distance term remains. A big pop-up (+25%, −9%…) slaps on screen for moves ≥ 4% in one go (≥ 12% also shakes the screen).
+- **Parachute:** open canopy = +10% on all gains; HUD shows "CHUTE +10%"; added to the help card.
+- **Patterns:** up phase = biased random walk, plus ~10% chance per candle to play a pattern: bull flag, ascending triangle, double bottom, head and shoulders (bearish), cup and handle, V reversal, stairs.
+- Headless Chromium: hands-off 28 s run never stuck (avg ~230 px/s) with slaps both ways; full rugpull crossing identical to before (30/30 from 25% fuel); game7/rug/choice scripts pass; no console errors, desktop + phone.

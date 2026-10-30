@@ -834,7 +834,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <button class="gameClose" type="button" onclick="coinpullClose()" aria-label="Close game">✕</button><button class="gameClose gameMute" type="button" id="gameMute" aria-label="Mute music" aria-pressed="false">🔊</button>
 <div class="gameHud"><b id="gScore" aria-label="Score"><canvas id="gScoreCv" height="28"></canvas></b><span class="gMult" id="gMult">×1.0</span><div class="gFuel" aria-label="Parachute charge"><i id="gFuelBar"></i><em id="gFuelTxt">0%</em></div></div>
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
-<div class="gameCard" id="gameCard"><h2 id="gcTitle">Coinpull</h2><p id="gcText">Climb the candles. Do not hit the ground hard.</p><ul><li>👆 Tap or click = parachute burst</li><li>✋ Hold = faster, but burns much more</li><li>🟩 Green candles charge the parachute slowly</li><li>📈 Points grow faster the higher you climb</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
+<div class="gameCard" id="gameCard"><h2 id="gcTitle">Coinpull</h2><p id="gcText">Climb the candles. Do not hit the ground hard.</p><ul><li>👆 Tap or click = parachute burst</li><li>✋ Hold = faster, but burns much more</li><li>🟩 Green candles charge the parachute slowly</li><li>☂️ Open parachute = +10% points</li><li>📈 Points grow faster the higher you climb</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
@@ -1443,12 +1443,21 @@ regLabel();if(!REGION)regOpen();
 
 /* Coinpull: climb ever steeper, uneven candles. Tap = parachute burst (cheap), hold = continuous thrust (burns a lot). Green candles recharge. The rugpull is a massive drop: pump the brake to land softly. */
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
-const CW=46,G=1400,BR=2600,VS=550,TERM=2200,HURT=1000,DEAD=1500,LOOK=5,TAPV=640,TAPC=.025,TAPCD=.05,HOLDD=.55,MAXRISE=760;let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
+const CW=46,G=1400,BR=2600,VS=550,TERM=2200,HURT=1000,DEAD=1500,LOOK=5,TAPV=640,TAPC=.025,TAPCD=.05,HOLDD=.55,MAXRISE=760,CLIMB=1000,DESC=1100,STEP=520,PY=1500;let W=0,H=0,dpr=1,R=null,raf=0,hold=false,holdT=0,best=0,lastTap=0;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
 let RUGK=10,HALFP=.35;const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#171004','#4a3608'],['#0a0a2a','#3a0a4a']];
 const fmt=n=>{n=Math.floor(n);return n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(2)+'M':n.toLocaleString('en')};
 function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-function fresh(){return{sx:0,y:0,vy:0,fuel:.6,score:0,dead:false,t:0,cam:0,px:Math.max(90,Math.min(210,W*.24)),C:[],gen:{top:0,phase:'flat',left:14,k:0,t0:0,Tup:30},layer:'up',peakY:1e9,lv:1,gold:0,bgIdx:0,bgPrev:0,bgBlend:1,cardA:-1,cardB:-1,card2A:-1,card2B:-1,cashed:-1,lastIdx:-1,parts:[],fx:[],ground:true,cliffAt:-1,wasAir:false,flash:0,speed:170,msgT:0,tilt:0}}
+function fresh(){return{sx:0,y:0,vy:0,fuel:.6,score:0,dead:false,t:0,cam:0,px:Math.max(90,Math.min(210,W*.24)),C:[],gen:{top:0,phase:'flat',left:14,k:0,t0:0,Tup:30},layer:'up',peakY:1e9,lv:1,gold:0,bgIdx:0,bgPrev:0,bgBlend:1,cardA:-1,cardB:-1,card2A:-1,card2B:-1,cashed:-1,lastIdx:-1,parts:[],fx:[],ground:true,cliffAt:-1,wasAir:false,flash:0,speed:170,msgT:0,tilt:0,acc:0,accIdle:0,slap:null}}
+const PAT={
+ flag:u=>[-1.6,-1.6,-1.6,-1.6,.4,.4,.4,.4,.4,.4,-1.8,-1.8,-1.8].map(m=>m*u),
+ tri:u=>[-2,1.6,-1.6,1.1,-1.1,.6,-2,-2,-1.5].map(m=>m*u),
+ dbl:u=>[1.2,1.2,1.2,-1.2,-1.2,-1.2,1.2,1.2,1.2,-1.2,-1.2,-1.2,-1.6,-1.6,-1.6].map(m=>m*u),
+ hs:u=>[-1.2,-1.2,1.2,1.2,-2,-2,2,2,-1.2,-1.2,1.2,1.2,1.6,1.6,1.6].map(m=>m*u),
+ cup:u=>[.5,.5,.5,.5,0,0,-.7,-.7,-.7,-.7,.4,.4,-1.6,-1.6,-1.6].map(m=>m*u),
+ vee:u=>[3,3,3,-2.6,-2.6,-2.6,-2.6].map(m=>m*u),
+ stairs:u=>[-1.8,-1.8,0,0,-1.8,-1.8,0,0,-1.8,-1.8].map(m=>m*u)};/* chart patterns that appear now and then inside the random walk */
+const pattern=u=>{const k=Object.keys(PAT);return PAT[k[ri(0,k.length-1)]](Math.max(8,u))};
 function gen(){const g=R.gen;let green=Math.random()<.8,top=g.top,dip=false,cd;
  if(g.phase==='cliff'&&Math.random()<HALFP){/* half rugpull: just a deep drop, a soft landing is all that is needed */g.phase='half'}
  if(g.phase==='half'){const from=g.top;top=from+rnd(1500,3200);g.top=top;R.peakY=1e9;R.cliffAt=R.C.length;g.phase='flat';g.left=14;R.C.push({top,low:null,green:false,rug:true,half:true,from,wu:rnd(2,30),wl:rnd(2,30),bh:rnd(90,160),k:0});return}
@@ -1458,15 +1467,19 @@ function gen(){const g=R.gen;let green=Math.random()<.8,top=g.top,dip=false,cd;
   if(i===q.wg)R.cardA=R.C.length;if(card)R.cardB=R.C.length;
   cd={top:t,low:l,green:false,card,card2:c2,rug:i===0,wu:rnd(2,30),wl:rnd(2,30),bh:t==null?rnd(120,260):rnd(34,110),k:0};
   if(q.i>=q.wg+q.zp){g.phase='flat';g.left=6;g.top=R.layer==='low'?q.low:q.peak}R.C.push(cd);return}
- if(g.phase==='up'){const trend=6+g.k*1.0;if(Math.random()<.17){/* an unpredictable valley */top+=rnd(40,320);green=false;dip=true}else if(green){let rise=rnd(.4,1.6)*trend+rnd(0,10);if(Math.random()<.14)rise*=2.4;top-=rise}else top+=rnd(3,10+g.k*.4);if(R.t-g.t0>=g.Tup)g.phase='cliff';g.k++}
- else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0}}
+ if(g.phase==='up'){const trend=6+g.k*1.0;if(!(g.q&&g.q.length)&&g.k>=5&&Math.random()<.1)g.q=pattern(trend);
+  if(g.q&&g.q.length){const d=g.q.shift();top+=d+rnd(-2,2);green=d<0;dip=d>45}else if(Math.random()<.12){/* an unpredictable valley */top+=rnd(40,320);green=false;dip=true}else if(green){let rise=rnd(.4,1.6)*trend+rnd(0,10);if(Math.random()<.14)rise*=2.4;top-=rise}else top+=rnd(3,10+g.k*.4);if(R.t-g.t0>=g.Tup){g.phase='cliff';g.q=null}g.k++}
+ else{top+=rnd(-6,6);if(--g.left<=0){g.phase='up';g.t0=R.t;g.Tup=rnd(26,42);g.k=0;g.q=null}}
  const inUp=g.phase==='up';g.top=top;R.C.push({top,low:null,green,rug:false,wu:rnd(2,50)*(Math.random()<.2?1.8:1),wl:rnd(2,40),bh:dip?rnd(90,170):rnd(34,110),k:inUp?g.k:0})}
 const cand=i=>{while(R.C.length<=i)gen();return R.C[i]};/* candles are decided only LOOK candles before the player arrives */
 
 const surf=c=>R.layer==='low'&&c.low!=null?c.low:(c.top!=null?c.top:Infinity);
 function reset(){R=fresh();for(let i=0;i<LOOK+4;i++)gen();R.y=surf(R.C[Math.floor(R.px/CW)]);R.cam=R.y-H*.58;msg('')}
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
-function ground(x){const a=surf(cand(Math.floor((x-9)/CW))),b=surf(cand(Math.floor((x+9)/CW)));return Math.min(a,b)}
+/* the invisible line the feet follow: a smooth ease between neighbouring candle tops (hard step for gaps and drops over STEP) */
+function ground(x){let u=x/CW-.5,i=Math.floor(u);const f=u-i;if(i<0)i=0;const a=surf(cand(i)),b=surf(cand(i+1));if(!isFinite(a)||!isFinite(b)||Math.abs(a-b)>STEP)return surf(cand(Math.floor(Math.max(0,x)/CW)));const e=f*f*(3-2*f);return a+(b-a)*e}
+function slap(p){R.slap={p,t0:R.t};if(Math.abs(p)>=.12)R.shake=.3}
+function tryCash(cc){if(((cc.card&&R.layer==='up')||(cc.card2&&R.layer==='low'))&&R.cashed!==R.cliffAt){R.cashed=R.cliffAt;R.score*=1.25;R.vy=0;R.wasAir=false;R.ground=true;R.pending=true;showCash();return true}return false}
 function tap(force){if(!R||R.dead||(!force&&!document.getElementById('gameCard').hidden))return;const n=performance.now();if((!force&&n-lastTap<TAPCD*1000)||R.fuel<=0)return;lastTap=n;const gd=ground(R.sx+R.px)-R.y,mul=1+Math.min(1.2,Math.max(0,((isFinite(gd)?gd:800)-150)/300));R.vy=Math.max(-MAXRISE,R.vy-TAPV);R.fuel=Math.max(0,R.fuel-TAPC*mul);R.flash=.24;for(let i=0;i<6;i++)R.fx.push({k:'s',x:R.px+rnd(-26,26),y:R.y-30,vx:rnd(-90,90),vy:rnd(180,420),l:.5})}
 function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0)R.shake-=dt;if(R.stumble>0)R.stumble-=dt;if(R.gold>0)R.gold-=dt;if(R.blink>0)R.blink-=dt;if(R.bgBlend<1)R.bgBlend=Math.min(1,R.bgBlend+dt/1.6);{const ix=Math.floor((R.sx+R.px)/CW);while(R.C.length<=ix+LOOK){if(R.gen.phase==='cliff'&&R.C.length>ix+3)break;gen()}}const px=R.sx+R.px;R.layer=R.y>R.peakY+600?'low':'up';const gnd=ground(px),front=surf(cand(Math.floor((px+14)/CW))),air=R.y<gnd-.5;
  R.speed=Math.min(560,170+R.t*5.5);let sp=R.speed*(R.lv>=2?1+.1*R.lv:1)*(R.stumble>0?.45:1);
@@ -1474,25 +1487,31 @@ function step(dt){if(R.dead)return;R.t+=dt;if(R.flash>0)R.flash-=dt;if(R.shake>0
  R.vy+=(G-(G+BR)*u)*dt;if(R.vy<-MAXRISE)R.vy=-MAXRISE;if(R.vy>TERM)R.vy=TERM;if(u>0)R.fuel=Math.max(0,R.fuel-HOLDD*u*dt);else if(R.ground&&!hold)R.fuel=Math.min(1,R.fuel+.015*dt);R.u=u;
  if(air&&!R.wasAir){R.wasAir=true;R.fallFrom=R.y}
  const py=R.y;R.y+=R.vy*dt;
- const wall=front<R.y-12;if(wall){const tall=front<R.y-260;sp*=tall&&!(hot||R.vy<-40)?0:.22;if(!(hot||R.vy<-40)&&!tall){R.y-=70*dt;R.vy=Math.min(0,R.vy)}}else if(R.vy<-40)sp*=1.3;
+ if(front<R.y-STEP){sp*=(hot||R.vy<-40)?.22:0}else if(R.vy<-40)sp*=1.3;/* only a real wall stops the run; anything lower is climbed automatically along the line */
  const g2=ground(px);
  if(R.y>=g2){const imp=R.vy,cc=cand(Math.floor(px/CW));if(R.wasAir){const dep=R.y-R.fallFrom;
    if(((cc.card&&R.layer==='up')||(cc.card2&&R.layer==='low'))&&R.cashed!==R.cliffAt){/* the cash out card (high one across the gap, or a raised one on the pit floor): stop and let the player choose */
-    R.cashed=R.cliffAt;R.score*=1.25;
-    R.y=g2;R.vy=0;R.wasAir=false;R.ground=true;R.pending=true;showCash();return}
+    R.y=g2;tryCash(cc);return}
    if(R.gold<=0){
     if(imp>DEAD){R.dead=true;R.y=g2;R.vy=0;die();return}
     if(imp>HURT){R.fuel=Math.max(0,R.fuel-.25);R.stumble=.7;R.shake=.4;R.blink=.28}
     if(dep>1200){if(imp<=HURT){R.score+=500;msg('SOFT LANDING +500');R.msgT=1.6}}
     else if(dep>=20){/* touching anything going down costs score (no text, a red blink); leverage multiplies the loss and adds a chance of liquidation */
-     const pc=R.lv>=2?R.lv*dep/600:Math.min(.4,dep/900);R.score*=Math.max(0,1-pc);R.blink=.28;if(R.score<1){R.score=0;R.dead=true;R.y=g2;R.vy=0;die();return}}}}
+     const pc=R.lv*(1-Math.exp(-dep/PY));R.score*=Math.max(0,1-pc);R.blink=.28;slap(-Math.min(1,pc));if(R.score<1){R.score=0;R.dead=true;R.y=g2;R.vy=0;die();return}}}}
   R.wasAir=false;R.y=g2;R.vy=0;R.ground=true}else R.ground=false;
- const kk=cand(Math.floor((R.sx+R.px)/CW)).k||0,mult=Math.pow(1.03,Math.min(300,kk));R.mult=mult;const up=R.vy<0?-R.vy*dt:0;R.tilt+=(((u>0||R.flash>0)?1:0)-R.tilt)*Math.min(1,dt*((u>0||R.flash>0)?14:5));sp*=1+.5*R.tilt;R.sx+=sp*dt;R.score+=(sp*dt/10+up*.4)*mult*R.lv;
+ const kk=cand(Math.floor((R.sx+R.px)/CW)).k||0,mult=Math.pow(1.03,Math.min(300,kk));R.mult=mult;R.tilt+=(((u>0||R.flash>0)?1:0)-R.tilt)*Math.min(1,dt*((u>0||R.flash>0)?14:5));sp*=1+.5*R.tilt;
+ const gl=R.ground&&R.vy>=0&&!R.pending,pm=u>0?1.1:1;/* an open parachute pays 10% more */
+ if(gl){const sl=(ground(px+8)-ground(px-8))/16;if(isFinite(sl)&&sl<0)sp=Math.min(sp,Math.max(90,CLIMB/-sl))}/* too steep: climb at the normal climbing speed */
+ R.sx+=sp*dt;R.score+=sp*dt/10*mult*R.lv*pm;
+ /* every metre of height is a percentage: upslopes positive, downturns negative, same as a chart */
+ let dh=0;if(gl){const ny=ground(R.sx+R.px);if(!isFinite(ny)||ny-R.y>DESC*dt)R.ground=false;else{dh=R.y-ny;R.y=ny;const cc2=cand(Math.floor((R.sx+R.px)/CW));if(tryCash(cc2))return}}else if(R.vy<0)dh=py-R.y;
+ if(dh>0||(dh<0&&R.gold<=0)){const dp=R.lv*dh/PY;R.score=Math.max(0,R.score*(1+(dp>0?dp*pm:dp)));R.acc+=dp}
+ if(Math.abs(dh)<.3)R.accIdle+=dt;else R.accIdle=0;if((R.accIdle>.12&&Math.abs(R.acc)>=.04)||Math.abs(R.acc)>=.25){slap(R.acc);R.acc=0}else if(R.accIdle>.12)R.acc=0;
  const idx=Math.floor((R.sx+R.px)/CW);if(R.cliffAt>=0&&idx>=R.cliffAt&&idx<R.cliffAt+3&&R.layer==='up')R.crossing=true;if(idx!==R.lastIdx){R.lastIdx=idx;const c=cand(idx);if(c.green&&R.ground)R.fuel=Math.min(1,R.fuel+Math.min(.05,.02+c.k*.0004))}
  if(R.msgT>0){R.msgT-=dt;if(R.msgT<=0)msg('')}
  for(let i=R.fx.length-1;i>=0;i--){const f=R.fx[i];f.l-=dt;f.x+=f.vx*dt-sp*dt;f.y+=f.vy*dt;f.vy*=.96;if(f.l<=0)R.fx.splice(i,1)}
  R.cam+=((R.y-H*(R.vy>350?.14:.58))-R.cam)*Math.min(1,dt*(R.vy>350?9:5));
- document.getElementById('gFuelBar').style.width=R.fuel*100+'%';document.getElementById('gFuelTxt').textContent=Math.round(R.fuel*100)+'%';paintScore(R.score);document.getElementById('gMult').textContent='×'+(R.mult<10?R.mult.toFixed(1):Math.round(R.mult))+(R.lv>1?' · LEV '+R.lv+'×':'')+(R.gold>0?' · GOLD '+R.gold.toFixed(1)+'s':'')}
+ document.getElementById('gFuelBar').style.width=R.fuel*100+'%';document.getElementById('gFuelTxt').textContent=Math.round(R.fuel*100)+'%';paintScore(R.score);document.getElementById('gMult').textContent='×'+(R.mult<10?R.mult.toFixed(1):Math.round(R.mult))+(R.lv>1?' · LEV '+R.lv+'×':'')+(u>0?' · CHUTE +10%':'')+(R.gold>0?' · GOLD '+R.gold.toFixed(1)+'s':'')}
 function die(){msg('');document.getElementById('gameCard').classList.add('slim');for(let i=0;i<34;i++)R.parts.push({x:R.px,y:R.y,vx:rnd(-300,300),vy:rnd(-560,-60),c:i%2?'#ff4d5e':'#ffd93b'});document.getElementById('gcTitle').textContent='LIQUIDATED 💀';document.getElementById('gcText').textContent='You are now in a lifetime of debt. This is not investing. This is speculation... oh right, gambling! You lost $'+fmt(R.score)+'. Only a cash out counts.';document.getElementById('gcBest').textContent='Best '+fmt(best);document.getElementById('gcGo').textContent='Try again';setTimeout(()=>{if(R&&R.dead)document.getElementById('gameCard').hidden=false},700)}
 function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);g.save();if(s.shake>0)g.translate(rnd(-6,6)*s.shake*2,rnd(-6,6)*s.shake*2);const pbg=BGS[s.bgPrev],nbg=BGS[s.bgIdx];[[pbg,1],[nbg,s.bgBlend]].forEach(([pl,al])=>{const bg=g.createLinearGradient(0,0,0,H);bg.addColorStop(0,pl[0]);bg.addColorStop(1,pl[1]);g.globalAlpha=al;g.fillStyle=bg;g.fillRect(0,0,W,H)});g.globalAlpha=1;
  g.strokeStyle='#ffffff10';g.lineWidth=1;const gy=80;for(let y=-((cam*.4%gy)+gy)%gy;y<H;y+=gy){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke()}for(let x=-((s.sx*.7)%gy);x<W;x+=gy){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke()}
@@ -1506,6 +1525,7 @@ function draw(){const g=cx,s=R,cam=s.cam;g.clearRect(0,0,W,H);g.save();if(s.shak
   [c.top,c.low].forEach(tp=>{if(tp==null||(c.card2&&tp===c.low))return;const y=tp-cam;if(y>H+300||y<-400)return;g.fillStyle=col;g.fillRect(x+CW/2-1.5,y-c.wu,3,c.wu+c.bh+c.wl);g.fillStyle=col;g.fillRect(x+4,y,CW-8,c.bh);g.fillStyle=dk;g.fillRect(x+4,y,CW-8,5);g.fillStyle='#ffffff26';g.fillRect(x+8,y+6,4,Math.max(0,c.bh-8))})}
  s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*1.6));g.fillStyle=f.k==='k'?'#9aa3b8':'#ffd25a';g.beginPath();g.arc(f.x,f.y-cam,f.k==='k'?6+(1-f.l)*8:2.6,0,6.3);g.fill()});g.globalAlpha=1;
  player(s.px,s.y-cam,s);
+ if(s.slap){const a=s.slap,ag=s.t-a.t0;if(ag<1.3){const up=a.p>0,k=Math.min(1,ag/.14),sc=1+(1-k)*1.4,al=ag>.8?1-(ag-.8)/.5:1,fs=30+Math.min(44,Math.abs(a.p)*100*.7);g.save();g.globalAlpha=al;g.translate(Math.min(W-90,s.px+80),s.y-cam-150-ag*30);g.scale(sc,sc);g.rotate(up?-.08:.08);g.font='900 '+fs+'px Inter,system-ui,sans-serif';g.textAlign='center';g.lineJoin='round';g.lineWidth=7;g.strokeStyle='#000';const tx=(up?'+':'−')+Math.round(Math.abs(a.p)*100)+'%';g.strokeText(tx,0,0);g.fillStyle=up?'#2dff9a':'#ff4d5e';g.fillText(tx,0,0);g.restore()}else s.slap=null}
  s.parts.forEach(p=>{g.fillStyle=p.c;g.beginPath();g.arc(p.x,p.y-cam,4,0,6.3);g.fill()});g.restore();if(s.blink>0){g.fillStyle='rgba(255,40,40,'+(s.blink/.28*.3).toFixed(3)+')';g.fillRect(0,0,W,H)}}
 
 const PIX={'0':'01110 10001 10011 10101 11001 10001 01110','1':'00100 01100 00100 00100 00100 00100 01110','2':'01110 10001 00001 00010 00100 01000 11111','3':'11110 00001 00001 01110 00001 00001 11110','4':'00010 00110 01010 10010 11111 00010 00010','5':'11111 10000 11110 00001 00001 10001 01110','6':'00110 01000 10000 11110 10001 10001 01110','7':'11111 00001 00010 00100 01000 01000 01000','8':'01110 10001 10001 01110 10001 10001 01110','9':'01110 10001 10001 01111 00001 00010 01100','$':'00100 01111 10100 01110 00101 11110 00100',',':'00000 00000 00000 00000 00110 00100 01000','.':'00000 00000 00000 00000 00000 00110 00110',M:'10001 11011 10101 10101 10001 10001 10001',B:'11110 10001 10001 11110 10001 10001 11110',C:'01110 10001 10000 10000 10000 10001 01110',A:'01110 10001 10001 11111 10001 10001 10001',S:'01111 10000 10000 01110 00001 00001 11110',H:'10001 10001 10001 11111 10001 10001 10001',O:'01110 10001 10001 10001 10001 10001 01110',U:'10001 10001 10001 10001 10001 10001 01110',T:'11111 00100 00100 00100 00100 00100 00100','!':'00100 00100 00100 00100 00100 00000 00100'};
