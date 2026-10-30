@@ -328,5 +328,5 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - Headless Chromium (900×700, 390×800): cat animates, parachute opens on hold and folds on release, no console errors.
 
 ## Coinpull soundtrack
-- `assets/audio/gaming-loop.flac`: supplied 192 kHz FLAC resampled to 44.1 kHz/16-bit (1.5 MB, 24.78 s) with a 12 ms fade-in so the wrap from the faded tail to the start has no click. Played via WebAudio `AudioBufferSourceNode.loop=true` (sample-exact, no `<audio loop>` gap), started from the Game tap, stopped on close. 🔊/🔇 button next to ✕, remembered in `cp-mute`.
+- `assets/audio/gaming-loop.wav`: supplied 192 kHz FLAC resampled to 44.1 kHz/16-bit WAV (4.4 MB, WAV because the artifact host does not serve FLAC, 24.78 s) with a 12 ms fade-in so the wrap from the faded tail to the start has no click. Played via WebAudio `AudioBufferSourceNode.loop=true` (sample-exact, no `<audio loop>` gap), started from the Game tap, stopped on close. 🔊/🔇 button next to ✕, remembered in `cp-mute`.
 - Headless Chromium over http: file decodes (24.78 s, 44.1 kHz, stereo), mute toggles, no console errors. (Not fetchable from file://.)
