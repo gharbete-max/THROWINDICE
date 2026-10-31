@@ -486,3 +486,11 @@ Headless Chromium (Playwright), `index.html` opened from disk. Everything below 
 - **Gold coin instead of the dollar sign:** the score is a drawn gold coin (shaded, rimmed, with a slot and a shine) followed by the pixel digits; texts that used `$` show a small CSS gold coin ("[coin] 873 on the table", "Best: [coin] 1,234.").
 - **Name:** the game is now LIVE CAT BOUNCE (title and aria-label). "Dead cat bounce" stays in the chart as the technical term for the relief rally.
 - Checks: fuzz, choice, pause, liquidation scripts clean; no console errors.
+
+## Live Cat Bounce: coins and traps (a runner's verbs for the score)
+**Diagnosis:** the score was a single number that only the market and leverage moved; the player's hands had almost no say in it except "don't fall in". A runner needs things to *collect* and things to *avoid* that sit on the path itself.
+- **Coins** (about 45 per market cycle): arcs of 5–9 coins floating 135–220 px above the candles (the cat has to be in the air, a standing cat cannot pick them up), a ladder over every gap hole (the reward for the jump), breadcrumbs down the rugpull void towards the cash-out card, and now and then **bait**: coins lying on the floor of a hole (a bull trap). A coin is worth +0.7% × combo (1–4, chained within 1.3 s) × leverage on your equity and refuels 2% of the tank. Sparkles and a rising blip per combo step.
+- **Traps** (about 2 per cycle, more in the choppy stage and with the level): red spikes on a candle top, never right next to a hole. Touching one costs 8% × leverage of your equity (a price drop of 8% measured from your last high), the combo, 8% of the tank, a stumble, a red blink and a shake. They are only dangerous when you stand on the candle or skim it: a hop clears them.
+- **Numbers:** a simulated run that touches nothing collects ~5 coins and hits ~1.6 traps; one that hops over traps and holes ~9 coins and 0.6 traps; one that also jumps for coins ~14 and 0.4 (a human who holds the flames can take most of the 45). All three survive a normal cycle at 1.1×, but the trap bill grows with the leverage.
+- **Big numbers** now read T and Q after M and B so that late-game scores stay legible.
+- Checks: fuzz (60 random runs), 140k frames with the cat never under the line, choice/pause scripts, rugpull from the edge 40/40, no console errors.
