@@ -1307,25 +1307,25 @@ regLabel();if(!REGION)regOpen();
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
 /* Live Cat Bounce: a runner over randomly generated stock-market terrain (candles: bull runs, chop, pullbacks, crashes, pits, rugpulls).
    Collect coins, grab power-ups, survive the falls (fall damage). Every checkpoint the run and the music speed up. No cash out: keep going. */
-const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=540,CPD=3000,BIG=500,SOFT=800,VG=140,UP=290;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the cat can stick to, start speed, checkpoint distance */
+const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=540,CPD=4500,AX=.16,BIG=500,SOFT=800,VG=140,UP=290;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the cat can stick to, start speed, checkpoint distance */
 let W=0,H=0,dpr=1,Z=.4,R=null,raf=0,hold=false,best=0,paused=false;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const RMQ=matchMedia('(prefers-reduced-motion: reduce)'),FONT='Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif';const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
 let coached=false;try{coached=localStorage.getItem('cp-coach')==='1'}catch(e){}
 const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#171004','#4a3608'],['#0a0a2a','#3a0a4a']];
 const PU={shield:['#3b8bff','S','Shield'],magnet:['#ff5ec8','M','Magnet'],x2:['#2dff9a','2x','2x coins']};
 const fmt=n=>Math.floor(n).toLocaleString('en');
-function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;Z=Math.max(.4,Math.min(.6,W/1500));cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-function fresh(){return{t:0,sx:0,cx:0,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,lives:3,pits:0,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,coinX:900,calm:0,fx:[],msgT:0}}
+function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;Z=Math.max(.34,Math.min(.5,W/1750));cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+function fresh(){return{t:0,sx:700,cx:700,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,lives:3,pits:0,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:700+CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,coinX:900,calm:0,fx:[],msgT:0}}
 /* terrain: one height per candle (a smaller y is higher). Segments are picked at random; crashes, pits and rugpulls get likelier with each checkpoint. */
 function push(y){if(y!=null&&R.gy-y>UP)y=R.gy-y>UP?R.gy-UP:y;/* no wall taller than a double jump can clear */R.top.push(y);if(y!=null)R.gy=y}
-const CT=[['#cfd6e4','#8a93a6',30,1],['#ffd25a','#b8860b',32,3],['#4da3ff','#1f5fb8',36,10],['#b266ff','#6a2fb8',40,50]];/* silver, yellow, blue, purple: each tier is 4x rarer than the one before */
+const CT=[['#cfd6e4','#8a93a6',48,1],['#ffd25a','#b8860b',52,3],['#4da3ff','#1f5fb8',58,10],['#b266ff','#6a2fb8',64,50]];/* silver, yellow, blue, purple: each tier is 4x rarer than the one before */
 const tierRoll=()=>Math.min(3,Math.floor(Math.log(1-Math.random())/Math.log(.25)));
 const TD=[[110,190],[140,220],[230,310],[300,380]];/* higher tiers float higher: blue and purple need the double jump */
 function lastGround(i){while(i>0&&R.top[i]==null)i--;return R.top[i]}
 /* coins: one every 520-900 px, never in clumps; higher tiers float higher */
 function placeCoins(){while(R.coinX<R.top.length*CW-200){const x=R.coinX;R.coinX+=rnd(520,900);const g=ground(x),t=tierRoll();R.coins.push({x,t,y:isFinite(g)?g-rnd(TD[t][0],TD[t][1]):lastGround(Math.floor(x/CW))-rnd(190,260)})}}
 function addSeg(){const k=R.top.length,L0=Math.floor(k*CW/CPD),lv=Math.min(L0*1.6,9),vol=1+.25*Math.min(lv,8);/* the chart gets wilder with distance */
- if(k<14){for(let i=k;i<14;i++)push(R.gy);return}
+ if(k<30){for(let i=k;i<30;i++)push(R.gy);return}
  const r=Math.random(),low=R.gy>R.base+1300,high=R.gy<R.base-1100,W_={bull:.28,chop:.18,pull:.14,crash:.06+.02*lv,ledge:.22+.02*lv,drop:.06+.09*lv};
  let tot=0;for(const q in W_)tot+=W_[q];let q=Math.random()*tot,kind0='bull';for(const n in W_){if((q-=W_[n])<0){kind0=n;break}}
  if(k>40&&r>.97-.02*lv)kind0='rug';if(low)kind0='bull';else if(high)kind0='pull';
@@ -1341,10 +1341,10 @@ function addSeg(){const k=R.top.length,L0=Math.floor(k*CW/CPD),lv=Math.min(L0*1.
  else if(kind==='drop'){push(y+rnd(420,640+40*lv));for(let i=0;i<5;i++)push(R.gy+rnd(-8,8))}
  else{push(y+rnd(650,1000));for(let i=0;i<4;i++)push(R.gy+rnd(-8,8))}/* rugpull: one huge gap down */
  if(R.top.length>30&&R.top.length-R.lastPu>22&&Math.random()<.35){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
-function ensure(){while(R.top.length*CW<R.cx+W/Z+900)addSeg();placeCoins()}
+function ensure(){while(R.top.length*CW<R.cx+W/Z+1500)addSeg();placeCoins()}
 function ground(x){const T=R.top,i=Math.max(0,Math.floor(x/CW)),a=T[i],b=T[i+1];if(a==null)return Infinity;if(b==null)return a;return Math.abs(b-a)>VG?a:a+(b-a)*(x/CW-i)}/* a step bigger than VG is a price gap: flat, then straight up or down at the candle edge */
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
-function reset(){R=fresh();ensure();R.y=ground(0);R.cam=R.y;R.refY=R.y}
+function reset(){R=fresh();ensure();R.y=ground(R.sx);R.cam=R.y;R.refY=R.y}
 function jump(){R.vy=-JV;R.air=true;R.buf=0;R.top0=R.y;R.sq=-.14;sfx('jump')}
 function tap(){if(!R||R.dead||paused||!document.getElementById('gameCard').hidden)return;R.buf=.12;if(!R.air){R.jumps=1;jump()}else if(R.jumps<2){R.jumps=2;jump();for(let i=0;i<8;i++)R.fx.push({x:R.sx+rnd(-30,30),y:R.y-10,vx:rnd(-120,120),vy:rnd(40,160),l:.35,c:'#fff'})}}
 function loseLife(why){if(R.shield){R.shield=false;sfx('lvl');msg('Shield saved you!');R.msgT=1.4;return false}R.lives--;R.hurt=.45;sfx('hurt');if(!RMQ.matches)R.shake=.25;paintLives();if(R.lives<=0){R.why=why;R.dead=true;die()}return true}
@@ -1359,18 +1359,18 @@ function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.8,1+.07*R.lv
   if(cont&&R.vy>=0&&R.y>=gy){const dist=R.y-R.top0;R.y=gy;R.vy=0;R.air=false;R.coy=0;R.refY=gy;R.sq=Math.min(.2,.04+dist/3000);if(dist>=BIG&&!(R.buf>0&&dist<SOFT)){loseLife('You fell too far.');if(R.dead)return}else if(dist>120)sfx('land');if(R.buf>0){R.jumps=1;jump()}}
   else if(R.y>R.refY+4000){respawn()}}
  if(R.sx>=R.nextCp){R.lvl++;R.nextCp+=CPD;R.lives=Math.min(3,R.lives+1);paintLives();sfx('lvl');msg('Checkpoint '+R.lvl);R.msgT=2;musicRate()}
- if(R.sx+90<R.cx-W*.22/Z){R.why='You got left behind.';R.lives=0;R.dead=true;paintLives();die();return}/* the whole cat is off the left edge of the screen */
+ if(R.sx+90<R.cx-W*AX/Z){R.why='You got left behind.';R.lives=0;R.dead=true;paintLives();die();return}/* the whole cat is off the left edge of the screen */
  if(R.magT>0)R.magT-=dt;if(R.x2T>0)R.x2T-=dt;
  const cy=R.y-60,cxw=R.sx;
- R.coins.forEach(c=>{if(c.got)return;if(R.magT>0){const dx=cxw-c.x,dy=cy-c.y,d=Math.hypot(dx,dy);if(d<420){const m=Math.min(d,900*dt);c.x+=dx/d*m;c.y+=dy/d*m}}if(Math.abs(c.x-cxw)<70&&Math.abs(c.y-cy)<85){c.got=1;R.score+=CT[c.t][3]*(R.x2T>0?2:1);sfx('coin');for(let i=0;i<6;i++)R.fx.push({x:c.x,y:c.y,vx:rnd(-200,200),vy:rnd(-260,0),l:.4,c:CT[c.t][0]})}});
- R.pups.forEach(p=>{if(!p.got&&Math.abs(p.x-cxw)<80&&Math.abs(p.y-cy)<95){p.got=1;power(p.k,p.x,p.y)}});
+ R.coins.forEach(c=>{if(c.got)return;if(R.magT>0){const dx=cxw-c.x,dy=cy-c.y,d=Math.hypot(dx,dy);if(d<420){const m=Math.min(d,900*dt);c.x+=dx/d*m;c.y+=dy/d*m}}if(Math.abs(c.x-cxw)<100&&Math.abs(c.y-cy)<115){c.got=1;R.score+=CT[c.t][3]*(R.x2T>0?2:1);sfx('coin');for(let i=0;i<6;i++)R.fx.push({x:c.x,y:c.y,vx:rnd(-200,200),vy:rnd(-260,0),l:.4,c:CT[c.t][0]})}});
+ R.pups.forEach(p=>{if(!p.got&&Math.abs(p.x-cxw)<100&&Math.abs(p.y-cy)<115){p.got=1;power(p.k,p.x,p.y)}});
  R.coins=R.coins.filter(c=>!c.got&&c.x>cxw-700);R.pups=R.pups.filter(p=>!p.got&&p.x>cxw-700);
  if(R.msgT>0){R.msgT-=dt;if(R.msgT<=0)msg('')}
  for(let i=R.fx.length-1;i>=0;i--){const f=R.fx[i];f.l-=dt;f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=800*dt;if(f.l<=0)R.fx.splice(i,1)}
  R.cam+=(R.y-R.cam)*Math.min(1,dt*(R.vy>500?9:4));
  paintScore(R.score)}
 function die(){sfx('ko');msg('');best=Math.max(best,R.score);try{localStorage.setItem('cp-best',best)}catch(e){}R.quit=true;{const e=document.getElementById('gcEnd');e.textContent='Quit';e.hidden=false}const c=document.getElementById('gameCard');c.classList.add('slim');setGT('Game over');document.getElementById('gcText').innerHTML=R.why+'<br><i class="coin"></i>'+fmt(R.score)+' · checkpoint '+R.lvl;document.getElementById('gcBest').innerHTML='Best <i class="coin"></i>'+fmt(best);document.getElementById('gcGo').textContent='Play again';setTimeout(()=>{if(R&&R.dead){musicOn('menu');c.hidden=false}},600)}
-function draw(){const g=cx,s=R,ax=W*.22,ay=H*.6,bg=BGS[Math.floor(s.cx/9000)%BGS.length];g.clearRect(0,0,W,H);const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,bg[0]);gr.addColorStop(1,bg[1]);g.fillStyle=gr;g.fillRect(0,0,W,H);
+function draw(){const g=cx,s=R,ax=W*AX,ay=H*.6,bg=BGS[Math.floor(s.cx/9000)%BGS.length];g.clearRect(0,0,W,H);const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,bg[0]);gr.addColorStop(1,bg[1]);g.fillStyle=gr;g.fillRect(0,0,W,H);
  g.fillStyle='#ffffff18';for(let i=0;i<28;i++){g.fillRect(((i*173.3-s.cx*.05)%W+W)%W,(i*97.7)%(H*.7),2,2)}
  g.save();if(s.shake>0)g.translate(rnd(-4,4),rnd(-4,4));g.translate(ax,ay);g.scale(Z,Z);g.translate(-s.cx,-s.cam);
  const x0=s.cx-ax/Z-60,x1=s.cx+(W-ax)/Z+60,yB=s.cam+(H-ay)/Z+60,T=s.top;
@@ -1381,7 +1381,7 @@ function draw(){const g=cx,s=R,ax=W*.22,ay=H*.6,bg=BGS[Math.floor(s.cx/9000)%BGS
  g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=6;g.lineJoin='round';g.beginPath();{const i0=Math.max(0,Math.floor(x0/CW)),i1=Math.min(T.length-2,Math.ceil(x1/CW));g.moveTo(i0*CW,T[i0]);for(let i=i0;i<=i1;i++){const a=T[i],b2=T[i+1];if(Math.abs(b2-a)>VG){g.lineTo((i+1)*CW,a);g.lineTo((i+1)*CW,b2)}else g.lineTo((i+1)*CW,b2)}}g.stroke();
  {const fy=ground(s.nextCp);if(isFinite(fy)&&s.nextCp<x1){g.fillStyle='#fff';g.fillRect(s.nextCp,fy-240,8,240);g.fillStyle='#ffd25a';g.beginPath();g.moveTo(s.nextCp+8,fy-240);g.lineTo(s.nextCp+110,fy-205);g.lineTo(s.nextCp+8,fy-170);g.fill()}}
  s.coins.forEach(c=>{if(c.x<x0||c.x>x1)return;const ct=CT[c.t],r=ct[2],rx=Math.max(8,r*Math.abs(Math.cos(s.t*4+c.x*.01)));g.fillStyle=ct[0];g.strokeStyle=ct[1];g.lineWidth=5;g.beginPath();g.ellipse(c.x,c.y,rx,r,0,0,6.3);g.fill();g.stroke()});
- s.pups.forEach(p=>{const y=p.y+Math.sin(s.t*3+p.x)*10;g.fillStyle=PU[p.k][0];g.beginPath();g.arc(p.x,y,42,0,6.3);g.fill();g.fillStyle='#fff';g.font='800 40px '+FONT;g.textAlign='center';g.textBaseline='middle';g.fillText(PU[p.k][1],p.x,y+2)});
+ s.pups.forEach(p=>{const y=p.y+Math.sin(s.t*3+p.x)*10;g.fillStyle=PU[p.k][0];g.beginPath();g.arc(p.x,y,54,0,6.3);g.fill();g.fillStyle='#fff';g.font='800 50px '+FONT;g.textAlign='center';g.textBaseline='middle';g.fillText(PU[p.k][1],p.x,y+2)});
  if(s.shield){g.strokeStyle='rgba(110,175,255,.95)';g.fillStyle='rgba(90,160,255,.16)';g.lineWidth=8;g.beginPath();g.arc(s.sx,s.y-60,110,0,6.3);g.fill();g.stroke()}
  if(s.magT>0){g.strokeStyle='rgba(255,94,200,.8)';g.lineWidth=6;g.setLineDash([16,16]);g.beginPath();g.arc(s.sx,s.y-60,160,0,6.3);g.stroke();g.setLineDash([])}
  if(!s.dead)player(s.sx,s.y,s);
@@ -1407,9 +1407,14 @@ const mb=document.getElementById('gameMute'),gpM=document.getElementById('gpMusi
 function paintAudio(){mb.innerHTML=ICON(!mute);mb.setAttribute('aria-pressed',mute);mb.setAttribute('aria-label',mute?'Unmute music':'Mute music');gpM.textContent='Music: '+(mute?'off':'on');gpS.textContent='Sounds: '+(sfxOff?'off':'on')}paintAudio();
 const TR={game:{url:'assets/audio/gaming-loop.wav',vol:.5},menu:{url:'assets/audio/menu-loop.wav',vol:.5}};let cur=null,want=null;
 function loadTr(n){const t=TR[n];return t.p||(t.p=fetch(t.url).then(r=>r.arrayBuffer()).then(b=>AC.decodeAudioData(b)).catch(e=>{t.p=null;throw e}))}
-function stopTr(o,fade){if(!o)return;o.src.onended=null;const t=AC.currentTime;try{if(fade){o.gn.gain.cancelScheduledValues(t);o.gn.gain.setValueAtTime(o.gn.gain.value,t);o.gn.gain.linearRampToValueAtTime(0,t+.3);o.src.stop(t+.35)}else o.src.stop()}catch(e){}}
-function musicOn(name){name=name||'menu';want=name;if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();if(cur&&cur.name===name)return;loadTr(name).then(buf=>{if(mute||L.hidden||want!==name||(cur&&cur.name===name))return;const src=AC.createBufferSource();src.buffer=buf;src.loop=true;src.loopStart=0;src.loopEnd=buf.duration;const gn=AC.createGain(),t=AC.currentTime;gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(TR[name].vol,t+.3);src.connect(gn).connect(AC.destination);const o={name,src,gn};src.onended=()=>{if(cur===o){cur=null;if(!L.hidden&&!mute)musicOn(want)}};src.start();stopTr(cur,true);cur=o;musicRate()}).catch(()=>{})}catch(e){}}
-function musicRate(){if(cur&&cur.name==='game'&&R)cur.src.playbackRate.value=Math.min(1.5,1+.06*R.lvl)}
+/* The loop is scheduled by hand instead of using the browser's loop flag: each copy of the track is started at the exact end time of the one before. A timer queues the next copy half a second ahead (and re-queues it when the speed changes). */
+function stopTr(o,fade){if(!o)return;clearInterval(o.iv);const t=AC.currentTime;[o.src,o.q&&o.q.src].forEach(x=>{if(!x)return;x.onended=null;try{if(fade){x.stop(t+.35)}else x.stop()}catch(e){}});if(fade)try{o.gn.gain.cancelScheduledValues(t);o.gn.gain.setValueAtTime(o.gn.gain.value,t);o.gn.gain.linearRampToValueAtTime(0,t+.3)}catch(e){}}
+function mkSrc(o,rate,when){const x=AC.createBufferSource();x.buffer=o.buf;x.playbackRate.value=rate;x.connect(o.gn);x.start(when);return x}
+function trTick(o){if(!AC)return;const t=AC.currentTime;if(o.q&&t>=o.q.start){o.src=o.q.src;o.t0=o.q.start;o.m0=0;o.q=null}
+ if(!o.q){const end=o.t0+(o.buf.duration-o.m0)/o.rate;if(end-t<1.6){o.q={src:mkSrc(o,o.rate,Math.max(end,t)),start:end}}}}
+function musicOn(name){name=name||'menu';want=name;if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();if(cur&&cur.name===name)return;loadTr(name).then(buf=>{if(mute||L.hidden||want!==name||(cur&&cur.name===name))return;const gn=AC.createGain(),t=AC.currentTime;gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(TR[name].vol,t+.3);gn.connect(AC.destination);const o={name,buf,gn,rate:1,m0:0,t0:t+.02,q:null};o.src=mkSrc(o,1,t+.02);stopTr(cur,true);cur=o;o.iv=setInterval(()=>trTick(o),200);musicRate()}).catch(()=>{})}catch(e){}}
+/* speed: change the rate of the playing copy and re-queue the next one for the new end time */
+function musicRate(){const o=cur;if(!o||!R)return;const r=o.name==='game'?Math.min(1.5,1+.06*R.lvl):1;if(Math.abs(r-o.rate)<.001)return;const t=AC.currentTime;o.m0=Math.min(o.buf.duration,o.m0+Math.max(0,t-o.t0)*o.rate);o.t0=t;o.rate=r;try{o.src.playbackRate.setValueAtTime(r,t)}catch(e){}if(o.q){o.q.src.onended=null;try{o.q.src.stop()}catch(e){}o.q=null}trTick(o)}
 function musicOff(){stopTr(cur,false);cur=null}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running'&&!L.hidden)AC.resume()});
 function setGT(t,n){const e=document.getElementById('gcTitle');e.textContent=t;e.className=n?'gname':''}
@@ -1422,7 +1427,7 @@ window.coinpullOpen=function(){const c=document.getElementById('gameCard');c.cla
 function setPause(v){if(v===paused||!R)return;if(v&&(R.dead||!document.getElementById('gameCard').hidden))return;paused=v;hold=false;document.getElementById('gamePause').hidden=!v;musicOn(v?'menu':'game');if(v)document.getElementById('gpResume').focus()}
 document.getElementById('gamePauseBtn').onclick=()=>setPause(true);document.getElementById('gpResume').onclick=()=>setPause(false);document.getElementById('gpQuit').onclick=()=>coinpullClose();document.addEventListener('visibilitychange',()=>{if(document.hidden&&!L.hidden)setPause(true)});
 window.coinpullClose=function(){paused=false;document.getElementById('gamePause').hidden=true;want=null;musicOff();L.hidden=true;document.body.style.overflow='';cancelAnimationFrame(raf);R=null;hold=false};
-window._cp={tap,get R(){return R},set hold(v){hold=v},step,reset,ground};
+window._cp={music:()=>cur,tap,get R(){return R},set hold(v){hold=v},step,reset,ground};
 document.getElementById('gcGo').onclick=start;document.getElementById('gcEnd').onclick=coinpullClose;
 L.addEventListener('pointerdown',e=>{if(e.target.closest('button,.gameCard'))return;hold=true;tap()});L.addEventListener('pointerup',()=>{hold=false});L.addEventListener('pointercancel',()=>{hold=false});
 addEventListener('keydown',e=>{if(L.hidden)return;if(e.key==='Escape'){paused?setPause(false):coinpullClose();return}if(e.key==='p'||e.key==='P'){setPause(!paused);return}if(paused)return;if((e.key===' '||e.key==='ArrowUp'||e.key==='w')&&!e.repeat){hold=true;tap();if(e.key===' ')e.preventDefault()}});addEventListener('keyup',e=>{if(e.key===' '||e.key==='ArrowUp'||e.key==='w')hold=false});
