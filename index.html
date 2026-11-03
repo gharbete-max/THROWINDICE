@@ -1329,7 +1329,7 @@ function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);co
  F.innerHTML='';const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;F.classList.toggle('static',reduced);
  const W=F.clientWidth,H=F.clientHeight;const wts=ids.map(id=>TIERW[TIER[id]||2]),sw=wts.reduce((a,w)=>a+w*w,0),wm=Math.max(...wts);const H2=H-BTOP;let r=Math.sqrt(W*H2*.32/(Math.PI*sw));r=Math.min(r,190,Math.min(W,H2)/3.2/wm);
  const items=ids.map((id,i)=>{const f=etfFacts[id],rr=Math.max(30,r*wts[i]),el=document.createElement('button');el.type='button';el.className='bub '+feeCls(id);el.style.cssText='width:'+2*rr+'px;height:'+2*rr+'px;font-size:'+Math.max(12,rr*.24)+'px';
-  el.setAttribute('aria-label','Open '+id+': '+f.name+(feeOf(id)!=null?', costs '+feeOf(id).toFixed(2)+'% a year':''));el.innerHTML='<span class="bi">'+f.icon+'</span><b>'+shortName(f)+'</b>'+(rr>=46?'<small class="bco">'+f.issuer+'</small>':'')+regBadge(id);if(REGION&&regAvail(id)===0)el.classList.add('nope');
+  el.setAttribute('aria-label','Open '+id+': '+f.name+(feeOf(id)!=null?', costs '+feeOf(id).toFixed(2)+'% a year':''));el.innerHTML='<span class="bi">'+f.icon+'</span><b>'+shortName(f)+'</b>'+(rr>=36?'<small class="bco">'+f.issuer+'</small>':'')+regBadge(id);if(REGION&&regAvail(id)===0)el.classList.add('nope');
   const b={id,el,r:rr,m:rr*rr,x:rr+Math.random()*Math.max(1,W-2*rr),y:-rr-i*rr*1.3,vx:(Math.random()-.5)*260,vy:0,delay:i*.14,popped:false,hit:0,ph:0};wireBubble(b);F.append(el);return b});
  bub={items,W,H,raf:0,last:performance.now(),reduced,key};
  if(reduced){F.style.cssText='';items.forEach(b=>{b.el.style.position='relative';b.el.style.transform='none'})}else{items.forEach(b=>{b.el.style.opacity=0});bub.raf=requestAnimationFrame(bubStep)}
