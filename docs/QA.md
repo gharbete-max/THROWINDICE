@@ -582,3 +582,6 @@ Not covered: real devices (iOS Safari audio unlock and the music beep, 120 Hz sc
 
 ## Portal animation halved (2026-11-03)
 Every timing in the Token World portal was cut to half: coins appear after 0.15-0.28 s (was 0.30-0.55), morph 0.23-0.64 s, black fade starts at 0.68 s and lasts 0.15 s, page swap at 50 ms. Measured end to end in the browser: enter 951 ms and exit 911 ms until the overlay is gone (was about 1.65 s plus fade); page switches correctly both ways, no console errors.
+
+## Fund balls: name first, company underneath (2026-11-03)
+Each ball now shows the fund's own short name in bold ("S&P 500", "Total World Stock", "Gold", derived from the full name by dropping the company and words like ETF/UCITS/Trust/(Acc)) with the company that runs it in small text underneath (Vanguard, iShares, State Street...), on balls big enough to hold it. Flag and country badge unchanged. Checked on the US pile at phone width; drag and pop still work, no console errors.
