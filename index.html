@@ -113,7 +113,7 @@ body{--cc:var(--c1)}
 .bubField{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;z-index:1}.bubField.static{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-content:flex-start;padding:166px 16px 16px;overflow:auto}
 .bub{position:absolute;left:0;top:0;border:0;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#000;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;background:radial-gradient(circle at 32% 24%,rgba(255,255,255,.75) 0 8%,transparent 9%),radial-gradient(130% 130% at 30% 12%,color-mix(in srgb,var(--cc) 58%,#fff),var(--cc) 48%,color-mix(in srgb,var(--cc) 86%,#000)),var(--cc);box-shadow:inset 0 -8px 14px rgba(0,0,0,.22),inset 0 8px 10px rgba(255,255,255,.45),0 10px 22px rgba(0,0,0,.35);will-change:transform}
 .bub .bi{font-size:1.9em;line-height:1}.bub b{font-size:1.05em;letter-spacing:.02em}.bub em{font-style:normal;font-size:.72em;font-weight:700;opacity:.85;max-width:84%;text-align:center;line-height:1.1}
-.bub.squash{animation:bubSquash .18s ease-out}
+.bub.fl{--cc:#3ddc84}.bub.fm{--cc:#ffd23f}.bub.fh{--cc:#ff8a3d}.bub.dim{opacity:.18!important;transition:opacity .2s}.bub .bfee{font-size:.8em;font-weight:800}.bkey{border:2px solid var(--cc,#fff)!important;background:color-mix(in srgb,var(--cc) 30%,transparent)!important;color:var(--text);border-radius:99px;padding:6px 14px;font-weight:800;cursor:pointer}.bkey.fl{--cc:#3ddc84}.bkey.fm{--cc:#ffd23f}.bkey.fh{--cc:#ff8a3d}.bkey.on{background:var(--cc)!important;color:#000}
 @keyframes bubSquash{40%{scale:1.12 .88}100%{scale:1}}
 .bub.zoom{animation:bubZoom .21s cubic-bezier(.2,.9,.3,1.5) forwards;z-index:3}
 @keyframes bubZoom{to{scale:1.3}}
@@ -496,11 +496,6 @@ body.token-world #vig{display:none}
 .startNote{margin-bottom:14px}.startNote h2{margin:4px 0 10px}.noteList{list-style:none;padding:0;margin:0;display:grid;gap:8px}.noteList li{display:flex;gap:10px;align-items:flex-start}.noteList li>span{font-size:22px;line-height:1.3;flex:none}.noteList li p{margin:0;font-size:15px;line-height:1.45}.startNote .actions{margin-top:12px}.story li p{font-size:16px}.learnHead{margin:18px 4px 8px}
 .vsBox{flex:1;min-width:0}.vsT{font-size:14px;font-weight:700;margin-bottom:6px}.vsRow{display:flex;align-items:center;gap:8px;margin:4px 0}.vsRow>span{flex:0 0 86px;font-size:13px;font-weight:800}.vsTrack{flex:1;min-width:0;display:flex;align-items:center;gap:8px}.vsBar{display:block;height:22px;border-radius:99px;flex:0 0 var(--w);min-width:10px;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 55%),var(--bc);box-shadow:inset 0 -3px 5px rgba(0,0,0,.18);transform-origin:left;animation:vsGrow 1.1s cubic-bezier(.2,.9,.25,1) both}.vsTrack b{font-size:15px;white-space:nowrap}.vsNote{font-size:12px;color:var(--muted);margin-top:4px}@keyframes vsGrow{from{transform:scaleX(0)}}@media(prefers-reduced-motion:reduce){.vsBar{animation:none}}
 
-/* Lightning around the tile while a carousel spins faster */
-.flameLayer{position:absolute;left:0;top:0;width:0;height:0;pointer-events:none;z-index:7;opacity:calc(.35 + var(--heat,0)*1.2)}
-.bolt{position:absolute;left:0;top:0;overflow:visible}.bolt path{fill:none;stroke-linejoin:round;stroke-linecap:round}
-.bolt .bg{stroke:#8a6bff;stroke-opacity:.85;filter:blur(7px)}.bolt .bm{stroke:#7be0ff;filter:drop-shadow(0 0 7px #7be0ff) drop-shadow(0 0 14px #5a7bff)}.bolt .bc{stroke:#fff;filter:drop-shadow(0 0 3px #fff)}.bolt .bb{stroke:#e2f7ff;filter:drop-shadow(0 0 6px #8a6bff) drop-shadow(0 0 10px #7be0ff)}
-@media(prefers-reduced-motion:reduce){.flameLayer{display:none}}
 .bub .bmx{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px}.bub .bmet{font-size:.72em;white-space:nowrap}
 /* Dough balls: irregular blob outline (clip-path) with one drop-shadow on the whole field. The gate line marks the top of the room. */
 .bubField:not(.static){filter:drop-shadow(0 8px 9px rgba(0,0,0,.32))}
@@ -605,7 +600,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div class="pageTitle"><div class="eyebrow">Understand · ETFs</div><h1>ETF Explorer</h1></div>
 <div class="grid">
 
-<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div class="dogMascot" aria-hidden="true"></div><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
+<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
 <div id="pileGrid"></div>
 
 </section>
@@ -627,7 +622,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
 </section>
 <section class="page" id="fees">
-<div class="pageTitle"><div class="eyebrow">FEE CALCULATOR</div><h1>What do fees cost?</h1><p>Slide the kittens to play.</p></div>
+<div class="pageTitle"><div class="eyebrow">FEE CALCULATOR</div><h1>What do fees cost?</h1><p>Slide the candy to play.</p></div>
 <div class="card" id="feeCalc"><div class="sectionHead"><div><h2>🧮 What do fees really cost?</h2><p>A small yearly fee looks tiny. Over many years it adds up. Slide and see.</p></div></div><div class="calcgrid"><div>
 <div class="control"><label for="ccy">Currency</label><select id="ccy" aria-label="Currency"></select></div>
 <div class="control"><label for="principal">Money you put in <output id="principalOut">€10,000</output></label><input id="principal" max="100000" min="1000" step="1000" type="range" value="10000"/></div>
@@ -749,7 +744,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div aria-labelledby="regTitle" aria-modal="true" class="modalShade" id="regionModal" role="dialog"><div class="modal" style="max-width:520px"><div class="eyebrow">📍 FIRST, PICK YOUR HOME</div><h2 id="regTitle" style="margin-top:8px">Where are you?</h2><p style="margin:6px 0 0">We show the funds people there can usually buy.</p><div class="regGrid" id="regGrid"></div><p class="disclaimer" style="margin:8px 0 0">Rules change. Ask your broker. Not advice.</p></div></div>
 <div aria-labelledby="focusTitle" aria-modal="true" class="modalShade" id="focusModal" role="dialog"><div class="modal wide" style="max-width:760px"><div class="eyebrow" id="focusEye">FOCUS</div><h2 id="focusTitle" style="margin-top:8px">Focus</h2><div class="actions" style="margin:10px 0"><button class="btn small" id="focusEtf" type="button">See ETFs →</button><a class="btn small secondary" id="focusNews" target="_blank" rel="noopener noreferrer">More news ↗</a><a class="btn small secondary" id="focusExch" target="_blank" rel="noopener noreferrer">Exchange news ↗</a><button class="btn secondary small" onclick="closeFocus()" type="button">Close</button></div><div id="focusBox" style="min-height:300px"></div><p class="disclaimer">News feeds are by TradingView, a third party, and load only when you open this page. Headlines are not advice.</p></div></div>
 <div aria-labelledby="chartTitle" aria-modal="true" class="modalShade" id="chartModal" role="dialog"><div class="modal wide" style="max-width:720px"><div class="eyebrow">CHART</div><h2 id="chartTitle" style="margin-top:8px">Chart</h2><div id="chartBox" style="min-height:300px;margin:12px 0"></div><p class="disclaimer" id="chartFallback" hidden>The chart could not load here. It may be blocked or you may be offline. Use the TradingView link instead.</p><div class="actions" style="margin-top:12px"><a class="btn small" id="chartLink" href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">Open on TradingView ↗</a><button class="btn secondary small" onclick="closeChart()" type="button">Close</button></div><p class="disclaimer">Charts are by TradingView, a third party, and load only when you ask. Past moves do not predict the future. Educational only, not financial advice.</p></div></div>
-<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Go back"><svg viewBox="0 0 90 56" aria-hidden="true"><path d="M82 30C66 4 50 54 26 30" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M36 12L14 30L38 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>go back!</span></button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div><div class="bubDog" id="bubDog" aria-hidden="true"></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button></div><div class="bubField" id="bubField"></div></div>
+<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Go back"><svg viewBox="0 0 90 56" aria-hidden="true"><path d="M82 30C66 4 50 54 26 30" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M36 12L14 30L38 46" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>go back!</span></button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><button type="button" class="bkey fl" onclick="bubKey(this,'fl')">Cheap</button><button type="button" class="bkey fm" onclick="bubKey(this,'fm')">Middle</button><button type="button" class="bkey fh" onclick="bubKey(this,'fh')">Pricey</button></div><div class="bubField" id="bubField"></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const pages=['dashboard','basics','fees','world','sectors','commodities','etfs','parallel'];
@@ -1031,7 +1026,6 @@ const THEMES={us:['United States','🇺🇸',['SPY','VOO','IVV','CSPX','IUSA','V
 /* Hidden size tiers (1 to 4) that set bubble size. Based on average daily dollar volume from data/facts.json (Oct 2026); funds without data are rough estimates. Not shown to users. Refresh quarterly. */
 const TIER={"VT":3,"VOO":4,"BND":3,"AGG":3,"GLD":4,"IAU":3,"VWO":3,"IEMG":3,"VGT":3,"QQQM":3,"SCHD":3,"IWM":4,"VEA":3,"VXUS":3,"TLT":4,"LQD":4,"VNQ":3,"ICLN":2,"BOTZ":1,"VWCE":2,"SWDA":2,"CSPX":2,"EIMI":2,"EQQQ":2,"SGLN":2,"SPY":4,"IVV":4,"EWG":1,"EXS1":2,"EWQ":1,"CAC":1,"EWU":2,"VUKE":1,"EWD":1,"XACT":1,"VGK":2,"VEUR":1,"EWJ":3,"SJPA":1,"AAXJ":2,"MCHI":2,"FXI":3,"KWEB":3,"INDA":3,"EPI":1,"EWA":2,"XLK":4,"XLF":4,"XLE":4,"XLV":4,"XLI":4,"XLP":3,"XLY":3,"XLB":3,"XLRE":3,"VFH":2,"VDE":1,"VHT":2,"VIS":2,"VDC":1,"VCR":1,"VAW":1,"QTUM":2,"ROBO":1,"CIBR":3,"HACK":2,"URA":2,"URNM":1,"TAN":2,"ARKX":1,"UFO":1,"GRID":2,"PAVE":2,"LIT":1,"BATT":1,"SLV":3,"SIVR":1,"USO":3,"BNO":1,"UNG":2,"FCG":1,"CPER":1,"COPX":3,"DBA":1,"MOO":1,"IBIT":4,"FBTC":3,"ETHA":3,"FETH":2,"BLOK":1,"BKCH":1,"SGOV":3,"BIL":3,"EWC":3,"FLCA":2,"EWZ":3,"FLBR":1,"EWW":2,"FLMX":1,"EWY":3,"FLKR":1,"EWT":3,"FLTW":1,"EWL":2,"FLSW":1,"EWI":2,"EWP":1,"EWN":1,"KSA":2,"FLSA":1,"EZA":2,"EWS":1,"EWH":2,"EIDO":1,"VNM":1,"TUR":1,"EIS":1,"EPOL":1,"NORW":1,"ECH":1,"ARGT":1,"FLAU":1,"XLC":3,"VOX":2,"XLU":3,"VPU":2,"SMH":4,"SOXX":3,"XBI":3,"IBB":3,"ITA":3,"XAR":2,"XHB":2,"ITB":3,"XRT":3,"KBE":2,"KIE":1,"IAI":1,"IHI":2,"XOP":3,"PHO":1,"FIW":1,"FAN":1,"GDX":4,"GDXJ":3,"REMX":1,"SLX":1,"PICK":2,"WOOD":1,"GLDM":3,"SGOL":2,"PPLT":1,"PALL":1,"DBO":1,"CSCA":1,"IBZL":1,"IKOR":1,"XKSD":1,"ITWN":1,"XMTD":1,"CSW":1,"XMEX":1,"SAUS":1,"NDIA":1,"FMI":1,"QDVE":1,"QDVG":1,"QDVH":1,"QDVF":1,"IUIS":1,"IUCS":1,"QDVK":1,"IUUS":1,"IWDP":1,"XDWD":1,"IUSQ":1,"IUSA":1,"VUSA":1,"XMME":1,"XNAS":1,"WSML":1,"VHYL":1,"UDVD":1,"IEAC":1,"SEGA":1,"IBTM":1,"SSLN":1,"PHAG":1,"SGLD":1,"PHAU":1,"PHPT":1,"BRNT":1,"BTCW":1,"ABTC":1,"VBTC":1,"ETHW":1,"AETH":1};const TIERW={1:.72,2:.88,3:1.05,4:1.28};
 function colorOf(id){let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))%97;return h%6+1}
-const SMUG=['Uh. {n}? Okay. Pop one!','I found {n}. I think. Please do not look at me.','Hi. {n}. I am a dog, not an advisor.','{n}! ...What is a fund? Anyway, pop one.'];
 THEMES.world=['Whole world','🌍',['VT','VWCE','SWDA','XDWD','IUSQ','VXUS','VEA']];THEMES.emerging=['Developing countries','🌱',['VWO','IEMG','EIMI','XMME']];THEMES.bonds=['Bonds','🏦',['BND','AGG','TLT','LQD','IEAC','SEGA','IBTM']];THEMES.dividend=['Dividend payers','💵',['SCHD','VHYL','UDVD']];THEMES.small=['Small companies','🐜',['IWM','WSML']];
 {const used=new Set(Object.values(THEMES).flatMap(t=>t[2])),rest=Object.keys(etfFacts).filter(t=>!used.has(t));if(rest.length)THEMES.more=['More funds','✨',rest]}
 const GROUPS=[['Countries & regions','🗺️',['us','ca','mx','br','latam','de','fr','uk','se','it','ch','euo','eu','jp','kr','tw','cn','in','sea','asia','mea','au']],['Sectors','🏭',['tech','fin','energy','health','ind','staples','disc','mat','prop','comm','util']],['Big ideas','💡',['quantum','robots','cyber','uranium','solar','space','grid','battery','semi','bio','defense','homes','miners','planet','metals']],['Everything & bonds','🧺',['world','emerging','bonds','dividend','small','more']],['Commodities','🪙',['gold','silver','plat','oil']]];
@@ -1112,6 +1106,47 @@ const lifeNotes=[
 function showLifeStage(btn,index){document.querySelectorAll('.lifeStep').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('lifeDescription').textContent=lifeNotes[index]}
 
 calc();
+var KR=22,KL=40,KG=2200,kRaf=0,kLast=0;
+function kP(w){const i=w.querySelector('input');return w._pc!=null?w._pc:(i.value-i.min)/(i.max-i.min)}
+function kTarget(w){return KR+kP(w)*(w.clientWidth-2*KR)}
+function kRender(w){const k=w._k,d=57.296,f=(n)=>n.toFixed(2),st=w.style;st.setProperty('--bx',f(k.x));st.setProperty('--rot',f(k.x/KR*d)+'deg');st.setProperty('--phi',f(k.phi*d)+'deg');st.setProperty('--tail',f(k.tail*d)+'deg');st.setProperty('--legs',f(k.legs*d)+'deg');st.setProperty('--head',f(-k.phi*d*.45)+'deg')}
+function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=false;
+ document.querySelectorAll('.kitty').forEach(w=>{const k=w._k;if(!k||!w.clientWidth)return;const tx=kTarget(w);if(!k.init){k.x=k.px=tx;k.vf=k.vp=0;k.init=1;kRender(w)}
+  const raw=(tx-k.px)/dt,pe=kP(w),end=pe<=.001||pe>=.999;if(end&&!k.end&&Math.abs(raw)>120)kScare(w);k.end=end;k.vf+=(raw-k.vf)*Math.min(1,dt*18);const af=(k.vf-k.vp)/dt;k.vp=k.vf;k.px=k.x=tx;
+  const a=Math.max(-3500,Math.min(3500,af*.16)),wb=Math.max(-40,Math.min(40,k.vf/KR)),n=4,h=dt/n;
+  for(let s=0;s<n;s++){
+   let acc=-(KG/KL)*Math.sin(k.phi)-(a/KL)*Math.cos(k.phi)+1.5*(-wb-k.om)-5.5*k.om;const over=Math.abs(k.phi)-.85;if(over>0)acc-=Math.sign(k.phi)*110*over;
+   k.om+=acc*h;k.phi+=k.om*h;if(Math.abs(k.phi)>1.05){k.phi=Math.sign(k.phi)*1.05;k.om*=-.3}
+   const ta=-90*(k.tail+k.phi*.8)-9*k.tailv;k.tailv+=ta*h;k.tail+=k.tailv*h;
+   const la=-120*(k.legs-k.phi*.5)-8*k.legsv;k.legsv+=la*h;k.legs+=k.legsv*h}
+  const moving=Math.abs(k.vf)>.5||Math.abs(k.phi)>.004||Math.abs(k.om)>.03||Math.abs(k.tail)>.004;
+  w.classList.toggle('moving',moving);kRender(w);if(moving)busy=true});
+ kRaf=busy?requestAnimationFrame(kStep):0}
+function kScare(w){/* scared clip: separate file, restarted from frame 0 and cross-faded over the still-running hang loop */
+ const c=w.querySelector('.kCat'),sc=c&&c.querySelector('.kScared');if(!sc||c._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;c._busy=1;
+ (window._kScare||(window._kScare=fetch('assets/mascots/kitten-scared.webp').then(r=>{if(!r.ok)throw 0;return r.blob()}))).then(bl=>{
+  const u=URL.createObjectURL(bl);sc.onload=()=>{c.classList.add('scared');setTimeout(()=>{c.classList.remove('scared');setTimeout(()=>{URL.revokeObjectURL(u);c._busy=0},120)},780)};sc.src=u})
+ .catch(()=>{c._busy=0;window._kScare=null})}
+function kWake(){if(!kRaf){kLast=performance.now();kRaf=requestAnimationFrame(kStep)}}
+function kittySync(){document.querySelectorAll('.kitty').forEach(w=>w.style.setProperty('--p',kP(w)));kWake()}
+document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);w._k={x:22,v:0,phi:0,om:0,tail:0,tailv:0,legs:0,legsv:0};const b=document.createElement('span');b.className='kBall';b.setAttribute('aria-hidden','true');b.innerHTML='<i></i>';w.append(b)});
+if(window.ResizeObserver){const ro=new ResizeObserver(es=>es.forEach(e=>{const k=e.target._k;if(k){k.init=0;kWake()}}));document.querySelectorAll('.kitty').forEach(w=>ro.observe(w))}
+kittySync();
+
+/* Glide: after a flick, the ball keeps rolling with friction, bounces softly at the ends and settles on a step. */
+function glide(i,w,v){const id=++w._gl,min=+i.min,max=+i.max,st=+i.step||1;let p=(i.value-min)/(max-min),last=performance.now();
+ const q=x=>Math.min(max,Math.max(min,Math.round((min+x*(max-min)-min)/st)*st+min));
+ (function f(t){if(w._gl!==id)return;const dt=Math.min(.05,(t-last)/1000);last=t;p+=v*dt;v*=Math.exp(-dt*2.5);
+  if(p<0){p=0;v=Math.abs(v)*.35}else if(p>1){p=1;v=-Math.abs(v)*.35}
+  const pq=(q(p)-min)/(max-min);if(Math.abs(v)<.3){p+=(pq-p)*Math.min(1,dt*10);v*=.9}
+  w._pc=p;const nv=q(p);if(String(nv)!==String(+i.value)){i.value=nv;i.dispatchEvent(new Event('input',{bubbles:true}))}else kittySync();
+  if(Math.abs(v)<.02&&Math.abs(pq-p)<.0005){w._pc=null;i.value=q(p);kittySync();return}
+  requestAnimationFrame(f)})(last)}
+document.querySelectorAll('.kitty').forEach(w=>{const i=w.querySelector('input');let drag=false,S=[];w._gl=0;
+ i.addEventListener('pointerdown',()=>{drag=true;S=[];w._gl++;w._pc=null;kittySync()});
+ i.addEventListener('input',()=>{if(drag){S.push([performance.now(),(i.value-i.min)/(i.max-i.min)]);if(S.length>12)S.shift()}});
+ window.addEventListener('pointerup',()=>{if(!drag)return;drag=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const now=performance.now(),r=S.filter(x=>now-x[0]<110);if(r.length<2)return;const a=r[0],b=r[r.length-1],dt=(b[0]-a[0])/1000;if(dt<=0)return;let v=(b[1]-a[1])/dt;if(Math.abs(v)<.15)return;glide(i,w,Math.max(-3,Math.min(3,v)))});
+ window.addEventListener('pointercancel',()=>{drag=false})});
 document.addEventListener('click',e=>{const el=e.target.closest('button,.exploreCard');if(!el)return;el.classList.remove('bounce-click');void el.offsetWidth;el.classList.add('bounce-click');setTimeout(()=>el.classList.remove('bounce-click'),450)});
 function revealApp(){setTimeout(()=>{document.getElementById('loadingScreen').classList.add('done');document.getElementById('appShell').style.opacity='1';},250)}
 if(document.readyState==='complete'){revealApp()}else{window.addEventListener('load',revealApp,{once:true})}
@@ -1200,25 +1235,23 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 document.querySelectorAll('.topic,.exploreCard,.tokenCategory,.tokenTopic,.tokenCase,.brokerCard,.tokenMetric,.tokenDataCard,.newsCard,.fbox,.card,.pageTitle,.lifeStep').forEach(el=>{const i=[...el.parentElement.children].indexOf(el);el.style.setProperty('--d',Math.min(i,8)*70+'ms');el.classList.add('reveal');io.observe(el)})})();
 
 /* Bubble pit: a theme's funds drop in as heavy bouncing balls. Pop one to open the fund. */
-const DOGSVG=document.querySelector('.dogMascot').innerHTML;let bub=null;
+let bub=null;
 function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);const L=document.getElementById('bubbleLayer'),F=document.getElementById('bubField');lastFocus=document.activeElement;
  L.hidden=false;document.body.style.overflow='hidden';document.getElementById('bubTitle').textContent=T[1]+' '+T[0];
- const RS=regSplit(T[2]),ids=RS.ids,n=ids.length;document.getElementById('bubNote').textContent=T[3]||(SMUG[Math.floor(Math.random()*SMUG.length)].replace('{n}',T[0]));document.getElementById('bubDog').innerHTML=DOGSVG;
+ const RS=regSplit(T[2]),ids=RS.ids.slice().sort((a,b)=>(feeOf(a)??.3)-(feeOf(b)??.3)),n=ids.length;document.getElementById('bubNote').textContent=(T[3]?T[3]+' ':'')+'Big ball = lots of owners. Colour = yearly fee.';
  F.innerHTML='';const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;F.classList.toggle('static',reduced);
  const W=F.clientWidth,H=F.clientHeight;const wts=ids.map(id=>TIERW[TIER[id]||2]),sw=wts.reduce((a,w)=>a+w*w,0),wm=Math.max(...wts);const H2=H-BTOP;let r=Math.sqrt(W*H2*.32/(Math.PI*sw));r=Math.min(r,190,Math.min(W,H2)/3.2/wm);
- const items=ids.map((id,i)=>{const f=etfFacts[id],rr=Math.max(30,r*wts[i]),el=document.createElement('button');el.type='button';el.className='bub';el.style.cssText='--cc:var(--c'+colorOf(id)+');width:'+2*rr*(reduced?1:EX)+'px;height:'+2*rr*(reduced?1:EX)+'px;font-size:'+Math.max(11,rr*.22)+'px';
-  el.setAttribute('aria-label','Open '+id+': '+f.name);{const fe=feeOf(id),vo=VOLX[id];el.innerHTML='<span class="bi" aria-hidden="true">'+f.icon+'</span><b>'+id+'</b>'+(rr>=58?'<em>'+f.name.split(' ').slice(0,3).join(' ')+'</em>':'')+(rr>=44?'<span class="bmx">'+(fe!=null?'<i class="bmet">fee '+fe.toFixed(2)+'%</i>':'')+(rr>=62&&vo!=null?'<i class="bmet">swing '+Math.round(vo)+'%</i>':'')+'</span>':'')+regBadge(id)}if(REGION&&regAvail(id)===0)el.classList.add('nope');
-  const b={id,el,r:rr,m:rr*rr,x:rr+Math.random()*Math.max(1,W-2*rr),y:-rr-i*rr*1.3,vx:(Math.random()-.5)*260,vy:0,delay:i*.14,popped:false,hit:0,O:new Array(NV).fill(0),ph:Math.random()*6.28};wireBubble(b);F.append(el);return b});
+ const items=ids.map((id,i)=>{const f=etfFacts[id],rr=Math.max(30,r*wts[i]),el=document.createElement('button');el.type='button';el.className='bub '+feeCls(id);el.style.cssText='width:'+2*rr+'px;height:'+2*rr+'px;font-size:'+Math.max(12,rr*.24)+'px';
+  el.setAttribute('aria-label','Open '+id+': '+f.name+(feeOf(id)!=null?', costs '+feeOf(id).toFixed(2)+'% a year':''));{const fe=feeOf(id);el.innerHTML='<b>'+id+'</b>'+(rr>=34&&fe!=null?'<span class="bfee">'+fe.toFixed(2)+'%</span>':'')+regBadge(id)}if(REGION&&regAvail(id)===0)el.classList.add('nope');
+  const b={id,el,r:rr,m:rr*rr,x:rr+Math.random()*Math.max(1,W-2*rr),y:-rr-i*rr*1.3,vx:(Math.random()-.5)*260,vy:0,delay:i*.14,popped:false,hit:0,ph:0};wireBubble(b);F.append(el);return b});
  bub={items,W,H,raf:0,last:performance.now(),reduced,key};
  if(reduced){F.style.cssText='';items.forEach(b=>{b.el.style.position='relative';b.el.style.transform='none'})}else{items.forEach(b=>{b.el.style.opacity=0});bub.raf=requestAnimationFrame(bubStep)}
  {const A=document.getElementById('bubAll');A.hidden=!(RS.hidden||SHOWALL);A.textContent=SHOWALL?'Hide the ones not for me':'🌍 Show '+RS.hidden+' more';if(RS.none)document.getElementById('bubNote').textContent='None of these are sold in your region. Showing them so you can learn.'}
- bubDetails();document.getElementById('bubBack').focus()}
+ document.getElementById('bubBack').focus()}
 
 const pctl=(arr,v)=>arr.filter(x=>x<=v).length/arr.length;
-function bubDetails(){if(!bub)return;bub.items.forEach(b=>{b.el.style.setProperty('--cc','var(--c'+colorOf(b.id)+')')})}
-const BTOP=150,EX=1.34,NV=18;
-function blobPath(b){const c=b.r*EX,P=[];for(let k=0;k<NV;k++){const a=k/NV*6.2832,R=b.r+b.O[k];P.push([c+Math.cos(a)*R,c+Math.sin(a)*R])}
- let d='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);for(let k=0;k<NV;k++){const p0=P[(k+NV-1)%NV],p1=P[k],p2=P[(k+1)%NV],p3=P[(k+2)%NV];d+='C'+(p1[0]+(p2[0]-p0[0])/6).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])/6).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])/6).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])/6).toFixed(1)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)}return d+'Z'}
+const BTOP=150,EX=1;
+const feeCls=id=>{const f=feeOf(id);return f==null||f<=.45&&f>.2?'fm':f<=.2?'fl':'fh'};
 function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000||.016);B.last=t;B.age=(B.age||0)+dt;const G=1900,REST=.03,calm=B.age>3?Math.exp(-Math.min(20,(B.age-3)*4)*dt):1;const live=B.items.filter(b=>!b.popped),TOP=BTOP;
  live.forEach(b=>{if(b.delay>0){b.delay-=dt;return}b.el.style.opacity=1;b.C=[];if(b.grab){b.vx=b.gvx||0;b.vy=b.gvy||0;b.gvx*=.88;b.gvy*=.88;return}b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;b.vx*=Math.exp(-.12*dt)*calm;if(calm<1)b.vy*=calm;
   /* one-way gate: once a ball has fallen in below the gate line, it cannot leave */
@@ -1234,15 +1267,8 @@ function bubStep(t){if(!bub)return;const B=bub,dt=Math.min(.033,(t-B.last)/1000|
    if(it===0&&vn>0){const e=vn*.25/tot;p.vx+=e*nx*im;p.vy+=e*ny*im;q.vx-=e*nx*jm;q.vy-=e*ny*jm}}
  live.forEach(clampB)}
  live.forEach(b=>{if(b.delay>0)return;const sp=Math.hypot(b.vx,b.vy);if(b.y>=B.H-b.r-1)b.vx*=Math.exp(-.9*dt);if(sp<60){b.vx*=.985;b.vy*=.99}});
- live.forEach(b=>{if(b.delay>0)return;
-  if(!b.reducedBlob&&!B.reduced){const C=b.C||[],r=b.r;b.imp=(b.imp||0)*Math.exp(-5*dt);
-   if(b.y>=B.H-r-.5)C.push([1.5708,r*.07+b.imp]);if(b.x<=r+.5)C.push([3.1416,r*.04]);if(b.x>=B.W-r-.5)C.push([0,r*.04]);if(b.in&&b.y<=TOP+r+.5)C.push([-1.5708,r*.04]);
-   let tot=0;C.forEach(c=>tot+=c[1]);const wa=r*.009+Math.min(r*.05,tot*.05);
-   for(let k=0;k<NV;k++){const ph=k/NV*6.2832;let tv=0;for(let m=0;m<C.length;m++){let dd=ph-C[m][0];dd=Math.atan2(Math.sin(dd),Math.cos(dd));const ad=Math.abs(dd);tv+=-C[m][1]*Math.exp(-(dd/.7)*(dd/.7))+C[m][1]*.55*Math.exp(-((ad-1.35)/.6)*((ad-1.35)/.6))}
-    tv+=wa*(Math.sin(B.age*1.6+b.ph+k*2.3)+.6*Math.sin(B.age*2.7+b.ph*2+k*4.1));tv=Math.max(-r*.5,Math.min(r*.3,tv));const o=b.O[k];b.O[k]=o+(tv-o)*Math.min(1,dt*(Math.abs(tv)>Math.abs(o)?16:2.4))}
-   b.el.style.clipPath="path('"+blobPath(b)+"')"}
-  const k=B.reduced?1:EX;b.el.style.transform='translate3d('+(b.x-b.r*k).toFixed(1)+'px,'+(b.y-b.r*k).toFixed(1)+'px,0)'});B.raf=requestAnimationFrame(bubStep)}
-function bubSquash(b){}
+ live.forEach(b=>{if(b.delay>0)return;b.el.style.transform='translate3d('+(b.x-b.r).toFixed(1)+'px,'+(b.y-b.r).toFixed(1)+'px,0)'});B.raf=requestAnimationFrame(bubStep)}
+function bubKey(btn,c){const on=!btn.classList.contains('on');document.querySelectorAll('.bkey').forEach(x=>x.classList.remove('on'));if(on)btn.classList.add('on');document.querySelectorAll('.bub').forEach(b=>b.classList.toggle('dim',on&&!b.classList.contains(c)))}
 function wireBubble(b){const el=b.el;let down=false,drag=false,sx=0,sy=0,tm=null,lt=0;const fr=()=>document.getElementById('bubField').getBoundingClientRect();
  const pos=e=>{const r=fr();return [e.clientX-r.left,e.clientY-r.top]};
  const startDrag=()=>{if(drag||!bub||bub.reduced)return;drag=true;b.grab=true;b.m0=b.m;b.m=1e9;b.gvx=b.gvy=0;bub.age=0;el.classList.add('grab')};
@@ -1392,16 +1418,6 @@ function go(c,d){const L=elig(c);if(L.length<2)return;L.forEach(x=>x.classList.r
   L.forEach((x,i)=>{x.classList.remove('wOff');x.style.cssText=(S.saved[i]||'')+';'+abs;S.H[i]=x.offsetHeight});
   L.forEach(x=>{if(x!==cur)x.classList.add('wOff')});S._start=1}
  S.target+=d;S.clicks.push(now);if(S._start){S._start=0;S.last=now-16;spin(c,now)}}
-function flame(c,S,dt,h){const w=c.parentNode;if(!w||!w.classList.contains('carWrap'))return;const W=S.W,P=2*(W+h);
- if(!S.fl){const L=document.createElement('div');L.className='flameLayer';L.setAttribute('aria-hidden','true');L.innerHTML='<svg class="bolt" width="'+w.offsetWidth+'" height="'+w.offsetHeight+'"><path class="bg"/><path class="bm"/><path class="bc"/><path class="bb"/></svg>';w.append(L);S.fl=L;S.bt=0;S.N=Math.max(26,Math.round(P/15));S.r=[];S.br=[];S.pa=[...L.querySelectorAll('path')]}
- const tgt=Math.max(0,Math.min(1,(Math.abs(S.v)-.4)/4.6));S.heat+=(tgt-S.heat)*Math.min(1,dt*(tgt>S.heat?7:3));const H=S.heat;
- S.bt-=dt;if(S.bt<=0){S.bt=.045;S.r=Array.from({length:S.N},()=>Math.random()*2-1);S.br=Array.from({length:9},()=>[Math.random(),Math.random()*2-1,Math.random()])}
- const x0=c.offsetLeft+(c.offsetWidth-W)/2,y0=c.offsetTop+S.T;S.fl.style.setProperty('--heat',H.toFixed(3));
- const pt=(d,o)=>{let x,y,nx,ny,tx,ty;if(d<W){x=x0+d;y=y0;nx=0;ny=-1;tx=1;ty=0}else if(d<W+h){x=x0+W;y=y0+d-W;nx=1;ny=0;tx=0;ty=1}else if(d<2*W+h){x=x0+W-(d-W-h);y=y0+h;nx=0;ny=1;tx=-1;ty=0}else{x=x0;y=y0+h-(d-2*W-h);nx=-1;ny=0;tx=0;ty=-1}return{x:x+nx*o,y:y+ny*o,nx,ny,tx,ty,bx:x,by:y}};
- const A=3+H*15,N=S.N;let d0='';for(let i=0;i<=N;i++){const q=pt((i%N)/N*P,S.r[i%N]*A);d0+=(i?'L':'M')+q.x.toFixed(1)+' '+q.y.toFixed(1)}d0+='Z';
- let db='';const nb=Math.round(H*9);for(let k=0;k<nb;k++){const B=S.br[k],q=pt(B[0]*P,0),Ln=14+H*52*(.5+B[2]);let x=q.bx,y=q.by;db+='M'+x.toFixed(1)+' '+y.toFixed(1);for(let j=1;j<=4;j++){const f=j/4,sw=Math.sin(j*2.7+B[1]*9)*11*(.3+H);x=q.bx+q.nx*Ln*f+q.tx*sw;y=q.by+q.ny*Ln*f+q.ty*sw;db+='L'+x.toFixed(1)+' '+y.toFixed(1)}}
- const P4=S.pa;P4[0].setAttribute('d',d0);P4[1].setAttribute('d',d0);P4[2].setAttribute('d',d0);P4[3].setAttribute('d',db);
- P4[0].style.strokeWidth=(16+H*18)+'px';P4[1].style.strokeWidth=(5+H*5)+'px';P4[2].style.strokeWidth=(2.4+H*2)+'px';P4[3].style.strokeWidth=(2.6+H*2.6)+'px'}
 function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1000||.016);S.last=t;
  S.clicks=S.clicks.filter(x=>t-x<650);const vmax=Math.min(6,2.2+1.1*S.clicks.length),dist=S.target-S.p;
  const want=Math.max(-vmax,Math.min(vmax,dist*3.4));S.v+=(want-S.v)*Math.min(1,dt*5);S.p+=S.v*dt;
@@ -1411,9 +1427,8 @@ function spin(c,t){const S=c._st;if(!S)return;const dt=Math.min(.05,(t-S.last)/1
  A.classList.remove('wOff');A.style.transformOrigin=R(S.H[i]);A.style.transform='rotateX('+(-90*f)+'deg)';
  if(f>.001){B.classList.remove('wOff');B.style.transformOrigin=R(S.H[(i+1)%n]);B.style.transform='rotateX('+(90*(1-f))+'deg)'}else B.classList.add('wOff');
  c.style.height=(S.H[i]*(1-f)+S.H[(i+1)%n]*f+S.pad)+'px';
- flame(c,S,dt,S.H[i]*(1-f)+S.H[(i+1)%n]*f);
  const k=c._ctl;if(k)k.q('span').textContent=((Math.round(S.p)%n+n)%n+1)+' / '+n;
- if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){if(S.fl){S.fl.remove();S.fl=null}const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);setTimeout(()=>window._dgRun&&window._dgRun(),40);return}
+ if(Math.abs(dist)<.03&&Math.abs(S.v)<.9){const e=((Math.round(S.target)%n)+n)%n;S.L.forEach((x,j)=>{x.classList.toggle('wOff',j!==e);x.style.transform='';x.style.opacity='';x.style.transformOrigin='';S.saved[j]==null?x.removeAttribute('style'):x.setAttribute('style',S.saved[j])});S.cs==null?c.removeAttribute('style'):c.setAttribute('style',S.cs);c.classList.remove('spinning');c._cur=S.L[e];c._st=null;sync(c);setTimeout(()=>window._dgRun&&window._dgRun(),40);return}
  S.raf=requestAnimationFrame(spin.bind(null,c))}
 function build(){document.querySelectorAll(SEL).forEach(c=>{if(c._ctl||c.closest('.bubbleLayer,.modal'))return;const k=document.createElement('div');k.className='carCtl';k.q=x=>k.querySelector(x);const AR='<svg viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M8 24h28M25 11l13 13-13 13" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>';k.innerHTML='<button type="button" class="arL" aria-label="Previous">'+AR+'</button><span aria-live="polite"></span><button type="button" class="arR" aria-label="Next">'+AR+'</button>';k.children[0].onclick=()=>go(c,-1);k.children[2].onclick=()=>go(c,1);const w=document.createElement('div');w.className='carWrap';c.parentNode.insertBefore(w,c);w.append(c,k);c._ctl=k;let x0=null;c.addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});c.addEventListener('touchend',e=>{if(x0==null)return;const dx=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(dx)>60)go(c,dx<0?1:-1)},{passive:true});new MutationObserver(()=>sync(c)).observe(c,{attributes:true,attributeFilter:['style','hidden'],subtree:true,childList:true})});document.querySelectorAll(SEL).forEach(sync)}
 new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(document.body,{childList:true,subtree:true});build()})();
