@@ -36,6 +36,16 @@ THEMES = {
     'nature':   ((0.18, 0.36, 0.04), DARK,  'sprout',      1, {}),
     'bonds':    ((0.07, 0.16, 0.38), DARK,  'band',       -1, {}),
     'token':    ((0.05, 0.3, 1.0),   DARK,  'pixelcoin',   1, {}),
+    # Investing popup balls: no face, the ball and accessory carry the meaning
+    'pop-world':       ((0.04, 0.5, 0.62),  DARK, 'continents', -1, {'face': False}),
+    'pop-sectors':     ((0.2, 0.25, 0.33),  DARK, 'gear',        1, {'face': False, 'acc_scale': 2.0}),
+    'pop-commodities': ((1.0, 0.72, 0.25),  DARK, None,         -1, {'face': False, 'metal': True}),
+    'pop-options':     ((0.05, 0.3, 1.0),   DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
+    'pop-networks':    ((0.05, 0.3, 1.0),   DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
+    'pop-issuance':    ((0.05, 0.3, 1.0),   DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
+    # particle sprites (no ball)
+    'spark-star':      ((1.0, 0.75, 0.15),  DARK, 'star',        1, {'noball': True}),
+    'spark-coin':      ((1.0, 0.7, 0.18),   DARK, 'coin',       -1, {'noball': True}),
     'chain':    ((0.05, 0.3, 1.0),   DARK,  'chain',      -1, {}),
 }
 
@@ -120,6 +130,28 @@ def accessory(kind, opts, feat):
         f = prim('cube', principled('flap', (0.32, 0.13, 0.03), 0.45, coat=0.4), tuple(L + Vector((0.08, -0.09, 0.05))), R, scale=(0.22, 0.04, 0.11), shade=False)
         out.append(bevel(f, 0.02, 3))
         out.append(prim('uv_sphere', gold(), tuple(L + Vector((-0.04, -0.15, 0.05))), radius=0.05))
+    elif kind == 'scroll':  # a certificate: cream sheet, red band, gold seal
+        paper = principled('paper', (0.92, 0.78, 0.5), 0.45, coat=0.3, sss=0.1, sss_radius=(1, 0.9, 0.7), sss_scale=0.05)
+        L, R = Vector((0.62, -0.88, -0.3)), (math.radians(-8), 0, math.radians(-22))
+        out.append(bevel(prim('cube', paper, tuple(L), R, scale=(0.3, 0.03, 0.38), shade=False), 0.02, 3))
+        rib = principled('ribbon', (0.85, 0.08, 0.12), 0.35, coat=0.6)
+        m = Euler(R).to_matrix()
+        out.append(prim('cube', rib, tuple(L + m @ Vector((0, -0.035, 0.12))), R, scale=(0.305, 0.012, 0.05), shade=False))
+        for k, z in enumerate((-0.06, -0.15)):
+            out.append(prim('cube', paper, tuple(L + m @ Vector((-0.04, -0.035, z))), R, scale=(0.2 - 0.06 * k, 0.008, 0.012), shade=False))
+        sl = prim('cylinder', gold(), tuple(L + m @ Vector((0.16, -0.05, -0.24))), (math.radians(90) + R[0], 0, R[2]), vertices=32, radius=0.09, depth=0.04)
+        out.append(bevel(sl, 0.01))
+    elif kind == 'star':
+        import bmesh
+        me = bpy.data.meshes.new('star'); bm = bmesh.new()
+        vs = [bm.verts.new((math.cos(math.pi / 2 + k * math.pi / 5) * (0.9 if k % 2 == 0 else 0.4), 0, math.sin(math.pi / 2 + k * math.pi / 5) * (0.9 if k % 2 == 0 else 0.4))) for k in range(10)]
+        bm.faces.new(vs); bm.to_mesh(me); bm.free()
+        o = link(bpy.data.objects.new('star', me)); o.data.materials.append(gold())
+        so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.28; so.offset = 0
+        bevel(o, 0.08, 4); out.append(o)
+    elif kind == 'coin':
+        out.append(bevel(prim('cylinder', gold(), (0, 0, 0), (math.radians(90), 0, math.radians(-25)), vertices=64, radius=0.8, depth=0.2), 0.04, 4))
+        out.append(prim('cylinder', principled('mark', (0.75, 0.45, 0.05), 0.3, metallic=1.0), (0, 0, 0), (math.radians(90), 0, math.radians(-25)), vertices=64, radius=0.55, depth=0.23))
     elif kind == 'gear':
         m = principled('steel', (0.75, 0.76, 0.8), 0.25, metallic=1.0)
         L, R = Vector((0.95, -0.3, 0.5)), (math.radians(90), 0, math.radians(-20))
@@ -191,19 +223,20 @@ def build(name, out, res, samples, nfr):
     if fk == DARK: feat = principled('feat', (0.012, 0.01, 0.008), 0.25, coat=1.0, coat_rough=0.02)
     else: feat = principled('feat', (0.97, 0.98, 1.0), 0.3, coat=0.8, coat_rough=0.05, sss=0.2, sss_radius=(1, 1, 1), sss_scale=0.02)
     if acc == 'continents': continents(body, (0.12, 0.4, 0.18))
-    ball = uv_sphere('ball', 1.0, (0, 0, 0), seg=128, rings=64); ball.data.materials.append(body)
     face = []
-    for s in (-1, 1):
+    ball = uv_sphere('ball', 1.0, (0, 0, 0), seg=128, rings=64); ball.data.materials.append(body)
+    if opts.get('noball'): bpy.data.objects.remove(ball); ball = None
+    for s in ((-1, 1) if opts.get('face', True) and ball else ()):
         p = surf(s * 0.2, -0.1, -0.012)
         e = uv_sphere(f'eye{s}', 0.062, tuple(p), (1, 0.55, 1.15)); e.data.materials.append(feat); on_surface(e, p); face.append(e)
     pts = []
     for k in range(13):
         a = math.radians(-58 + 116 * k / 12); x = 0.13 * math.sin(a); z = -0.31 - 0.055 * math.cos(a) + 0.055
         pts.append(tuple(surf(x, z, 0.004)))
-    face.append(tube('smile', pts, [0.014, 0.019] + [0.021] * 9 + [0.019, 0.014], feat))
+    if opts.get('face', True) and ball: face.append(tube('smile', pts, [0.014, 0.019] + [0.021] * 9 + [0.019, 0.014], feat))
     if acc and acc != 'continents':
         parts = accessory(acc, opts, feat)
-        k = opts.get('acc_scale', 1.0 if acc == 'band' else ACC_SCALE)
+        k = opts.get('acc_scale', 1.0 if acc == 'band' or not ball else ACC_SCALE)
         if k != 1.0:  # grow the accessory about the point where it meets the ball, so it stays attached
             bpy.context.view_layer.update()
             c = sum((o.matrix_world @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8) for o in parts), Vector()) / len(parts)
@@ -220,7 +253,7 @@ def build(name, out, res, samples, nfr):
         bg = bpy.context.scene.world.node_tree.nodes['Background']; bg.inputs['Strength'].default_value = 0.9
     vs = bpy.context.scene.view_settings; vs.view_transform = 'Standard'; vs.look = 'None'; vs.exposure = -0.2
     pivot = link(bpy.data.objects.new('pivot', None))
-    for o in face + [ball]: o.parent = pivot
+    for o in face + ([ball] if ball else []): o.parent = pivot
     pivot.rotation_mode = 'QUATERNION'
     d = os.path.join(out, name); os.makedirs(d, exist_ok=True)
     for i in range(nfr):
