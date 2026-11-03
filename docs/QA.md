@@ -531,3 +531,6 @@ Terrain is generated again as candles (green/red bars, white line the cat runs o
 Pause screen: Resume, Music on/off, Sounds on/off, Exit game.
 **Music:** the sound engine was rewritten: explicit loop points, exactly one active track (checked: menu, game, pause, resume each leave 1 active looping source), a track that ever ends restarts itself, a suspended audio context is resumed when the tab returns. I could not reproduce the "continuous beep" itself in headless Chromium; the WAV files have no tail beep (checked levels at the loop end), so this is a defensive fix, not a confirmed root cause.
 Test: bot that jumps pits and soft-lands reaches 25-77 s at phone width (one run 150 s); hands-off dies in pits/falls within seconds.
+
+## Game: cat back, double jump, coin tiers (2026-11-03)
+Animated cat sprite restored in the game only (no fire/fuel); slight squash and stretch on take-off and landing. Double jump: one extra tap in the air (a third tap is ignored; walking off a ledge leaves one air jump). Coins are random with exponential rarity: silver 1 (75%), yellow 3 (19%), blue 10 (4.7%), purple 50 (1.6%), each tier 4x rarer; higher tiers float higher (blue and purple need the double jump). Checked: tier frequencies over 200k rolls, double-jump velocity, no console errors, bot run unchanged.
