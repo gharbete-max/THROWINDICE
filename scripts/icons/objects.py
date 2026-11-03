@@ -80,15 +80,36 @@ def o_coin():
     rim = prim('torus', gold(), (0, -0.12, 0), (math.radians(90), 0, 0), major_radius=0.8, minor_radius=0.035, major_segments=64, minor_segments=12)
     return [c, rim], face([c], 0, 0.05, 1.15)
 
+def glass_grad(name, c0, c1, trans=0.55, emit=0.35):
+    """tinted glass whose colour runs c0 (bottom left) to c1 (top right), with a soft inner glow"""
+    m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    tc = nt.nodes.new('ShaderNodeTexCoord'); sep = nt.nodes.new('ShaderNodeSeparateXYZ'); add = nt.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
+    ramp = nt.nodes.new('ShaderNodeValToRGB'); e0, e1 = ramp.color_ramp.elements; e0.position = 0.2; e0.color = (*c0, 1); e1.position = 0.8; e1.color = (*c1, 1)
+    mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY_ADD'; mul.inputs[1].default_value = 0.3; mul.inputs[2].default_value = 0.5
+    nt.links.new(tc.outputs['Object'], sep.inputs[0]); nt.links.new(sep.outputs['X'], add.inputs[0]); nt.links.new(sep.outputs['Y'], add.inputs[1])
+    nt.links.new(add.outputs[0], mul.inputs[0]); nt.links.new(mul.outputs[0], ramp.inputs['Fac'])
+    nt.links.new(ramp.outputs['Color'], b.inputs['Base Color']); nt.links.new(ramp.outputs['Color'], b.inputs['Emission Color'])
+    b.inputs['Emission Strength'].default_value = emit; b.inputs['Transmission Weight'].default_value = trans; b.inputs['IOR'].default_value = 1.45
+    b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
+    return m
+
 def o_crypto():
-    m = principled('orange', (1.0, 0.45, 0.02), 0.25, metallic=0.85, coat=0.6, coat_rough=0.05)
-    c = cyl(m, (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 64, 0.05)
-    rim = prim('torus', m, (0, -0.12, 0), (math.radians(90), 0, 0), major_radius=0.8, minor_radius=0.035, major_segments=64, minor_segments=12)
-    # a small stamped B above the face (a plain letter, not a logo)
-    bpy.ops.object.text_add(location=(0, -0.13, 0.32), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
-    t.data.body = 'B'; t.data.size = 0.42; t.data.extrude = 0.025; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'
-    t.data.materials.append(principled('stamp', (1.0, 0.82, 0.5), 0.3, metallic=0.9))
-    return [c, rim, t], face([c], 0, -0.1, 0.95)
+    """translucent cyan-to-purple glass coin, 16-sided edge, a ring of raised pixel tiles round the face"""
+    bpy.context.scene.render.film_transparent = True
+    try: bpy.context.scene.cycles.film_transparent_glass = True
+    except Exception: pass
+    m = glass_grad('cglass', (0.0, 0.7, 1.0), (0.45, 0.05, 1.0), emit=0.25)
+    c = cyl(m, (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 16, 0.03)
+    core = cyl(principled('core', (0.1, 0.2, 0.9), 0.3, emit=(0.15, 0.3, 1.0), emit_str=0.35), (0, 0, 0), 0.7, 0.1, (math.radians(90), 0, 0), 16, 0)
+    cols = [principled('px%d' % k, col, 0.15, emit=col, emit_str=0.25, coat=1.0, coat_rough=0.02) for k, col in
+            enumerate(((0.0, 0.75, 1.0), (0.5, 0.08, 1.0), (0.75, 0.9, 1.0), (0.15, 0.3, 1.0)))]
+    px, st = [], 0.15
+    for i in range(-6, 7):
+        for k in range(-6, 7):
+            x, z = i * st, k * st; d = math.hypot(x, z)
+            if 0.6 < d < 0.83:
+                px.append(box('px', cols[(i * 3 + k * 5) % 4], (x, -0.15, z), (st * 0.82, 0.05, st * 0.82), bv=0.008))
+    return [c, core] + px, face([c], 0, 0.05, 1.05)
 
 def o_notes():
     g = plastic('note', (0.08, 0.6, 0.2)); dk = plastic('noteDk', (0.03, 0.42, 0.14))
