@@ -1297,7 +1297,7 @@ regLabel();if(!REGION)regOpen();
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
 /* Live Cat Bounce: a runner over randomly generated stock-market terrain (candles: bull runs, chop, pullbacks, crashes, pits, rugpulls).
    Collect coins, grab power-ups, survive the falls (fall damage). Every checkpoint the run and the music speed up. No cash out: keep going. */
-const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=250,CPD=2400;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the cat can stick to, start speed, checkpoint distance */
+const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=420,CPD=2400;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the cat can stick to, start speed, checkpoint distance */
 let W=0,H=0,dpr=1,Z=.4,R=null,raf=0,hold=false,best=0,paused=false;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const RMQ=matchMedia('(prefers-reduced-motion: reduce)'),FONT='Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif';const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
 let coached=false;try{coached=localStorage.getItem('cp-coach')==='1'}catch(e){}
@@ -1305,25 +1305,28 @@ const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#
 const PU={shield:['#3b8bff','S','Shield'],magnet:['#ff5ec8','M','Magnet'],x2:['#2dff9a','2x','2x coins']};
 const fmt=n=>Math.floor(n).toLocaleString('en');
 function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;Z=Math.max(.4,Math.min(.6,W/1500));cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-function fresh(){return{t:0,sx:0,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,hp:100,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,fx:[],msgT:0}}
+function fresh(){return{t:0,sx:0,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,hp:100,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,coinX:900,fx:[],msgT:0}}
 /* terrain: one height per candle (a smaller y is higher). Segments are picked at random; crashes, pits and rugpulls get likelier with each checkpoint. */
 function push(y){R.top.push(y);if(y!=null)R.gy=y}
 const CT=[['#cfd6e4','#8a93a6',30,1],['#ffd25a','#b8860b',32,3],['#4da3ff','#1f5fb8',36,10],['#b266ff','#6a2fb8',40,50]];/* silver, yellow, blue, purple: each tier is 4x rarer than the one before */
 const tierRoll=()=>Math.min(3,Math.floor(Math.log(1-Math.random())/Math.log(.25)));
 const TD=[[110,190],[140,220],[230,310],[300,380]];/* higher tiers float higher: blue and purple need the double jump */
-function coinAt(i,dy){const t=tierRoll();R.coins.push({x:i*CW+CW/2,y:R.gy-rnd(TD[t][0],TD[t][1]),t})}
+function lastGround(i){while(i>0&&R.top[i]==null)i--;return R.top[i]}
+/* coins: one every 520-900 px, never in clumps; higher tiers float higher */
+function placeCoins(){while(R.coinX<R.top.length*CW-200){const x=R.coinX;R.coinX+=rnd(520,900);const g=ground(x),t=tierRoll();R.coins.push({x,t,y:isFinite(g)?g-rnd(TD[t][0],TD[t][1]):lastGround(Math.floor(x/CW))-rnd(190,260)})}}
 function addSeg(){const k=R.top.length,lv=R.lvl;if(k<14){for(let i=k;i<14;i++)push(R.gy);return}
- const r=Math.random(),low=R.gy>R.base+1100,high=R.gy<R.base-1000;
- const q=Math.random(),c1=.34,c2=.56,c3=.73,c4=c3+.08+.008*lv,kind=low?'bull':high?'pull':k>40&&r>.965-.012*lv?'rug':q<c1?'bull':q<c2?'chop':q<c3?'pull':q<c4?'crash':'pit';
+ const r=Math.random(),low=R.gy>R.base+1300,high=R.gy<R.base-1100;
+ const q=Math.random(),c1=.26,c2=.46,c3=.6,c4=c3+.08+.008*lv,c5=c4+.14,kind=low?'bull':high?'pull':k>40&&r>.965-.012*lv?'rug':q<c1?'bull':q<c2?'chop':q<c3?'pull':q<c4?'crash':q<c5?'pit':'plat';
  let y=R.gy;
- if(kind==='bull'){const n=ri(8,16);for(let i=0;i<n;i++){y+=Math.random()<.75?-rnd(8,40):rnd(5,20);push(y);if(Math.random()<.08)coinAt(R.top.length-1)}}
- else if(kind==='chop'){const n=ri(6,12);for(let i=0;i<n;i++){y+=rnd(-30,30);push(y);if(Math.random()<.06)coinAt(R.top.length-1)}}
- else if(kind==='pull'){const n=ri(4,8);for(let i=0;i<n;i++){y+=rnd(10,35);push(y);if(Math.random()<.06)coinAt(R.top.length-1)}}
- else if(kind==='crash'){const n=ri(3,6);for(let i=0;i<n;i++){y+=rnd(70,130);push(y)}for(let i=0;i<3;i++)push(R.gy+rnd(-8,8))}
- else if(kind==='pit'){const w=Math.max(130,rnd(.35,.55)*R.speed*.87),n=Math.ceil(w/CW);for(let i=0;i<n;i++)push(null);const mid=R.top.length-Math.ceil(n/2);if(Math.random()<.6)R.coins.push({x:mid*CW+CW/2,y:R.gy-rnd(200,260),t:tierRoll()});push(y+rnd(-40,40));for(let i=0;i<5;i++)push(R.gy+rnd(-12,12))}
+ if(kind==='bull'){const n=ri(8,16);for(let i=0;i<n;i++){y+=Math.random()<.68?-rnd(15,70):rnd(10,45);push(y)}}
+ else if(kind==='chop'){const n=ri(6,12);for(let i=0;i<n;i++){y+=rnd(-65,65);push(y)}}
+ else if(kind==='pull'){const n=ri(4,8);for(let i=0;i<n;i++){y+=rnd(15,60);push(y)}}
+ else if(kind==='crash'){const n=ri(3,6);for(let i=0;i<n;i++){y+=rnd(90,170);push(y)}for(let i=0;i<3;i++)push(R.gy+rnd(-8,8))}
+ else if(kind==='pit'){const w=Math.max(130,rnd(.35,.55)*R.speed*.87),n=Math.ceil(w/CW);for(let i=0;i<n;i++)push(null);push(y+rnd(-40,40));for(let i=0;i<5;i++)push(R.gy+rnd(-12,12))}
+ else if(kind==='plat'){/* choppy platforms: short islands at different heights with gaps between them */const n=ri(4,7);for(let i=0;i<n;i++){y=Math.max(R.base-1000,Math.min(R.base+1200,y+rnd(-110,170)));const m=ri(3,4);for(let j=0;j<m;j++)push(y);const w=Math.max(120,rnd(.3,.45)*R.speed*.87),g=Math.ceil(w/CW);for(let j=0;j<g;j++)push(null)}push(y);push(y);push(y)}
  else{push(y+rnd(250,450));push(R.gy+rnd(250,450));for(let i=0;i<4;i++)push(R.gy+rnd(-8,8))}/* rugpull: the floor drops 500-900 px in two candles */
  if(R.top.length>30&&R.top.length-R.lastPu>22&&Math.random()<.35){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
-function ensure(){while(R.top.length*CW<R.sx+W/Z+900)addSeg()}
+function ensure(){while(R.top.length*CW<R.sx+W/Z+900)addSeg();placeCoins()}
 function ground(x){const T=R.top,i=Math.max(0,Math.floor(x/CW)),a=T[i],b=T[i+1];if(a==null)return Infinity;if(b==null)return a;return a+(b-a)*(x/CW-i)}
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
 function reset(){R=fresh();ensure();R.y=R.gy=ground(0);R.cam=R.y;R.refY=R.y}
@@ -1331,7 +1334,7 @@ function jump(){R.vy=-JV;R.air=true;R.buf=0;R.top0=R.y;R.sq=-.14;sfx('jump')}
 function tap(){if(!R||R.dead||paused||!document.getElementById('gameCard').hidden)return;R.buf=.15;if(!R.air){R.jumps=1;jump()}else if(R.jumps<2){R.jumps=2;jump();for(let i=0;i<8;i++)R.fx.push({x:R.sx+rnd(-30,30),y:R.y-10,vx:rnd(-120,120),vy:rnd(40,160),l:.35,c:'#fff'})}}
 function hit(d,why){if(d<=0)return;if(R.shield){R.shield=false;sfx('lvl');msg('Shield saved you!');R.msgT=1.4;return}R.hp-=d;R.hurt=.45;sfx('hurt');if(!RMQ.matches)R.shake=.25;if(R.hp<=0){R.hp=0;R.why=why;R.dead=true;die()}}
 function power(k,x,y){sfx('lvl');if(k==='shield')R.shield=true;else if(k==='magnet')R.magT=8;else R.x2T=10;msg(PU[k][2]+'!');R.msgT=1.4;for(let i=0;i<12;i++)R.fx.push({x:x+rnd(-30,30),y:y+rnd(-30,30),vx:rnd(-160,160),vy:rnd(-240,80),l:rnd(.4,.8),c:PU[k][0]})}
-function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.9,1+.09*R.lvl);R.speed+=(tgt-R.speed)*Math.min(1,dt*2);R.sx+=R.speed*dt;ensure();
+function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.7,1+.08*R.lvl);R.speed+=(tgt-R.speed)*Math.min(1,dt*2);R.sx+=R.speed*dt;ensure();
  const wx=R.sx,gy=ground(wx);R.buf=Math.max(0,R.buf-dt);R.hurt=Math.max(0,R.hurt-dt);R.sq*=Math.exp(-9*dt);if(R.shake>0)R.shake-=dt;
  if(!R.air){if(isFinite(gy)){if(gy-R.y<=DESC*dt){R.y=gy;R.coy=0;R.refY=gy}else{R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}else if((R.coy+=dt)>.09){R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}
  if(R.air){R.vy+=G*(hold&&R.vy<0?HOLDG:1)*dt;R.y+=R.vy*dt;R.top0=Math.min(R.top0,R.y);

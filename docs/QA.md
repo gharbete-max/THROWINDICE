@@ -534,3 +534,6 @@ Test: bot that jumps pits and soft-lands reaches 25-77 s at phone width (one run
 
 ## Game: cat back, double jump, coin tiers (2026-11-03)
 Animated cat sprite restored in the game only (no fire/fuel); slight squash and stretch on take-off and landing. Double jump: one extra tap in the air (a third tap is ignored; walking off a ledge leaves one air jump). Coins are random with exponential rarity: silver 1 (75%), yellow 3 (19%), blue 10 (4.7%), purple 50 (1.6%), each tier 4x rarer; higher tiers float higher (blue and purple need the double jump). Checked: tier frequencies over 200k rolls, double-jump velocity, no console errors, bot run unchanged.
+
+## Game: faster start, volatile terrain, platforms, spaced coins (2026-11-03)
+Start speed 250 to 420 (cap 1.7x, +8% per checkpoint). Candle moves roughly doubled (bull -15..-70 / +10..+45, chop +-65, pullback 15..60, crash 90..170). New "platform" segment: 4-7 islands of 3-4 candles at different heights (up 110 / down 170 max) with jumpable gaps. Coins are no longer rolled per candle: one coin every 520-900 px (checked min gap 620+ px), tiers unchanged. Bot check (naive reflex bot, 40 runs, desktop): median 10-16 s, so it is hard; I have not played it by hand and difficulty may need tuning.
