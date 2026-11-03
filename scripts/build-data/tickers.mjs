@@ -5,14 +5,14 @@
 export const TICKERS = {
   broad: ["VT", "VOO", "SPY", "QQQ", "QQQM", "VGT"],
   bonds: ["BND", "AGG"],
-  commodities: ["GLD", "IAU", "SLV", "USO", "UNG", "CPER", "DBA"],
+  commodities: ["GLD", "IAU", "SLV", "DBA"],
   emerging: ["VWO", "IEMG"],
-  countries: ["EWG", "EWQ", "EWU", "EWD", "VGK", "EWJ", "AAXJ", "MCHI", "INDA", "EWA"],
+  countries: ["EWG", "EWQ", "EWU", "EWD", "VGK", "EWJ", "MCHI", "INDA", "EWA"],
   sectors: ["XLK", "XLF", "XLE", "XLV", "XLI", "XLP", "XLY", "XLB", "XLRE"],
   themes: [
-    "ARTY", "IGPT", "CHAT", "QTUM", "BOTZ", "ROBO", "IRBO", "ARKX", "UFO", "CIBR", "HACK", "BUG",
-    "SMH", "SOXX", "KBE", "FINX", "IPAY", "BLOK", "BKCH", "KIE", "IAI", "URA", "NLR", "XOP", "TAN",
-    "FAN", "PHO", "FIW", "GRID", "BATT", "GDX", "GDXJ", "COPX", "PICK", "LIT", "REMX", "SLX",
+    "ARTY", "IGPT", "CHAT", "QTUM", "BOTZ", "IRBO", "CIBR", "HACK", "BUG",
+    "SMH", "SOXX", "KBE", "FINX", "IPAY", "BKCH", "KIE", "IAI", "URA", "NLR", "XOP", "TAN",
+    "FAN", "PHO", "FIW", "GRID", "BATT", "GDX", "GDXJ", "COPX", "PICK", "REMX", "SLX",
     "XBI", "IBB", "PPH", "IHI", "ITA", "EUAD", "VIS", "XRT", "VNQ",
   ],
 };
