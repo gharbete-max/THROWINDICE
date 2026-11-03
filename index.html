@@ -730,7 +730,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div class="gameHud"><b id="gScore" aria-label="Score"><canvas id="gScoreCv" height="28"></canvas></b><div class="gLives" id="gLives" aria-label="Lives"></div></div>
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
 <div class="gameCard slim" id="gamePause" role="dialog" aria-label="Paused" hidden><h2>PAUSED</h2><div class="actions"><button class="btn" type="button" id="gpResume">Resume</button></div><div class="actions"><button class="btn secondary" type="button" id="gpMusic">Music: on</button><button class="btn secondary" type="button" id="gpSfx">Sounds: on</button></div><div class="actions"><button class="btn secondary" type="button" id="gpQuit">Exit game</button></div></div>
-<div class="gameCard" id="gameCard"><h2 id="gcTitle" class="gname">LIVE CAT BOUNCE</h2><p id="gcText"></p><ul><li>Tap to jump. Tap again in the air to jump twice.</li><li>Collect coins. Big falls cost a life.</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
+<div class="gameCard" id="gameCard"><h2 id="gcTitle" class="gname">LIVE CAT BOUNCE</h2><p id="gcText"></p><ul><li>Tap to jump. Tap again in the air to jump twice.</li><li>Don't get left behind. Big falls cost a life.</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>You're viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">
@@ -1315,7 +1315,7 @@ const BGS=[['#0b0820','#1d1250'],['#04161e','#0b4a50'],['#1c0606','#5a1c0c'],['#
 const PU={shield:['#3b8bff','S','Shield'],magnet:['#ff5ec8','M','Magnet'],x2:['#2dff9a','2x','2x coins']};
 const fmt=n=>Math.floor(n).toLocaleString('en');
 function size(){dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;Z=Math.max(.4,Math.min(.6,W/1500));cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
-function fresh(){return{t:0,sx:0,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,lives:3,pits:0,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,coinX:900,calm:0,fx:[],msgT:0}}
+function fresh(){return{t:0,sx:0,cx:0,y:0,gy:0,base:0,vy:0,air:false,coy:0,buf:0,top0:0,refY:0,lives:3,pits:0,hurt:0,sq:0,jumps:0,dead:false,why:'',score:0,shield:false,magT:0,x2T:0,lvl:0,nextCp:CPD,speed:SP0,cam:0,top:[],coins:[],pups:[],lastPu:0,coinX:900,calm:0,fx:[],msgT:0}}
 /* terrain: one height per candle (a smaller y is higher). Segments are picked at random; crashes, pits and rugpulls get likelier with each checkpoint. */
 function push(y){if(y!=null&&R.gy-y>UP)y=R.gy-y>UP?R.gy-UP:y;/* no wall taller than a double jump can clear */R.top.push(y);if(y!=null)R.gy=y}
 const CT=[['#cfd6e4','#8a93a6',30,1],['#ffd25a','#b8860b',32,3],['#4da3ff','#1f5fb8',36,10],['#b266ff','#6a2fb8',40,50]];/* silver, yellow, blue, purple: each tier is 4x rarer than the one before */
@@ -1341,7 +1341,7 @@ function addSeg(){const k=R.top.length,L0=Math.floor(k*CW/CPD),lv=Math.min(L0*1.
  else if(kind==='drop'){push(y+rnd(420,640+40*lv));for(let i=0;i<5;i++)push(R.gy+rnd(-8,8))}
  else{push(y+rnd(650,1000));for(let i=0;i<4;i++)push(R.gy+rnd(-8,8))}/* rugpull: one huge gap down */
  if(R.top.length>30&&R.top.length-R.lastPu>22&&Math.random()<.35){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
-function ensure(){while(R.top.length*CW<R.sx+W/Z+900)addSeg();placeCoins()}
+function ensure(){while(R.top.length*CW<R.cx+W/Z+900)addSeg();placeCoins()}
 function ground(x){const T=R.top,i=Math.max(0,Math.floor(x/CW)),a=T[i],b=T[i+1];if(a==null)return Infinity;if(b==null)return a;return Math.abs(b-a)>VG?a:a+(b-a)*(x/CW-i)}/* a step bigger than VG is a price gap: flat, then straight up or down at the candle edge */
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
 function reset(){R=fresh();ensure();R.y=ground(0);R.cam=R.y;R.refY=R.y}
@@ -1351,7 +1351,7 @@ function loseLife(why){if(R.shield){R.shield=false;sfx('lvl');msg('Shield saved 
 function respawn(){let i=Math.floor(R.sx/CW);while(R.top[i]==null||i*CW<R.sx)i++;R.sx=i*CW+60;R.y=ground(R.sx);R.vy=0;R.air=false;R.jumps=0}
 function paintLives(){const e=document.getElementById('gLives'),h='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 018-2.8A4.5 4.5 0 0120 10c0 5.8-8 11-8 11z" fill="#ff4d6d" stroke="#000" stroke-width="1.5"/></svg>';e.innerHTML=h.repeat(Math.max(0,R.lives));e.setAttribute('aria-label',R.lives+' lives')}
 function power(k,x,y){sfx('lvl');if(k==='shield')R.shield=true;else if(k==='magnet')R.magT=8;else R.x2T=10;msg(PU[k][2]+'!');R.msgT=1.4;for(let i=0;i<12;i++)R.fx.push({x:x+rnd(-30,30),y:y+rnd(-30,30),vx:rnd(-160,160),vy:rnd(-240,80),l:rnd(.4,.8),c:PU[k][0]})}
-function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.8,1+.07*R.lvl);R.speed+=(tgt-R.speed)*Math.min(1,dt*2);{const nx=R.sx+R.speed*dt,gn=ground(nx);if(gn<ground(R.sx)-VG&&R.y>gn+30){R.speed*=.5;R.wall=true}else{R.sx=nx;R.wall=false}}ensure();/* a gap up (a vertical green line) stops the cat unless it is above the top edge: jump it */
+function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.8,1+.07*R.lvl);R.speed+=(tgt-R.speed)*Math.min(1,dt*2);R.cx+=R.speed*dt;/* the screen always scrolls right */{const nx=R.sx+R.speed*dt*(R.sx<R.cx-2?1.3:1),gn=ground(nx);if(gn<ground(R.sx)-VG&&R.y>gn+30){R.wall=true}else{R.sx=nx;R.wall=false}}ensure();/* a gap up (a vertical green line) stops the cat unless it is above the top edge: jump it */
  const wx=R.sx,gy=ground(wx);R.buf=Math.max(0,R.buf-dt);R.hurt=Math.max(0,R.hurt-dt);R.sq*=Math.exp(-9*dt);if(R.shake>0)R.shake-=dt;
  if(!R.air){if(isFinite(gy)){if(gy-R.y<=DESC*dt){R.y=gy;R.coy=0;R.refY=gy}else{R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}else if((R.coy+=dt)>.09){R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}
  if(R.air){R.vy+=G*(hold&&R.vy<0?HOLDG:1)*dt;R.y+=R.vy*dt;R.top0=Math.min(R.top0,R.y);
@@ -1359,6 +1359,7 @@ function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.8,1+.07*R.lv
   if(cont&&R.vy>=0&&R.y>=gy){const dist=R.y-R.top0;R.y=gy;R.vy=0;R.air=false;R.coy=0;R.refY=gy;R.sq=Math.min(.2,.04+dist/3000);if(dist>=BIG&&!(R.buf>0&&dist<SOFT)){loseLife('You fell too far.');if(R.dead)return}else if(dist>120)sfx('land');if(R.buf>0){R.jumps=1;jump()}}
   else if(R.y>R.refY+4000){respawn()}}
  if(R.sx>=R.nextCp){R.lvl++;R.nextCp+=CPD;R.lives=Math.min(3,R.lives+1);paintLives();sfx('lvl');msg('Checkpoint '+R.lvl);R.msgT=2;musicRate()}
+ if(R.sx+90<R.cx-W*.22/Z){R.why='You got left behind.';R.lives=0;R.dead=true;paintLives();die();return}/* the whole cat is off the left edge of the screen */
  if(R.magT>0)R.magT-=dt;if(R.x2T>0)R.x2T-=dt;
  const cy=R.y-60,cxw=R.sx;
  R.coins.forEach(c=>{if(c.got)return;if(R.magT>0){const dx=cxw-c.x,dy=cy-c.y,d=Math.hypot(dx,dy);if(d<420){const m=Math.min(d,900*dt);c.x+=dx/d*m;c.y+=dy/d*m}}if(Math.abs(c.x-cxw)<70&&Math.abs(c.y-cy)<85){c.got=1;R.score+=CT[c.t][3]*(R.x2T>0?2:1);sfx('coin');for(let i=0;i<6;i++)R.fx.push({x:c.x,y:c.y,vx:rnd(-200,200),vy:rnd(-260,0),l:.4,c:CT[c.t][0]})}});
@@ -1369,10 +1370,10 @@ function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.8,1+.07*R.lv
  R.cam+=(R.y-R.cam)*Math.min(1,dt*(R.vy>500?9:4));
  paintScore(R.score)}
 function die(){sfx('ko');msg('');best=Math.max(best,R.score);try{localStorage.setItem('cp-best',best)}catch(e){}R.quit=true;{const e=document.getElementById('gcEnd');e.textContent='Quit';e.hidden=false}const c=document.getElementById('gameCard');c.classList.add('slim');setGT('Game over');document.getElementById('gcText').innerHTML=R.why+'<br><i class="coin"></i>'+fmt(R.score)+' · checkpoint '+R.lvl;document.getElementById('gcBest').innerHTML='Best <i class="coin"></i>'+fmt(best);document.getElementById('gcGo').textContent='Play again';setTimeout(()=>{if(R&&R.dead){musicOn('menu');c.hidden=false}},600)}
-function draw(){const g=cx,s=R,ax=W*.22,ay=H*.6,bg=BGS[Math.floor(s.sx/9000)%BGS.length];g.clearRect(0,0,W,H);const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,bg[0]);gr.addColorStop(1,bg[1]);g.fillStyle=gr;g.fillRect(0,0,W,H);
- g.fillStyle='#ffffff18';for(let i=0;i<28;i++){g.fillRect(((i*173.3-s.sx*.05)%W+W)%W,(i*97.7)%(H*.7),2,2)}
- g.save();if(s.shake>0)g.translate(rnd(-4,4),rnd(-4,4));g.translate(ax,ay);g.scale(Z,Z);g.translate(-s.sx,-s.cam);
- const x0=s.sx-ax/Z-60,x1=s.sx+(W-ax)/Z+60,yB=s.cam+(H-ay)/Z+60,T=s.top;
+function draw(){const g=cx,s=R,ax=W*.22,ay=H*.6,bg=BGS[Math.floor(s.cx/9000)%BGS.length];g.clearRect(0,0,W,H);const gr=g.createLinearGradient(0,0,0,H);gr.addColorStop(0,bg[0]);gr.addColorStop(1,bg[1]);g.fillStyle=gr;g.fillRect(0,0,W,H);
+ g.fillStyle='#ffffff18';for(let i=0;i<28;i++){g.fillRect(((i*173.3-s.cx*.05)%W+W)%W,(i*97.7)%(H*.7),2,2)}
+ g.save();if(s.shake>0)g.translate(rnd(-4,4),rnd(-4,4));g.translate(ax,ay);g.scale(Z,Z);g.translate(-s.cx,-s.cam);
+ const x0=s.cx-ax/Z-60,x1=s.cx+(W-ax)/Z+60,yB=s.cam+(H-ay)/Z+60,T=s.top;
  for(let i=Math.max(0,Math.floor(x0/CW));i<=Math.ceil(x1/CW);i++){const t=T[i];if(t==null)continue;let pi=i-1;while(pi>0&&T[pi]==null&&i-pi<9)pi--;const p=T[pi],up=p==null||t<=p,bh=Math.max(16,Math.min(150,Math.abs(t-(p==null?t:p))+30)),x=i*CW;
   g.fillStyle='#1b1445';g.fillRect(x,t,CW+1,yB-t);g.fillStyle=up?'#16c784':'#ea3943';g.fillRect(x,t-2,CW-5,bh);g.fillRect(x+CW/2-4,t-18,3,18);if(p!=null&&Math.abs(t-p)>VG){g.fillStyle=t>p?'#ea3943':'#16c784';g.fillRect(x-4,Math.min(t,p),8,Math.abs(t-p))}}/* a price gap: a red line straight down (or green straight up) */
  /* the price line carries on through a gap as a dashed line, so platforms read as one chart */
@@ -1385,6 +1386,7 @@ function draw(){const g=cx,s=R,ax=W*.22,ay=H*.6,bg=BGS[Math.floor(s.sx/9000)%BGS
  if(s.magT>0){g.strokeStyle='rgba(255,94,200,.8)';g.lineWidth=6;g.setLineDash([16,16]);g.beginPath();g.arc(s.sx,s.y-60,160,0,6.3);g.stroke();g.setLineDash([])}
  if(!s.dead)player(s.sx,s.y,s);
  s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*2));g.fillStyle=f.c;g.beginPath();g.arc(f.x,f.y,8,0,6.3);g.fill()});g.globalAlpha=1;g.restore();
+ {const sxp=ax+(s.sx-s.cx)*Z;if(sxp<W*.12){const gr2=g.createLinearGradient(0,0,W*.25,0);gr2.addColorStop(0,'rgba(255,40,60,'+(.6*(1-Math.max(0,sxp)/(W*.12))).toFixed(2)+')');gr2.addColorStop(1,'rgba(255,40,60,0)');g.fillStyle=gr2;g.fillRect(0,0,W*.25,H)}}
  if(s.hurt>0){g.fillStyle='rgba(255,40,60,'+(s.hurt*.5).toFixed(2)+')';g.fillRect(0,0,W,H)}
  const ts=[];if(s.x2T>0)ts.push('2x '+Math.ceil(s.x2T)+'s');if(s.magT>0)ts.push('Magnet '+Math.ceil(s.magT)+'s');if(s.shield)ts.push('Shield');if(ts.length){g.fillStyle='#fff';g.font='700 14px '+FONT;g.textAlign='center';g.textBaseline='top';g.fillText(ts.join('  ·  '),W/2,76)}}
 const PIX={'0':'01110 10001 10011 10101 11001 10001 01110','1':'00100 01100 00100 00100 00100 00100 01110','2':'01110 10001 00001 00010 00100 01000 11111','3':'11110 00001 00001 01110 00001 00001 11110','4':'00010 00110 01010 10010 11111 00010 00010','5':'11111 10000 11110 00001 00001 10001 01110','6':'00110 01000 10000 11110 10001 10001 01110','7':'11111 00001 00010 00100 01000 01000 01000','8':'01110 10001 10001 01110 10001 10001 01110','9':'01110 10001 10001 01111 00001 00010 01100','$':'00100 01111 10100 01110 00101 11110 00100',',':'00000 00000 00000 00000 00110 00100 01000','.':'00000 00000 00000 00000 00000 00110 00110',M:'10001 11011 10101 10101 10001 10001 10001',B:'11110 10001 10001 11110 10001 10001 11110',C:'01110 10001 10000 10000 10000 10001 01110',A:'01110 10001 10001 11111 10001 10001 10001',S:'01111 10000 10000 01110 00001 00001 11110',H:'10001 10001 10001 11111 10001 10001 10001',O:'01110 10001 10001 10001 10001 10001 01110',U:'10001 10001 10001 10001 10001 10001 01110',T:'11111 00100 00100 00100 00100 00100 00100','!':'00100 00100 00100 00100 00100 00000 00100'};
