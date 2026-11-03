@@ -568,7 +568,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <path d="M61 2L94 35L61 68L28 35Z" fill="none" stroke="#25b9ff" stroke-linejoin="miter" stroke-width="4"></path>
 <circle cx="51" cy="25" fill="#25b9ff" r="4.5"></circle><circle cx="69" cy="43" fill="#25b9ff" r="4.5"></circle>
 </svg></span><span>THROWINDICE</span><span class="tag">CONCEPT</span></div>
-<div class="topright"><span class="pill hideSmall">SOURCED SNAPSHOTS · NOT LIVE QUOTES</span><button class="btn small secondary" onclick="showGuide()">Quick tour</button><button class="regBtn" id="regBtn" onclick="regOpen()" type="button" aria-label="Choose your region"><span id="regEmoji">📍</span><span class="rl" id="regLbl">Where are you?</span></button><button aria-label="Switch light/dark theme" class="themeBtn" onclick="toggleTheme()" title="Light / dark" type="button">☾</button><button aria-label="Open profile" class="avatar" onclick="openProfile()" title="Profile" type="button">★</button></div>
+<div class="topright"><button class="regBtn" id="regBtn" onclick="regOpen()" type="button" aria-label="Choose your region"><span id="regEmoji">📍</span><span class="rl" id="regLbl">Where are you?</span></button><button aria-label="Switch light/dark theme" class="themeBtn" onclick="toggleTheme()" title="Light / dark" type="button">☾</button><button aria-label="Open profile" class="avatar" onclick="openProfile()" title="Profile" type="button">★</button></div>
 </header>
 <main>
 <section class="page active" id="dashboard">
@@ -602,12 +602,12 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 </section>
 <section class="page" id="commodities"><div class="pageTitle"><div class="eyebrow">REAL-WORLD ASSETS</div><h1>Commodities</h1><p>Gold, oil and more. Each card names a fund that follows it. A fund is not the same as the thing itself.</p></div><div class="exploreRows" id="commodityCards"></div><p class="disclaimer">Gold and silver funds hold the metal. The oil, gas, copper and farm funds hold futures contracts, so they can differ from the spot price.</p></section>
 <section class="page" id="etfs">
-<div class="pageTitle"><div class="eyebrow">Understand · ETFs</div><h1>ETF Explorer</h1><p>A simple list of popular funds. See what is inside, ask the four big questions, then read more on the linked sites.</p></div>
+<div class="pageTitle"><div class="eyebrow">Understand · ETFs</div><h1>ETF Explorer</h1></div>
 <div class="grid">
 
-<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div class="dogMascot" aria-hidden="true"><div class="mascot" data-m="pug"><i class="mBase" style="background:url(assets/mascots/pug-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div></div><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
+<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>ETF explorer</h2><p>Pick a pile. Its funds drop in as bouncy bubbles. Pop one to see what is inside and where to read more. We list and explain funds. We do not track how they perform.</p></div><span class="tag">Reviewed quarterly · Oct 2026</span></div><div class="catBanner"><div class="dogMascot" aria-hidden="true"></div><div><b id="themeTitle">Uh... hi. Pick a pile?</b><p id="themeNote">I am a dog, not a financial advisor. Pop a bubble to see a fund.</p></div></div>
 <div id="pileGrid"></div>
-<p class="disclaimer">Fees: 10 funds show the issuer-reported expense ratio (26 Oct 2026). Other US-listed funds show the fee from Yahoo Finance fund profiles (29 Oct 2026). Fees for Europe-listed funds are total expense ratios from justETF (29 Oct 2026). Market price, share class, tax treatment and trading currency differ, so these funds are not direct substitutes. Not financial advice.</p>
+
 </section>
 <span id="etfSelAnchor" hidden></span><section class="card span5" id="etfSelected" hidden><div class="selHead"><div class="selOrb" id="selOrb" aria-hidden="true"></div><div><span class="selTag">✓ SELECTED FUND</span><h2 id="etfName" style="margin-top:8px">VT · Vanguard Total World Stock ETF</h2><p id="etfPlain" style="font-size:17px;color:var(--text)"></p><div class="regRow" id="etfRegion"></div></div></div><p style="margin-top:10px;color:var(--text)"><b>What is inside:</b> <span id="etfInside"></span></p><p class="eyebrow" style="margin-top:16px">Read more on</p><div class="actions" id="etfLinks" style="margin-top:8px"></div><div class="lookFor"><b>🔍 On those sites, check:</b><ul><li><span>💸</span><p><strong>Fee</strong> (called TER). Lower is better when funds follow the same thing.</p></li><li><span>🧺</span><p><strong>Top 10 holdings.</strong> If they add up to more than about 40%, a few companies decide the result.</p></li><li><span>🏷️</span><p><strong>P/E.</strong> Euros you pay for €1 of yearly profit. Higher means pricier.</p></li><li><span>🎯</span><p><strong>Index.</strong> What it follows. Same index means almost the same fund.</p></li><li><span>💧</span><p><strong>Size and trading.</strong> Bigger, busier funds are easier to buy and sell.</p></li></ul></div><details id="etfMore" style="margin-top:12px"><summary class="textlink" style="cursor:pointer">More about this fund</summary><p id="etfDescription" style="margin-top:8px"></p></details>
 <div class="fgrid" id="fund4" style="margin-top:18px"></div><p class="disclaimer" id="etfSource"></p><button class="btn" id="etfCalcBtn" onclick="openPage('fees')" style="width:100%;margin-top:18px">Try the fee calculator →</button><div class="actions"><button class="btn secondary" id="etfChartBtn" type="button" onclick="openChart(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">📈 Show chart</button><button class="btn secondary" id="etfSaveBtn" onclick="saveCurrentETF()" type="button">☆ Save</button><button class="btn" id="etfBuyBtn" type="button" onclick="openBuy(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">Where to buy</button></div><p class="disclaimer">Brokers shown are placeholders, not partners yet. Third-party sites are not run by THROWINDICE.</p></section>
@@ -616,7 +616,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 </section>
 <section class="page" id="basics">
 <div class="pageTitle"><div class="eyebrow">BASICS</div><h1>Basics</h1><p>Short and simple.</p></div>
-<div class="card"><div class="sectionHead basicsHead"><div><h2>Investing in plain words</h2></div><div class="basicsDancer mascot" data-m="dancer" data-moves="none" aria-hidden="true"><i class="mBase" style="background:url(assets/mascots/dancer-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div></div><ul class="noteList story">
+<div class="card"><div class="sectionHead basicsHead"><div><h2>Investing in plain words</h2></div></div><ul class="noteList story">
 <li><span>🏦</span><p><b>A fund is like a savings account you do not touch.</b> You put money in, you leave it for a long time, and you do not need to read the news every day.</p></li>
 <li><span>🧺</span><p><b>ETF means exchange traded fund.</b> It is a basket of many companies that you buy and sell like one share. If one company falls, the others help carry it.</p></li>
 <li><span>😌</span><p><b>Passive means the fund just follows a list.</b> It does not pay experts to pick winners, so it costs less and asks less of you. For decades, studies such as the S&amp;P SPIVA reports have found that most actively managed funds trail their index over long periods. <a href="https://www.spglobal.com/spdji/en/research-insights/spiva/" target="_blank" rel="noopener noreferrer">SPIVA ↗</a></p></li>
@@ -624,15 +624,6 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <li><span>📈</span><div class="vsBox" data-vs></div></li>
 <li><span>🌍</span><p><b>Pick your flavour.</b> You can choose other countries or sectors you like. Do not overthink it: a global fund works great too if you do not want to spend time on it.</p></li>
 <li><span>⚠️</span><p><b>Be careful with hype.</b> People may push single stocks, crypto or the latest trend. One company can fall a lot, even to zero. A fund spreads the risk over many companies, so one bad one hurts less.</p></li></ul>
-<p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
-<h2 class="learnHead">The 4 Fs</h2>
-<div class="card"><div class="flatGrid">
-<div class="fbox"><span class="letter">💸 FAIR PRICE</span><b>Is the price fair?</b><small>P/E = the price for €1 of yearly profit. Compare it with similar funds.</small></div>
-<div class="fbox"><span class="letter">🧾 FEES</span><b>What does it cost?</b><small>A small yearly cost that adds up. Lower is better for the same thing.</small></div>
-<div class="fbox"><span class="letter">🎢 FLUCTUATION</span><b>How much does it jump?</b><small>Many things inside means smaller jumps than one thing alone.</small></div>
-<div class="fbox"><span class="letter">🔄 FLOW</span><b>Easy to buy and sell?</b><small>More trading means a fair price and a small gap between buy and sell.</small></div>
-</div><div class="actions" style="margin-top:14px"><button class="btn" type="button" onclick="scrollToSection('fees')">🧮 Try the fee calculator</button></div>
-
 <p class="disclaimer">Investing can fall as well as grow. Learn first, start small. Educational only, not financial advice.</p></div>
 </section>
 <section class="page" id="fees">
@@ -643,27 +634,16 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div class="control"><label for="returnRate">Growth per year (a guess) <output id="returnOut">7.0%</output></label><input id="returnRate" max="12" min="0" step=".5" type="range" value="7"/></div>
 <div class="control"><label for="fee">Fund cost per year <output id="feeOut">0.14%</output></label><input id="fee" max="2" min="0" step=".01" type="range" value=".14"/></div>
 <div class="control"><label for="years">How many years <output id="yearsOut">20 years</output></label><input id="years" max="40" min="1" step="1" type="range" value="20"/></div>
-<p class="disclaimer"><b>Starting values = a typical fund.</b> Growth 7% a year is a guess: over the long run, US and world stocks have grown roughly 7–10% a year before inflation (about 6–7% after). The S&amp;P 500 is near 10% since 1928 (<a href="https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/prime-numbers/markets-will-be-markets-an-analysis-of-long-term-returns-from-the-s-and-p-500" target="_blank" rel="noopener noreferrer">McKinsey</a>); world stocks are near 8% since 1970, though sources differ. Cost 0.14% a year is the average for index stock ETFs (<a href="https://www.ici.org/news-release/mutual-fund-and-etf-fees-remained-near-historic-lows-in-2025" target="_blank" rel="noopener noreferrer">ICI</a>). Real years swing a lot and the past does not predict the future. It assumes the same growth and cost every year and leaves out taxes, trading costs and inflation. Pick a fund in the ETF explorer to load its real fee.</p>
 </div><div>
 <div class="eyebrow">What it could look like</div><div class="result"><p>Without the fund cost</p><div class="bigResult" id="noFee">€32,071</div></div>
 <div class="result"><p>With the fund cost</p><div class="bigResult" id="withFee">€30,861</div></div>
 <div class="result"><p>The difference</p><div class="bigResult" id="lostValue">€1,210</div><p id="lostPct">3.8% of the no-fee value</p></div>
 <button class="btn secondary" onclick="resetCalc()">Back to typical fund</button>
 </div></div>
-<div class="guide"><span style="font-size:21px">ⓘ</span><div><h3>It is not a bill</h3><p>The difference includes the growth that money could have made. The fund does not send you an invoice.</p></div></div></div>
-<div class="card" id="inflCalc" style="margin-top:16px"><div class="sectionHead"><div><h2>🎈 Inflation eats money</h2><p>Prices creep up, so the same money buys less later. It uses the money and years you set above.</p></div></div><div class="calcgrid"><div>
-<div class="control"><label for="infl">Prices rise per year (an example) <output id="inflOut">2.0%</output></label><input id="infl" max="10" min="0" step=".5" type="range" value="2"/></div>
-<p class="disclaimer"><b>2% is an example.</b> Many central banks aim for about 2% a year. Real inflation changes from year to year and from country to country.</p>
-</div><div>
-<div class="result"><p>Cash left alone, in today’s prices</p><div class="bigResult" id="inflCash">€13,000</div><p id="inflCashPct">0% less buying power</p></div>
-<div class="result"><p>Your fund after fees, in today’s prices</p><div class="bigResult" id="inflFund">€20,000</div></div>
-<div class="result"><p>Real growth per year</p><div class="bigResult" id="inflReal">4.8%</div><p>Growth after fees and inflation</p></div>
-</div></div>
-<div class="guide"><span style="font-size:21px">🎈</span><div><h3>Not a bill, just a price tag</h3><p>Your cash does not shrink. Things get more expensive. Money that grows slower than prices buys less over time. That is one reason people invest.</p></div></div></div>
 </section>
 <section class="page tp tcur" id="parallel">
 <div class="pageTitle"><div class="eyebrow">TOKEN WORLD</div><h1>Tokens, in plain words</h1><p>Real things becoming digital tokens. Pick a planet to start.</p></div>
-<section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><div class="alienRow"><div class="alienCat mascot" data-m="alien" aria-hidden="true"><i class="mBase" style="background:url(assets/mascots/alien-still.webp) center/contain no-repeat"></i><i class="mFx"></i></div><h2>Pick a planet</h2></div><p data-dg="1">Tap a planet. Pop a bubble.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
+<section class="card tokenHome" id="tokenHome"><div class="sectionHead"><div><div class="alienRow"><h2>Pick a planet</h2></div><p data-dg="1">Tap a planet. Pop a bubble.</p></div><span class="tag">Reviewed Q4 2026</span></div><div id="tokenPileGrid"></div><div id="tokenFundHost"></div></section>
 <div class="card stageNote"><div class="eyebrow">🌱 EARLY DAYS</div><ul class="noteList"><li><span>🧪</span><p>Tokenization is young. Few products exist, and many are only for professional investors.</p></li><li><span>📈</span><p>For most people, crypto and blockchain ETFs are the easiest way in today. A normal broker account is enough.</p></li><li><span>🧭</span><p>Use the menu below: Basics and Wallets to learn, Explore to see what exists.</p></li></ul></div>
 <p class="disclaimer">The issuer and network examples above are real projects. Market metrics are dated snapshots with source links; case studies marked fictional are teaching examples. This is an educational map of roles and mechanisms, not a broker recommendation. Brokers are placeholders; nothing is traded on this site.</p>
 
@@ -763,7 +743,6 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 </div></nav>
 <div id="vig" aria-hidden="true"></div>
 <div class="invPop" id="invPop" role="group" aria-label="Investing" hidden></div>
-<div aria-labelledby="guideTitle" aria-modal="true" class="modalShade" id="guideModal" role="dialog"><div class="modal"><div class="eyebrow" id="guideStep">QUICK TOUR · 1 OF 3</div><h2 id="guideTitle" style="margin-top:8px">Start with a question</h2><div class="guideDots" id="guideDots"><i class="on"></i><i></i><i></i></div><p id="guideText">Choose a region, a sector or a commodity. There is no single correct starting point — follow your curiosity.</p><div class="modalFoot"><button class="btn secondary" onclick="closeGuide()">Skip tour</button><button class="btn" id="nextGuide" onclick="nextGuide()">Next →</button></div></div></div>
 <div aria-hidden="true" class="portalOverlay" id="portalOverlay"><video aria-hidden="true" class="portalVideo" muted playsinline preload="auto" src="assets/token-portal.mp4"></video><div aria-hidden="true" class="portalVisual"><svg role="presentation" viewbox="0 0 500 500"><path class="spiralPath" d="M250 250 C250 190 330 190 330 250 C330 330 220 350 170 285 C100 190 190 95 285 115 C405 140 430 285 355 375 C270 475 100 420 65 290 C20 120 170 5 330 40" stroke="#7da88c"></path><path class="spiralPath" d="M250 250 C290 210 325 255 290 285 C245 325 180 280 195 225 C215 155 310 150 355 210 C420 295 355 395 270 400" stroke="#86acd2"></path><path class="spiralPath" d="M250 250 L305 195 L360 250 L305 305 L250 250 L195 195 L140 250 L195 305 L250 250" stroke="#7da88c"></path></svg></div></div>
 <div aria-labelledby="profileTitle" aria-modal="true" class="modalShade" id="profileModal" role="dialog"><div class="modal wide"><div class="eyebrow">YOUR PROFILE</div><h2 id="profileTitle" style="margin-top:8px">Saved</h2><p>Funds and assets you starred. Saved on this device only.</p><div id="savedList"></div><div class="modalFoot"><button class="btn small" onclick="copyList()" type="button">Copy my list</button><button class="btn secondary small" id="profileClose" onclick="closeProfile()" type="button">Close</button></div><p class="disclaimer">Brokers are placeholders. Educational only, not financial advice.</p></div></div>
 <div aria-labelledby="buyTitle" aria-modal="true" class="modalShade" id="buyModal" role="dialog"><div class="modal wide"><div class="eyebrow">PICK A BROKER</div><h2 id="buyTitle" style="margin-top:8px">Where to buy</h2><p>Tap a broker to open its site.</p><div class="actions" id="buyList" style="flex-direction:column;align-items:stretch"></div><div class="modalFoot" style="margin-top:18px"><button class="btn secondary small" onclick="closeBuy()" type="button">Close</button></div><p class="disclaimer">These brokers are placeholders, not partners. No affiliate links yet. Educational only, not financial advice.</p></div></div>
@@ -804,27 +783,7 @@ document.querySelectorAll('[data-vs]').forEach(e=>{const k=.8,wv=k*100,ws=Math.m
 document.body.dataset.view='dashboard';document.body.dataset.tview='home';document.getElementById('dashboard').classList.add('cur');
 function navGame(b){invClose();if(document.body.classList.contains('token-world'))coinpullOpen();else toast('🎮 A game is coming soon!')}
 (()=>{const b=document.querySelector('.tokenCoin');if(!b)return;const imgs=[...b.querySelectorAll('img[data-spin]')];imgs.forEach(i=>{i._still=i.getAttribute('src');new Image().src=i.dataset.spin});b.addEventListener('mouseenter',()=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;imgs.forEach(i=>i.src=i.dataset.spin)});b.addEventListener('mouseleave',()=>imgs.forEach(i=>i.src=i._still))})();
-(()=>{/* Mascot sprite player: default dance loop; hold = speed up; tap = special move (spin, flip, pose in turn),
- cross-faded over the dance, which keeps running underneath. Sheets are 8 frames wide, 24 fps. */
- const C=8,FPS=24,SP=24,M={pug:66,alien:66,dancer:420},MOVES=['spin','flip','pose'],u=(m,k)=>'assets/mascots/'+m+'-'+k+'.webp';
- if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;  // the still frame in the markup stays
- const frame=(el,m,k,n,f)=>{const r=Math.ceil(n/C),i=Math.floor(f)%n;el.style.background='url('+u(m,k)+') '+((i%C)/(C-1)*100)+'% '+(r>1?Math.floor(i/C)/(r-1)*100:0)+'% / '+C*100+'% '+r*100+'% no-repeat'};
- let last=performance.now();
- const tick=now=>{const dt=Math.min(.1,(now-last)/1000);last=now;
-  document.querySelectorAll('.mascot').forEach(el=>{const m=el.dataset.m,n=M[m];if(!n)return;const s=el._s||(el._s={t:0,v:1,k:0,fx:null});
-   s.v+=((s.hold?2.2:1)-s.v)*Math.min(1,dt*6);s.t=(s.t+dt*FPS*s.v)%n;frame(el.querySelector('.mBase'),m,'dance',n,s.t);
-   if(s.fx){s.fx.f+=dt*FPS*Math.max(1,s.v*.8);if(s.fx.f>=SP-1){s.fx=null;el.classList.remove('fx')}else frame(el.querySelector('.mFx'),m,s.fx.k,SP,s.fx.f)}});
-  requestAnimationFrame(tick)};
- requestAnimationFrame(tick);
- const st=e=>{const el=e.target.closest&&e.target.closest('.mascot');return el&&(el._s||(el._s={t:0,v:1,k:0,fx:null}))&&el};
- document.addEventListener('pointerdown',e=>{const el=st(e);if(!el)return;const s=el._s;s.down=1;clearTimeout(s.tm);s.tm=setTimeout(()=>{if(s.down)s.hold=true},180);window._mHeld=el});
- const up=()=>{const el=window._mHeld;if(!el)return;window._mHeld=null;const s=el._s;clearTimeout(s.tm);
-  if(s.down&&!s.hold&&!s.fx&&el.dataset.moves!=='none'){const k=MOVES[s.k++%MOVES.length];s.fx={k,f:0};frame(el.querySelector('.mFx'),el.dataset.m,k,SP,0);el.classList.add('fx')}
-  s.down=0;s.hold=false};
- document.addEventListener('pointerup',up);document.addEventListener('pointercancel',up);
- document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.mascot'))e.preventDefault()});
- addEventListener('load',()=>Object.keys(M).forEach(m=>(m==='dancer'?['dance']:['dance',...MOVES]).forEach(k=>{new Image().src=u(m,k)})));
-})();
+
 function toggleTokenWorld(){const token=document.body.classList.contains('token-world');portalTransition(token?'exit':'enter',token?'dashboard':'parallel')}
 function openPage(id){setPage(id);scrollToSection(id)}
 let portalBusy=false;
@@ -1126,8 +1085,8 @@ function money(n){try{return new Intl.NumberFormat('en',{style:'currency',curren
 (function(){const sel=document.getElementById('ccy');let dn=null;try{dn=new Intl.DisplayNames(['en'],{type:'currency'})}catch(e){}
 sel.innerHTML=Object.entries(CCY).map(([g,o])=>'<optgroup label="'+g+'">'+Object.keys(o).map(c=>{let n='';try{n=dn?dn.of(c):''}catch(e){}return '<option value="'+c+'">'+c+(n&&n!==c?' · '+n:'')+'</option>'}).join('')+'</optgroup>').join('');sel.value='EUR';
 sel.addEventListener('change',()=>{ccy=sel.value;const f=CCYF[ccy]||1,p=document.getElementById('principal');p.min=1000*f;p.max=100000*f;p.step=1000*f;p.value=10000*f;calc()})})();
-function calc(){const p=+document.getElementById('principal').value,r=+document.getElementById('returnRate').value/100,f=+document.getElementById('fee').value/100,n=+document.getElementById('years').value;const no=p*Math.pow(1+r,n),yes=p*Math.pow(Math.max(0,1+r-f),n),lost=no-yes;document.getElementById('principalOut').textContent=money(p);document.getElementById('returnOut').textContent=(r*100).toFixed(1)+'%';document.getElementById('feeOut').textContent=(f*100).toFixed(2)+'%';document.getElementById('yearsOut').textContent=n+' year'+(n===1?'':'s');document.getElementById('noFee').textContent=money(no);document.getElementById('withFee').textContent=money(yes);document.getElementById('lostValue').textContent=money(lost);document.getElementById('lostPct').textContent=(no?((lost/no)*100).toFixed(1):'0')+'% of the no-fee value';{const i=+document.getElementById('infl').value/100,d=Math.pow(1+i,n),cash=p/d;document.getElementById('inflOut').textContent=(i*100).toFixed(1)+'%';document.getElementById('inflCash').textContent=money(cash);document.getElementById('inflCashPct').textContent=(p?((1-cash/p)*100).toFixed(0):'0')+'% less buying power than today';document.getElementById('inflFund').textContent=money(yes/d);const rg=((1+r-f)/(1+i)-1)*100;document.getElementById('inflReal').textContent=rg.toFixed(1)+'%'}if(typeof kittySync==="function")kittySync()}
-['principal','returnRate','fee','years','infl'].forEach(id=>document.getElementById(id).addEventListener('input',calc));function resetCalc(){document.getElementById('principal').value=10000*(CCYF[ccy]||1);document.getElementById('returnRate').value=7;document.getElementById('fee').value=.14;document.getElementById('years').value=20;document.getElementById('infl').value=2;calc()}
+function calc(){const p=+document.getElementById('principal').value,r=+document.getElementById('returnRate').value/100,f=+document.getElementById('fee').value/100,n=+document.getElementById('years').value;const no=p*Math.pow(1+r,n),yes=p*Math.pow(Math.max(0,1+r-f),n),lost=no-yes;document.getElementById('principalOut').textContent=money(p);document.getElementById('returnOut').textContent=(r*100).toFixed(1)+'%';document.getElementById('feeOut').textContent=(f*100).toFixed(2)+'%';document.getElementById('yearsOut').textContent=n+' year'+(n===1?'':'s');document.getElementById('noFee').textContent=money(no);document.getElementById('withFee').textContent=money(yes);document.getElementById('lostValue').textContent=money(lost);document.getElementById('lostPct').textContent=(no?((lost/no)*100).toFixed(1):'0')+'% of the no-fee value';}
+['principal','returnRate','fee','years'].forEach(id=>document.getElementById(id).addEventListener('input',calc));function resetCalc(){document.getElementById('principal').value=10000*(CCYF[ccy]||1);document.getElementById('returnRate').value=7;document.getElementById('fee').value=.14;document.getElementById('years').value=20;document.getElementById('infl').value=2;calc()}
 
 const tokenDetails={
  crypto:{title:'Cryptoassets: inspect the token and its network',text:'Identify what the token does, whether it is native to a network or issued through a contract, how its supply changes, and what creates demand for its use. Then inspect network security, concentration, liquidity and bridge or custody risks.',watch:['Token utility','Supply rules','Network security','Concentration','Liquidity']}, stablecoins:{title:'Stablecoins: inspect the peg mechanism',text:'A stablecoin may rely on cash and short-term reserves, crypto collateral, or an algorithmic mechanism. Check who can redeem, which assets back it, how reserves are reported, whether redemption is available in stress, and how the token behaves around its target value.',watch:['Reserve assets','Redemption rights','Issuer','Peg history','Transparency']}, assets:{title:'Tokenized assets: start with the legal claim',text:'A token is a digital record, not automatically the asset itself. Identify the issuer, the legal claim, who holds the underlying asset, and how holders can redeem or transfer it.',watch:['Issuer','Legal claim','Custody','Redemption']},
@@ -1152,57 +1111,7 @@ const lifeNotes=[
 ];
 function showLifeStage(btn,index){document.querySelectorAll('.lifeStep').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById('lifeDescription').textContent=lifeNotes[index]}
 
-let guideIndex=0;const guideSteps=[['Start with a question','Choose a region, a sector or a commodity. There is no single correct starting point — follow your curiosity.'],['Follow the connections','Move from a country into its industries, from an industry into an ETF, or from a headline into the underlying topic.'],['Go deeper when you want','Use the four Fs and the fee calculator for detail. Some figures are dated real-world snapshots; explicitly labelled teaching examples are illustrative. No forecast or buy/sell signal is provided.']];
-const tokenGuideSteps=[['Welcome to Token World','This side explores cryptoassets, stablecoins and tokenized real-world assets. Market metrics are dated snapshots with source links; case studies labelled fictional are teaching examples.'],['Explore the building blocks','Inspect asset backing, network activity, smart-contract controls, issuance and settlement — not just token prices.'],['Understand the intermediaries','Brokers provide access, custodians safeguard assets or keys, issuers define rights, and networks record transfers. Their roles can overlap. No buy/sell actions are offered.']];
-function showGuide(){lastFocus=document.activeElement;guideIndex=0;renderGuide();document.getElementById('guideModal').classList.add('show');document.querySelector('#guideModal button').focus()}
-function renderGuide(){const steps=document.body.classList.contains('token-world')?tokenGuideSteps:guideSteps;document.getElementById('guideStep').textContent=(document.body.classList.contains('token-world')?'TOKEN WORLD TOUR':'QUICK TOUR')+' · '+(guideIndex+1)+' OF '+steps.length;document.getElementById('guideTitle').textContent=steps[guideIndex][0];document.getElementById('guideText').textContent=steps[guideIndex][1];const dots=document.getElementById('guideDots');dots.innerHTML=steps.map((_,i)=>'<i class="'+(i===guideIndex?'on':'')+'"></i>').join('');document.getElementById('nextGuide').textContent=guideIndex===steps.length-1?'Finish':'Next →'}
-function nextGuide(){const steps=document.body.classList.contains('token-world')?tokenGuideSteps:guideSteps;if(guideIndex<steps.length-1){guideIndex++;renderGuide()}else closeGuide()}
-function closeGuide(){document.getElementById('guideModal').classList.remove('show');if(lastFocus)lastFocus.focus()}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGuide()});
-document.getElementById('guideModal').addEventListener('click',e=>{if(e.target.id==='guideModal')closeGuide()});
 calc();
-const KITTEN='<picture><source media="(prefers-reduced-motion: reduce)" srcset="assets/mascots/kitten-still.webp"><img src="assets/mascots/kitten-idle.webp" alt="" aria-hidden="true" draggable="false"></picture><img class="kScared" alt="" aria-hidden="true" draggable="false">';
-var KR=22,KL=40,KG=2200,kRaf=0,kLast=0;
-function kP(w){const i=w.querySelector('input');return w._pc!=null?w._pc:(i.value-i.min)/(i.max-i.min)}
-function kTarget(w){return KR+kP(w)*(w.clientWidth-2*KR)}
-function kRender(w){const k=w._k,d=57.296,f=(n)=>n.toFixed(2),st=w.style;st.setProperty('--bx',f(k.x));st.setProperty('--rot',f(k.x/KR*d)+'deg');st.setProperty('--phi',f(k.phi*d)+'deg');st.setProperty('--tail',f(k.tail*d)+'deg');st.setProperty('--legs',f(k.legs*d)+'deg');st.setProperty('--head',f(-k.phi*d*.45)+'deg')}
-function kStep(t){const dt=Math.min(.033,(t-kLast)/1000||.016);kLast=t;let busy=false;
- document.querySelectorAll('.kitty').forEach(w=>{const k=w._k;if(!k||!w.clientWidth)return;const tx=kTarget(w);if(!k.init){k.x=k.px=tx;k.vf=k.vp=0;k.init=1;kRender(w)}
-  const raw=(tx-k.px)/dt,pe=kP(w),end=pe<=.001||pe>=.999;if(end&&!k.end&&Math.abs(raw)>120)kScare(w);k.end=end;k.vf+=(raw-k.vf)*Math.min(1,dt*18);const af=(k.vf-k.vp)/dt;k.vp=k.vf;k.px=k.x=tx;
-  const a=Math.max(-3500,Math.min(3500,af*.16)),wb=Math.max(-40,Math.min(40,k.vf/KR)),n=4,h=dt/n;
-  for(let s=0;s<n;s++){
-   let acc=-(KG/KL)*Math.sin(k.phi)-(a/KL)*Math.cos(k.phi)+1.5*(-wb-k.om)-5.5*k.om;const over=Math.abs(k.phi)-.85;if(over>0)acc-=Math.sign(k.phi)*110*over;
-   k.om+=acc*h;k.phi+=k.om*h;if(Math.abs(k.phi)>1.05){k.phi=Math.sign(k.phi)*1.05;k.om*=-.3}
-   const ta=-90*(k.tail+k.phi*.8)-9*k.tailv;k.tailv+=ta*h;k.tail+=k.tailv*h;
-   const la=-120*(k.legs-k.phi*.5)-8*k.legsv;k.legsv+=la*h;k.legs+=k.legsv*h}
-  const moving=Math.abs(k.vf)>.5||Math.abs(k.phi)>.004||Math.abs(k.om)>.03||Math.abs(k.tail)>.004;
-  w.classList.toggle('moving',moving);kRender(w);if(moving)busy=true});
- kRaf=busy?requestAnimationFrame(kStep):0}
-function kScare(w){/* scared clip: separate file, restarted from frame 0 and cross-faded over the still-running hang loop */
- const c=w.querySelector('.kCat'),sc=c&&c.querySelector('.kScared');if(!sc||c._busy||matchMedia('(prefers-reduced-motion: reduce)').matches)return;c._busy=1;
- (window._kScare||(window._kScare=fetch('assets/mascots/kitten-scared.webp').then(r=>{if(!r.ok)throw 0;return r.blob()}))).then(bl=>{
-  const u=URL.createObjectURL(bl);sc.onload=()=>{c.classList.add('scared');setTimeout(()=>{c.classList.remove('scared');setTimeout(()=>{URL.revokeObjectURL(u);c._busy=0},120)},780)};sc.src=u})
- .catch(()=>{c._busy=0;window._kScare=null})}
-function kWake(){if(!kRaf){kLast=performance.now();kRaf=requestAnimationFrame(kStep)}}
-function kittySync(){document.querySelectorAll('.kitty').forEach(w=>w.style.setProperty('--p',kP(w)));kWake()}
-document.querySelectorAll('input[type=range]').forEach(i=>{const w=document.createElement('div');w.className='kitty';i.before(w);w.append(i);w._k={x:22,v:0,phi:0,om:0,tail:0,tailv:0,legs:0,legsv:0};const b=document.createElement('span'),c=document.createElement('span');b.className='kBall';b.setAttribute('aria-hidden','true');b.innerHTML='<i></i>';c.className='kCat';c.setAttribute('aria-hidden','true');c.innerHTML=KITTEN;w.append(b,c)});
-if(window.ResizeObserver){const ro=new ResizeObserver(es=>es.forEach(e=>{const k=e.target._k;if(k){k.init=0;kWake()}}));document.querySelectorAll('.kitty').forEach(w=>ro.observe(w))}
-kittySync();
-
-/* Glide: after a flick, the ball keeps rolling with friction, bounces softly at the ends and settles on a step. */
-function glide(i,w,v){const id=++w._gl,min=+i.min,max=+i.max,st=+i.step||1;let p=(i.value-min)/(max-min),last=performance.now();
- const q=x=>Math.min(max,Math.max(min,Math.round((min+x*(max-min)-min)/st)*st+min));
- (function f(t){if(w._gl!==id)return;const dt=Math.min(.05,(t-last)/1000);last=t;p+=v*dt;v*=Math.exp(-dt*2.5);
-  if(p<0){p=0;v=Math.abs(v)*.35}else if(p>1){p=1;v=-Math.abs(v)*.35}
-  const pq=(q(p)-min)/(max-min);if(Math.abs(v)<.3){p+=(pq-p)*Math.min(1,dt*10);v*=.9}
-  w._pc=p;const nv=q(p);if(String(nv)!==String(+i.value)){i.value=nv;i.dispatchEvent(new Event('input',{bubbles:true}))}else kittySync();
-  if(Math.abs(v)<.02&&Math.abs(pq-p)<.0005){w._pc=null;i.value=q(p);kittySync();return}
-  requestAnimationFrame(f)})(last)}
-document.querySelectorAll('.kitty').forEach(w=>{const i=w.querySelector('input');let drag=false,S=[];w._gl=0;
- i.addEventListener('pointerdown',()=>{drag=true;S=[];w._gl++;w._pc=null;kittySync()});
- i.addEventListener('input',()=>{if(drag){S.push([performance.now(),(i.value-i.min)/(i.max-i.min)]);if(S.length>12)S.shift()}});
- window.addEventListener('pointerup',()=>{if(!drag)return;drag=false;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const now=performance.now(),r=S.filter(x=>now-x[0]<110);if(r.length<2)return;const a=r[0],b=r[r.length-1],dt=(b[0]-a[0])/1000;if(dt<=0)return;let v=(b[1]-a[1])/dt;if(Math.abs(v)<.15)return;glide(i,w,Math.max(-3,Math.min(3,v)))});
- window.addEventListener('pointercancel',()=>{drag=false})});
 document.addEventListener('click',e=>{const el=e.target.closest('button,.exploreCard');if(!el)return;el.classList.remove('bounce-click');void el.offsetWidth;el.classList.add('bounce-click');setTimeout(()=>el.classList.remove('bounce-click'),450)});
 function revealApp(){setTimeout(()=>{document.getElementById('loadingScreen').classList.add('done');document.getElementById('appShell').style.opacity='1';},250)}
 if(document.readyState==='complete'){revealApp()}else{window.addEventListener('load',revealApp,{once:true})}
@@ -1412,7 +1321,7 @@ let lastScoreTxt='';function paintScore(n,col){col=col||'#ffe14d';const t=fmt(n)
  /* a gold coin instead of a dollar sign */
  {const r=13,cx0=14,cy0=14,gr=g.createRadialGradient(cx0-4,cy0-5,2,cx0,cy0,r);gr.addColorStop(0,'#fff6b0');gr.addColorStop(.45,'#ffd23a');gr.addColorStop(1,'#c98a00');g.fillStyle='#000';g.beginPath();g.arc(cx0+1,cy0+1,r,0,6.3);g.fill();g.fillStyle=gr;g.beginPath();g.arc(cx0,cy0,r,0,6.3);g.fill();g.strokeStyle='#a86f00';g.lineWidth=2;g.stroke();g.strokeStyle='rgba(168,111,0,.8)';g.lineWidth=1.6;g.beginPath();g.arc(cx0,cy0,r-5,0,6.3);g.stroke();g.fillStyle='#a86f00';g.fillRect(cx0-1.5,cy0-5,3,10);g.fillStyle='rgba(255,255,255,.75)';g.beginPath();g.ellipse(cx0-5,cy0-6,3,1.8,-.7,0,6.3);g.fill()}
  let x=cw;for(const ch of t){const m=PIX[ch];if(m)m.split(' ').forEach((row,ry)=>{for(let rx=0;rx<5;rx++)if(row[rx]==='1'){g.fillStyle='#000';g.fillRect(x+rx*u+1,ry*u+1,u,u);g.fillStyle=col;g.fillRect(x+rx*u,ry*u,u,u)}});x+=6*u}}
-function player(x,y,s){const im=window._catSheet||(window._catSheet=Object.assign(new Image(),{src:'assets/mascots/catdance.webp'}));if(!(im.complete&&im.naturalWidth))return;const C=8,N=93,fw=im.naturalWidth/C,S=130,k=Math.floor(s.t*10*s.speed/250)%(2*N-2),fi=k<N?k:2*N-2-k,bob=s.air?0:Math.abs(Math.sin(s.t*14))*3;cx.drawImage(im,(fi%C)*fw,Math.floor(fi/C)*fw,fw,fw,x-S/2,y-S*.97-bob,S,S)}
+function player(x,y,s){const g=cx,sq=s.air?Math.max(.85,1-Math.abs(s.vy)/6000):1;g.save();g.translate(x,y-34);g.rotate(s.air?s.vy/3500:0);g.scale(1/sq,sq);g.fillStyle='#c6ff3d';g.strokeStyle='#000';g.lineWidth=4;g.beginPath();g.roundRect(-28,-28,56,56,14);g.fill();g.stroke();g.fillStyle='#000';g.fillRect(-12,-8,6,12);g.fillRect(6,-8,6,12);g.restore()}
 let last=0;function loop(t){raf=requestAnimationFrame(loop);const dt=Math.min(.033,(t-last)/1000||.016);last=t;if(!R)return;if(paused){draw();return}if(!document.getElementById('gameCard').hidden){R.t+=dt;draw();return}step(dt);draw()}
 function start(){const c=document.getElementById('gameCard');c.classList.remove('slim','liq');document.getElementById('gcEnd').hidden=true;c.hidden=true;setGT('LIVE CAT BOUNCE',1);reset();paintScore(0);musicOn('game');if(!coached){coached=true;try{localStorage.setItem('cp-coach','1')}catch(e){}msg('Tap to jump. Hold to jump higher.');R.msgT=4}document.getElementById('gcBest').textContent=best?'Best '+fmt(best):''}
 /* soundtrack: decoded once, looped sample-exact through WebAudio (no gap like <audio loop>); starts from the Game tap, stops on close */
