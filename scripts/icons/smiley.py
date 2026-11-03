@@ -8,33 +8,35 @@ import bpy
 from mathutils import Vector, Quaternion, Euler
 from lib import reset, link, uv_sphere, tube, principled, stage, render
 
-DARK, LIGHT = 'dark', 'light'
+ACC_SCALE = 1.5
+LENS = 70  # nav framing: the ball is drawn at 70/110 of the coin's size, CSS scales the image up so balls match
+DARK, LIGHT = 'dark', 'light'  # all icons now use DARK (black eyes and mouth); LIGHT kept for reference
 # name: (ball colour, feature colour, accessory, spin sign (-1 = clockwise seen from above), extra ball options)
 THEMES = {
-    'yellow':   ((1.0, 0.66, 0.0),   DARK,  None,         -1, {}),
-    'blue':     ((0.05, 0.3, 1.0),   LIGHT, None,          1, {}),
+    'yellow':   ((1.0, 0.66, 0.0),   DARK,  None,         -1, {'lens': 110}),
+    'blue':     ((0.05, 0.3, 1.0),   DARK,  None,          1, {'lens': 110}),
     'home':     ((0.8, 0.48, 0.18),  DARK,  'roof',       -1, {}),
-    'basics':   ((0.08, 0.62, 0.12), LIGHT, 'mortarboard', 1, {}),
-    'fees':     ((0.0, 0.6, 0.42),   LIGHT, 'coinstack',  -1, {}),
-    'game':     ((0.48, 0.18, 0.9),  LIGHT, 'orbitcoin',   1, {}),
-    'invest':   ((0.85, 0.12, 0.08), LIGHT, 'arrow',      -1, {}),
-    'explore':  ((0.05, 0.3, 1.0),   LIGHT, 'telescope',   1, {}),
-    'wallet':   ((0.05, 0.3, 1.0),   LIGHT, 'wallet',     -1, {}),
-    'world':    ((0.04, 0.5, 0.62),  LIGHT, 'continents', -1, {}),
-    'industry': ((0.2, 0.25, 0.33),  LIGHT, 'gear',        1, {}),
-    'tech':     ((0.0, 0.62, 0.62),  LIGHT, 'antenna',    -1, {}),
-    'finance':  ((0.0, 0.2, 0.09),   LIGHT, 'slotcoin',    1, {}),
+    'basics':   ((0.08, 0.62, 0.12), DARK,  'mortarboard', 1, {}),
+    'fees':     ((0.0, 0.6, 0.42),   DARK,  'coinstack',  -1, {}),
+    'game':     ((0.48, 0.18, 0.9),  DARK,  'orbitcoin',   1, {}),
+    'invest':   ((0.85, 0.12, 0.08), DARK,  'arrow',      -1, {}),
+    'explore':  ((0.05, 0.3, 1.0),   DARK,  'telescope',   1, {}),
+    'wallet':   ((0.05, 0.3, 1.0),   DARK,  'wallet',     -1, {}),
+    'world':    ((0.04, 0.5, 0.62),  DARK,  'continents', -1, {}),
+    'industry': ((0.2, 0.25, 0.33),  DARK,  'gear',        1, {}),
+    'tech':     ((0.0, 0.62, 0.62),  DARK,  'antenna',    -1, {}),
+    'finance':  ((0.0, 0.2, 0.09),   DARK,  'slotcoin',    1, {}),
     'energy':   ((1.0, 0.2, 0.0),    DARK,  'flame',      -1, {}),
     'health':   ((0.8, 0.82, 0.86),  DARK,  'cross',       1, {}),
-    'shops':    ((0.95, 0.12, 0.42), LIGHT, 'bag',        -1, {}),
-    'property': ((0.45, 0.06, 0.02), LIGHT, 'roof',        1, {'roof': (0.12, 0.12, 0.14)}),
+    'shops':    ((0.95, 0.12, 0.42), DARK,  'bag',        -1, {}),
+    'property': ((0.45, 0.06, 0.02), DARK,  'roof',        1, {'roof': (0.12, 0.12, 0.14)}),
     'gold':     ((1.0, 0.72, 0.25),  DARK,  None,         -1, {'metal': True}),
     'silver':   ((0.86, 0.87, 0.9),  DARK,  None,          1, {'metal': True}),
     'copper':   ((0.95, 0.45, 0.25), DARK,  None,         -1, {'metal': True}),
-    'nature':   ((0.18, 0.36, 0.04), LIGHT, 'sprout',      1, {}),
-    'bonds':    ((0.07, 0.16, 0.38), LIGHT, 'band',       -1, {}),
-    'token':    ((0.05, 0.3, 1.0),   LIGHT, 'pixelcoin',   1, {}),
-    'chain':    ((0.05, 0.3, 1.0),   LIGHT, 'chain',      -1, {}),
+    'nature':   ((0.18, 0.36, 0.04), DARK,  'sprout',      1, {}),
+    'bonds':    ((0.07, 0.16, 0.38), DARK,  'band',       -1, {}),
+    'token':    ((0.05, 0.3, 1.0),   DARK,  'pixelcoin',   1, {}),
+    'chain':    ((0.05, 0.3, 1.0),   DARK,  'chain',      -1, {}),
 }
 
 GOLD = None
@@ -105,7 +107,7 @@ def accessory(kind, opts, feat):
         h = prim('cone', gold(), tuple(b + d * 0.12), vertices=32, radius1=0.21, radius2=0.0, depth=0.3)
         h.rotation_euler = d.to_track_quat('Z', 'Y').to_euler(); out.append(h)
     elif kind == 'telescope':
-        body = principled('scope', (0.95, 0.95, 0.97), 0.3, coat=0.8, coat_rough=0.05)
+        body = principled('scope', (0.08, 0.1, 0.3), 0.3, coat=0.8, coat_rough=0.05)
         a, b = Vector((-0.25, 0.0, 1.0)), Vector((0.45, -0.2, 1.38))
         d = (b - a).normalized(); q = d.to_track_quat('Z', 'Y').to_euler()
         t = prim('cone', body, tuple(a.lerp(b, 0.5)), vertices=48, radius1=0.09, radius2=0.14, depth=(b - a).length); t.rotation_euler = q; out.append(bevel(t, 0.01))
@@ -199,10 +201,21 @@ def build(name, out, res, samples, nfr):
         a = math.radians(-58 + 116 * k / 12); x = 0.13 * math.sin(a); z = -0.31 - 0.055 * math.cos(a) + 0.055
         pts.append(tuple(surf(x, z, 0.004)))
     face.append(tube('smile', pts, [0.014, 0.019] + [0.021] * 9 + [0.019, 0.014], feat))
-    if acc and acc != 'continents': face += accessory(acc, opts, feat)
+    if acc and acc != 'continents':
+        parts = accessory(acc, opts, feat)
+        k = opts.get('acc_scale', 1.0 if acc == 'band' else ACC_SCALE)
+        if k != 1.0:  # grow the accessory about the point where it meets the ball, so it stays attached
+            bpy.context.view_layer.update()
+            c = sum((o.matrix_world @ (sum((Vector(b) for b in o.bound_box), Vector()) / 8) for o in parts), Vector()) / len(parts)
+            hub = link(bpy.data.objects.new('acc', None)); hub.location = c.normalized() if c.length > 1e-6 else Vector((0, 0, 1))
+            bpy.context.view_layer.update()
+            for o in parts:
+                mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+            hub.scale = (k, k, k); parts = [hub]
+        face += parts
     CAM = Vector((-0.9, -7.6, 0.9))
-    # 84 mm instead of the original 110 mm leaves room for accessories; every icon uses it so balls stay the same size
-    stage(res=res, samples=samples, cam_loc=tuple(CAM), target=(0.1, 0, 0.2), lens=84)
+    # themed icons use LENS (wider than the coin's 110 mm) to leave room for accessories; all of them share it so balls match
+    stage(res=res, samples=samples, cam_loc=tuple(CAM), target=(0, 0, 0) if opts.get('lens') == 110 else (0.1, 0, 0.15), lens=opts.get('lens', LENS))
     if opts.get('metal'):  # metals only show what they reflect: give them a soft bright studio sky
         bg = bpy.context.scene.world.node_tree.nodes['Background']; bg.inputs['Strength'].default_value = 0.9
     vs = bpy.context.scene.view_settings; vs.view_transform = 'Standard'; vs.look = 'None'; vs.exposure = -0.2
