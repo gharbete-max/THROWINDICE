@@ -567,3 +567,15 @@ Zoom 0.34-0.5 (was 0.4-0.6); the cat sits at 16% from the left (was 22%) so more
 **Jump puzzles:** new "stairs" segments (3-6 tall gap-ups of 200-290 px, each needing a good jump, ending in a 380-560 px drop); ledge steps up are more common and taller (180-290 px; a held single jump reaches about 387 px, a double jump about 750 px).
 **Sounds:** every event has its own layered effect (tones plus filtered noise): jump, double jump, land, big-fall boom, life lost, wall bump, four coin tiers (silver ping up to purple cascade with sub-bass), three power-ups, checkpoint fanfare, game over, and a heartbeat when the cat is about to be left behind. All 16 effects run without errors; I cannot hear them here.
 **Bots:** human-like bot (up to 230 ms late) median level 2, mean 2.8 over 30 runs; a search bot with perfect timing reaches mean level 5.5 (median 6) over 8 runs, so the course is beatable but hard.
+
+## Phone adaptation: audit, bot tests, fixes (2026-11-03)
+**Audit** (Playwright, touch emulation, 5 screens: iPhone SE 375x667, iPhone 13 390x844, Pixel 7 412x915, small Android 360x640, landscape 844x390; every page incl. the Token World pages; checks: horizontal scroll, elements past the right edge, tap targets under 32 px, text under 11 px, content hidden under the menu, console errors). Findings and fixes:
+1. **Region picker could not be dismissed on short phones** (the "Show me everything" button was off-screen and the modal did not scroll, 360x640 and landscape). Modal now scrolls (max height 100dvh - 24 px), the picker is compacter below 700 px and 3 columns in landscape.
+2. **Horizontal scroll at 360 px** on the dashboard comparison bar (VOO +717% label 4 px too wide): the bar now shrinks.
+3. **Menu too tall**: 110 px on 667 px screens and 159 px (41% of the screen) in landscape, with buttons clipped. Now 92 px on short portrait phones, and in landscape a one-row menu with side-by-side icon and label (63 px, 44 px tap height).
+4. Safe areas: `viewport-fit=cover`; game buttons, score and menu respect the notch / home bar insets. `touch-action: manipulation` on controls (no double-tap zoom), `touch-action: none` on the game and the balls, no overscroll in the game.
+5. Game text contrast on the dark cards raised.
+6. **Game scale for narrow screens:** zoom floor 0.2 (was 0.27) so a portrait phone sees about 1,950 world px instead of 1,440, and the cat, coins, power-ups and their pick-up boxes are drawn up to 1.5x larger so they stay readable; physics is unchanged.
+**Touch tests** (real touch events via the browser protocol, iPhone 13, Pixel 7, landscape): a 40 ms tap jumps 245-251 px, holding 700 ms jumps 373-404 px, a second tap in the air gives the double jump, the page never scrolls or zooms and nothing gets selected.
+**Bot tests at phone sizes** (human-like bot, 20 runs each): 390x844 median level 2, 360x640 median 2, 844x390 median 2, same as desktop. After the fixes the audit reports no problems on any of the 5 screens and no console errors.
+Not covered: real devices (iOS Safari audio unlock and the music beep, 120 Hz screens), and I did not test tablets in portrait beyond the desktop layout.
