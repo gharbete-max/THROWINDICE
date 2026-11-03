@@ -1346,7 +1346,7 @@ function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.7,1+.06*R.lv
   const cont=isFinite(gy)&&(isFinite(ground(wx-CW*.6))||R.y-gy<90);if(cont&&R.vy<0&&R.y>gy)R.y=gy;/* a slope rising into a rising cat pushes it up */
   if(cont&&R.vy>=0&&R.y>=gy){const dist=R.y-R.top0;R.y=gy;R.vy=0;R.air=false;R.coy=0;R.refY=gy;R.sq=Math.min(.2,.04+dist/3000);if(dist>=BIG&&!(R.buf>0&&dist<SOFT)){loseLife('You fell too far.');if(R.dead)return}else if(dist>120)sfx('land');if(R.buf>0){R.jumps=1;jump()}}
   else if(!(isFinite(gy)&&R.y<gy)&&R.y>R.refY+900){R.pits++;loseLife('You fell in a pit.');if(R.dead)return;respawn()}}
- if(R.sx>=R.nextCp){R.lvl++;R.nextCp+=CPD;R.lives=Math.min(5,R.lives+1);paintLives();sfx('lvl');msg('Checkpoint '+R.lvl+' · +1 life');R.msgT=2;musicRate()}
+ if(R.sx>=R.nextCp){R.lvl++;R.nextCp+=CPD;R.lives=Math.min(3,R.lives+1);paintLives();sfx('lvl');msg('Checkpoint '+R.lvl+' · +1 life');R.msgT=2;musicRate()}
  if(R.magT>0)R.magT-=dt;if(R.x2T>0)R.x2T-=dt;
  const cy=R.y-60,cxw=R.sx;
  R.coins.forEach(c=>{if(c.got)return;if(R.magT>0){const dx=cxw-c.x,dy=cy-c.y,d=Math.hypot(dx,dy);if(d<420){const m=Math.min(d,900*dt);c.x+=dx/d*m;c.y+=dy/d*m}}if(Math.abs(c.x-cxw)<70&&Math.abs(c.y-cy)<85){c.got=1;R.score+=CT[c.t][3]*(R.x2T>0?2:1);sfx('coin');for(let i=0;i<6;i++)R.fx.push({x:c.x,y:c.y,vx:rnd(-200,200),vy:rnd(-260,0),l:.4,c:CT[c.t][0]})}});
