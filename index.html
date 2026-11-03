@@ -525,6 +525,15 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 .gameCard.slim ul{display:none}.gameCard .btn.secondary{color:#fff}.gLives{display:flex;gap:4px}
 .gameCard .btn.goldbtn{background:linear-gradient(180deg,#fff6b0,#ffd23a 45%,#e59a00);color:#3a2300;border:0;box-shadow:0 0 22px #ffd23acc,inset 0 -4px 8px #b8730055;font-weight:900;position:relative;overflow:hidden}.gameCard .btn.goldbtn::after{content:'';position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,#fffa,transparent);animation:goldSweep 1.6s ease-in-out infinite}@keyframes goldSweep{to{left:130%}}
 #gcEnd{background:transparent!important;border:2px solid #fff!important;color:#fff!important;box-shadow:none!important;font-weight:400!important}
+/* menu redesign: big smileys, the title arched over each one */
+.bottomNav{padding:4px 6px calc(6px + env(safe-area-inset-bottom))}.navinner{gap:2px;align-items:flex-end}
+.navbtn,.bottomNav .tokenCoin,.navbtn.home{flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:0;padding:0 0 6px;min-width:0;border-radius:20px;position:relative;font-size:0}
+.navArc{display:block;width:104px;max-width:none;margin:0 -20px -6px;flex:none;height:auto;aspect-ratio:100/34;overflow:visible;pointer-events:none;color:var(--text)}.navArc text{font:800 13px/1 Inter,system-ui,sans-serif;fill:currentColor}
+.navbtn .ico{min-height:0}.navbtn .ico .navIco,.bottomNav .tokenCoin img{width:60px;height:60px;margin:0}
+.bottomNav .tokenCoin svg.navArc{position:static;left:auto;top:auto;margin:0 -20px -6px;width:104px;height:auto}.navArc text:has(#coinTxt){font-size:11.5px}.srOnly{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.shell{padding-bottom:140px}
+@media(max-width:430px){.navbtn .ico .navIco,.bottomNav .tokenCoin img{width:50px;height:50px}.navArc,.bottomNav .tokenCoin svg.navArc{width:80px;margin:0 -8px -5px}}
+@media(min-width:801px){.navbtn .ico .navIco,.bottomNav .tokenCoin img{width:76px;height:76px}.navArc,.bottomNav .tokenCoin svg.navArc{width:124px;margin:0 -30px -8px}}
 </style>
 </head>
 <body>
@@ -747,7 +756,7 @@ body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231
 <div class="toast" id="toast"></div>
 <script>
 const pages=['dashboard','basics','fees','world','sectors','commodities','etfs','parallel'];
-function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);if(token){document.body.dataset.tview='';showTView('parallel')}document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel)coinLabel.textContent=token?'Real world investments':'Tokenized';invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
+function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);if(token){document.body.dataset.tview='';showTView('parallel')}document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel){coinLabel.textContent=token?'Real world':'Tokenized';window.arcSet&&window.arcSet()}invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>You are viewing token &amp; blockchain</strong>Click the coin to return to real-world assets.':'<strong>You are viewing real-world assets</strong>Click the coin to enter tokenization &amp; blockchain.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
 const TVG={parallel:'home',tBasics:'learn',tWallets:'learn',tToday:'explore',tNetworks:'explore',tIssuance:'explore'};
 function showTView(id){const B=document.body,g=TVG[id]||'home';if(B.dataset.tview===g)return;B.dataset.tview=g;document.querySelectorAll('.tp').forEach(x=>x.classList.toggle('tcur',TVG[x.id]===g));window.scrollTo(0,0)}
 const INVP=['world','sectors','commodities'],LEARNP=['basics','fees'],viewOf=id=>INVP.includes(id)?'invest':LEARNP.includes(id)?'learn':id;
@@ -1315,20 +1324,24 @@ const TD=[[110,190],[140,220],[230,310],[300,380]];/* higher tiers float higher:
 function lastGround(i){while(i>0&&R.top[i]==null)i--;return R.top[i]}
 /* coins: one every 520-900 px, never in clumps; higher tiers float higher */
 function placeCoins(){while(R.coinX<R.top.length*CW-200){const x=R.coinX;R.coinX+=rnd(520,900);const g=ground(x),t=tierRoll();R.coins.push({x,t,y:isFinite(g)?g-rnd(TD[t][0],TD[t][1]):lastGround(Math.floor(x/CW))-rnd(190,260)})}}
-function addSeg(){const k=R.top.length,lv=R.lvl;if(k<14){for(let i=k;i<14;i++)push(R.gy);return}
- const r=Math.random(),low=R.gy>R.base+1300,high=R.gy<R.base-1100;
- const q=Math.random(),c1=.26,c2=.46,c3=.6,c4=c3+.08+.008*lv,c5=c4+.14,kind0=low?'bull':high?'pull':k>40&&r>.965-.012*lv?'rug':q<c1?'bull':q<c2?'chop':q<c3?'pull':q<c4?'crash':q<c5?'pit':'plat';
+function addSeg(){const k=R.top.length,lv=Math.min(R.lvl,14),vol=1+.7*Math.min(lv,6);/* each checkpoint makes the chart wilder: bigger swings, wider and more frequent holes, steeper crashes */
+ if(k<14){for(let i=k;i<14;i++)push(R.gy);return}
+ const r=Math.random(),low=R.gy>R.base+1300,high=R.gy<R.base-1100,W_={bull:.28,chop:.2,pull:.14,crash:.08+.02*lv,pit:.1+.1*lv,plat:.2+.05*lv};
+ let tot=0;for(const q in W_)tot+=W_[q];let q=Math.random()*tot,kind0='bull';for(const n in W_){if((q-=W_[n])<0){kind0=n;break}}
+ if(k>40&&r>.965-.012*lv)kind0='rug';if(low)kind0='bull';else if(high)kind0='pull';
  const kind=R.calm>k&&(kind0==='crash'||kind0==='rug')?'bull':kind0;/* no two big drops in a row */
  if(kind==='crash'||kind==='rug')R.calm=k+16;
  let y=R.gy;
- if(kind==='bull'){const n=ri(8,16);for(let i=0;i<n;i++){y+=Math.random()<.68?-rnd(15,70):rnd(10,45);push(y)}}
- else if(kind==='chop'){const n=ri(6,12);for(let i=0;i<n;i++){y+=rnd(-65,65);push(y)}}
- else if(kind==='pull'){const n=ri(4,8);for(let i=0;i<n;i++){y+=rnd(15,60);push(y)}}
- else if(kind==='crash'){const n=ri(3,5);for(let i=0;i<n;i++){y+=rnd(80,140);push(y)}for(let i=0;i<3;i++)push(R.gy+rnd(-8,8))}
- else if(kind==='pit'){const w=Math.max(130,rnd(.35,.55)*R.speed*.87),n=Math.ceil(w/CW);for(let i=0;i<n;i++)push(null);push(y+rnd(-40,40));for(let i=0;i<5;i++)push(R.gy+rnd(-12,12))}
- else if(kind==='plat'){/* choppy platforms: short islands at different heights with gaps between them */const n=ri(4,7);for(let i=0;i<n;i++){y=Math.max(R.base-1000,Math.min(R.base+1200,y+rnd(-90,110)));const m=ri(3,4);for(let j=0;j<m;j++)push(y);const w=Math.max(120,rnd(.3,.45)*R.speed*.87),g=Math.ceil(w/CW);for(let j=0;j<g;j++)push(null)}push(y);push(y);push(y)}
- else{push(y+rnd(220,380));push(R.gy+rnd(220,380));for(let i=0;i<4;i++)push(R.gy+rnd(-8,8))}/* rugpull: the floor drops 500-900 px in two candles */
+ if(kind==='bull'){const n=ri(8,16);for(let i=0;i<n;i++){y+=(Math.random()<.68?-rnd(15,70):rnd(10,45))*vol;push(y)}}
+ else if(kind==='chop'){const n=ri(6,12);for(let i=0;i<n;i++){y+=rnd(-65,65)*vol;push(y)}}
+ else if(kind==='pull'){const n=ri(4,8);for(let i=0;i<n;i++){y+=rnd(15,60)*vol;push(y)}}
+ else if(kind==='crash'){const n=ri(3,5);for(let i=0;i<n;i++){y+=Math.min(190,rnd(80,140)*(1+.06*lv));push(y)}for(let i=0;i<3;i++)push(R.gy+rnd(-8,8))}
+ else if(kind==='pit'){const w=gapW(),n=Math.ceil(w/CW);for(let i=0;i<n;i++)push(null);push(y+rnd(-40,40)*Math.min(vol,2.5));for(let i=0;i<5;i++)push(R.gy+rnd(-12,12))}
+ else if(kind==='plat'){/* choppy platforms: short islands at different heights with holes between them */const n=ri(4,7);for(let i=0;i<n;i++){y=Math.max(R.base-1000,Math.min(R.base+1200,y+Math.max(-260,Math.min(320,rnd(-90,110)*vol))));const m=ri(3,4);for(let j=0;j<m;j++)push(y);const g=Math.ceil(gapW()/CW);for(let j=0;j<g;j++)push(null)}push(y);push(y);push(y)}
+ else{push(y+rnd(220,380));push(R.gy+rnd(220,380));for(let i=0;i<4;i++)push(R.gy+rnd(-8,8))}/* rugpull */
  if(R.top.length>30&&R.top.length-R.lastPu>22&&Math.random()<.35){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
+/* hole width: about a third of a jump at level 0, up to nearly the whole double-jump reach later, so late holes need a double jump and good timing */
+function gapW(){const v=R.speed,lv=Math.min(R.lvl,14);return Math.max(130,Math.min(2.05*v,rnd(.3+.35*lv,.45+.5*lv)*v))}
 function ensure(){while(R.top.length*CW<R.sx+W/Z+900)addSeg();placeCoins()}
 function ground(x){const T=R.top,i=Math.max(0,Math.floor(x/CW)),a=T[i],b=T[i+1];if(a==null)return Infinity;if(b==null)return a;return a+(b-a)*(x/CW-i)}
 function msg(t){const m=document.getElementById('gMsg');m.textContent=t;m.className='gameMsg'+(t?' show':'')}
@@ -1345,7 +1358,7 @@ function step(dt){if(R.dead)return;R.t+=dt;const tgt=SP0*Math.min(1.7,1+.06*R.lv
  if(R.air){R.vy+=G*(hold&&R.vy<0?HOLDG:1)*dt;R.y+=R.vy*dt;R.top0=Math.min(R.top0,R.y);
   const cont=isFinite(gy)&&(isFinite(ground(wx-CW*.6))||R.y-gy<90);if(cont&&R.vy<0&&R.y>gy)R.y=gy;/* a slope rising into a rising cat pushes it up */
   if(cont&&R.vy>=0&&R.y>=gy){const dist=R.y-R.top0;R.y=gy;R.vy=0;R.air=false;R.coy=0;R.refY=gy;R.sq=Math.min(.2,.04+dist/3000);if(dist>=BIG&&!(R.buf>0&&dist<SOFT)){loseLife('You fell too far.');if(R.dead)return}else if(dist>120)sfx('land');if(R.buf>0){R.jumps=1;jump()}}
-  else if(!(isFinite(gy)&&R.y<gy)&&R.y>R.refY+900){R.pits++;loseLife('You fell in a pit.');if(R.dead)return;respawn()}}
+  else if(!(isFinite(gy)&&R.y<gy)&&R.y>R.refY+900){R.pits++;if(R.shield){R.shield=false;sfx('lvl');msg('Shield saved you!');R.msgT=1.4;respawn()}else{R.lives=0;R.why='You fell in a hole.';R.dead=true;paintLives();die();return}}}
  if(R.sx>=R.nextCp){R.lvl++;R.nextCp+=CPD;R.lives=Math.min(3,R.lives+1);paintLives();sfx('lvl');msg('Checkpoint '+R.lvl+' · +1 life');R.msgT=2;musicRate()}
  if(R.magT>0)R.magT-=dt;if(R.x2T>0)R.x2T-=dt;
  const cy=R.y-60,cxw=R.sx;
@@ -1414,6 +1427,10 @@ L.addEventListener('pointerdown',e=>{if(e.target.closest('button,.gameCard'))ret
 addEventListener('keydown',e=>{if(L.hidden)return;if(e.key==='Escape'){paused?setPause(false):coinpullClose();return}if(e.key==='p'||e.key==='P'){setPause(!paused);return}if(paused)return;if((e.key===' '||e.key==='ArrowUp'||e.key==='w')&&!e.repeat){hold=true;tap();if(e.key===' ')e.preventDefault()}});addEventListener('keyup',e=>{if(e.key===' '||e.key==='ArrowUp'||e.key==='w')hold=false});
 addEventListener('resize',()=>{if(!L.hidden)size()})})();
 
+/* arched nav titles: each button's label becomes text on a curve above its smiley (the plain label stays for screen readers) */
+(()=>{const NS='http://www.w3.org/2000/svg';let n=0;const arc=(items,ids)=>{const id='navArc'+(n++),sv=document.createElementNS(NS,'svg');sv.setAttribute('class','navArc');sv.setAttribute('viewBox','0 0 100 34');sv.setAttribute('aria-hidden','true');sv.innerHTML='<path id="'+id+'" d="M10 31Q50 4 90 31" fill="none"/>'+items.map(([t,w],k)=>'<text'+(w?' data-w="'+w+'"':'')+'><textPath href="#'+id+'" startOffset="50%" text-anchor="middle"'+(ids&&k===0?' id="'+ids+'"':'')+'>'+t+'</textPath></text>').join('');return sv};
+ document.querySelectorAll('.navbtn').forEach(b=>{const L=b.querySelector('.navLabel');if(!L)return;const v=[...L.children].filter(c=>c.dataset&&c.dataset.w),items=v.length?v.map(c=>[c.textContent,c.dataset.w]):[[L.textContent,null]];b.insertBefore(arc(items),b.firstChild);L.classList.add('srOnly')});
+ const t=document.querySelector('.tokenCoin'),cl=t&&t.querySelector('.coinLabel');if(t&&cl){t.insertBefore(arc([[cl.textContent,null]],'coinTxt'),t.firstChild);cl.classList.add('srOnly');window.arcSet=()=>{document.getElementById('coinTxt').textContent=cl.textContent}}})();
 /* digest: clamp long text, add a More pill */
 (function(){let t;const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 const BAL='<svg viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><defs><radialGradient id="balG" cx="38%" cy="30%" r="75%"><stop class="g0" offset="0"/><stop class="g1" offset=".45"/><stop class="g2" offset="1"/></radialGradient></defs><path class="bString" d="M32 66c-5 5 5 9 0 14" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linecap="round"/><path class="bKnot" d="M32 61l-5 6h10z"/><path class="bBody" d="M32 2C16 2 5 14 5 29c0 17 13 32 27 32s27-15 27-32C59 14 48 2 32 2z" fill="url(#balG)"/><ellipse cx="21" cy="17" rx="6" ry="9" transform="rotate(25 21 17)" fill="#fff" opacity=".55"/><text x="32" y="40" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="26" fill="#fff">M</text></svg><svg class="balLimp" viewBox="0 0 64 84" width="44" height="58" aria-hidden="true"><path d="M14 60c-4-8 2-14 12-13 6-5 16-4 21 2 6-1 11 4 8 10-3 7-14 8-22 6-8 3-17 1-19-5z" class="bLimp" stroke-width="1.2" stroke-linejoin="round"/><path d="M22 54c4-3 9-3 13-1M34 62c5 1 9 0 12-3" fill="none" stroke="#8c0014" stroke-width="1.4" stroke-linecap="round" opacity=".7"/><path class="bKnot" d="M13 61l-7 2 5 4z"/><path d="M7 64c-4 3 2 6-1 10" fill="none" stroke="#8a8a8a" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="28" cy="52" rx="4" ry="2" fill="#fff" opacity=".5"/></svg>';
