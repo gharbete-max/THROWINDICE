@@ -579,3 +579,6 @@ Zoom 0.34-0.5 (was 0.4-0.6); the cat sits at 16% from the left (was 22%) so more
 **Touch tests** (real touch events via the browser protocol, iPhone 13, Pixel 7, landscape): a 40 ms tap jumps 245-251 px, holding 700 ms jumps 373-404 px, a second tap in the air gives the double jump, the page never scrolls or zooms and nothing gets selected.
 **Bot tests at phone sizes** (human-like bot, 20 runs each): 390x844 median level 2, 360x640 median 2, 844x390 median 2, same as desktop. After the fixes the audit reports no problems on any of the 5 screens and no console errors.
 Not covered: real devices (iOS Safari audio unlock and the music beep, 120 Hz screens), and I did not test tablets in portrait beyond the desktop layout.
+
+## Portal animation halved (2026-11-03)
+Every timing in the Token World portal was cut to half: coins appear after 0.15-0.28 s (was 0.30-0.55), morph 0.23-0.64 s, black fade starts at 0.68 s and lasts 0.15 s, page swap at 50 ms. Measured end to end in the browser: enter 951 ms and exit 911 ms until the overlay is gone (was about 1.65 s plus fade); page switches correctly both ways, no console errors.
