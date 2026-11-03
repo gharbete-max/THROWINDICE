@@ -56,8 +56,10 @@ def _hit(objs, x, z):
             if best is None or w.y < best[0].y: best = (w, nw)
     return best
 
+NOFACE = False
 def face(targets, cx, cz, s=1.0):
     """black dot eyes + small smile on the front of `targets`, centred at (cx, cz), scaled by s"""
+    if NOFACE: return []
     bpy.context.view_layer.update(); f = ink(); out = []
     for k in (-1, 1):
         h = _hit(targets, cx + k * 0.2 * s, cz - 0.1 * s)
@@ -255,8 +257,9 @@ def flag_badge(cc):
 def build(name, out, res, samples, nfr):
     smiley.GOLD = None; reset()
     if name.startswith('flag-'): parts, fc, sign = flag_badge(name[5:]), [], -1
-    else:
-        fn, sign = OBJECTS[name]; parts, fc = fn()
+    else:  # '<name>-plain' = the same object without a face (used by the Token World portal coins)
+        global NOFACE; NOFACE = name.endswith('-plain')
+        fn, sign = OBJECTS[name[:-6] if NOFACE else name]; parts, fc = fn()
     stage(res=res, samples=samples, cam_loc=(-0.9, -7.6, 0.9), target=(0.05, 0, 0.05), lens=LENS)
     bpy.context.scene.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0.35  # something for gold to reflect
     vs = bpy.context.scene.view_settings; vs.view_transform = 'Standard'; vs.look = 'None'; vs.exposure = -0.75
