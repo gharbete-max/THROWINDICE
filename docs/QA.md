@@ -585,3 +585,14 @@ Every timing in the Token World portal was cut to half: coins appear after 0.15-
 
 ## Fund balls: name first, company underneath (2026-11-03)
 Each ball now shows the fund's own short name in bold ("S&P 500", "Total World Stock", "Gold", derived from the full name by dropping the company and words like ETF/UCITS/Trust/(Acc)) with the company that runs it in small text underneath (Vanguard, iShares, State Street...), on balls big enough to hold it. Flag and country badge unchanged. Checked on the US pile at phone width; drag and pop still work, no console errors.
+
+## Game revamp from research (2026-11-03), see docs/GAME_RESEARCH.md
+Theme, cat, music, 3 lives, double jump, coin tiers, auto-scroll and forecast cone unchanged. Added:
+**Feedback** - hit-stop (2-8 frames) on life loss, soft landing, tier 3 coins, checkpoints; three shake tiers; 3-7% camera zoom punch; floating +N / PERFECT / SOFT LANDING / CHAIN / GOAL text; jump rings, run dust, landing puffs, bigger sparkle for higher coin tiers; phone vibration on big moments (off with sound off or reduced motion).
+**Skill rewards** - coin chain (1.6 s window, multiplier x1-x5 shown in the HUD, resets when a life is lost, burst every 5th), PERFECT for jumping right before an edge or wall (+3 x multiplier), SOFT LANDING for saving a big fall with the landing tap (+5).
+**Sounds** - coin pitch climbs with the chain, +-7% pitch variation on jump/land, new chimes for perfect, chain milestone, goal complete, new best. Music untouched.
+**Atmosphere** - two parallax layers (faint skyline and ghost candles), regime glow along the bottom (green when the market is rising, red when falling), speed lines above 1.2x speed, a scrolling ticker tape.
+**Map design** - guide coins over every gap showing the jump that clears it (high over a wall's take-off, just past a drop edge), never closer than 260 px to another coin; an easy breather (slopes and chop only) for 900 px after each checkpoint.
+**Retention** - three daily goals (of seven, same all day, saved locally) pop up when done and show on the game over card with distance, best chain, perfect jumps and a NEW BEST badge; the Play again button is focused so Space/Enter restarts instantly.
+Checks: perfect-jump window verified at 10/40/70 px before an edge (100 and 150 px do not count), a 7-coin chain gives x3, hit-stop freezes the run, no console errors, game over card checked on a phone. Bots: human-like bot median level 3 desktop and 2 on phone sizes, perfect-timing search bot mean 4.7.
+Not tested: feel with real fingers, haptics, sounds by ear.
