@@ -96,15 +96,15 @@ def glass_grad(name, c0, c1, trans=0.55, emit=0.35):
     return m
 
 def o_crypto():
-    """translucent cyan-to-purple glass coin, 16-sided edge, a ring of raised pixel tiles round the face"""
+    """translucent platinum glass coin (Loppa palette), 16-sided edge, a ring of raised pixel tiles round the face"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
     except Exception: pass
-    m = glass_grad('cglass', (0.0, 0.7, 1.0), (0.45, 0.05, 1.0), emit=0.25)
+    P = smiley.PAL; m = glass_grad('cglass', P['platinum'], P['pewter'], emit=0.12)
     c = cyl(m, (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 16, 0.03)
-    core = cyl(principled('core', (0.1, 0.2, 0.9), 0.3, emit=(0.15, 0.3, 1.0), emit_str=0.35), (0, 0, 0), 0.7, 0.1, (math.radians(90), 0, 0), 16, 0)
+    core = cyl(principled('core', P['graphite'], 0.3, emit=P['platinum'], emit_str=0.15), (0, 0, 0), 0.7, 0.1, (math.radians(90), 0, 0), 16, 0)
     cols = [principled('px%d' % k, col, 0.15, emit=col, emit_str=0.25, coat=1.0, coat_rough=0.02) for k, col in
-            enumerate(((0.0, 0.75, 1.0), (0.5, 0.08, 1.0), (0.75, 0.9, 1.0), (0.15, 0.3, 1.0)))]
+            enumerate((P['gold'], P['bronze'], P['sheen'], P['platinum']))]
     px, st = [], 0.15
     for i in range(-6, 7):
         for k in range(-6, 7):

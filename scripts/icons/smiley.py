@@ -8,19 +8,30 @@ import bpy
 from mathutils import Vector, Quaternion, Euler
 from lib import reset, link, uv_sphere, tube, principled, stage, render
 
+PAL = {  # Loppa palette (THROWPAPER), as base colours calibrated so the rendered ball reads as the token
+    'gold': (0.2874, 0.1809, 0.0402),
+    'sheen': (0.6542, 0.4651, 0.2656),
+    'bronze': (0.1186, 0.061, 0.0099),
+    'platinum': (0.3179, 0.338, 0.3633),
+    'pewter': (0.0861, 0.0963, 0.1073),
+    'graphite': (0.0223, 0.0266, 0.0326),
+    'paper': (1.0, 1.0, 1.0),
+    'roomgold': (0.5433, 0.2357, 0.0253),
+}
+INK = (0.004, 0.004, 0.005)
 ACC_SCALE = 1.5
 LENS = 70  # nav framing: the ball is drawn at 70/110 of the coin's size, CSS scales the image up so balls match
 DARK, LIGHT = 'dark', 'light'  # all icons now use DARK (black eyes and mouth); LIGHT kept for reference
 # name: (ball colour, feature colour, accessory, spin sign (-1 = clockwise seen from above), extra ball options)
 THEMES = {
-    'yellow':   ((1.0, 0.66, 0.0),   DARK,  None,         -1, {'lens': 110}),
-    'blue':     ((0.05, 0.3, 1.0),   DARK,  None,          1, {'lens': 110}),
-    'home':     ((0.8, 0.48, 0.18),  DARK,  'roof',       -1, {}),
-    'basics':   ((0.08, 0.62, 0.12), DARK,  'mortarboard', 1, {}),
+    'yellow':   (PAL['gold'],     DARK,  None,         -1, {'lens': 110}),
+    'blue':     (PAL['platinum'], DARK,  None,          1, {'lens': 110}),
+    'home':     (PAL['sheen'],    DARK,  'roof',       -1, {}),
+    'basics':   (PAL['platinum'], DARK,  'mortarboard', 1, {}),
     'fees':     ((0.0, 0.6, 0.42),   DARK,  'coinstack',  -1, {}),
-    'game':     ((0.48, 0.18, 0.9),  DARK,  'orbitcoin',   1, {}),
-    'invest':   ((0.85, 0.12, 0.08), DARK,  'arrow',      -1, {}),
-    'explore':  ((0.05, 0.3, 1.0),   DARK,  'telescope',   1, {}),
+    'game':     (PAL['pewter'],   DARK,  'orbitcoin',   1, {}),
+    'invest':   (PAL['bronze'],   DARK,  'arrow',      -1, {}),
+    'explore':  (PAL['gold'],     DARK,  'telescope',   1, {}),
     'wallet':   ((0.05, 0.3, 1.0),   DARK,  'wallet',     -1, {}),
     'world':    ((0.04, 0.5, 0.62),  DARK,  'continents', -1, {}),
     'industry': ((0.2, 0.25, 0.33),  DARK,  'gear',        1, {}),
@@ -37,12 +48,12 @@ THEMES = {
     'bonds':    ((0.07, 0.16, 0.38), DARK,  'band',       -1, {}),
     'token':    ((0.05, 0.3, 1.0),   DARK,  'pixelcoin',   1, {}),
     # Investing popup balls: no face, the ball and accessory carry the meaning
-    'pop-world':       ((0.04, 0.5, 0.62),  DARK, 'continents', -1, {'face': False}),
-    'pop-sectors':     ((0.2, 0.25, 0.33),  DARK, 'gear',        1, {'face': False, 'acc_scale': 2.0}),
+    'pop-world':       (PAL['platinum'], DARK, 'continents', -1, {'face': False}),
+    'pop-sectors':     (PAL['pewter'],   DARK, 'gear',        1, {'face': False, 'acc_scale': 2.0}),
     'pop-commodities': ((1.0, 0.72, 0.25),  DARK, None,         -1, {'face': False, 'metal': True}),
-    'pop-options':     ((0.05, 0.3, 1.0),   DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
-    'pop-networks':    ((0.05, 0.3, 1.0),   DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
-    'pop-issuance':    ((0.05, 0.3, 1.0),   DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
+    'pop-options':     (PAL['platinum'], DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
+    'pop-networks':    (PAL['platinum'], DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
+    'pop-issuance':    (PAL['platinum'], DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
     # particle sprites (no ball)
     'spark-star':      ((1.0, 0.75, 0.15),  DARK, 'star',        1, {'noball': True}),
     'spark-coin':      ((1.0, 0.7, 0.18),   DARK, 'coin',       -1, {'noball': True}),
@@ -87,12 +98,12 @@ def accessory(kind, opts, feat):
     """Returns the objects that make up the accessory (they get parented to the spin pivot)."""
     out = []
     if kind == 'roof':
-        col = opts.get('roof', (0.78, 0.25, 0.12))
+        col = opts.get('roof', PAL['bronze'])
         m = principled('roof', col, 0.35, coat=0.5, coat_rough=0.1)
         r = prim('cone', m, (0, 0, 1.1), (0, 0, math.radians(45)), vertices=4, radius1=0.62, radius2=0.0, depth=0.4, shade=False)
         out += [bevel(r, 0.02), bevel(prim('cube', m, (0.22, 0.1, 1.2), scale=(0.06, 0.06, 0.12), shade=False), 0.01)]
     elif kind == 'mortarboard':
-        m = principled('cap', (0.08, 0.1, 0.18), 0.35, coat=0.5, coat_rough=0.1)
+        m = principled('cap', INK, 0.35, coat=0.5, coat_rough=0.1)
         out.append(prim('cylinder', m, (0, 0, 0.98), vertices=48, radius=0.36, depth=0.16))
         out.append(bevel(prim('cube', m, (0, 0, 1.07), (0, 0, math.radians(45)), scale=(0.48, 0.48, 0.025), shade=False), 0.01))
         out.append(prim('uv_sphere', gold(), (0, 0, 1.105), radius=0.04))
@@ -117,7 +128,7 @@ def accessory(kind, opts, feat):
         h = prim('cone', gold(), tuple(b + d * 0.12), vertices=32, radius1=0.21, radius2=0.0, depth=0.3)
         h.rotation_euler = d.to_track_quat('Z', 'Y').to_euler(); out.append(h)
     elif kind == 'telescope':
-        body = principled('scope', (0.08, 0.1, 0.3), 0.3, coat=0.8, coat_rough=0.05)
+        body = principled('scope', PAL['graphite'], 0.3, coat=0.8, coat_rough=0.05)
         a, b = Vector((-0.25, 0.0, 1.0)), Vector((0.45, -0.2, 1.38))
         d = (b - a).normalized(); q = d.to_track_quat('Z', 'Y').to_euler()
         t = prim('cone', body, tuple(a.lerp(b, 0.5)), vertices=48, radius1=0.09, radius2=0.14, depth=(b - a).length); t.rotation_euler = q; out.append(bevel(t, 0.01))
@@ -131,10 +142,10 @@ def accessory(kind, opts, feat):
         out.append(bevel(f, 0.02, 3))
         out.append(prim('uv_sphere', gold(), tuple(L + Vector((-0.04, -0.15, 0.05))), radius=0.05))
     elif kind == 'scroll':  # a certificate: cream sheet, red band, gold seal
-        paper = principled('paper', (0.92, 0.78, 0.5), 0.45, coat=0.3, sss=0.1, sss_radius=(1, 0.9, 0.7), sss_scale=0.05)
+        paper = principled('paper', PAL['sheen'], 0.45, coat=0.3, sss=0.1, sss_radius=(1, 0.9, 0.7), sss_scale=0.05)
         L, R = Vector((0.62, -0.88, -0.3)), (math.radians(-8), 0, math.radians(-22))
         out.append(bevel(prim('cube', paper, tuple(L), R, scale=(0.3, 0.03, 0.38), shade=False), 0.02, 3))
-        rib = principled('ribbon', (0.85, 0.08, 0.12), 0.35, coat=0.6)
+        rib = principled('ribbon', PAL['bronze'], 0.35, coat=0.6)
         m = Euler(R).to_matrix()
         out.append(prim('cube', rib, tuple(L + m @ Vector((0, -0.035, 0.12))), R, scale=(0.305, 0.012, 0.05), shade=False))
         for k, z in enumerate((-0.06, -0.15)):
@@ -167,7 +178,7 @@ def accessory(kind, opts, feat):
     elif kind == 'antenna':
         m = principled('rod', (0.15, 0.15, 0.18), 0.3, metallic=1.0)
         out.append(tube('rod', [(0.12, 0, 0.97), (0.2, 0, 1.2), (0.28, 0, 1.33)], [0.025, 0.02, 0.018], m))
-        out.append(prim('uv_sphere', principled('tip', (1.0, 0.15, 0.2), 0.25, coat=1.0, emit=(1.0, 0.1, 0.1), emit_str=1.5), (0.29, 0, 1.37), radius=0.075))
+        out.append(prim('uv_sphere', gold(), (0.29, 0, 1.37), radius=0.075))
     elif kind == 'slotcoin':
         slot = principled('slot', (0.01, 0.06, 0.03), 0.6)
         out.append(prim('cube', slot, (0, 0, 0.995), scale=(0.24, 0.05, 0.02), shade=False))
@@ -222,7 +233,7 @@ def build(name, out, res, samples, nfr):
         body = principled('ball', col, 0.3, sss=0.12, sss_radius=(1, 0.6, 0.2) if warm else (0.3, 0.6, 1.0), sss_scale=0.15, coat=0.6, coat_rough=0.08)
     if fk == DARK: feat = principled('feat', (0.012, 0.01, 0.008), 0.25, coat=1.0, coat_rough=0.02)
     else: feat = principled('feat', (0.97, 0.98, 1.0), 0.3, coat=0.8, coat_rough=0.05, sss=0.2, sss_radius=(1, 1, 1), sss_scale=0.02)
-    if acc == 'continents': continents(body, (0.12, 0.4, 0.18))
+    if acc == 'continents': continents(body, PAL['gold'])
     face = []
     ball = uv_sphere('ball', 1.0, (0, 0, 0), seg=128, rings=64); ball.data.materials.append(body)
     if opts.get('noball'): bpy.data.objects.remove(ball); ball = None
