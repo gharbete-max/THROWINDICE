@@ -596,3 +596,12 @@ Theme, cat, music, 3 lives, double jump, coin tiers, auto-scroll and forecast co
 **Retention** - three daily goals (of seven, same all day, saved locally) pop up when done and show on the game over card with distance, best chain, perfect jumps and a NEW BEST badge; the Play again button is focused so Space/Enter restarts instantly.
 Checks: perfect-jump window verified at 10/40/70 px before an edge (100 and 150 px do not count), a 7-coin chain gives x3, hit-stop freezes the run, no console errors, game over card checked on a phone. Bots: human-like bot median level 3 desktop and 2 on phone sizes, perfect-timing search bot mean 4.7.
 Not tested: feel with real fingers, haptics, sounds by ear.
+
+## Game simplified: no hearts, instant-death gaps and walls (2026-11-04), see docs/GAME_BENCHMARK.md
+**Removed:** hearts, fall damage, soft-landing and left-behind rules. A shield power-up now saves one fatal mistake.
+**New rules:** real gaps in the chart (no ground, red lines down both edges, the price line dashed across) and walls end the run. Edge forgiveness: if the cat only touches an edge, a wall top or the far side of a gap within 100 px of its feet, it slides up smoothly and carries on (grounded or airborne); coyote time 0.14 s.
+**Fairness fix (found with bots):** after any real fall the generator now leaves a landing zone of fall time x speed + run-up before the next hazard, and every ledge/island/gap exit has at least 0.45 s of run-up; before this, a drop followed straight away by a gap or wall could not be survived. The vertical drift of the terrain is now mean-reverting, which also fixed hazards disappearing after about 20,000 px.
+**Scoring less generous:** coin values 1/2/5/15 (were 1/3/10/50), chain x1 / x2 from 4 / x3 from 8 within 1.3 s (was up to x5 in 1.6 s), PERFECT +2 flat, coins spaced 700-1200 px, guide coins on about a third of gaps. Same bot: 78 coins in 17 s before, 48 now, with distance shown beside the score.
+**Loop tweaks:** BEST distance marker in the world, distance in the HUD and on the game over card, restart by tapping anywhere or Space, card after 0.3 s, easy opening of 140 candles.
+**Bots:** human-like bot (170 ms jitter) over 12-20 runs: median level 3, about 21 s, 195 m; deaths 7 gap / 5 wall. Perfect-timing search bot: levels 5-9. Hazard mix checked per distance band (holes, walls and every kind keep appearing to 120,000 px).
+Not covered: real people, haptics and sound by ear.
