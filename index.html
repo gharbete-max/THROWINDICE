@@ -450,10 +450,10 @@ body.token-world .topic.pile{padding:18px 16px}body.token-world .topic.pile b{fo
 .carCtl button{position:relative;overflow:hidden;background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.95) 0 7%,rgba(255,255,255,0) 15%),radial-gradient(rgba(0,0,0,.07) 1px,transparent 1.5px) 0 0/5px 5px,radial-gradient(rgba(255,255,255,.2) 1px,transparent 1.5px) 2.5px 2.5px/5px 5px,radial-gradient(circle at 36% 30%,color-mix(in srgb,var(--accent) 55%,#fff) 0,var(--accent) 45%,color-mix(in srgb,var(--accent) 70%,#000) 100%);box-shadow:inset 0 -7px 12px rgba(0,0,0,.28),inset 0 5px 8px rgba(255,255,255,.65),0 5px 0 rgba(0,0,0,.25),0 8px 14px rgba(0,0,0,.18)}
 .carCtl button::after{content:"";position:absolute;left:16%;top:7%;width:44%;height:24%;border-radius:50%;background:linear-gradient(rgba(255,255,255,.85),rgba(255,255,255,.05));transform:rotate(-18deg);pointer-events:none}
 .carCtl button svg{position:relative;z-index:1}
-body{--bal:#ff2438}body.token-world{--bal:#2f8bff}
+body{--bal:#ff2438}body.token-world{--bal:#8f6b3a}
 .g0{stop-color:#ff7a86}.g1{stop-color:#ff2438}.g2{stop-color:#b3001a}.bKnot{fill:#c4001d}.bLimp{fill:#e8182d;stroke:#a80016}
-body.token-world .g0{stop-color:#a6ecff}body.token-world .g1{stop-color:#2f8bff}body.token-world .g2{stop-color:#0b3c91}body.token-world .bKnot{fill:#0a47b8}body.token-world .bLimp{fill:#2f8bff;stroke:#0b3c91}
-body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(5,40,120,.5))}
+body.token-world .g0{stop-color:#f0e2c4}body.token-world .g1{stop-color:#cea85c}body.token-world .g2{stop-color:#8f6b3a}body.token-world .bKnot{fill:#6b4f2a}body.token-world .bLimp{fill:#b08a54;stroke:#8f6b3a}
+body.token-world .dgMore.balloon svg{filter:drop-shadow(0 4px 5px rgba(60,45,20,.5))}
 .bubModes{position:absolute;top:84px;left:0;right:0;z-index:3;height:66px;display:flex;flex-wrap:wrap;align-content:flex-start;align-items:center;gap:6px 8px;padding:0 16px}.bubModes .bubLegend{flex-basis:100%}.bubModes button{border:2px solid var(--line);background:var(--surface2);color:var(--text);border-radius:999px;padding:6px 14px;font:800 14px/1.2 inherit;font-family:inherit;cursor:pointer}.bubModes button.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
 .bubLegend{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.bubLegend i{display:block;width:80px;height:12px;border-radius:99px;background:linear-gradient(90deg,hsl(120 85% 58%),hsl(60 85% 58%),hsl(0 85% 58%))}.bubLegend em{font-style:normal}
 .bub .bmet{font-style:normal;font-weight:800;font-size:.8em;background:rgba(255,255,255,.78);border-radius:99px;padding:1px 8px;color:#000}
@@ -510,7 +510,7 @@ body.token-world .dgMore.balloon .satSvg{display:block}
 body.token-world .dgMore.balloon.popped .satSvg,body.token-world .dgMore.balloon.blasting .satSvg{display:none}
 body.token-world .dgMore.balloon.popped .satLimp{display:block;animation:satBack .7s cubic-bezier(.2,1.5,.4,1)}
 body.token-world .dgMore.balloon.blasting{pointer-events:none}
-body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(126,231,255,.7))}
+body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(206,168,92,.7))}
 @keyframes satBack{0%{transform:scale(2.2);filter:brightness(2.5)}100%{transform:scale(1);filter:none}}
 /* Coinpull */
 .gameLayer{position:fixed;inset:0;z-index:520;background:#0e0e10;touch-action:none;user-select:none;-webkit-user-select:none}.gameLayer[hidden]{display:none}#gameCv{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -574,6 +574,8 @@ html{-webkit-text-size-adjust:100%}button,a,[role=button],select,input[type=rang
 .vsBar{flex:0 1 var(--w)}.vsRow>span{flex:0 0 78px}
 .gDist{font-weight:900;color:#fff;font-size:15px;text-shadow:0 2px 6px #000}.gMult{font-weight:900;color:#ff9bd9;font-size:15px;text-shadow:0 2px 6px #000;letter-spacing:.02em}.gGoals{margin:8px 0 2px;text-align:left;font-size:13px;line-height:1.5;color:#e4e0ff}.gGoals b{color:#7dffb0}.gNew{display:inline-block;margin:2px 0 4px;padding:2px 10px;border-radius:99px;background:#ffd25a;color:#000;font-weight:900;letter-spacing:.04em}
 .q{margin:14px 0 4px;padding:10px 14px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 14%,transparent);border-radius:12px;font-size:15px;font-style:italic;color:var(--text)}.q cite{display:block;margin-top:4px;font-size:12px;font-style:normal;color:var(--muted)}
+/* Token World smileys: the blue ones are shifted to the gold of the palette */
+body.token-world .navIco[src*="explore"],body.token-world .navIco[src*="wallet"],body.token-world .tokenCoin .coin-token,body.token-world .invPop img{filter:hue-rotate(197deg) saturate(.9) drop-shadow(0 2px 2px rgba(0,0,0,.3))}
 </style>
 </head>
 <body>
@@ -736,7 +738,7 @@ html{-webkit-text-size-adjust:100%}button,a,[role=button],select,input[type=rang
 <div class="tokenFlow card" id="tokenFlow"><div class="sectionHead"><div><h2>Five steps</h2></div></div><div aria-label="Token lifecycle stages" class="lifecycle" role="group"><button class="lifeStep active" onclick="showLifeStage(this,0)"><b>1</b><span>Asset &amp; rights</span></button><button class="lifeStep" onclick="showLifeStage(this,1)"><b>2</b><span>Issuance</span></button><button class="lifeStep" onclick="showLifeStage(this,2)"><b>3</b><span>Access &amp; custody</span></button><button class="lifeStep" onclick="showLifeStage(this,3)"><b>4</b><span>Transfer &amp; settlement</span></button><button class="lifeStep" onclick="showLifeStage(this,4)"><b>5</b><span>Redemption</span></button></div><p class="lifeDescription" id="lifeDescription">Step 1: what real thing is behind it?</p></div>
 </section>
 </main>
-<div class="footerNote">THROWINDICE concept prototype · sourced market snapshots are dated and may be delayed; illustrative teaching cases are labelled · not investment advice</div>
+<div class="footerNote">Concept prototype. Not investment advice.</div>
 </div>
 
 <div class="gameLayer" id="gameLayer" role="dialog" aria-modal="true" aria-label="Live Cat Bounce game" hidden><canvas id="gameCv"></canvas>
@@ -1577,7 +1579,7 @@ function scraps(cx,cy){let C=document.getElementById('confetti');if(!C){C=docume
 function blast(b,cx,cy){let C=document.getElementById('confetti');if(!C){C=document.createElement('div');C.id='confetti';C.setAttribute('aria-hidden','true');document.body.append(C)}
  b.classList.add('blasting');const fl=document.createElement('i');fl.style.cssText='position:absolute;left:'+cx+'px;top:'+cy+'px;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;background:radial-gradient(circle,#fff 0,#ffe08a 35%,rgba(255,120,40,.6) 60%,transparent 72%)';C.append(fl);
  fl.animate([{transform:'scale(.2)',opacity:1},{transform:'scale(5.5)',opacity:0}],{duration:520,easing:'ease-out'}).onfinish=()=>fl.remove();
- const T=2500,cols=['#ffd27a','#ffb347','#cfa070','#7ee7ff','#bff5ff','#fff0b8'];
+ const T=2500,cols=['#ffd27a','#ffb347','#cfa070','#a9b0ba','#e9ebee','#fff0b8'];
  for(let k=0;k<30;k++){const e=document.createElement('i'),a=Math.random()*6.283,d=50+Math.random()*95,sh=k%3===0,w=sh?16:5+Math.random()*7,h=sh?3:w*(.7+Math.random()*.6);e.style.cssText='position:absolute;left:'+cx+'px;top:'+cy+'px;width:'+w+'px;height:'+h+'px;margin:-'+h/2+'px 0 0 -'+w/2+'px;border-radius:'+(sh?'3px':'30%')+';background:'+cols[sh?3+(k%3):k%3]+';box-shadow:0 0 6px rgba(255,190,90,.8)';C.append(e);const dx=Math.cos(a)*d,dy=Math.sin(a)*d,rot=Math.random()*400-200;
   e.animate([{transform:'translate(0,0) rotate(0deg) scale(.4)',opacity:1,easing:'cubic-bezier(.1,.7,.3,1)'},{transform:'translate('+dx+'px,'+dy+'px) rotate('+rot+'deg) scale(1)',opacity:1,offset:.5,easing:'cubic-bezier(.55,0,1,.6)'},{transform:'translate(0,0) rotate('+rot*2+'deg) scale(.1)',opacity:.9}],{duration:T-Math.random()*250}).onfinish=()=>e.remove()}
  setTimeout(()=>{b.classList.remove('blasting');b.classList.add('popped')},T)}
