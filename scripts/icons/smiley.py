@@ -19,7 +19,7 @@ PAL = {  # Loppa palette (THROWPAPER), as base colours calibrated so the rendere
     'roomgold': (0.5433, 0.2357, 0.0253),
 }
 INK = (0.004, 0.004, 0.005)
-ACC_SCALE = 1.5
+ACC_SCALE = float(os.environ.get('ACC_SCALE', 1.5))  # content icons render with ACC_SCALE=1.9 so accessories read at text size
 LENS = 70  # nav framing: the ball is drawn at 70/110 of the coin's size, CSS scales the image up so balls match
 DARK, LIGHT = 'dark', 'light'  # all icons now use DARK (black eyes and mouth); LIGHT kept for reference
 # name: (ball colour, feature colour, accessory, spin sign (-1 = clockwise seen from above), extra ball options)
@@ -28,25 +28,25 @@ THEMES = {
     'blue':     (PAL['platinum'], DARK,  None,          1, {'lens': 110}),
     'home':     (PAL['sheen'],    DARK,  'roof',       -1, {}),
     'basics':   (PAL['platinum'], DARK,  'mortarboard', 1, {}),
-    'fees':     ((0.0, 0.6, 0.42),   DARK,  'coinstack',  -1, {}),
+    'fees':     (PAL['gold'],   DARK,  'coinstack',  -1, {}),
     'game':     (PAL['pewter'],   DARK,  'orbitcoin',   1, {}),
     'invest':   (PAL['bronze'],   DARK,  'arrow',      -1, {}),
     'explore':  (PAL['gold'],     DARK,  'telescope',   1, {}),
     'wallet':   ((0.05, 0.3, 1.0),   DARK,  'wallet',     -1, {}),
-    'world':    ((0.04, 0.5, 0.62),  DARK,  'continents', -1, {}),
-    'industry': ((0.2, 0.25, 0.33),  DARK,  'gear',        1, {}),
-    'tech':     ((0.0, 0.62, 0.62),  DARK,  'antenna',    -1, {}),
-    'finance':  ((0.0, 0.2, 0.09),   DARK,  'slotcoin',    1, {}),
-    'energy':   ((1.0, 0.2, 0.0),    DARK,  'flame',      -1, {}),
-    'health':   ((0.8, 0.82, 0.86),  DARK,  'cross',       1, {}),
-    'shops':    ((0.95, 0.12, 0.42), DARK,  'bag',        -1, {}),
-    'property': ((0.45, 0.06, 0.02), DARK,  'roof',        1, {'roof': (0.12, 0.12, 0.14)}),
-    'gold':     ((1.0, 0.72, 0.25),  DARK,  None,         -1, {'metal': True}),
+    'world':    (PAL['platinum'],  DARK,  'continents', -1, {}),
+    'industry': (PAL['pewter'],  DARK,  'gear',        1, {}),
+    'tech':     (PAL['platinum'],  DARK,  'antenna',    -1, {}),
+    'finance':  (PAL['gold'],   DARK,  'slotcoin',    1, {}),
+    'energy':   (PAL['bronze'],    DARK,  'flame',      -1, {}),
+    'health':   (PAL['paper'],  DARK,  'cross',       1, {}),
+    'shops':    (PAL['sheen'], DARK,  'bag',        -1, {}),
+    'property': (PAL['bronze'], DARK,  'roof',        1, {'roof': PAL['graphite']}),
+    'gold':     ((1.0, 0.72, 0.25),  DARK,  None,         -1, {'metal': True}),  # metals: reflectance colours, not calibrated plastic
     'silver':   ((0.86, 0.87, 0.9),  DARK,  None,          1, {'metal': True}),
-    'copper':   ((0.95, 0.45, 0.25), DARK,  None,         -1, {'metal': True}),
-    'nature':   ((0.18, 0.36, 0.04), DARK,  'sprout',      1, {}),
-    'bonds':    ((0.07, 0.16, 0.38), DARK,  'band',       -1, {}),
-    'token':    ((0.05, 0.3, 1.0),   DARK,  'pixelcoin',   1, {}),
+    'copper':   ((0.72, 0.47, 0.24), DARK,  None,         -1, {'metal': True}),
+    'nature':   (PAL['sheen'], DARK,  'sprout',      1, {}),
+    'bonds':    (PAL['pewter'], DARK,  'band',       -1, {}),
+    'token':    (PAL['platinum'],   DARK,  'pixelcoin',   1, {}),
     # Investing popup balls: no face, the ball and accessory carry the meaning
     'pop-world':       (PAL['platinum'], DARK, 'continents', -1, {'face': False}),
     'pop-sectors':     (PAL['pewter'],   DARK, 'gear',        1, {'face': False, 'acc_scale': 2.0}),
@@ -57,7 +57,7 @@ THEMES = {
     # particle sprites (no ball)
     'spark-star':      ((1.0, 0.75, 0.15),  DARK, 'star',        1, {'noball': True}),
     'spark-coin':      ((1.0, 0.7, 0.18),   DARK, 'coin',       -1, {'noball': True}),
-    'chain':    ((0.05, 0.3, 1.0),   DARK,  'chain',      -1, {}),
+    'chain':    (PAL['platinum'],   DARK,  'chain',      -1, {}),
 }
 
 GOLD = None
@@ -180,40 +180,40 @@ def accessory(kind, opts, feat):
         out.append(tube('rod', [(0.12, 0, 0.97), (0.2, 0, 1.2), (0.28, 0, 1.33)], [0.025, 0.02, 0.018], m))
         out.append(prim('uv_sphere', gold(), (0.29, 0, 1.37), radius=0.075))
     elif kind == 'slotcoin':
-        slot = principled('slot', (0.01, 0.06, 0.03), 0.6)
+        slot = principled('slot', INK, 0.6)
         out.append(prim('cube', slot, (0, 0, 0.995), scale=(0.24, 0.05, 0.02), shade=False))
         c = prim('cylinder', gold(), (0, 0, 1.15), (0, math.radians(90), 0), vertices=48, radius=0.22, depth=0.06)
         out.append(bevel(c, 0.012))
     elif kind == 'flame':
-        outer = principled('flameO', (1.0, 0.25, 0.02), 0.35, emit=(1.0, 0.3, 0.02), emit_str=2.0, coat=0.6)
-        inner = principled('flameI', (1.0, 0.85, 0.2), 0.35, emit=(1.0, 0.8, 0.2), emit_str=3.0)
+        outer = principled('flameO', PAL['roomgold'], 0.35, emit=PAL['roomgold'], emit_str=1.2, coat=0.6)
+        inner = principled('flameI', PAL['sheen'], 0.35, emit=PAL['sheen'], emit_str=1.5)
         f = prim('uv_sphere', outer, (0, 0, 1.12), scale=(0.2, 0.2, 0.34), radius=1.0, segments=48, ring_count=24)
         tp = f.modifiers.new('tp', 'SIMPLE_DEFORM'); tp.deform_method = 'TAPER'; tp.factor = -1.2; tp.deform_axis = 'Z'
         g = prim('uv_sphere', inner, (0, -0.12, 1.08), scale=(0.1, 0.1, 0.18), radius=1.0, segments=32, ring_count=16)
         tg = g.modifiers.new('tp', 'SIMPLE_DEFORM'); tg.deform_method = 'TAPER'; tg.factor = -1.2; tg.deform_axis = 'Z'
         out += [f, g]
     elif kind == 'cross':
-        m = principled('red', (0.9, 0.05, 0.08), 0.3, coat=0.8, coat_rough=0.05)
+        m = principled('red', PAL['bronze'], 0.3, coat=0.8, coat_rough=0.05)
         p = surf(0, 0.5, 0.0)
         for sc in ((0.16, 0.05, 0.05), (0.05, 0.05, 0.16)):
             c = prim('cube', m, tuple(p), scale=sc, shade=False); on_surface(c, p)
             out.append(bevel(c, 0.015))
     elif kind == 'bag':
-        m = principled('bag', (0.98, 0.95, 0.85), 0.5, coat=0.3)
+        m = principled('bag', PAL['paper'], 0.5, coat=0.3)
         L = Vector((1.0, -0.25, -0.45))
         out.append(bevel(prim('cube', m, tuple(L), (0, 0, math.radians(-20)), scale=(0.2, 0.09, 0.22), shade=False), 0.02))
-        h = principled('handle', (0.9, 0.1, 0.35), 0.4)
+        h = principled('handle', PAL['bronze'], 0.4)
         d = Vector((math.cos(math.radians(-20)), math.sin(math.radians(-20)), 0))
         pts = [tuple(L + d * (0.1 * math.cos(a)) + Vector((0, 0, 0.21 + 0.12 * math.sin(a)))) for a in [math.radians(t) for t in range(0, 181, 30)]]
         out.append(tube('handle', pts, [0.018] * len(pts), h))
     elif kind == 'sprout':
-        st = principled('stem', (0.45, 0.3, 0.12), 0.5); lf = principled('leaf', (0.4, 0.85, 0.2), 0.35, coat=0.6, sss=0.2, sss_radius=(0.4, 1, 0.2), sss_scale=0.05)
+        st = principled('stem', PAL['bronze'], 0.5); lf = principled('leaf', PAL['gold'], 0.35, coat=0.6)
         out.append(tube('stem', [(0, 0, 0.97), (0.02, 0, 1.12), (0, 0, 1.24)], [0.03, 0.025, 0.02], st))
         for s in (-1, 1):
             l = prim('uv_sphere', lf, (s * 0.17, 0, 1.3), (0, s * math.radians(-35), 0), scale=(0.2, 0.06, 0.09), radius=1.0, segments=32, ring_count=16)
             out.append(l)
     elif kind == 'band':
-        m = principled('ribbon', (0.95, 0.75, 0.2), 0.3, metallic=0.6, coat=0.6)
+        m = principled('ribbon', PAL['gold'], 0.3, metallic=0.6, coat=0.6)
         z = 0.42; R = math.sqrt(1 - z * z) * 1.005
         out.append(prim('torus', m, (0, 0, z), major_radius=R, minor_radius=0.045, major_segments=96, minor_segments=16))
     elif kind == 'chain':

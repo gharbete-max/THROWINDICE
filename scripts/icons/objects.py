@@ -114,30 +114,30 @@ def o_crypto():
     return [c, core] + px, face([c], 0, 0.05, 1.05)
 
 def o_notes():
-    g = plastic('note', (0.08, 0.6, 0.2)); dk = plastic('noteDk', (0.03, 0.42, 0.14))
+    g = plastic('note', smiley.PAL['sheen']); dk = plastic('noteDk', smiley.PAL['gold'])
     ps = []
     for k, (dx, dz, rz) in enumerate([(0.12, -0.1, 10), (0.06, -0.05, 4), (0, 0, 0)]):
         ps.append(box('n', g if k == 2 else dk, (dx, 0.12 - 0.06 * k, dz), (1.9, 0.05, 1.0), (0, math.radians(rz), 0), 0.02))
-    oval = prim('cylinder', plastic('oval', (0.45, 0.85, 0.4)), (0, -0.035, 0), (math.radians(90), 0, 0), vertices=48, radius=0.36, depth=0.02)
+    oval = prim('cylinder', plastic('oval', smiley.PAL['paper']), (0, -0.035, 0), (math.radians(90), 0, 0), vertices=48, radius=0.36, depth=0.02)
     oval.scale = (1.3, 1, 1)
     return ps + [oval], face([oval, ps[2]], 0, 0.06, 0.95)
 
 def o_moneybag():
-    tan = plastic('bag', (0.72, 0.42, 0.1))
+    tan = plastic('bag', smiley.PAL['bronze'])
     b = uv_sphere('bag', 0.85, (0, 0, -0.2), (1, 0.92, 0.95), 64, 32); b.data.materials.append(tan)
     neck = cyl(tan, (0, 0, 0.62), 0.22, 0.25); top = prim('cone', tan, (0, 0, 0.86), vertices=48, radius1=0.12, radius2=0.42, depth=0.26)
     tie = prim('torus', gold(), (0, 0, 0.66), major_radius=0.25, minor_radius=0.055, major_segments=48, minor_segments=12)
     return [b, neck, top, tie], face([b], 0, -0.1, 1.15)
 
 def o_receipt():
-    paper = plastic('paper', (0.78, 0.82, 0.9)); line = plastic('line', (0.25, 0.3, 0.42))
+    paper = plastic('paper', smiley.PAL['paper']); line = plastic('line', smiley.PAL['pewter'])
     r = box('rcpt', paper, (0, 0, 0), (1.2, 0.08, 1.75), (0, 0, 0), 0.03)
     ls = [box('l', line, (-0.05 if k % 2 else 0, -0.045, -0.35 - 0.16 * k), (0.8 - 0.25 * (k % 2), 0.01, 0.05), bv=0) for k in range(3)]
     tot = box('t', gold(), (0.25, -0.05, -0.8), (0.4, 0.015, 0.09), bv=0)
     return [r, tot] + ls, face([r], 0, 0.45, 0.95)
 
 def o_tag():
-    pink = plastic('tag', (1.0, 0.12, 0.38))
+    pink = plastic('tag', smiley.PAL['gold'])
     import bmesh
     me = bpy.data.meshes.new('tag'); bm = bmesh.new()
     vs = [bm.verts.new(p) for p in [(-0.62, 0, -0.8), (0.62, 0, -0.8), (0.62, 0, 0.45), (0, 0, 0.98), (-0.62, 0, 0.45)]]
@@ -151,7 +151,7 @@ def o_tag():
     return [t, hole, s], face([t], 0, -0.12, 1.0)
 
 def o_bank():
-    st = plastic('stone', (0.82, 0.68, 0.42)); rf = plastic('roof', (0.05, 0.25, 0.75))
+    st = plastic('stone', smiley.PAL['sheen']); rf = plastic('roof', smiley.PAL['graphite'])
     base = box('base', st, (0, 0, -0.85), (1.9, 1.1, 0.2)); step = box('step', st, (0, -0.05, -0.72), (1.7, 1.0, 0.1))
     cols = [cyl(st, (x, -0.3, -0.25), 0.1, 0.85, v=24, bv=0.01) for x in (-0.6, -0.2, 0.2, 0.6)]
     back = box('back', st, (0, 0.15, -0.25), (1.5, 0.5, 0.85), bv=0.02)
@@ -160,24 +160,24 @@ def o_bank():
     return [base, step, back, frieze, roof] + cols, face([frieze], 0, 0.42, 0.72)
 
 def o_tower():
-    gl = plastic('glass', (0.03, 0.32, 0.85)); win = principled('win', (0.75, 0.9, 1.0), 0.1, coat=1.0)
+    gl = plastic('glass', smiley.PAL['platinum']); win = principled('win', smiley.PAL['graphite'], 0.1, coat=1.0)
     t = box('tower', gl, (0, 0, -0.1), (1.0, 1.0, 1.9), bv=0.06)
     ws = [box('w', win, (x, -0.505, z), (0.18, 0.01, 0.16), bv=0) for x in (-0.3, 0, 0.3) for z in (-0.85, -0.55)]
-    top = box('top', plastic('cap', (0.15, 0.3, 0.6)), (0, 0, 0.9), (0.7, 0.7, 0.14))
+    top = box('top', plastic('cap', smiley.PAL['pewter']), (0, 0, 0.9), (0.7, 0.7, 0.14))
     ant = tube('ant', [(0.2, 0, 0.96), (0.2, 0, 1.15), (0.2, 0, 1.3)], [0.02] * 3, gold())
     return [t, top, ant] + ws, face([t], 0, 0.4, 1.0)
 
 def o_factory():
-    w = plastic('wall', (0.95, 0.38, 0.08)); r = plastic('saw', (0.3, 0.33, 0.42))
+    w = plastic('wall', smiley.PAL['bronze']); r = plastic('saw', smiley.PAL['pewter'])
     body = box('body', w, (0, 0, -0.45), (1.9, 1.0, 0.95))
     saws = [prism(r, (x, 0, 0.03), 0.6, 1.0, 0.32, (0, math.radians(18), 0)) for x in (-0.6, 0, 0.6)]
-    ch = cyl(plastic('chim', (0.8, 0.25, 0.2)), (0.62, 0.2, 0.45), 0.13, 0.95)
+    ch = cyl(plastic('chim', smiley.PAL['graphite']), (0.62, 0.2, 0.45), 0.13, 0.95)
     smoke = [uv_sphere('s', r_, (0.62 + dx, 0.2, z), seg=32, rings=16) for dx, z, r_ in ((0.05, 1.05, 0.16), (0.22, 1.25, 0.12))]
-    for s in smoke: s.data.materials.append(plastic('smoke', (0.9, 0.92, 0.96)))
+    for s in smoke: s.data.materials.append(plastic('smoke', smiley.PAL['platinum']))
     return [body, ch] + saws + smoke, face([body], -0.2, -0.35, 0.95)
 
 def o_crane():
-    y = plastic('yellow', (1.0, 0.58, 0.0)); dk = plastic('dark', (0.2, 0.22, 0.28))
+    y = plastic('yellow', smiley.PAL['gold']); dk = plastic('dark', smiley.PAL['graphite'])
     mast = box('mast', y, (-0.35, 0, -0.2), (0.22, 0.22, 1.8), bv=0.02)
     jib = box('jib', y, (0.2, 0, 0.72), (1.5, 0.16, 0.16), bv=0.02)
     cab = box('cab', y, (-0.35, -0.02, 0.38), (0.55, 0.5, 0.45))
@@ -187,24 +187,24 @@ def o_crane():
     return [mast, jib, cab, hook, blk, base], face([cab], -0.35, 0.42, 0.55)
 
 def o_house():
-    wl = plastic('hwall', (0.95, 0.62, 0.22)); rf = plastic('hroof', (0.72, 0.08, 0.04))
+    wl = plastic('hwall', smiley.PAL['sheen']); rf = plastic('hroof', smiley.PAL['bronze'])
     b = box('house', wl, (0, 0, -0.45), (1.5, 1.2, 1.1))
     r = prism(rf, (0, 0, 0.08), 1.75, 1.4, 0.7)
-    door = box('door', plastic('door', (0.5, 0.28, 0.12)), (0.45, -0.6, -0.75), (0.3, 0.04, 0.5), bv=0.02)
+    door = box('door', plastic('door', smiley.PAL['graphite']), (0.45, -0.6, -0.75), (0.3, 0.04, 0.5), bv=0.02)
     ch = box('chim', rf, (0.45, 0.2, 0.55), (0.2, 0.2, 0.45), bv=0.02)
     return [b, r, door, ch], face([b], -0.18, -0.3, 0.95)
 
 def o_castle():
-    st = plastic('cstone', (0.48, 0.44, 0.7)); rf = plastic('croof', (0.42, 0.06, 0.78))
+    st = plastic('cstone', smiley.PAL['platinum']); rf = plastic('croof', smiley.PAL['graphite'])
     wall = box('wall', st, (0, 0, -0.45), (1.3, 0.9, 1.0))
     tws = [cyl(st, (x, 0, -0.25), 0.3, 1.45) for x in (-0.75, 0.75)]
     cones = [prim('cone', rf, (x, 0, 0.72), vertices=48, radius1=0.38, radius2=0.0, depth=0.55) for x in (-0.75, 0.75)]
     cren = [box('c', st, (x, 0, 0.12), (0.18, 0.9, 0.18), bv=0.02) for x in (-0.36, 0, 0.36)]
-    gate = box('gate', plastic('gate', (0.35, 0.2, 0.1)), (0, -0.46, -0.78), (0.4, 0.04, 0.45), bv=0.04)
+    gate = box('gate', plastic('gate', smiley.PAL['bronze']), (0, -0.46, -0.78), (0.4, 0.04, 0.45), bv=0.04)
     return [wall, gate] + tws + cones + cren, face([wall], 0, -0.15, 0.8)
 
 def o_dome():
-    st = plastic('dstone', (0.88, 0.7, 0.45)); dm = plastic('dome', (0.0, 0.48, 0.42))
+    st = plastic('dstone', smiley.PAL['sheen']); dm = plastic('dome', smiley.PAL['gold'])
     base = box('dbase', st, (0, 0, -0.6), (1.7, 1.1, 0.75))
     drum = cyl(st, (0, 0, -0.08), 0.6, 0.3)
     d = uv_sphere('dome', 0.6, (0, 0, 0.05), (1, 1, 1.05), 64, 32); d.data.materials.append(dm)
@@ -213,21 +213,21 @@ def o_dome():
     return [base, drum, d, sp, ball], face([base], 0, -0.48, 0.85)
 
 def o_map():
-    pp = [plastic('map%d' % k, c) for k, c in enumerate(((0.92, 0.72, 0.35), (0.8, 0.6, 0.26)))]
-    land = plastic('land', (0.12, 0.55, 0.12)); sea = plastic('sea', (0.45, 0.75, 0.95))
+    pp = [plastic('map%d' % k, c) for k, c in enumerate((smiley.PAL['sheen'], smiley.PAL['paper']))]
+    land = plastic('land', smiley.PAL['gold']); sea = plastic('sea', smiley.PAL['platinum'])
     panels = [box('p', pp[k % 2], (-0.6 + 0.6 * k, 0.08 * (k % 2), 0), (0.6, 0.05, 1.5), (0, 0, math.radians(14 if k % 2 else -14)), 0.015) for k in range(3)]
     blobs = [box('b', land, (-0.62, -0.06, 0.35), (0.35, 0.01, 0.4), (0, 0, math.radians(-14)), 0), box('b', land, (0.6, -0.06, -0.45), (0.3, 0.01, 0.35), (0, 0, math.radians(-14)), 0)]
     return panels + blobs, face([panels[1]], 0, 0.05, 0.85)
 
 def o_pin():
-    red = plastic('pin', (0.95, 0.12, 0.18))
+    red = plastic('pin', smiley.PAL['bronze'])
     s = uv_sphere('pinball', 0.7, (0, 0, 0.3), seg=64, rings=32); s.data.materials.append(red)
     c = prim('cone', red, (0, 0, -0.45), (math.radians(180), 0, 0), vertices=48, radius1=0.5, radius2=0.02, depth=0.95)
-    shadow = cyl(plastic('pinshadow', (0.2, 0.2, 0.25)), (0, 0, -0.95), 0.22, 0.03, bv=0.01)
+    shadow = cyl(plastic('pinshadow', smiley.PAL['graphite']), (0, 0, -0.95), 0.22, 0.03, bv=0.01)
     return [s, c, shadow], face([s], 0, 0.3, 0.9)
 
 def o_compass():
-    body = principled('cbody', (0.96, 0.96, 0.98), 0.3, coat=0.8)
+    body = principled('cbody', smiley.PAL['paper'], 0.3, coat=0.8)
     d = cyl(body, (0, 0, 0), 0.92, 0.22, (math.radians(90), 0, 0), 64, 0.04)
     rim = prim('torus', gold(), (0, -0.1, 0), (math.radians(90), 0, 0), major_radius=0.92, minor_radius=0.07, major_segments=64, minor_segments=16)
     import bmesh
@@ -237,7 +237,7 @@ def o_compass():
         o = link(bpy.data.objects.new('ndl', me)); o.location = (0.0, -0.13, 0.25); o.data.materials.append(principled('n', col, 0.3, coat=0.8))
         so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.03; o.rotation_euler = (0, math.radians(-35), 0); return o
     hub = prim('uv_sphere', gold(), (0, -0.14, 0.25), radius=0.05)
-    return [d, rim, needle((0.95, 0.15, 0.15), 1), needle((0.3, 0.32, 0.4), -0.6), hub], face([d], 0, -0.2, 0.85)
+    return [d, rim, needle(smiley.PAL['bronze'], 1), needle(smiley.PAL['pewter'], -0.6), hub], face([d], 0, -0.2, 0.85)
 
 OBJECTS = {'coin': (o_coin, -1), 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
