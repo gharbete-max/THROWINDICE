@@ -262,6 +262,22 @@ def _air(name, i):
 AIR = {'tko': 3, 'rise': 4, 'fall': 4}
 RUNNER_SKIN = os.environ.get('RUNNER_SKIN', 'gold')   # 'glass' = the powered-up look
 
+def rainbow_glass(name):
+    """translucent glass whose hue runs in a spiral round the body (angle around z + height); the game also rotates the hues over time"""
+    m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    tc = nt.nodes.new('ShaderNodeTexCoord'); sep = nt.nodes.new('ShaderNodeSeparateXYZ'); nt.links.new(tc.outputs['Object'], sep.inputs[0])
+    at = nt.nodes.new('ShaderNodeMath'); at.operation = 'ARCTAN2'; nt.links.new(sep.outputs['Y'], at.inputs[0]); nt.links.new(sep.outputs['X'], at.inputs[1])
+    zk = nt.nodes.new('ShaderNodeMath'); zk.operation = 'MULTIPLY'; zk.inputs[1].default_value = 0.55; nt.links.new(sep.outputs['Z'], zk.inputs[0])
+    turn = nt.nodes.new('ShaderNodeMath'); turn.operation = 'MULTIPLY_ADD'; turn.inputs[1].default_value = 2 / (2 * math.pi); nt.links.new(at.outputs[0], turn.inputs[0])
+    nt.links.new(zk.outputs[0], turn.inputs[2])  # two hue turns per lap + a slow climb with height: bands wind round as a spiral
+    fr = nt.nodes.new('ShaderNodeMath'); fr.operation = 'FRACT'; nt.links.new(turn.outputs[0], fr.inputs[0])
+    hsv = nt.nodes.new('ShaderNodeCombineColor'); hsv.mode = 'HSV'; hsv.inputs[1].default_value = 0.85; hsv.inputs[2].default_value = 1.0
+    nt.links.new(fr.outputs[0], hsv.inputs[0])
+    nt.links.new(hsv.outputs[0], b.inputs['Base Color']); nt.links.new(hsv.outputs[0], b.inputs['Emission Color'])
+    b.inputs['Emission Strength'].default_value = 0.45; b.inputs['Transmission Weight'].default_value = 0.6; b.inputs['IOR'].default_value = 1.45
+    b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
+    return m
+
 def o_runner(gait, frame):
     """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
     P = smiley.PAL
@@ -276,6 +292,11 @@ def o_runner(gait, frame):
         body = glass_grad('rglass', c0, c1, trans=0.6, emit=0.45, axis='Z', k=0.75)
         limb = principled('rlimb', cl, 0.15, emit=cl, emit_str=0.5, coat=1.0, coat_rough=0.02)
         limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
+    elif RUNNER_SKIN == 'rainbow':  # two or three power-ups at once
+        bpy.context.scene.render.film_transparent = True
+        try: bpy.context.scene.cycles.film_transparent_glass = True
+        except Exception: pass
+        body = rainbow_glass('rbow'); limb = rainbow_glass('rbowl')
     else:
         body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
     if gait in GAITS:
@@ -399,7 +420,34 @@ def o_pu_x2():
     t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
     return [t], []
 
-OBJECTS = {'coin': (o_coin, -1), 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+def o_case():
+    """checkpoint: an open briefcase full of green banknote bundles and gold coins, with a face on the front"""
+    leather = plastic('leather', (0.06, 0.025, 0.01), 0.35); lining = plastic('lining', smiley.PAL['graphite'])
+    note = plastic('notes', (0.03, 0.32, 0.08)); band = plastic('band', smiley.PAL['sheen'])
+    base = box('base', leather, (0, 0, -0.3), (1.9, 1.05, 0.6), bv=0.07)
+    inner = box('inner', lining, (0, 0, -0.04), (1.72, 0.88, 0.1), bv=0.02)
+    lid = box('lid', leather, (0, 0.6, 0.42), (1.9, 0.14, 1.05), (math.radians(-12), 0, 0), bv=0.07)
+    lidin = box('lidin', lining, (0, 0.51, 0.42), (1.72, 0.04, 0.9), (math.radians(-12), 0, 0), bv=0.01)
+    handle = prim('torus', gold(), (0, 0.72, 0.98), (0, math.radians(90), 0), major_radius=0.22, minor_radius=0.05, major_segments=32, minor_segments=10)
+    handle.scale = (1, 1, 1.6)
+    parts = [base, inner, lid, lidin, handle]
+    for x in (-0.7, 0.7):  # gold latches and corners
+        parts.append(box('latch', gold(), (x, -0.54, -0.05), (0.2, 0.06, 0.14), bv=0.02))
+    for i, x in enumerate((-0.55, 0, 0.55)):     # banknote bundles, two layers, with paper bands
+        for j, y in enumerate((-0.2, 0.2)):
+            for k in range(2):
+                parts.append(box('bundle', note, (x, y, 0.06 + 0.13 * k), (0.48, 0.34, 0.12), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0.015))
+                parts.append(box('band', band, (x, y, 0.06 + 0.13 * k), (0.1, 0.36, 0.13), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0))
+    for (x, y, z) in ((-0.3, -0.25, 0.38), (0.25, 0.1, 0.38), (0.6, -0.2, 0.36), (-0.6, 0.15, 0.37), (0.0, -0.1, 0.46), (0.4, -0.3, 0.45)):
+        parts.append(cyl(gold(), (x, y, z), 0.15, 0.05, (math.radians(15), math.radians(20), 0), 32, 0.01))
+    fc = face([base], 0, -0.28, 0.75)
+    hub = link(bpy.data.objects.new('tilt', None)); bpy.context.view_layer.update()
+    for o in parts + fc:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
+    return [hub], []
+
+OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1), 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
