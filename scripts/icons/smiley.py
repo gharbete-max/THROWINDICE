@@ -17,6 +17,10 @@ PAL = {  # Loppa palette (THROWPAPER), as base colours calibrated so the rendere
     'graphite': (0.0223, 0.0266, 0.0326),
     'paper': (1.0, 1.0, 1.0),
     'roomgold': (0.5433, 0.2357, 0.0253),
+    'lavender': (0.2256, 0.2403, 0.5067),  # Token World
+    'violet': (0.1133, 0.092, 0.3297),  # Token World
+    'periwinkle': (0.091, 0.1053, 0.2944),  # Token World
+    'ice': (0.6528, 0.6785, 0.9737),  # Token World
 }
 INK = (0.004, 0.004, 0.005)
 ACC_SCALE = float(os.environ.get('ACC_SCALE', 1.5))  # content icons render with ACC_SCALE=1.9 so accessories read at text size
@@ -25,13 +29,13 @@ DARK, LIGHT = 'dark', 'light'  # all icons now use DARK (black eyes and mouth); 
 # name: (ball colour, feature colour, accessory, spin sign (-1 = clockwise seen from above), extra ball options)
 THEMES = {
     'yellow':   (PAL['gold'],     DARK,  None,         -1, {'lens': 110}),
-    'blue':     (PAL['platinum'], DARK,  None,          1, {'lens': 110}),
+    'blue':     (PAL['lavender'], DARK,  None,          1, {'lens': 110}),
     'home':     (PAL['sheen'],    DARK,  'roof',       -1, {}),
     'basics':   (PAL['platinum'], DARK,  'mortarboard', 1, {}),
     'fees':     (PAL['gold'],   DARK,  'coinstack',  -1, {}),
     'game':     (PAL['pewter'],   DARK,  'orbitcoin',   1, {}),
     'invest':   (PAL['bronze'],   DARK,  'arrow',      -1, {}),
-    'explore':  (PAL['gold'],     DARK,  'telescope',   1, {}),
+    'explore':  (PAL['violet'],   DARK,  'telescope',   1, {}),
     'wallet':   ((0.05, 0.3, 1.0),   DARK,  'wallet',     -1, {}),
     'world':    (PAL['platinum'],  DARK,  'continents', -1, {}),
     'industry': (PAL['pewter'],  DARK,  'gear',        1, {}),
@@ -47,13 +51,17 @@ THEMES = {
     'nature':   (PAL['sheen'], DARK,  'sprout',      1, {}),
     'bonds':    (PAL['pewter'], DARK,  'band',       -1, {}),
     'token':    (PAL['platinum'],   DARK,  'pixelcoin',   1, {}),
+    # Token World versions of the shared nav smileys (blue-violet palette)
+    'home-t':   (PAL['ice'],        DARK,  'roof',        1, {'roof': PAL['violet']}),
+    'basics-t': (PAL['lavender'],   DARK,  'mortarboard', -1, {}),
+    'game-t':   (PAL['periwinkle'], DARK,  'orbitcoin',   1, {}),
     # Investing popup balls: no face, the ball and accessory carry the meaning
     'pop-world':       (PAL['platinum'], DARK, 'continents', -1, {'face': False}),
     'pop-sectors':     (PAL['pewter'],   DARK, 'gear',        1, {'face': False, 'acc_scale': 2.0}),
     'pop-commodities': ((1.0, 0.72, 0.25),  DARK, None,         -1, {'face': False, 'metal': True}),
-    'pop-options':     (PAL['platinum'], DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
-    'pop-networks':    (PAL['platinum'], DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
-    'pop-issuance':    (PAL['platinum'], DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
+    'pop-options':     (PAL['lavender'], DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
+    'pop-networks':    (PAL['periwinkle'], DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
+    'pop-issuance':    (PAL['violet'], DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
     # game power-ups: faceless balls with one big front badge
     'pu-shield': (PAL['platinum'], DARK, 'shieldbadge', 1, {'face': False, 'acc_scale': 1.0}),
     'pu-magnet': (PAL['pewter'],   DARK, 'magnet',     -1, {'face': False, 'acc_scale': 1.0}),

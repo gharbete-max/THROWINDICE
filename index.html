@@ -582,6 +582,20 @@ html{-webkit-text-size-adjust:100%}button,a,[role=button],select,input[type=rang
 
 /* 3D emoji icons (assets/e): sized like the emoji they replace */
 .e3d{display:inline-block;width:1.35em;height:1.35em;margin:-.2em .02em;vertical-align:-.12em;object-fit:contain}
+
+/* ---- Token World palette: the Loppa ink and metals with a blue-violet cast, so the two worlds read apart ---- */
+body.token-world{--c1:#b9bde8;--c2:#8b7fd6;--c3:#5b5fb8;--c4:#7f86cf;--c5:#dfe2fb;--accent:#b9bde8;--accent-text:#b9bde8;--bg:#0d0d17;--surface:#161627;--surface2:#1f1f36;--line:#34345a;--text:#f4f4fb;--muted:#b4b6d6;--ink:#f4f4fb;--bal:#5b5fb8}
+:root[data-theme=dark] body.token-world{--accent-text:#b9bde8}
+body.token-world::before{background:radial-gradient(40% 35% at 20% 25%,rgba(139,127,214,.30),transparent 70%),radial-gradient(45% 40% at 80% 20%,rgba(91,95,184,.34),transparent 70%),radial-gradient(40% 40% at 70% 80%,rgba(127,134,207,.24),transparent 70%),radial-gradient(35% 35% at 25% 85%,rgba(185,189,232,.16),transparent 70%)}
+body.token-world .g0{stop-color:#dfe2fb}body.token-world .g1{stop-color:#8b7fd6}body.token-world .g2{stop-color:#5b5fb8}
+body.token-world .bKnot{fill:#5b5fb8}body.token-world .bLimp{fill:#7f86cf;stroke:#5b5fb8}
+body.token-world .dgMore.balloon .satSvg{filter:drop-shadow(0 0 7px rgba(139,127,214,.7))}
+/* rendered icons on Token World pages take the same cast; flags keep their real colours */
+body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85)}
+/* a 3D icon replaces the flat CSS ball it used to sit in */
+.exploreCard .big:has(.e3d),.topic .symbol:has(.e3d),.catIcon:has(.e3d),.avatar:has(.e3d),.themeBtn:has(.e3d){background:none;box-shadow:none;border:0}
+.exploreCard .big .e3d,.topic .symbol .e3d,.catIcon .e3d{width:100%;height:100%;margin:0;vertical-align:0}
+.avatar .e3d,.themeBtn .e3d{width:120%;height:120%;margin:0;vertical-align:0}
 </style>
 </head>
 <body>
@@ -761,9 +775,9 @@ html{-webkit-text-size-adjust:100%}button,a,[role=button],select,input[type=rang
 <span class="coinLabel">Tokenized</span>
 </button>
 <button aria-controls="invPop" aria-expanded="false" aria-haspopup="true" class="navbtn" data-pages="world sectors commodities" id="invBtn" onclick="invToggle(this)"><span class="ico"><img class="navIco" data-w="r" src="assets/icons/invest.webp" data-spin="assets/icons/invest-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"><img class="navIco" data-w="t" src="assets/icons/explore.webp" data-spin="assets/icons/explore-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel"><span data-w="r">Investing</span><span data-w="t">Explore</span></span></button>
-<button aria-label="Dashboard home" class="navbtn home active" data-page="dashboard" onclick="navAction(this,'dashboard','home')"><span class="ico"><img class="navIco" src="assets/icons/home.webp" data-spin="assets/icons/home-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel"><span data-w="r">Dashboard</span><span data-w="t">Home</span></span></button>
-<button class="navbtn" data-page="basics" data-pages="basics fees feecalc tBasics tWallets" onclick="navAction(this,'basics','basics')"><span class="ico"><img class="navIco" src="assets/icons/basics.webp" data-spin="assets/icons/basics-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel">Basics</span></button>
-<button class="navbtn" data-page="game" onclick="navGame(this)"><span class="ico"><img class="navIco" src="assets/icons/game.webp" data-spin="assets/icons/game-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel">Game</span></button>
+<button aria-label="Dashboard home" class="navbtn home active" data-page="dashboard" onclick="navAction(this,'dashboard','home')"><span class="ico"><img class="navIco" data-w="r" src="assets/icons/home.webp" data-spin="assets/icons/home-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"><img class="navIco" data-w="t" src="assets/icons/home-t.webp" data-spin="assets/icons/home-t-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel"><span data-w="r">Dashboard</span><span data-w="t">Home</span></span></button>
+<button class="navbtn" data-page="basics" data-pages="basics fees feecalc tBasics tWallets" onclick="navAction(this,'basics','basics')"><span class="ico"><img class="navIco" data-w="r" src="assets/icons/basics.webp" data-spin="assets/icons/basics-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"><img class="navIco" data-w="t" src="assets/icons/basics-t.webp" data-spin="assets/icons/basics-t-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel">Basics</span></button>
+<button class="navbtn" data-page="game" onclick="navGame(this)"><span class="ico"><img class="navIco" data-w="r" src="assets/icons/game.webp" data-spin="assets/icons/game-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"><img class="navIco" data-w="t" src="assets/icons/game-t.webp" data-spin="assets/icons/game-t-spin.webp" alt="" aria-hidden="true" width="192" height="192" draggable="false"></span><span class="navLabel">Game</span></button>
 </div></nav>
 <div id="vig" aria-hidden="true"></div>
 <div class="invPop" id="invPop" role="group" aria-label="Investing" hidden></div>
@@ -1661,13 +1675,13 @@ new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(docum
 '₿':'crypto','🟧':'crypto','💎':'crypto','🔶':'crypto','🧪':'health','💊':'health','🩺':'health','✈':'industry','🛩':'industry','🔩':'industry','🌉':'industry','🚗':'industry',
 '🏛':'bank','🧲':'copper','🟠':'copper','🪨':'copper','🌲':'nature','🌱':'nature','🌾':'nature','🚜':'nature','💧':'nature','🚿':'nature','🥈':'silver','⚪':'silver',
 '☢':'energy','☀':'energy','🌞':'energy','🔌':'energy','🔋':'energy','🪫':'energy','🔥':'energy','⛽':'energy','🌬':'energy','🚰':'energy',
-'📍':'pin','⏳':'bonds','📜':'bonds','🏢':'tower','🧭':'compass','🔍':'compass','🔎':'compass','🗺':'map','🧾':'receipt','📝':'receipt','⌘':'receipt','🏷':'tag','☂':'finance','💰':'moneybag',
-'🏰':'castle','🕌':'dome','🏭':'factory','🏗':'crane','🧮':'fees','😌':'basics','🎮':'game','🔭':'explore','🔑':'token','⛓':'chain','🔄':'chain',
+'📍':'pin','⏳':'bonds','📜':'bonds','🏢':'tower','🧭':'compass','🔍':'compass','🔎':'compass','🗺':'map','🧾':'receipt','📝':'receipt','⌘':'tech','🏷':'tag','☂':'finance','💰':'moneybag',
+'🏰':'castle','🕌':'dome','🏭':'factory','🏗':'crane','🧮':'fees','😌':'basics','🎮':'game','🔭':'explore','🔑':'token','⛓':'chain','🔄':'chain','★':'star','☆':'star-off','☾':'moon','⚠':'warn','🎣':'hook','％':'basics','◈':'industry','⚒':'gold','▤':'compass',
 '🗽':'flag-us','🍁':'flag-ca','🦫':'flag-ca','🏔':'flag-ch','🦘':'flag-au','🎤':'flag-kr','🧋':'flag-tw','🐪':'flag-sa','🦜':'flag-br','🌮':'flag-mx','🐉':'flag-hk','🪔':'flag-in',
 '☕':'flag-gb','🐼':'flag-cn','🌃':'flag-hk','🗻':'flag-jp','🐘':'flag-in','🦁':'flag-sg'};
  const RI=/[\u{1F1E6}-\u{1F1FF}]{2}/u,FL=new Set(["ar", "au", "br", "ca", "ch", "cl", "cn", "de", "es", "eu", "fr", "gb", "hk", "id", "il", "in", "it", "jp", "kr", "mx", "nl", "no", "pl", "sa", "se", "sg", "tr", "tw", "us", "vn", "za"]);
- const name=e=>{if(RI.test(e)){const c=[...e].map(ch=>String.fromCharCode(ch.codePointAt(0)-0x1F1E6+97)).join('');return FL.has(c)?'flag-'+c:null}return M[e.replace('️','')]||null};
- const re=new RegExp('[\\u{1F1E6}-\\u{1F1FF}]{2}|(?:'+Object.keys(M).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\uFE0F?','gu');
+ const name=e=>{if(RI.test(e)){const c=[...e].map(ch=>String.fromCharCode(ch.codePointAt(0)-0x1F1E6+97)).join('');return FL.has(c)?'flag-'+c:null}return M[e.replace(/[\uFE0E\uFE0F]/g,'')]||null};
+ const re=new RegExp('[\\u{1F1E6}-\\u{1F1FF}]{2}|(?:'+Object.keys(M).map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')[\\uFE0E\\uFE0F]?','gu');
  const SKIP=/^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|SELECT|CANVAS|SVG|TITLE|NOSCRIPT)$/i;
  const swap=root=>{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>{for(let p=n.parentNode;p&&p!==document;p=p.parentNode){if(SKIP.test(p.nodeName)||p.namespaceURI==='http://www.w3.org/2000/svg')return 2}re.lastIndex=0;return re.test(n.data)?1:2}}),list=[];
   while(w.nextNode())list.push(w.currentNode);

@@ -98,15 +98,15 @@ def glass_grad(name, c0, c1, trans=0.55, emit=0.35):
     return m
 
 def o_crypto():
-    """translucent platinum glass coin (Loppa palette), 16-sided edge, a ring of raised pixel tiles round the face"""
+    """translucent lavender-to-violet glass coin (Token World palette), 16-sided edge, a ring of raised pixel tiles round the face"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
     except Exception: pass
-    P = smiley.PAL; m = glass_grad('cglass', P['platinum'], P['pewter'], emit=0.12)
+    P = smiley.PAL; m = glass_grad('cglass', P['lavender'], P['violet'], emit=0.15)
     c = cyl(m, (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 16, 0.03)
-    core = cyl(principled('core', P['graphite'], 0.3, emit=P['platinum'], emit_str=0.15), (0, 0, 0), 0.7, 0.1, (math.radians(90), 0, 0), 16, 0)
+    core = cyl(principled('core', P['periwinkle'], 0.3, emit=P['lavender'], emit_str=0.2), (0, 0, 0), 0.7, 0.1, (math.radians(90), 0, 0), 16, 0)
     cols = [principled('px%d' % k, col, 0.15, emit=col, emit_str=0.25, coat=1.0, coat_rough=0.02) for k, col in
-            enumerate((P['gold'], P['bronze'], P['sheen'], P['platinum']))]
+            enumerate((P['gold'], P['lavender'], P['ice'], P['violet']))]
     px, st = [], 0.15
     for i in range(-6, 7):
         for k in range(-6, 7):
@@ -271,7 +271,61 @@ def o_runner(gait, frame):
     hub.rotation_euler = (0, math.radians(lean), math.radians(30))  # lean into the run, turned a little toward +x
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+def star_mesh(mat, loc=(0, 0, 0), r=0.9):
+    import bmesh
+    me = bpy.data.meshes.new('star'); bm = bmesh.new()
+    vs = [bm.verts.new((math.cos(math.pi / 2 + k * math.pi / 5) * (r if k % 2 == 0 else r * 0.45), 0, math.sin(math.pi / 2 + k * math.pi / 5) * (r if k % 2 == 0 else r * 0.45))) for k in range(10)]
+    bm.faces.new(vs); bm.to_mesh(me); bm.free()
+    o = link(bpy.data.objects.new('star', me)); o.location = loc; o.data.materials.append(mat)
+    so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.3; so.offset = 0
+    return bevel(o, 0.09, 4)
+
+def o_star(off=False):
+    """UI star (save / profile): gold, or platinum for 'not saved'. No face: it is a control, not a character."""
+    m = principled('pstar', (0.86, 0.87, 0.9), 0.3, metallic=0.7, coat=0.6) if off else principled('gstar', smiley.PAL['gold'], 0.28, coat=0.8, coat_rough=0.05)
+    return [star_mesh(m)], []
+
+def o_warn():
+    """warning sign: rounded gold triangle with a face"""
+    import bmesh
+    me = bpy.data.meshes.new('tri'); bm = bmesh.new()
+    vs = [bm.verts.new(p) for p in [(-0.95, 0, -0.7), (0.95, 0, -0.7), (0, 0, 0.95)]]; bm.faces.new(vs); bm.to_mesh(me); bm.free()
+    t = link(bpy.data.objects.new('tri', me)); t.data.materials.append(plastic('warn', smiley.PAL['gold']))
+    so = t.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.24; so.offset = 0; bevel(t, 0.14, 5)
+    return [t], face([t], 0, -0.12, 0.85)
+
+def o_hook():
+    """scam warning: a fishing hook with a coin as bait (the coin has the face)"""
+    steel = principled('steel', (0.86, 0.87, 0.9), 0.25, metallic=1.0)
+    # a big J: shank down the right, a round bend, the point coming back up on the left
+    arc = [(0.55 * math.cos(math.radians(a)), 0.15, -0.35 - 0.55 * math.sin(math.radians(a))) for a in range(0, 181, 15)]
+    pts = [(0.55, 0.15, 1.1), (0.55, 0.15, 0.4)] + arc + [(-0.55, 0.15, 0.05)]
+    hook = tube('hook', pts, [0.1] * len(pts), steel)
+    barb = prim('cone', steel, (-0.55, 0.15, 0.12), vertices=24, radius1=0.15, radius2=0.0, depth=0.3)
+    eye = prim('torus', steel, (0.55, 0.15, 1.22), (math.radians(90), 0, 0), major_radius=0.13, minor_radius=0.05, major_segments=32, minor_segments=8)
+    c = cyl(gold(), (0, -0.25, -0.75), 0.42, 0.14, (math.radians(90), 0, 0), 48, 0.03)
+    return [hook, barb, eye, c], face([c], 0, -0.72, 0.55)
+
+def o_moon():
+    """theme toggle: a thick gold crescent moon with a face (2D crescent, solidified and rounded)"""
+    import bmesh
+    R1, C2, R2 = 0.95, Vector((0.5, 0.32)), 0.78
+    outer = [(R1 * math.cos(math.radians(a)), R1 * math.sin(math.radians(a))) for a in range(0, 360, 4)]
+    keep = [q for q in outer if (Vector(q) - C2).length > R2]
+    k0 = max(range(len(outer)), key=lambda i: (Vector(outer[i]) - C2).length > R2 and (Vector(outer[i - 1]) - C2).length <= R2)
+    ring = outer[k0:] + outer[:k0]; ring = [q for q in ring if (Vector(q) - C2).length > R2]   # outer arc, in order
+    inner = [(C2.x + R2 * math.cos(math.radians(a)), C2.y + R2 * math.sin(math.radians(a))) for a in range(0, 360, 4)]
+    inner = [q for q in inner if Vector(q).length < R1]
+    a0 = math.atan2(ring[-1][1] - C2.y, ring[-1][0] - C2.x)
+    inner.sort(key=lambda q: (a0 - math.atan2(q[1] - C2.y, q[0] - C2.x)) % (2 * math.pi))       # walk the cut arc back to the start
+    me = bpy.data.meshes.new('moon'); bm = bmesh.new()
+    vs = [bm.verts.new((x, 0, z)) for x, z in ring + inner]; bm.faces.new(vs); bm.to_mesh(me); bm.free()
+    o = link(bpy.data.objects.new('moon', me)); o.data.materials.append(plastic('moon', smiley.PAL['sheen']))
+    so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.4; so.offset = 0; bevel(o, 0.16, 6)
+    o.rotation_euler = (0, math.radians(-20), 0)
+    return [o], face([o], -0.48, -0.02, 0.55)
+
+OBJECTS = {'coin': (o_coin, -1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, v in GAITS.items() for i in range(v[4])}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
