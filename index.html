@@ -1455,7 +1455,7 @@ function crash(why){if(R.shield){R.shield=false;sfx('pu_shield');msg('Shield sav
 function respawn(){let i=Math.floor(R.sx/CW);while(R.top[i]==null||i*CW<R.sx)i++;R.sx=i*CW+60;R.y=ground(R.sx);R.vy=0;R.air=false;R.jumps=0}
 function power(k,x,y){sfx('pu_'+k);if(k==='shield')R.shield=true;else if(k==='magnet')R.magT=8;else R.x2T=10;msg(PU[k][2]+'!');R.msgT=1.4;for(let i=0;i<12;i++)R.fx.push({x:x+rnd(-30,30),y:y+rnd(-30,30),vx:rnd(-160,160),vy:rnd(-240,80),l:rnd(.4,.8),c:PU[k][0]})}
 function step(dt){if(R.dead)return;if(R.stop>0){R.stop-=dt;R.zp*=Math.exp(-6*dt);return}/* hit-stop: the whole game freezes for a few frames on a big moment */R.t+=dt;R.shk*=Math.exp(-14*dt);if(R.shk<.3)R.shk=0;R.zp*=Math.exp(-7*dt);const tgt=SP0*Math.min(1.7,1+.07*R.lvl);R.speed+=(tgt-R.speed)*Math.min(1,dt*2);R.cx+=R.speed*dt;/* the screen always scrolls right */{const nx=R.sx+R.speed*dt,gn=ground(nx),gc=ground(R.sx);R.sx=nx;/* an edge ahead (a wall, or the far side of a gap): if the runner only just touches it, it slides up and carries on; lower than that is the end */if(isFinite(gn)&&(!isFinite(gc)||gn<gc-VG)&&R.y>gn+SLIDE){crash(isFinite(gc)?'You hit a wall.':'You fell in a gap.');if(R.dead)return}}ensure();/* a gap up (a vertical green line) stops the runner unless it is above the top edge: jump it */
- const wx=R.sx,gy=ground(wx);R.buf=Math.max(0,R.buf-dt);R.hurt=Math.max(0,R.hurt-dt);R.sq*=Math.exp(-9*dt);if(R.bnc>0)R.bnc-=dt;if(R.rx&&R.rx.t>0)R.rx.t-=dt;if(R.tko>0)R.tko-=dt;if(R.flip>0)R.flip-=dt;if(powered(R)&&!RMQ.matches&&Math.random()<dt*28)R.fx.push({x:R.sx+rnd(-50,20)*VK,y:R.y-rnd(20,150)*VK,vx:rnd(-260,-120),vy:rnd(-60,40),l:rnd(.25,.45),c:Math.random()<.5?'#c43cff':'#ff3a6e',g:.05});
+ const wx=R.sx,gy=ground(wx);R.buf=Math.max(0,R.buf-dt);R.hurt=Math.max(0,R.hurt-dt);R.sq*=Math.exp(-9*dt);if(R.bnc>0)R.bnc-=dt;if(R.rx&&R.rx.t>0)R.rx.t-=dt;if(R.tko>0)R.tko-=dt;if(R.flip>0)R.flip-=dt;if(powered(R)&&!RMQ.matches&&Math.random()<dt*28)R.fx.push({x:R.sx+rnd(-50,20)*VK,y:R.y-rnd(20,150)*VK,vx:rnd(-260,-120),vy:rnd(-60,40),l:rnd(.25,.45),c:formOf(R)[3][Math.random()<.5?0:1],g:.05});
  if(!R.air){if(isFinite(gy)){if(gy-R.y<=DESC*dt){const up=R.y-gy;R.y=up>30?R.y-up*Math.min(1,dt*16):gy;/* a sudden rise (a curb or wall edge) is climbed smoothly */R.coy=0;R.refY=gy}else{R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}else if((R.coy+=dt)>.14){R.air=true;R.jumps=1;R.vy=0;R.top0=R.y}}
  if(R.air){R.vy+=G*(hold&&R.vy<0?HOLDG:1)*dt;R.y+=R.vy*dt;R.top0=Math.min(R.top0,R.y);
   const cont=isFinite(gy)&&(R.y-gy<SLIDE||Math.abs(ground(wx-CW*.6)-gy)<=VG);
@@ -1520,26 +1520,30 @@ let lastScoreTxt='';function paintScore(n,col){col=col||'#ebbd4e';const t=fmt(n)
  let x=cw;for(const ch of t){const m=PIX[ch];if(m)m.split(' ').forEach((row,ry)=>{for(let rx=0;rx<5;rx++)if(row[rx]==='1'){g.fillStyle='#0e0e10';g.fillRect(x+rx*u+1,ry*u+1,u,u);g.fillStyle=col;g.fillRect(x+rx*u,ry*u,u,u)}});x+=6*u}}
 
 /* game sprites (assets/game): 3D renders in the site palette. Runner sheet = 8 run frames + 1 jump frame. */
-const GIMG=n=>Object.assign(new Image(),{src:'assets/game/'+n+'.webp'}),RUNNER=GIMG('runner'),RUNNERG=GIMG('runner-glass'),COINI=[1,2,3,4].map(i=>GIMG('coin-'+i)),PUI={shield:GIMG('pu-shield'),magnet:GIMG('pu-magnet'),x2:GIMG('pu-x2')},PUGLOW={shield:'198,202,209',magnet:'188,127,58',x2:'235,189,78'};
+const GIMG=n=>Object.assign(new Image(),{src:'assets/game/'+n+'.webp'}),RUNNER=GIMG('runner'),RUNNERG=GIMG('runner-glass'),RUNNERM=GIMG('runner-magnet'),RUNNERX=GIMG('runner-x2'),COINI=[1,2,3,4].map(i=>GIMG('coin-'+i)),PUI={shield:GIMG('pu-shield'),magnet:GIMG('pu-magnet'),x2:GIMG('pu-x2')},PUGLOW={shield:'198,202,209',magnet:'188,127,58',x2:'235,189,78'};
 function glow(x,y,r,rgb,a){const g=cx;g.save();g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba('+rgb+','+a+')');gr.addColorStop(1,'rgba('+rgb+',0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,r,0,6.3);g.fill();g.restore()}
 const powered=s=>s.shield||s.magT>0||s.x2T>0;
+/* the powered form follows the strongest active power-up: 2x (green, $ eyes, pulsing) > magnet (blue, magnet on the head) > shield (purple-red) */
+const FORM={x2:[()=>RUNNERX,'40,210,90','235,189,78',['#3ee87a','#ffd04a']],magnet:[()=>RUNNERM,'40,110,255','90,220,255',['#3a8cff','#5fe1ff']],shield:[()=>RUNNERG,'170,40,200','235,40,90',['#c43cff','#ff3a6e']]};
+const formOf=s=>s.x2T>0?FORM.x2:s.magT>0?FORM.magnet:s.shield?FORM.shield:null;
 const ok=im=>im.complete&&im.naturalWidth>0;
 /* runner sheets (35 frames each; gold, and glass while powered up): walk 0-7, jog 8-15, run 16-23, take-off 24-26,
    rising 27-30, falling 31-34. The gait steps up per checkpoint; ground frames advance with distance so feet never skate. */
 const GAIT={walk:[0,74],jog:[8,62],run:[16,50]},gaitOf=s=>s.lvl<1?'walk':s.lvl<2?'jog':'run',RPRI={coin:1,pup:2,cp:3},TKO=.15,FLIP=.45;
 function react(k,d){if(RMQ.matches||(R.rx&&R.rx.t>0&&RPRI[R.rx.k]>RPRI[k]))return;R.rx={k,t:d,d}}/* a short body reaction; a bigger one is not cut off by a smaller one */
-function player(x,y,s){const g=cx,pw=powered(s),im=pw&&ok(RUNNERG)?RUNNERG:RUNNER,r=s.rx,rk=r&&r.t>0?r.k:'',u=rk?1-r.t/r.d:0,k=Math.sin(u*Math.PI);let sx=1,sy=1,rot=0,dy=0;
- if(pw){const p=.5+.5*Math.sin(s.t*7);glow(x,y-85*VK,(150+30*p)*VK,'170,40,200',.32+.12*p);glow(x,y-85*VK,(95+20*p)*VK,'235,40,90',.22+.1*p)}/* powered aura: purple outside, red core, pulsing */
+function player(x,y,s){const g=cx,F=formOf(s),pw=!!F,fi0=F&&F[0](),im=fi0&&ok(fi0)?fi0:RUNNER,r=s.rx,rk=r&&r.t>0?r.k:'',u=rk?1-r.t/r.d:0,k=Math.sin(u*Math.PI);let sx=1,sy=1,rot=0,dy=0;
+ if(pw){const p=.5+.5*Math.sin(s.t*7);glow(x,y-85*VK,(150+30*p)*VK,F[1],.32+.12*p);glow(x,y-85*VK,(95+20*p)*VK,F[2],.22+.1*p)}/* powered aura in the form's colours, pulsing */
  if(s.air){const v=Math.min(1,Math.abs(s.vy)/2400);sy+=.14*v;sx-=.1*v;rot=Math.max(-.35,Math.min(.35,s.vy/3200))}/* stretch with speed, tilt with the arc */
  else{const a=ground(s.sx+50),b=ground(s.sx-50);if(isFinite(a)&&isFinite(b))rot=Math.atan2(a-b,100)*.55}/* lean with the slope */
  if(s.flip>0)rot+=(1-s.flip/FLIP)*Math.PI*2;/* double jump: a front flip */
  sx*=1+s.sq*.9;sy*=1-s.sq*.9;/* landing squash, set from the fall height */
+ if(F===FORM.x2&&!RMQ.matches){const q=Math.sin(s.t*13);sx*=1+.09*q;sy*=1+.09*q}/* 2x: the whole body pulses */
  if(s.bnc>0)dy-=s.bncA*Math.abs(Math.sin((.45-s.bnc)*14))*(s.bnc/.45);/* damped rebound hops after a landing */
  if(rk==='coin'){sx*=1+.16*k;sy*=1-.12*k}
  else if(rk==='pup'){sx*=1+.3*k;sy*=1+.3*k;rot+=u*Math.PI*2}
  else if(rk==='cp'){dy-=130*k;rot-=u*Math.PI*2;sx*=1-.1*k;sy*=1+.14*k}
  g.save();g.translate(x,y+dy*VK);g.scale(VK,VK);g.translate(0,-85);g.rotate(rot);g.translate(0,85);g.scale(sx,sy);/* rotate about the body, squash from the feet */
- if(ok(im)){const fw=im.naturalWidth/35,fh=im.naturalHeight,Hh=185,Ww=Hh*fw/fh,G=GAIT[gaitOf(s)];
+ if(ok(im)){const fw=im.naturalWidth/35,fh=im.naturalHeight,Hh=217,Ww=Hh*fw/fh,G=GAIT[gaitOf(s)];
   const fi=!s.air?G[0]+Math.floor(s.sx/G[1])%8:s.tko>0?24+Math.min(2,Math.floor((1-s.tko/TKO)*3)):s.vy<0?27+Math.floor(s.t*12)%4:31+Math.floor(s.t*15)%4;
   g.drawImage(im,fi*fw,0,fw,fh,-Ww/2,-Hh+8,Ww,Hh)}
  else{g.fillStyle='#cea85c';g.beginPath();g.arc(0,-90,70,0,6.3);g.fill()}g.restore()}

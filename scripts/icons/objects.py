@@ -57,6 +57,7 @@ def _hit(objs, x, z):
     return best
 
 NOFACE = False
+DOLLAR = 0.0   # > 0: eyes are gold $ signs at this scale (2x power-up form)
 def face(targets, cx, cz, s=1.0):
     """black dot eyes + small smile on the front of `targets`, centred at (cx, cz), scaled by s"""
     if NOFACE: return []
@@ -64,7 +65,13 @@ def face(targets, cx, cz, s=1.0):
     for k in (-1, 1):
         h = _hit(targets, cx + k * 0.2 * s, cz - 0.1 * s)
         if not h: continue
-        p, n = h; e = uv_sphere(f'eye{k}', 0.062 * s, tuple(p - n * 0.012 * s), (1, 0.55, 1.15)); e.data.materials.append(f)
+        p, n = h
+        if DOLLAR:
+            bpy.ops.object.text_add(location=tuple(p + n * 0.03), rotation=(math.radians(90), 0, 0)); e = bpy.context.active_object
+            e.data.body = '$'; e.data.size = 0.36 * s * DOLLAR; e.data.extrude = 0.035; e.data.bevel_depth = 0.012
+            e.data.align_x = 'CENTER'; e.data.align_y = 'CENTER'; e.data.materials.append(principled('dollar', (1.0, 0.74, 0.18), 0.22, metallic=0.85, coat=0.8, emit=(1.0, 0.7, 0.15), emit_str=0.6))
+            out.append(e); continue
+        e = uv_sphere(f'eye{k}', 0.062 * s, tuple(p - n * 0.012 * s), (1, 0.55, 1.15)); e.data.materials.append(f)
         e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
     pts = []
     for k in range(13):
@@ -258,12 +265,16 @@ RUNNER_SKIN = os.environ.get('RUNNER_SKIN', 'gold')   # 'glass' = the powered-up
 def o_runner(gait, frame):
     """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
     P = smiley.PAL
-    if RUNNER_SKIN == 'glass':  # powered up: translucent purple-to-red glass with an inner glow
+    SK = {'glass': ((0.98, 0.06, 0.22), (0.4, 0.05, 0.98), (0.85, 0.05, 0.25)),    # shield: red underneath -> purple on top
+          'blue':  ((0.05, 0.25, 1.0), (0.3, 0.85, 1.0), (0.1, 0.4, 1.0)),       # magnet: deep blue -> cyan
+          'green': ((0.02, 0.55, 0.12), (0.45, 1.0, 0.35), (0.05, 0.7, 0.2))}    # 2x: green -> lime
+    if RUNNER_SKIN in SK:  # powered up: translucent glass with an inner glow
         bpy.context.scene.render.film_transparent = True
         try: bpy.context.scene.cycles.film_transparent_glass = True
         except Exception: pass
-        body = glass_grad('rglass', (0.98, 0.06, 0.22), (0.4, 0.05, 0.98), trans=0.6, emit=0.45, axis='Z', k=0.75)  # red underneath -> purple on top
-        limb = principled('rlimb', (0.85, 0.05, 0.25), 0.15, emit=(0.9, 0.08, 0.3), emit_str=0.5, coat=1.0, coat_rough=0.02)
+        c0, c1, cl = SK[RUNNER_SKIN]
+        body = glass_grad('rglass', c0, c1, trans=0.6, emit=0.45, axis='Z', k=0.75)
+        limb = principled('rlimb', cl, 0.15, emit=cl, emit_str=0.5, coat=1.0, coat_rough=0.02)
         limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
     else:
         body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
@@ -285,7 +296,17 @@ def o_runner(gait, frame):
         hand = sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))
         parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
         hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
-    fc = face([b], 0, 0.3 + bob, 0.95)
+    global DOLLAR
+    if RUNNER_SKIN == 'green':  # 2x: huge $ eyes that swell and shrink through the cycle (bouncy)
+        n_ = 8 if gait in GAITS else AIR[gait]; DOLLAR = 1.2 + 0.4 * abs(math.sin(2 * math.pi * frame / n_))
+    fc = face([b], 0, 0.3 + bob, 0.95 * (1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
+    if RUNNER_SKIN == 'blue':  # magnet form: a red horseshoe magnet stuck on top of the head
+        red = principled('magred', (0.9, 0.06, 0.08), 0.25, coat=1.0, coat_rough=0.03); pole = principled('pole', (0.86, 0.87, 0.9), 0.2, metallic=1.0)
+        top = Vector((0.05, 0, 1.0 + bob))
+        arc = [tuple(top + Vector((0.3 * math.cos(math.radians(a)), 0, 0.05 + 0.3 * math.sin(math.radians(a))))) for a in range(0, 181, 15)]
+        mag = tube('headmag', [tuple(top + Vector((0.3, 0, -0.17)))] + arc + [tuple(top + Vector((-0.3, 0, -0.17)))], [0.12] * (len(arc) + 2), red)
+        poles = [cyl(pole, tuple(top + Vector((x, 0, -0.24))), 0.125, 0.16, bv=0.02) for x in (-0.3, 0.3)]
+        parts += [mag] + poles
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
