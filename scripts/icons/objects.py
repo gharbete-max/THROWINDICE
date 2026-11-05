@@ -84,13 +84,16 @@ def o_coin(metal=None):
     rim = prim('torus', m, (0, -0.12, 0), (math.radians(90), 0, 0), major_radius=0.8, minor_radius=0.035, major_segments=64, minor_segments=12)
     return [c, rim], face([c], 0, 0.05, 1.15)
 
-def glass_grad(name, c0, c1, trans=0.55, emit=0.35):
+def glass_grad(name, c0, c1, trans=0.55, emit=0.35, axis=None, k=0.3):
     """tinted glass whose colour runs c0 (bottom left) to c1 (top right), with a soft inner glow"""
     m = bpy.data.materials.new(name); m.use_nodes = True; nt = m.node_tree; b = nt.nodes['Principled BSDF']
     tc = nt.nodes.new('ShaderNodeTexCoord'); sep = nt.nodes.new('ShaderNodeSeparateXYZ'); add = nt.nodes.new('ShaderNodeMath'); add.operation = 'ADD'
     ramp = nt.nodes.new('ShaderNodeValToRGB'); e0, e1 = ramp.color_ramp.elements; e0.position = 0.2; e0.color = (*c0, 1); e1.position = 0.8; e1.color = (*c1, 1)
     mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY_ADD'; mul.inputs[1].default_value = 0.3; mul.inputs[2].default_value = 0.5
-    nt.links.new(tc.outputs['Object'], sep.inputs[0]); nt.links.new(sep.outputs['X'], add.inputs[0]); nt.links.new(sep.outputs['Y'], add.inputs[1])
+    mul.inputs[1].default_value = k
+    nt.links.new(tc.outputs['Object'], sep.inputs[0])
+    if axis: nt.links.new(sep.outputs[axis], add.inputs[0]); add.inputs[1].default_value = 0.0
+    else: nt.links.new(sep.outputs['X'], add.inputs[0]); nt.links.new(sep.outputs['Y'], add.inputs[1])
     nt.links.new(add.outputs[0], mul.inputs[0]); nt.links.new(mul.outputs[0], ramp.inputs['Fac'])
     nt.links.new(ramp.outputs['Color'], b.inputs['Base Color']); nt.links.new(ramp.outputs['Color'], b.inputs['Emission Color'])
     b.inputs['Emission Strength'].default_value = emit; b.inputs['Transmission Weight'].default_value = trans; b.inputs['IOR'].default_value = 1.45
@@ -241,34 +244,52 @@ def o_compass():
     hub = prim('uv_sphere', gold(), (0, -0.14, 0.25), radius=0.05)
     return [d, rim, needle(smiley.PAL['bronze'], 1), needle(smiley.PAL['pewter'], -0.6), hub], face([d], 0, -0.2, 0.85)
 
-GAITS = {  # stride (deg), leg length, body bob, forward lean (deg), cadence frames
-    'walk': (20, 0.56, 0.03, 0, 8), 'jog': (32, 0.58, 0.05, 8, 8), 'run': (46, 0.6, 0.08, 18, 8), 'air': (0, 0.5, 0, -8, 4)}
+# runner poses. Ground gaits: (stride deg, leg length, bob, lean deg, arm swing deg, knee bend), 8 frames each.
+GAITS = {'walk': (22, 0.56, 0.04, 0, 20, 0.04), 'jog': (34, 0.58, 0.07, 8, 38, 0.08), 'run': (54, 0.62, 0.13, 18, 64, 0.17)}
+# Air poses, one tuple per frame: (bob, lean, (front leg, back leg) deg, leg length, knee bend, (arm 1, arm 2) deg)
+def _air(name, i):
+    w = math.sin(2 * math.pi * i / 4)
+    if name == 'tko': return [(-0.16, 6, (24, -18), 0.42, 0.22, (-55, -40)), (0.05, 2, (-6, 8), 0.7, 0.0, (125, 150)), (0.1, -4, (44, -24), 0.46, 0.2, (150, 165))][i]
+    if name == 'rise': return (0.06, -6, (42 + 10 * w, -12 - 10 * w), 0.48, 0.2, (150 + 14 * w, 160 - 14 * w))
+    return (0.0, -10, (-42 + 24 * w, 40 - 24 * w), 0.56, 0.1, (95 + 40 * w, 95 - 40 * w))  # fall: arms windmill, legs kick
+AIR = {'tko': 3, 'rise': 4, 'fall': 4}
+RUNNER_SKIN = os.environ.get('RUNNER_SKIN', 'gold')   # 'glass' = the powered-up look
 
 def o_runner(gait, frame):
-    """game runner: gold smiley ball on bronze legs, turned to face right. walk/jog/run = 8-frame cycles that
-    get longer strides, more bounce and more forward lean; air = 4 frames of small leg flails while airborne"""
-    P = smiley.PAL; body = plastic('rbody', P['gold']); leg = plastic('rleg', P['bronze'])
-    st, L, bobA, lean, n = GAITS[gait]; ph = frame / n
-    bob = bobA * math.cos(4 * math.pi * ph)
+    """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
+    P = smiley.PAL
+    if RUNNER_SKIN == 'glass':  # powered up: translucent purple-to-red glass with an inner glow
+        bpy.context.scene.render.film_transparent = True
+        try: bpy.context.scene.cycles.film_transparent_glass = True
+        except Exception: pass
+        body = glass_grad('rglass', (0.98, 0.06, 0.22), (0.4, 0.05, 0.98), trans=0.6, emit=0.45, axis='Z', k=0.75)  # red underneath -> purple on top
+        limb = principled('rlimb', (0.85, 0.05, 0.25), 0.15, emit=(0.9, 0.08, 0.3), emit_str=0.5, coat=1.0, coat_rough=0.02)
+        limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
+    else:
+        body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
+    if gait in GAITS:
+        st, L, bobA, lean, armA, bend = GAITS[gait]; ph = frame / 8; c = math.sin(2 * math.pi * ph)
+        bob = bobA * math.cos(4 * math.pi * ph); legs = (st * c, -st * c); arms = (-armA * c, armA * c)
+    else:
+        bob, lean, legs, L, bend, arms = _air(gait, frame)
     b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
     parts = [b]
     for k, side in enumerate((-1, 1)):
-        if gait == 'air':
-            a = math.radians((-40 if k == 0 else 38) + 22 * math.sin(2 * math.pi * ph + k * math.pi))  # one leg forward, one back, both kicking
-        else:
-            a = math.radians(st) * math.sin(2 * math.pi * ph + k * math.pi)
-        hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
-        bend = 0.12 if gait in ('run', 'air') else 0.04  # knees bend forward more when running
+        a = math.radians(legs[k]); hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
         knee = hip + Vector((math.sin(a) * L * 0.5 + bend, 0, -math.cos(a) * L * 0.5))
         foot = hip + Vector((math.sin(a) * L, 0, -math.cos(a) * L))
-        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], leg))
-        f = uv_sphere('foot', 0.13, tuple(foot + Vector((0.07, 0, -0.02))), (1.5, 0.9, 0.6), 32, 16); f.data.materials.append(leg); parts.append(f)
+        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], limb))
+        f = uv_sphere('foot', 0.13, tuple(foot + Vector((0.07, 0, -0.02))), (1.5, 0.9, 0.6), 32, 16); f.data.materials.append(limb); parts.append(f)
+        # arm: on the visible left/right side of the ball (clear of the face), raised outward by its angle
+        bA = math.radians(abs(arms[k]) * 0.8 + 18); sh = Vector((side * 0.74, 0.05, 0.12 + bob))
+        hand = sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))
+        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
+        hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
     fc = face([b], 0, 0.3 + bob, 0.95)
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
-    hub.rotation_mode = 'XYZ'
-    hub.rotation_euler = (0, math.radians(lean), math.radians(30))  # lean into the run, turned a little toward +x
+    hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(30))
     return [hub], []
 
 def star_mesh(mat, loc=(0, 0, 0), r=0.9):
@@ -325,8 +346,40 @@ def o_moon():
     o.rotation_euler = (0, math.radians(-20), 0)
     return [o], face([o], -0.48, -0.02, 0.55)
 
-OBJECTS = {'coin': (o_coin, -1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
-           **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, v in GAITS.items() for i in range(v[4])}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
+def o_pu_shield():
+    """power-up: a heater shield, platinum face, gold rim and boss, with a face"""
+    import bmesh
+    def outline(sc):
+        pts = [(-0.75, 0.85), (0.75, 0.85), (0.78, 0.1)] + [(0.78 * math.cos(math.radians(a)) * (1 - t) , -0.15 - 0.85 * t) for t, a in [(0.25, 20), (0.5, 40), (0.75, 65)]] + [(0, -1.0)]
+        right = [(0.75, 0.85), (0.78, 0.2), (0.7, -0.25), (0.5, -0.6), (0.25, -0.85), (0, -1.0)]
+        full = [(-0.75, 0.85)] + right + [(-x, z) for x, z in reversed(right[1:-1])]
+        return [(x * sc, z * sc) for x, z in full]
+    def slab(sc, th, mat, y):
+        me = bpy.data.meshes.new('sh'); bm = bmesh.new(); vs = [bm.verts.new((x, 0, z)) for x, z in outline(sc)]; bm.faces.new(vs); bm.to_mesh(me); bm.free()
+        o = link(bpy.data.objects.new('sh', me)); o.location = (0, y, 0); o.data.materials.append(mat)
+        so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = th; so.offset = 0; return bevel(o, 0.05, 4)
+    rim = slab(1.0, 0.28, gold(), 0)
+    face_ = slab(0.84, 0.3, principled('plat', (0.86, 0.87, 0.9), 0.25, metallic=0.9, coat=0.6), -0.04)
+    return [rim, face_], face([face_], 0, 0.05, 0.85)
+
+def o_pu_magnet():
+    """power-up: a chunky horseshoe magnet, bronze with platinum poles, with a face on the bend"""
+    mb = principled('mag', smiley.PAL['bronze'], 0.3, coat=0.9, coat_rough=0.04); tip = principled('pole', (0.86, 0.87, 0.9), 0.22, metallic=1.0)
+    arc = [(0.48 * math.cos(math.radians(a)), 0, 0.15 + 0.48 * math.sin(math.radians(a))) for a in range(0, 181, 10)]
+    pts = [(0.48, 0, -0.45)] + arc + [(-0.48, 0, -0.45)]
+    body = tube('magnet', pts, [0.22] * len(pts), mb)
+    poles = [cyl(tip, (x, 0, -0.62), 0.225, 0.3, bv=0.03) for x in (-0.48, 0.48)]
+    return [body] + poles, face([body], 0, 0.72, 0.5)
+
+def o_pu_x2():
+    """power-up: a chunky bevelled gold 2x"""
+    bpy.ops.object.text_add(location=(0, 0, 0), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
+    t.data.body = '2x'; t.data.size = 1.35; t.data.extrude = 0.16; t.data.bevel_depth = 0.05; t.data.bevel_resolution = 4
+    t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
+    return [t], []
+
+OBJECTS = {'coin': (o_coin, -1), 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+           **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
 
@@ -357,7 +410,7 @@ def build(name, out, res, samples, nfr):
     d = os.path.join(out, name); os.makedirs(d, exist_ok=True)
     for i in range(nfr):
         # objects rock +-25 deg instead of a full turn, so the face never turns away; flags turn fully
-        ang = sign * 2 * math.pi * i / nfr if name.startswith('flag-') else sign * math.radians(25) * math.sin(2 * math.pi * i / nfr)
+        ang = sign * 2 * math.pi * i / nfr if name.startswith(('flag-', 'pu2-')) else sign * math.radians(25) * math.sin(2 * math.pi * i / nfr)
         pivot.rotation_quaternion = Quaternion((0, 0, 1), ang)
         render(f'{d}/{i:03d}.png')
 
