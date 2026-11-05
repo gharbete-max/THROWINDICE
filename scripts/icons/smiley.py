@@ -54,6 +54,10 @@ THEMES = {
     'pop-options':     (PAL['platinum'], DARK, 'pixelcoin',   1, {'face': False, 'acc_scale': 2.0}),
     'pop-networks':    (PAL['platinum'], DARK, 'chain',      -1, {'face': False, 'acc_scale': 2.0}),
     'pop-issuance':    (PAL['platinum'], DARK, 'scroll',      1, {'face': False, 'acc_scale': 1.6}),
+    # game power-ups: faceless balls with one big front badge
+    'pu-shield': (PAL['platinum'], DARK, 'shieldbadge', 1, {'face': False, 'acc_scale': 1.0}),
+    'pu-magnet': (PAL['pewter'],   DARK, 'magnet',     -1, {'face': False, 'acc_scale': 1.0}),
+    'pu-x2':     (PAL['sheen'],    DARK, 'x2',          1, {'face': False, 'acc_scale': 1.0}),
     # particle sprites (no ball)
     'spark-star':      ((1.0, 0.75, 0.15),  DARK, 'star',        1, {'noball': True}),
     'spark-coin':      ((1.0, 0.7, 0.18),   DARK, 'coin',       -1, {'noball': True}),
@@ -93,6 +97,9 @@ def continents(mat, land):
     e0, e1 = ramp.color_ramp.elements; e0.position = 0.53; e0.color = ocean; e1.position = 0.56; e1.color = (*land, 1)
     nt.links.new(tc.outputs['Object'], nz.inputs['Vector']); nt.links.new(nz.outputs['Fac'], ramp.inputs['Fac'])
     nt.links.new(ramp.outputs['Color'], b.inputs['Base Color'])
+
+def cyl_(mat, loc, r, depth):
+    o = prim('cylinder', mat, loc, vertices=32, radius=r, depth=depth); return bevel(o, 0.02)
 
 def accessory(kind, opts, feat):
     """Returns the objects that make up the accessory (they get parented to the spin pivot)."""
@@ -152,6 +159,23 @@ def accessory(kind, opts, feat):
             out.append(prim('cube', paper, tuple(L + m @ Vector((-0.04, -0.035, z))), R, scale=(0.2 - 0.06 * k, 0.008, 0.012), shade=False))
         sl = prim('cylinder', gold(), tuple(L + m @ Vector((0.16, -0.05, -0.24))), (math.radians(90) + R[0], 0, R[2]), vertices=32, radius=0.09, depth=0.04)
         out.append(bevel(sl, 0.01))
+    elif kind == 'shieldbadge':
+        import bmesh
+        me = bpy.data.meshes.new('shield'); bm = bmesh.new()
+        vs = [bm.verts.new(p) for p in [(-0.5, 0, 0.5), (0.5, 0, 0.5), (0.5, 0, 0.05), (0.3, 0, -0.35), (0, 0, -0.6), (-0.3, 0, -0.35), (-0.5, 0, 0.05)]]
+        bm.faces.new(vs); bm.to_mesh(me); bm.free()
+        o = link(bpy.data.objects.new('shield', me)); o.location = (0, -1.02, 0); o.data.materials.append(principled('shieldm', PAL['gold'], 0.3, coat=0.8, coat_rough=0.05))
+        so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.16; so.offset = 0; bevel(o, 0.05, 4); out.append(o)
+    elif kind == 'magnet':
+        mb = principled('magnet', PAL['bronze'], 0.3, coat=0.8, coat_rough=0.05); tip = principled('tip', (0.86, 0.87, 0.9), 0.25, metallic=1.0)
+        pts = [(0.38 * math.cos(math.radians(t)), -1.05, 0.05 + 0.38 * math.sin(math.radians(t))) for t in range(0, 181, 15)]
+        pts = [(0.38, -1.05, -0.35)] + pts + [(-0.38, -1.05, -0.35)]
+        out.append(tube('mag', pts, [0.13] * len(pts), mb))
+        for x in (-0.38, 0.38): out.append(cyl_(tip, (x, -1.05, -0.45), 0.135, 0.2))
+    elif kind == 'x2':
+        bpy.ops.object.text_add(location=(0, -1.0, -0.05), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
+        t.data.body = '2x'; t.data.size = 0.95; t.data.extrude = 0.08; t.data.bevel_depth = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'
+        t.data.materials.append(gold()); out.append(t)
     elif kind == 'star':
         import bmesh
         me = bpy.data.meshes.new('star'); bm = bmesh.new()

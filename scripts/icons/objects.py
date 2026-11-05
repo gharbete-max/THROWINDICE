@@ -77,9 +77,11 @@ def face(targets, cx, cz, s=1.0):
     return out
 
 # ---------- objects: each returns (parts, face parts) ----------
-def o_coin():
-    c = cyl(gold(), (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 64, 0.05)
-    rim = prim('torus', gold(), (0, -0.12, 0), (math.radians(90), 0, 0), major_radius=0.8, minor_radius=0.035, major_segments=64, minor_segments=12)
+METAL = {'silver': (0.86, 0.87, 0.9), 'bronze': (0.72, 0.47, 0.24)}
+def o_coin(metal=None):
+    m = principled(metal, METAL[metal], 0.28, metallic=0.75, coat=0.5, coat_rough=0.05) if metal else gold()
+    c = cyl(m, (0, 0, 0), 0.95, 0.26, (math.radians(90), 0, 0), 64, 0.05)
+    rim = prim('torus', m, (0, -0.12, 0), (math.radians(90), 0, 0), major_radius=0.8, minor_radius=0.035, major_segments=64, minor_segments=12)
     return [c, rim], face([c], 0, 0.05, 1.15)
 
 def glass_grad(name, c0, c1, trans=0.55, emit=0.35):
@@ -239,7 +241,29 @@ def o_compass():
     hub = prim('uv_sphere', gold(), (0, -0.14, 0.25), radius=0.05)
     return [d, rim, needle(smiley.PAL['bronze'], 1), needle(smiley.PAL['pewter'], -0.6), hub], face([d], 0, -0.2, 0.85)
 
-OBJECTS = {'coin': (o_coin, -1), 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
+def o_runner(frame):
+    """game runner: gold smiley ball on bronze legs, turned to face right. frames 0-7 = run cycle, 8 = jump"""
+    P = smiley.PAL; body = plastic('rbody', P['gold']); leg = plastic('rleg', P['bronze'])
+    ph = frame / 8.0; jump = frame == 8; bob = 0 if jump else 0.06 * math.cos(4 * math.pi * ph)
+    b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
+    parts = [b]
+    for k, side in enumerate((-1, 1)):
+        a = math.radians(-35 if k == 0 else 25) if jump else math.radians(38) * math.sin(2 * math.pi * ph + k * math.pi)
+        # legs stride along x (screen left-right, the run direction), one in front of the other in depth
+        L = 0.42 if jump else 0.58; hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
+        knee = hip + Vector((math.sin(a) * L * 0.5, 0, -math.cos(a) * L * 0.5))
+        foot = hip + Vector((math.sin(a) * L, 0, -math.cos(a) * L))
+        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], leg))
+        f = uv_sphere('foot', 0.13, tuple(foot + Vector((0.07, 0, -0.02))), (1.5, 0.9, 0.6), 32, 16); f.data.materials.append(leg); parts.append(f)
+    fc = face([b], 0, 0.3 + bob, 0.95)
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts + fc:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (0, 0, math.radians(30))  # turn a little toward +x, the way the game scrolls; the stride runs along x
+    return [hub], []
+
+OBJECTS = {'coin': (o_coin, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+           **{'runner-%d' % i: ((lambda i=i: o_runner(i)), 0) for i in range(9)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
 
