@@ -421,7 +421,7 @@ def o_pu_x2():
     return [t], []
 
 def o_case():
-    """checkpoint: an open briefcase full of green banknote bundles and gold coins, with a face on the front"""
+    """checkpoint: an open briefcase full of green banknote bundles, with a face on the front"""
     leather = plastic('leather', (0.06, 0.025, 0.01), 0.35); lining = plastic('lining', smiley.PAL['graphite'])
     note = plastic('notes', (0.03, 0.32, 0.08)); band = plastic('band', smiley.PAL['sheen'])
     base = box('base', leather, (0, 0, -0.3), (1.9, 1.05, 0.6), bv=0.07)
@@ -438,8 +438,6 @@ def o_case():
             for k in range(2):
                 parts.append(box('bundle', note, (x, y, 0.06 + 0.13 * k), (0.48, 0.34, 0.12), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0.015))
                 parts.append(box('band', band, (x, y, 0.06 + 0.13 * k), (0.1, 0.36, 0.13), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0))
-    for (x, y, z) in ((-0.3, -0.25, 0.38), (0.25, 0.1, 0.38), (0.6, -0.2, 0.36), (-0.6, 0.15, 0.37), (0.0, -0.1, 0.46), (0.4, -0.3, 0.45)):
-        parts.append(cyl(gold(), (x, y, z), 0.15, 0.05, (math.radians(15), math.radians(20), 0), 32, 0.01))
     fc = face([base], 0, -0.28, 0.75)
     hub = link(bpy.data.objects.new('tilt', None)); bpy.context.view_layer.update()
     for o in parts + fc:
