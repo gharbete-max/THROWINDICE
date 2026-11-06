@@ -606,7 +606,7 @@ body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85
 
 /* game over: the runner dances on top of the results window (12-frame loop, assets/game/dance.webp, 165x144 cells) */
 .gcDancer{--dw:120px;display:none;position:absolute;left:50%;top:0;width:var(--dw);height:calc(var(--dw)*144/165);transform:translate(-50%,calc(-100% + 2px));background:url(assets/game/dance.webp) 0 0/calc(var(--dw)*12) 100% no-repeat;animation:gcDance .9s steps(12) infinite;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
-.gameCard.slim .gcDancer{display:block}
+#gameCard .gcDancer{display:block}
 @keyframes gcDance{to{background-position-x:calc(var(--dw)*-12)}}
 @media(prefers-reduced-motion:reduce){.gcDancer{animation:none}}
 </style>

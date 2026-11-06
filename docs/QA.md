@@ -634,3 +634,6 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - Stats (score, distance, best), graphics quality slider (Low: no background layers, ticker, speed lines or glow and fewer sparks, 1x pixels; Medium: the full look; High: runner glow), music and effects volume sliders with mute toggles, player name, screen shake (off/low/full), hold-to-jump-higher and vibration toggles, Resume, Restart, Exit.
 - Settings persist in localStorage (`cp-set`); the site's calculator slider decoration skips the pause sliders.
 - Headless desktop, phone and small phone: every control changes its setting, Resume and Restart work, no page errors; the menu scrolls when the screen is short.
+
+## Game: dancer on the intro window
+- The dancing runner now sits on top of the intro window as well as the results window. Headless desktop and phone: shown above the card, no page errors.
