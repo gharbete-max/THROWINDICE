@@ -622,3 +622,10 @@ The Token World pages were already cut (see above); this pass finished the lefto
 ## Game in both worlds
 - The Game button now opens the game in the normal world too (it used to show "coming soon" outside Token World).
 - Headless: normal and Token World, desktop and phone, the game starts, runs and accepts jumps with no page errors.
+
+## Game: variable jump, checkpoint launch, walls and gaps no longer instant death
+- Jump height follows how long the button is held: a tap is a short hop (about 90 px), a full hold the old full jump (about 380 px). Letting go early cuts the climb.
+- Checkpoints launch the runner about 770 px into the air (`R.fly` is set for 2.6 s or until landing, the hook for the flying animation coming from the other session).
+- Walls hold the runner back instead of killing; the screen keeps scrolling and only leaving it on the left ends the run. Clearing the wall snaps the camera so the runner is mid-screen, then it drifts back to the usual spot.
+- Falling into a gap only ends the run once the runner drops off the bottom of the screen (camera stops following the fall), so a double jump can still save it.
+- Checked with a stepped simulation: wall without a jump ends after about 0.9 s blocked, wall with a jump recovers and snaps, gap without a jump ends, gap with an immediate double jump recovers, checkpoint rises 769 px. No page errors on desktop and phone.
