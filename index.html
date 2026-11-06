@@ -1547,7 +1547,7 @@ let lastScoreTxt='';function paintScore(n,col){col=col||'#ebbd4e';const t=fmt(n)
  let x=cw;for(const ch of t){const m=PIX[ch];if(m)m.split(' ').forEach((row,ry)=>{for(let rx=0;rx<5;rx++)if(row[rx]==='1'){g.fillStyle='#0e0e10';g.fillRect(x+rx*u+1,ry*u+1,u,u);g.fillStyle=col;g.fillRect(x+rx*u,ry*u,u,u)}});x+=6*u}}
 
 /* game sprites (assets/game): 3D renders in the site palette. Runner sheet = 8 run frames + 1 jump frame. */
-const GIMG=n=>Object.assign(new Image(),{src:'assets/game/'+n+'.webp'}),RUNNER=GIMG('runner'),RUNNERG=GIMG('runner-glass'),RUNNERM=GIMG('runner-magnet'),RUNNERX=GIMG('runner-x2'),RUNNERR=GIMG('runner-rainbow'),CASE=GIMG('cp-case'),GOO=GIMG('goo'),GLIDE=GIMG('glide'),COINI=[1,2,3,4].map(i=>GIMG('coin-'+i)),PUI={shield:GIMG('pu-shield'),magnet:GIMG('pu-magnet'),x2:GIMG('pu-x2')},PUGLOW={shield:'198,202,209',magnet:'188,127,58',x2:'235,189,78'};
+const GIMG=n=>Object.assign(new Image(),{src:'assets/game/'+n+'.webp'}),RUNNER=GIMG('runner'),RUNNERG=GIMG('runner-glass'),RUNNERM=GIMG('runner-magnet'),RUNNERX=GIMG('runner-x2'),RUNNERR=GIMG('runner-rainbow'),CASE=GIMG('cp-case'),LOVEI={gold:GIMG('runner-love'),shield:GIMG('runner-love-glass'),magnet:GIMG('runner-love-magnet'),x2:GIMG('runner-love-x2'),combo:GIMG('runner-love-rainbow')},COINI=[1,2,3,4].map(i=>GIMG('coin-'+i)),PUI={shield:GIMG('pu-shield'),magnet:GIMG('pu-magnet'),x2:GIMG('pu-x2')},PUGLOW={shield:'198,202,209',magnet:'188,127,58',x2:'235,189,78'};
 function glow(x,y,r,rgb,a){const g=cx;g.save();g.globalCompositeOperation='lighter';const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba('+rgb+','+a+')');gr.addColorStop(1,'rgba('+rgb+',0)');g.fillStyle=gr;g.beginPath();g.arc(x,y,r,0,6.3);g.fill();g.restore()}
 const powered=s=>s.shield||s.magT>0||s.x2T>0;
 /* the powered form follows the strongest active power-up: 2x (green, $ eyes, pulsing) > magnet (blue, magnet on the head) > shield (purple-red) */
@@ -1562,10 +1562,10 @@ const GAIT={walk:[0,74],jog:[8,62],run:[16,50]},gaitOf=s=>s.lvl<1?'walk':s.lvl<2
 function react(k,d){if(RMQ.matches||(R.rx&&R.rx.t>0&&RPRI[R.rx.k]>RPRI[k]))return;R.rx={k,t:d,d}}/* a short body reaction; a bigger one is not cut off by a smaller one */
 function player(x,y,s){const g=cx,F=formOf(s),pw=!!F,fi0=F&&F[0](),im=fi0&&ok(fi0)?fi0:RUNNER,r=s.rx,rk=r&&r.t>0?r.k:'',u=rk?1-r.t/r.d:0,k=Math.sin(u*Math.PI);let sx=1,sy=1,rot=0,dy=0;
  if(pw){const p=.5+.5*Math.sin(s.t*7),hu=s.t*160;glow(x,y-85*VK,(150+30*p)*VK,F[1]||hueRGB(hu),.32+.12*p);glow(x,y-85*VK,(95+20*p)*VK,F[2]||hueRGB(hu+120),.22+.1*p)}/* powered aura in the form's colours, pulsing */
- const cpf=s.cpFly&&s.air&&ok(GOO)&&ok(GLIDE);/* checkpoint flight: gooey arrow up, moonwalk glide down */
- if(cpf){if(s.vy<0){const v=Math.min(1,-s.vy/3000),q=Math.sin(s.t*22)*.05;sy+=.25*v+q;sx-=.12*v+q}}
- else if(s.air){const v=Math.min(1,Math.abs(s.vy)/2400);sy+=.14*v;sx-=.1*v;rot=Math.max(-.35,Math.min(.35,s.vy/3200))}/* stretch with speed, tilt with the arc */
+ const lk=F===FORM.combo?'combo':F===FORM.x2?'x2':F===FORM.magnet?'magnet':F===FORM.shield?'shield':'gold',li=LOVEI[lk],cpf=s.cpFly&&s.air&&ok(li);/* checkpoint flight: the same runner, smitten (love face) */
+ if(s.air){const v=Math.min(1,Math.abs(s.vy)/2400);sy+=.14*v;sx-=.1*v;rot=Math.max(-.35,Math.min(.35,s.vy/3200))}/* stretch with speed, tilt with the arc */
  else{const a=ground(s.sx+50),b=ground(s.sx-50);if(isFinite(a)&&isFinite(b))rot=Math.atan2(a-b,100)*.55}/* lean with the slope */
+ if(cpf){const v=Math.min(1,Math.abs(s.vy)/2000);sx*=1.12*(1-.1*v);sy*=1.12*(1+.2*v)}/* a little bigger, stretched out along the flight */
  if(s.flip>0)rot+=(1-s.flip/FLIP)*Math.PI*2;/* double jump: a front flip */
  sx*=1+s.sq*.9;sy*=1-s.sq*.9;/* landing squash, set from the fall height */
  if(F===FORM.x2&&!RMQ.matches){const q=Math.sin(s.t*13);sx*=1+.09*q;sy*=1+.09*q}/* 2x: the whole body pulses */
@@ -1574,7 +1574,7 @@ function player(x,y,s){const g=cx,F=formOf(s),pw=!!F,fi0=F&&F[0](),im=fi0&&ok(fi
  else if(rk==='pup'){sx*=1+.3*k;sy*=1+.3*k;rot+=u*Math.PI*2}
  else if(rk==='cp'){dy-=130*k;rot-=u*Math.PI*2;sx*=1-.1*k;sy*=1+.14*k}
  g.save();g.translate(x,y+dy*VK);g.scale(VK,VK);g.translate(0,-85);g.rotate(rot);g.translate(0,85);g.scale(sx,sy);/* rotate about the body, squash from the feet */
- if(cpf){const up=s.vy<0,sh=up?GOO:GLIDE,n=up?4:8,fw=sh.naturalWidth/n,fh=sh.naturalHeight,Hh=fh*217/182,Ww=Hh*fw/fh,fi=Math.floor(s.t*(up?14:10))%n;g.drawImage(sh,fi*fw,0,fw,fh,-Ww/2,-Hh+8,Ww,Hh)}/* same pixel scale as the runner sheet */
+ if(cpf){const fw=li.naturalWidth/8,fh=li.naturalHeight,Hh=fh*217/182,Ww=Hh*fw/fh,fi=s.vy<0?Math.floor(s.t*12)%4:4+Math.floor(s.t*15)%4;if(F===FORM.combo&&!RMQ.matches)g.filter='hue-rotate('+Math.round(s.t*160%360)+'deg)';g.drawImage(li,fi*fw,0,fw,fh,-Ww/2,-Hh+8,Ww,Hh);g.filter='none'}/* love frames: rise 0-3, fall 4-7; same pixel scale as the runner sheet */
  else if(ok(im)){const fw=im.naturalWidth/35,fh=im.naturalHeight,Hh=217,Ww=Hh*fw/fh,G=GAIT[gaitOf(s)];
   const fi=!s.air?G[0]+Math.floor(s.sx/G[1])%8:s.tko>0?24+Math.min(2,Math.floor((1-s.tko/TKO)*3)):s.vy<0?27+Math.floor(s.t*12)%4:31+Math.floor(s.t*15)%4;
   if(F===FORM.combo&&!RMQ.matches)g.filter='hue-rotate('+Math.round(s.t*160%360)+'deg)';g.drawImage(im,fi*fw,0,fw,fh,-Ww/2,-Hh+8,Ww,Hh);g.filter='none'}
