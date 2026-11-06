@@ -73,27 +73,27 @@ def face(targets, cx, cz, s=1.0):
             e.data.align_x = 'CENTER'; e.data.align_y = 'CENTER'; e.data.materials.append(principled('dollar', (1.0, 0.74, 0.18), 0.22, metallic=0.85, coat=0.8, emit=(1.0, 0.7, 0.15), emit_str=0.6))
             out.append(e); continue
         if LOVE:  # puppy eyes: bigger glossy black balls that pop out, each with a big and a small white shine
-            r = 0.125 * s; e = uv_sphere(f'eye{k}', r, tuple(p + n * 0.035 * s), (1, 0.8, 1.1)); e.data.materials.append(f)
+            r = 0.15 * s; e = uv_sphere(f'eye{k}', r, tuple(p + n * 0.035 * s), (1, 0.8, 1.1)); e.data.materials.append(f)
             e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
             shine = principled('shine', (0.85, 0.86, 0.9), 0.2, emit=(0.85, 0.86, 0.9), emit_str=0.5)  # a soft catch-light, not a white blob
             for dx, dz, rr in ((-0.38, 0.4, 0.26), (0.32, -0.3, 0.12)):
                 q = p + n * (0.035 * s + r * 0.85) + Vector((dx * r, 0, dz * r)); sh = uv_sphere('shine', rr * r, tuple(q)); sh.data.materials.append(shine); out.append(sh)
-            ch = _hit(targets, cx + k * 0.36 * s, cz - 0.24 * s)  # blush below each eye
+            ch = _hit(targets, cx + k * 0.4 * s, cz - 0.27 * s)  # blush below each eye
             if ch:
-                cp_, cn = ch; bl = uv_sphere('blush', 0.085 * s, tuple(cp_ + cn * 0.005), (1.5, 0.25, 0.8)); bl.data.materials.append(principled('blush', (1.0, 0.35, 0.45), 0.5, emit=(1.0, 0.3, 0.4), emit_str=0.3))
+                cp_, cn = ch; bl = uv_sphere('blush', 0.12 * s, tuple(cp_ + cn * 0.005), (1.5, 0.25, 0.8)); bl.data.materials.append(principled('blush', (1.0, 0.35, 0.45), 0.5, emit=(1.0, 0.3, 0.4), emit_str=0.3))
                 bl.rotation_euler = (-cn).to_track_quat('Y', 'Z').to_euler(); out.append(bl)
             continue
         e = uv_sphere(f'eye{k}', 0.062 * s, tuple(p - n * 0.012 * s), (1, 0.55, 1.15)); e.data.materials.append(f)
         e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
     pts = []
     for k in range(13):
-        a = math.radians(-58 + 116 * k / 12); W_, D_ = (0.22, 0.12) if LOVE else (0.13, 0.055)
+        a = math.radians(-58 + 116 * k / 12); W_, D_ = (0.27, 0.15) if LOVE else (0.13, 0.055)
         x = W_ * s * math.sin(a); z = (-0.31 - D_ * math.cos(a) + D_) * s
         h = _hit(targets, cx + x, cz + z)
         if h: pts.append(tuple(h[0] + h[1] * 0.004 * s))
     if len(pts) >= 6:
         r = [0.014, 0.019] + [0.021] * (len(pts) - 4) + [0.019, 0.014]
-        if LOVE: r = [v * 1.5 for v in r]
+        if LOVE: r = [v * 1.9 for v in r]
         out.append(tube('smile', pts, [v * s for v in r], f))
     return out
 
@@ -334,7 +334,7 @@ def o_runner(gait, frame):
     global DOLLAR
     if RUNNER_SKIN == 'green' and not LOVE:  # 2x: huge $ eyes that swell and shrink through the cycle (bouncy)
         n_ = 8 if gait in GAITS else AIR[gait]; DOLLAR = 1.2 + 0.4 * abs(math.sin(2 * math.pi * frame / n_))
-    fc = face([b], 0, 0.3 + bob, 0.95 * (1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
+    fc = face([b], 0, 0.3 + bob, 0.95 * (1.12 if LOVE else 1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
     if RUNNER_SKIN == 'blue':  # magnet form: a red horseshoe magnet stuck on top of the head
         red = principled('magred', (0.9, 0.06, 0.08), 0.25, coat=1.0, coat_rough=0.03); pole = principled('pole', (0.86, 0.87, 0.9), 0.2, metallic=1.0)
         top = Vector((0.05, 0, 1.0 + bob))
@@ -345,7 +345,7 @@ def o_runner(gait, frame):
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
-    hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(30))
+    hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(14 if LOVE else 30))  # love frames turn toward the camera so the whole happy face shows
     return [hub], []
 
 def o_dance(frame, n=12):
