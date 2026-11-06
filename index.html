@@ -1382,7 +1382,7 @@ regLabel();if(!REGION)regOpen();
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');
 /* Live Ball Bounce: a runner over randomly generated stock-market terrain (candles: bull runs, chop, pullbacks, crashes, pits, rugpulls).
    Collect coins, grab power-ups, survive the falls (fall damage). Every checkpoint the run and the music speed up. No cash out: keep going. */
-const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=820,CPD=5500,AX=.16,SLIDE=100,VG=140,UP=290;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the runner can stick to, start speed, checkpoint distance */
+const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=820,CPD=11000,AX=.16,SLIDE=100,VG=140,UP=290;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the runner can stick to, start speed, checkpoint distance */
 let bestD=0;try{bestD=+localStorage.getItem('cp-bestd')||0}catch(e){}
 let W=0,H=0,dpr=1,Z=.4,VK=1,R=null,raf=0,hold=false,best=0,paused=false;try{best=+localStorage.getItem('cp-best')||0}catch(e){}
 const RMQ=matchMedia('(prefers-reduced-motion: reduce)'),FONT='Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif';const rnd=(a,b)=>a+Math.random()*(b-a),ri=(a,b)=>Math.floor(rnd(a,b+1));
@@ -1401,9 +1401,9 @@ function lastGround(i){while(i>0&&R.top[i]==null)i--;return R.top[i]}
 /* coins: one every 520-900 px, never in clumps; higher tiers float higher */
 const farFromCoins=x=>!R.coins.some(c=>Math.abs(c.x-x)<260);
 function placeCoins(){/* guide coins first: one over every gap, showing the jump that clears it (wall: high above the take-off; drop: just past the edge) */
-while(R.holeQ.length){const [x,y]=R.holeQ.shift();if(farFromCoins(x))R.coins.push({x,t:tierRoll(),y})}
- while(R.guideQ.length){const [i,prev,y]=R.guideQ.shift(),wall=y<prev-VG,x=wall?i*CW-170:i*CW+90;if(Math.random()<.35&&farFromCoins(x)){const t=Math.min(3,tierRoll()+(Math.random()<.35?1:0));R.coins.push({x,t,y:wall?prev-300:prev-150})}}
- while(R.coinX<R.top.length*CW-200){const x=R.coinX;R.coinX+=rnd(700,1200);if(!farFromCoins(x))continue;const g=ground(x),t=tierRoll();R.coins.push({x,t,y:isFinite(g)?g-rnd(TD[t][0],TD[t][1]):lastGround(Math.floor(x/CW))-rnd(190,260)})}}
+while(R.holeQ.length){const [x,y]=R.holeQ.shift();if(Math.random()<.5&&farFromCoins(x))R.coins.push({x,t:tierRoll(),y})}
+ while(R.guideQ.length){const [i,prev,y]=R.guideQ.shift(),wall=y<prev-VG,x=wall?i*CW-170:i*CW+90;if(Math.random()<.12&&farFromCoins(x)){const t=Math.min(3,tierRoll()+(Math.random()<.35?1:0));R.coins.push({x,t,y:wall?prev-300:prev-150})}}
+ while(R.coinX<R.top.length*CW-200){const x=R.coinX;R.coinX+=rnd(2000,3400);if(!farFromCoins(x))continue;const g=ground(x),t=tierRoll();R.coins.push({x,t,y:isFinite(g)?g-rnd(TD[t][0],TD[t][1]):lastGround(Math.floor(x/CW))-rnd(190,260)})}}
 function addSeg(){const k=R.top.length,L0=Math.floor(k*CW/CPD),lv=Math.min(L0*1.5,9),vol=1+.12*Math.min(lv,8);/* the chart gets wilder with distance */
  if(k<30){for(let i=k;i<30;i++)push(R.gy);return}
  const r=Math.random(),low=R.gy>R.base+1500,high=R.gy<R.base-1300,mr=Math.max(-1,Math.min(1,(R.gy-R.base)/800)),W_={bull:.28*(1+mr*.8),chop:.18,pull:.14*(1-mr*.8),crash:.04+.01*lv,ledge:.14+.03*lv,stairs:(L0>=2?.06+.03*lv:0),drop:.04+.02*lv,pit:.16+.06*lv,plat:.14+.05*lv};
@@ -1425,7 +1425,7 @@ function addSeg(){const k=R.top.length,L0=Math.floor(k*CW/CPD),lv=Math.min(L0*1.
  else if(kind==='drop'){const h=rnd(420,640+40*lv);push(y+h,true);const m=landLen(h,L0)+2;for(let i=0;i<m;i++)push(R.gy+rnd(-8,8))}
  else{const h=rnd(650,1000);push(y+h,true);const m=landLen(h,L0)+2;for(let i=0;i<m;i++)push(R.gy+rnd(-8,8))}/* rugpull: one huge gap down */
  {let run=0,mx=0;for(let j=k;j<R.top.length;j++){const a=R.top[j],b=R.top[j-1];if(a!=null&&b!=null&&a-b>=70){run+=a-b;mx=Math.max(mx,run)}else run=0}if(mx>200&&['drop','rug','ledge','stairs','crash','plat','pit'].includes(kind))R.safeUntil=R.top.length+landLen(mx,L0)+2}/* a real fall (steep steps in a row) needs room to land */
- if(R.top.length>30&&R.top.length-R.lastPu>22&&Math.random()<.35){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
+ if(R.top.length>30&&R.top.length-R.lastPu>130&&Math.random()<.4){R.lastPu=R.top.length;const k2=Object.keys(PU)[Math.floor(Math.random()*3)];R.pups.push({x:(R.top.length-1)*CW,y:R.gy-rnd(100,160),k:k2})}}
 /* fairness: after any fall the runner needs room to land and react before the next hazard: fall time x speed + 0.3 s of run-up */
 const vAt=L0=>SP0*Math.min(1.7,1+.07*L0),runUp=L0=>Math.ceil(.45*vAt(L0)/CW),landLen=(h,L0)=>Math.ceil((Math.sqrt(2*Math.max(0,h)/G)*vAt(L0)*1.05+.3*vAt(L0))/CW);
 /* gap width: about a third of a jump at the start, up to most of a double jump later */
@@ -1444,7 +1444,7 @@ function hitStop(f){R.stop=Math.max(R.stop,f/60)}
 function pop(x,y,t,c,sz){R.pops.push({x,y,t,c,sz:sz||1,l:1.1})}
 function puff(x,y,n,c){for(let i=0;i<n;i++)R.fx.push({x:x+rnd(-20,20),y,vx:rnd(-240,80),vy:rnd(-170,-20),l:rnd(.25,.5),c:c||'#a9b0ba',g:.3})}
 /* daily goals: three of seven, the same all day, kept in localStorage */
-const MIS=[['c20','Collect 20 coins',s=>s.score>=20],['c40','Collect 40 coins',s=>s.score>=40],['cp2','Reach checkpoint 2',s=>s.lvl>=2],['cp4','Reach checkpoint 4',s=>s.lvl>=4],['pf4','Land 4 perfect jumps',s=>s.perfects>=4],['cb6','Chain 6 coins',s=>s.bestCombo>=6],['m400','Run 400 m',s=>(s.sx-700)/100>=400]];
+const MIS=[['c20','Score 12 points',s=>s.score>=12],['c40','Score 25 points',s=>s.score>=25],['cp2','Reach checkpoint 1',s=>s.lvl>=1],['cp4','Reach checkpoint 3',s=>s.lvl>=3],['pf4','Land 4 perfect jumps',s=>s.perfects>=4],['cb6','Chain 3 coins',s=>s.bestCombo>=3],['m400','Run 400 m',s=>(s.sx-700)/100>=400]];
 const dayKey=()=>{const d=new Date();return d.getFullYear()*372+d.getMonth()*31+d.getDate()};
 const todays=()=>{const b=dayKey()%7;return[b,(b+2)%7,(b+4)%7].map(i=>MIS[i])};
 const doneSet=()=>{try{return JSON.parse(localStorage.getItem('cp-mis-'+dayKey())||'[]')}catch(e){return[]}};

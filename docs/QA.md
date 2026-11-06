@@ -613,3 +613,8 @@ Checks: phone audit clean on all 5 screens, bubble drag and pop, portal (about 0
 
 ## Token World included in the text cut and palette (2026-11-04)
 The Token World pages were already cut (see above); this pass finished the leftovers: the long footer line is now "Concept prototype. Not investment advice.", the Token World balloon (blue) is brown/gold, the confetti and satellite glow use palette tones, and the blue smileys and menu bubbles in Token World (Explore, Wallets, the toggle coin, Options/Networks/Issuance) are hue-shifted to gold with a CSS filter because they are image files. Checked on a phone in Token World: Basics page, Explore popup, bubble pile; no console errors.
+
+## Game: coins, power-ups and checkpoints much rarer
+- Measured over 300k px of generated track: coins 1.15 -> 0.44 per 1000 px (about 2.6x rarer), power-ups 0.21 -> 0.10 (about 2x rarer), checkpoints every 5500 -> 11000 px (2x rarer).
+- Daily goals retuned to match: score 12 / 25 points, checkpoint 1 / 3, chain 3 coins.
+- Headless desktop and phone runs: no page errors.
