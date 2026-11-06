@@ -361,6 +361,55 @@ def o_dance(frame, n=12):
         f = uv_sphere('foot', 0.13, tuple(foot + Vector((0, -0.07, -0.02))), (0.9, 1.5, 0.6), 32, 16); f.data.materials.append(limb); legs.append(f)
     return [up] + legs, []
 
+def o_goo(frame, n=4):
+    """checkpoint launch: the runner stretched into a gooey gold arrow pointing up: one swept tube whose radius
+    necks into drips at the bottom and swells into the body, topped by a flattened arrowhead. Frames wobble it."""
+    w = 2 * math.pi * frame / n; gold_ = plastic('goo', smiley.PAL['gold'])
+    zs = [-2.05, -1.85, -1.62, -1.42, -1.2, -0.95, -0.6, -0.2, 0.25, 0.6, 0.95]
+    rs = [0.03, 0.13, 0.05, 0.19, 0.08, 0.36, 0.62, 0.74, 0.7, 0.56, 0.5]
+    pts = [(0.07 * math.sin(w + 1.3 * k) * (1 - k / len(zs)), 0, z) for k, z in enumerate(zs)]
+    body = tube('goo', pts, [r * (1 + 0.05 * math.sin(w + k)) for k, r in enumerate(rs)], gold_)
+    head = prim('cone', gold_, (0, 0, 1.12), vertices=64, radius1=0.72, radius2=0.0, depth=0.78); head.scale = (1, 0.62, 1); bevel(head, 0.12, 5)
+    return [body, head], face([body], 0, -0.05, 1.0)
+
+def o_glide(frame, n=8):
+    """checkpoint descent: a moonwalk-style backward glide in a black fedora, one hand on the brim. Feet slide
+    back in turn (sawtooth), the back foot up on its toes."""
+    P = smiley.PAL; body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
+    felt = principled('felt', (0.012, 0.012, 0.014), 0.8); band = principled('band', (0.9, 0.9, 0.88), 0.4)
+    ph = frame / n; bob = 0.03 * math.cos(4 * math.pi * ph)
+    b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
+    parts = [b]
+    for k, side in enumerate((-1, 1)):
+        u = (ph + 0.5 * k) % 1.0                               # each foot slides from front to back, then steps forward
+        fx = 0.38 - 0.76 * u if u < 0.8 else -0.38 + 0.76 * (u - 0.8) / 0.2
+        toe = u > 0.45                                          # the back foot rises onto its toes
+        hip = Vector((0.04 * side, side * 0.22, -0.4 + bob)); foot = Vector((fx, side * 0.22, -1.0 + (0.1 if toe else 0)))
+        knee = hip.lerp(foot, 0.5) + Vector((0.12 if toe else 0.03, 0, 0))
+        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], limb))
+        f = uv_sphere('foot', 0.13, tuple(foot + Vector((0.07, 0, -0.02))), (1.5, 0.9, 0.6), 32, 16); f.data.materials.append(limb)
+        if toe: f.rotation_euler = (0, math.radians(35), 0)
+        parts.append(f)
+    # arms: one on the hat brim, one out to the side
+    for side, hand in ((-1, Vector((-0.55, 0.05, -0.05 + bob))), (1, Vector((0.45, -0.05, 1.0 + bob)))):
+        sh = Vector((side * 0.74, 0.05, 0.12 + bob))
+        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5) + Vector((0, 0, 0.1))), tuple(hand)], [0.07, 0.065, 0.06], limb))
+        hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
+    # fedora: tapered crown with a pinched top, a wide flat brim and a pale band, tipped forward
+    hat = link(bpy.data.objects.new('hat', None)); hat.location = (0.05, 0, 0.98 + bob)
+    crown = prim('cone', felt, (0, 0, 0.22), vertices=48, radius1=0.5, radius2=0.4, depth=0.46); bevel(crown, 0.06, 4)
+    dent = uv_sphere('dent', 0.33, (0, 0, 0.5), (1.0, 0.55, 0.35), 32, 16); dent.data.materials.append(felt)
+    brim = prim('cylinder', felt, (0, 0, 0), vertices=64, radius=0.82, depth=0.05); brim.scale = (1, 0.92, 1); bevel(brim, 0.02, 3)
+    rib = prim('cylinder', band, (0, 0, 0.1), vertices=48, radius=0.505, depth=0.1)
+    for o in (crown, dent, brim, rib): o.parent = hat  # created at hat-local positions
+    hat.rotation_euler = (0, math.radians(14), 0)
+    fc = face([b], 0, 0.22 + bob, 0.95)
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts + fc + [hat]:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(-8), math.radians(30))  # leaning back into the glide
+    return [hub], []
+
 def star_mesh(mat, loc=(0, 0, 0), r=0.9):
     import bmesh
     me = bpy.data.meshes.new('star'); bm = bmesh.new()
@@ -472,7 +521,7 @@ def o_case():
     hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1), **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1), **{'goo-%d' % i: ((lambda i=i: o_goo(i)), 0) for i in range(4)}, **{'glide-%d' % i: ((lambda i=i: o_glide(i)), 0) for i in range(8)}, **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
