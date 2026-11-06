@@ -296,8 +296,8 @@ def rainbow_glass(name):
     b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
     return m
 
-def o_runner(gait, frame):
-    """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
+def runner_mats():
+    """body + limb materials for the current RUNNER_SKIN"""
     P = smiley.PAL
     SK = {'glass': ((0.98, 0.06, 0.22), (0.4, 0.05, 0.98), (0.85, 0.05, 0.25)),    # shield: red underneath -> purple on top
           'blue':  ((0.05, 0.25, 1.0), (0.3, 0.85, 1.0), (0.1, 0.4, 1.0)),       # magnet: deep blue -> cyan
@@ -317,6 +317,21 @@ def o_runner(gait, frame):
         body = rainbow_glass('rbow'); limb = rainbow_glass('rbowl')
     else:
         body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
+    return body, limb
+
+def head_magnet(bob):
+    """magnet form: a red horseshoe magnet stuck on top of the head"""
+    red = principled('magred', (0.9, 0.06, 0.08), 0.25, coat=1.0, coat_rough=0.03); pole = principled('pole', (0.86, 0.87, 0.9), 0.2, metallic=1.0)
+    top = Vector((0.05, 0, 1.0 + bob))
+    arc = [tuple(top + Vector((0.3 * math.cos(math.radians(a)), 0, 0.05 + 0.3 * math.sin(math.radians(a))))) for a in range(0, 181, 15)]
+    mag = tube('headmag', [tuple(top + Vector((0.3, 0, -0.17)))] + arc + [tuple(top + Vector((-0.3, 0, -0.17)))], [0.12] * (len(arc) + 2), red)
+    poles = [cyl(pole, tuple(top + Vector((x, 0, -0.24))), 0.125, 0.16, bv=0.02) for x in (-0.3, 0.3)]
+    return [mag] + poles
+
+def o_runner(gait, frame):
+    """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
+    P = smiley.PAL
+    body, limb = runner_mats()
     if gait in GAITS:
         st, L, bobA, lean, armA, bend = GAITS[gait]; ph = frame / 8; c = math.sin(2 * math.pi * ph)
         bob = bobA * math.cos(4 * math.pi * ph); legs = (st * c, -st * c); arms = (-armA * c, armA * c)
@@ -339,18 +354,31 @@ def o_runner(gait, frame):
     if RUNNER_SKIN == 'green' and not LOVE:  # 2x: huge $ eyes that swell and shrink through the cycle (bouncy)
         n_ = 8 if gait in GAITS else AIR[gait]; DOLLAR = 1.2 + 0.4 * abs(math.sin(2 * math.pi * frame / n_))
     fc = face([b], 0, 0.3 + bob, 0.95 * (1.12 if LOVE else 1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
-    if RUNNER_SKIN == 'blue':  # magnet form: a red horseshoe magnet stuck on top of the head
-        red = principled('magred', (0.9, 0.06, 0.08), 0.25, coat=1.0, coat_rough=0.03); pole = principled('pole', (0.86, 0.87, 0.9), 0.2, metallic=1.0)
-        top = Vector((0.05, 0, 1.0 + bob))
-        arc = [tuple(top + Vector((0.3 * math.cos(math.radians(a)), 0, 0.05 + 0.3 * math.sin(math.radians(a))))) for a in range(0, 181, 15)]
-        mag = tube('headmag', [tuple(top + Vector((0.3, 0, -0.17)))] + arc + [tuple(top + Vector((-0.3, 0, -0.17)))], [0.12] * (len(arc) + 2), red)
-        poles = [cyl(pole, tuple(top + Vector((x, 0, -0.24))), 0.125, 0.16, bv=0.02) for x in (-0.3, 0.3)]
-        parts += [mag] + poles
+    if RUNNER_SKIN == 'blue': parts += head_magnet(bob)
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
     hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(14 if LOVE else 30))  # love frames turn toward the camera so the whole happy face shows
     return [hub], []
+
+def o_split(frame, n=4):
+    """mid-air trick: a side split facing the camera, arms up in a V, toes pointed; a 4-frame loop (legs pulse, arms wave)"""
+    global DOLLAR
+    body, limb = runner_mats(); ph = 2 * math.pi * frame / n; w = math.sin(ph)
+    b = uv_sphere('rb', 0.8, (0, 0, 0.25), seg=64, rings=32); b.data.materials.append(body); parts = [b]
+    for side in (-1, 1):
+        hip = Vector((side * 0.26, 0, -0.42)); a = math.radians(84 + 5 * w)       # leg angle from straight down
+        foot = hip + Vector((side * math.sin(a) * 0.92, 0, -math.cos(a) * 0.92)); knee = hip.lerp(foot, 0.5) + Vector((0, -0.04, -0.05))
+        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], limb))
+        f = uv_sphere('foot', 0.13, tuple(foot + Vector((side * 0.05, -0.02, 0.06))), (0.7, 0.9, 1.45), 32, 16); f.data.materials.append(limb); parts.append(f)
+        bA = math.radians(140 + 12 * math.sin(ph + side)); sh = Vector((side * 0.74, 0.05, 0.12))
+        hand = sh + Vector((side * math.sin(bA) * 0.46, -0.06, -math.cos(bA) * 0.46))
+        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
+        hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
+    if RUNNER_SKIN == 'green': DOLLAR = 1.4
+    fc = face([b], 0, 0.3, 1.15); DOLLAR = 0.0
+    if RUNNER_SKIN == 'blue': parts += head_magnet(0)
+    return parts + fc, []
 
 def o_dance(frame, n=12):
     """game-over dance, a seamless loop: facing the camera, feet planted, the body sways side to side and dips
@@ -508,7 +536,7 @@ def o_case():
     hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'split-%d' % i: ((lambda i=i: o_split(i)), 0) for i in range(4)}, 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
