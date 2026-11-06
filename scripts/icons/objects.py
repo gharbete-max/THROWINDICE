@@ -361,24 +361,102 @@ def o_runner(gait, frame):
     hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(14 if LOVE else 30))  # love frames turn toward the camera so the whole happy face shows
     return [hub], []
 
-def o_split(frame, n=4):
-    """mid-air trick: a side split facing the camera, arms up in a V, toes pointed; a 4-frame loop (legs pulse, arms wave)"""
+TRICK_N = 12
+def _ss(a, b, x):
+    t = max(0.0, min(1.0, (x - a) / (b - a))); return t * t * (3 - 2 * t)
+
+def _rest_limbs():
+    """the runner's 'fall' frame 0 in body space (before the hub's yaw/lean): the pose every trick starts and ends on"""
+    bob, lean, legs, L, bend, arms = _air('fall', 0); out = {'legs': [], 'arms': [], 'lean': lean}
+    for k, side in enumerate((-1, 1)):
+        a = math.radians(legs[k]); hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
+        knee = hip + Vector((math.sin(a) * L * 0.5 + bend, 0, -math.cos(a) * L * 0.5)); foot = hip + Vector((math.sin(a) * L, 0, -math.cos(a) * L))
+        out['legs'].append((hip, knee, foot, Vector((1.5, 0.9, 0.6))))
+        bA = math.radians(abs(arms[k]) * 0.8 + 18); sh = Vector((side * 0.74, 0.05, 0.12 + bob))
+        out['arms'].append((sh, sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))))
+    return out
+
+def o_trick(kind, i, n=TRICK_N):
+    """flick tricks as real 3D frame sequences; frame 0 and n-1 are the runner's fall pose, so the game cuts in/out without a fade.
+    cork:  off-axis 360 (spin axis tilted 45 deg toward the run direction), knees tucked, arms hugging
+    spin:  flat 360 about the vertical axis, arms flung wide, legs together and pointed
+    split: turns to face the camera and opens into a side split with arms in a V, holds, closes
+    goo:   0-3 melt into a rippling pancake, 4-7 pancake loop (seamless), 8-11 land: splat on the floor and spring back"""
     global DOLLAR
-    body, limb = runner_mats(); ph = 2 * math.pi * frame / n; w = math.sin(ph)
-    b = uv_sphere('rb', 0.8, (0, 0, 0.25), seg=64, rings=32); b.data.materials.append(body); parts = [b]
-    for side in (-1, 1):
-        hip = Vector((side * 0.26, 0, -0.42)); a = math.radians(84 + 5 * w)       # leg angle from straight down
-        foot = hip + Vector((side * math.sin(a) * 0.92, 0, -math.cos(a) * 0.92)); knee = hip.lerp(foot, 0.5) + Vector((0, -0.04, -0.05))
-        parts.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], limb))
-        f = uv_sphere('foot', 0.13, tuple(foot + Vector((side * 0.05, -0.02, 0.06))), (0.7, 0.9, 1.45), 32, 16); f.data.materials.append(limb); parts.append(f)
-        bA = math.radians(140 + 12 * math.sin(ph + side)); sh = Vector((side * 0.74, 0.05, 0.12))
-        hand = sh + Vector((side * math.sin(bA) * 0.46, -0.06, -math.cos(bA) * 0.46))
-        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
-        hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
-    if RUNNER_SKIN == 'green': DOLLAR = 1.4
-    fc = face([b], 0, 0.3, 1.15); DOLLAR = 0.0
-    if RUNNER_SKIN == 'blue': parts += head_magnet(0)
-    return parts + fc, []
+    body, limb = runner_mats(); R0 = _rest_limbs(); u = i / (n - 1)
+    yaw, lean, bob, rot = math.radians(30), math.radians(R0['lean']), 0.0, Quaternion()
+    sq, ctr, rip, legs, arms = 0.0, 0.25, 0.0, [], []
+    L = lambda a, b, t: a.lerp(b, t)
+    if kind in ('cork', 'spin'):
+        e = _ss(0, 1, u); env = math.sin(math.pi * u) ** 0.7
+        if kind == 'cork':
+            rot = Quaternion(Vector((0.7, 0, 0.7)).normalized(), 2 * math.pi * e)
+            for k, side in enumerate((-1, 1)):
+                hip, kn, ft, fs = R0['legs'][k]; y = side * 0.2
+                legs.append((hip, L(kn, Vector((0.42, y, -0.3)), env), L(ft, Vector((0.12, y, -0.62)), env), fs))
+                sh, hd = R0['arms'][k]; arms.append((sh, L(hd, Vector((side * 0.55, -0.42, -0.25)), env)))
+        else:
+            rot = Quaternion(Vector((0, 0, 1)), -2 * math.pi * e)
+            for k, side in enumerate((-1, 1)):
+                hip, kn, ft, fs = R0['legs'][k]; y = side * 0.1
+                legs.append((hip, L(kn, Vector((0.03, y, -0.72)), env), L(ft, Vector((0.0, y, -1.02)), env), L(fs, Vector((0.7, 0.9, 1.4)), env)))
+                sh, hd = R0['arms'][k]; arms.append((sh, L(hd, sh + Vector((side * 0.5, 0.0, 0.08)), env)))
+            lean *= 1 - env
+    elif kind == 'split':
+        env = _ss(0, 0.32, u) * (1 - _ss(0.68, 1, u)); pulse = math.sin(2 * math.pi * _ss(0.32, 0.68, u)) * env
+        yaw *= 1 - env; lean *= 1 - env
+        for k, side in enumerate((-1, 1)):
+            hip0, kn0, ft0, fs0 = R0['legs'][k]; a = math.radians(84 + 6 * pulse)
+            hip = Vector((side * 0.26, 0, -0.42)); ft = hip + Vector((side * math.sin(a) * 0.92, 0, -math.cos(a) * 0.92)); kn = L(hip, ft, 0.5) + Vector((0, -0.04, -0.05))
+            legs.append((L(hip0, hip, env), L(kn0, kn, env), L(ft0, ft, env), L(fs0, Vector((0.7, 0.9, 1.45)), env)))
+            sh, hd = R0['arms'][k]; bA = math.radians(140 + 10 * pulse * side)
+            arms.append((sh, L(hd, sh + Vector((side * math.sin(bA) * 0.46, -0.06, -math.cos(bA) * 0.46)), env)))
+    else:  # goo
+        n4 = n // 3
+        if i < n4: sq = _ss(0, 1, (i + 1) / n4); ph = 0                                # melt in
+        elif i < 2 * n4: sq = 1.0; ph = 2 * math.pi * (i - n4) / n4                   # loop (period = n4 frames)
+        else:                                                                          # land: splat, then spring back with overshoot
+            t = (i - 2 * n4) / (n4 - 1); sq = [1.0, 0.5, -0.18, 0.0][min(3, round(t * 3))] if n4 == 4 else 1.2 * (1 - t); ph = 0
+            ctr = 0.25 + (-0.3 - 0.25) * (1 - _ss(0, 1, t)) * (1 if t < 1 else 0); ctr = 0.25 if t >= 1 else ctr
+        rip = 0.07 * max(0.0, min(1.0, sq)) if i < 2 * n4 or sq > 0.9 else 0.0
+        yaw *= 1 - 0.6 * max(0.0, min(1.0, sq)); lean *= 1 - max(0.0, min(1.0, sq))
+        flat = max(0.0, min(1.2, sq)); wide = 1 + 0.5 * flat; hz = 0.8 * (1 - 0.62 * flat) if sq >= 0 else 0.8 * (1 - 0.3 * sq)
+        for k, side in enumerate((-1, 1)):
+            hip, kn, ft, fs = R0['legs'][k]; t_ = max(0.0, min(1.0, sq))
+            rim = Vector((side * 0.5 * wide, -0.15, ctr - 0.25 - hz * 0.5)); out = Vector((side * 0.8 * wide, -0.3, ctr - 0.25 - hz * 0.6))
+            legs.append((L(hip, rim, t_), L(kn, L(rim, out, 0.5) + Vector((0, 0, 0.04)), t_), L(ft, out, t_), L(fs, Vector((1.2, 1.2, 0.45)), t_)))
+            sh, hd = R0['arms'][k]; sh2 = Vector((side * 0.55 * wide, -0.2, ctr - 0.25 + hz * 0.15))
+            arms.append((L(sh, sh2, t_), L(hd, sh2 + Vector((side * 0.32, -0.3, -0.05)), t_)))
+    if not legs: legs = R0['legs']
+    if not arms: arms = R0['arms']
+    b = uv_sphere('rb', 0.8, (0, 0, 0.25), seg=64, rings=32); b.data.materials.append(body)
+    if kind == 'goo':  # deform the mesh itself: flatten, widen, ripple round the rim
+        flat = max(0.0, min(1.2, sq)); wide = 1 + 0.5 * flat if sq >= 0 else 1 + 0.25 * sq; tall = 1 - 0.62 * flat if sq >= 0 else 1 - 0.3 * sq
+        for v in b.data.vertices:
+            x, y, z = v.co; r = math.hypot(x, y) / 0.8; th = math.atan2(y, x)
+            v.co = Vector((x * wide, y * wide, z * tall + rip * r * r * math.sin(5 * th + ph) + 0.03 * flat * (z < 0) * r))
+        b.location = (0, 0, ctr)
+    parts = [b]
+    for hip, kn, ft, fs in legs:
+        parts.append(tube('leg', [tuple(hip), tuple(kn), tuple(ft)], [0.09, 0.085, 0.08], limb))
+        d = (ft - kn).normalized(); w_ = min(1.0, (fs - Vector((1.5, 0.9, 0.6))).length / 0.5); f = uv_sphere('foot', 0.13, tuple(ft + Vector((0.07, 0, -0.02)).lerp(d * 0.07, w_)), tuple(fs), 32, 16); f.data.materials.append(limb); parts.append(f)  # at rest: the same foot as o_runner
+    for sh, hd in arms:
+        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hd, 0.5)), tuple(hd)], [0.07, 0.065, 0.06], limb))
+        h_ = uv_sphere('hand', 0.1, tuple(hd), seg=24, rings=12); h_.data.materials.append(limb); parts.append(h_)
+    if RUNNER_SKIN == 'blue': parts += head_magnet(ctr - 0.25 + (0.8 * (1 - 0.62 * max(0.0, min(1.2, sq))) - 0.8 if kind == 'goo' else 0))
+    if kind == 'goo' and sq > 0:  # tip the pancake's top toward the camera so its face and splayed limbs read
+        tilt = link(bpy.data.objects.new('tilt', None)); tilt.location = (0, 0, ctr); bpy.context.view_layer.update()
+        for o in parts:
+            mw = o.matrix_world.copy(); o.parent = tilt; o.matrix_world = mw
+        tilt.rotation_euler = (math.radians(42) * min(1.0, sq) * (0.6 if i >= 2 * n4 else 1), 0, 0); bpy.context.view_layer.update(); parts = [tilt]
+    if RUNNER_SKIN == 'green': DOLLAR = 1.3
+    gs = 1 - 0.15 * max(0.0, min(1.0, sq)); fz = ctr + 0.12 * max(0.0, min(1.0, sq)) + 0.05 * (1 - max(0.0, min(1.0, sq))) if kind == 'goo' else 0.3
+    fc = face([b], 0, fz, 0.95 * gs * (1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
+    hub = link(bpy.data.objects.new('turn', None)); hub.rotation_mode = 'QUATERNION'; bpy.context.view_layer.update()
+    for o in parts + fc:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_quaternion = Euler((0, lean, yaw)).to_quaternion() @ rot
+    return [hub], []
 
 def o_dance(frame, n=12):
     """game-over dance, a seamless loop: facing the camera, feet planted, the body sways side to side and dips
@@ -536,7 +614,7 @@ def o_case():
     hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'split-%d' % i: ((lambda i=i: o_split(i)), 0) for i in range(4)}, 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}

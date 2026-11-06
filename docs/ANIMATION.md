@@ -29,32 +29,47 @@ Integration notes for Claude Code: how every animation in the Live Ball Bounce g
 | Pickups | collision | coin sparkles (6 fx), power-up flip and wobble | fx particles with gravity `g`, life `l` | instant | life fade |
 | Game-over dance | `R.dead` | dance sheet on the results card | sheet loop, sway `sin` | **todo:** fade the card in 200 ms, start the dance on frame 0 | — |
 
-## Flick tricks
+## Flick tricks (real 3D frames)
 
 Press = jump as before. While the press is held, a drag of 40 px or more within 0.6 s is a flick, and a flick starts a trick (`trick(k)`). A flick on the ground jumps first. Only one trick runs at a time (`R.trk = {k, t, d, ok, land}`).
 
-| Flick (screen) | Key | Trick `k` | How it's drawn | Length |
-|---|---|---|---|---|
-| up (any up-diagonal) | E | `split` | cross-fade (90 ms in, 100 ms out) to `runner-split*.webp`: 4-frame front-facing side split, 10 fps loop, +8% size | 0.6 s |
-| straight down (within ~24°) | S / ↓ | `goo` | scale x 1.85 / y 0.38 with a 19 rad/s ripple, kept centred in the air, drips fx; holds until landing, then splats (fx, shake, wobble) and springs back over 0.3 s | until landing + 0.3 s |
-| down-left (and left) | A / ← | `cork` | backward roll `rot -= 2π·e` plus twist `scaleX = cos(2π·e)` | 0.62 s |
-| down-right (and right) | D / → | `spin` | two yaw turns `scaleX = cos(4π·e)`, slight stretch | 0.55 s |
+Every trick is a **rendered Blender sequence**, not a canvas transform or a fade. The body really rotates in 3D (the face turns away and comes back) and the limbs tuck or splay. The goo is a deformed mesh with rim ripples. **Frames 0 and 11 of every row are exactly the runner's `fall` frame 0**, so the game cuts from the run sheet into a trick and back with no fade and no pop.
 
-- `e` is ease-in-out of `t/d`. `|scaleX|` is floored at 0.14 (`cs()`), so the body never vanishes edge-on.
-- A trick finished in the air scores +3 and pops `NAME!`. One that lands early simply plays out (no snap) and scores nothing.
-- Starting a trick cancels the double-jump flip (`R.flip = 0`); they share the rotation channel.
-- Reduced motion: no roll/spin, no ripple or particles. The split shows without looping, and the goo still flattens (it's a state, not motion).
-- Code: `TRK`, `flickDir`, `trick` next to `wob()`; trick channel at the end of `player()` (`const T=s.trk`); step block `if(R.trk)` next to `R.flip`; goo splat in the landing branch; input on `#gameLayer` pointermove plus the keydown map. `_cp.trick` and `_cp.flickDir` are exposed for tests.
-- Self-check (browser console, game open): `['0,-80','0,80','-70,70','70,70'].map(v=>_cp.flickDir(...v.split(',').map(Number)))` → `split,goo,cork,spin`.
+| Flick (screen) | Key | `k` | Row | What the frames show | Playback |
+|---|---|---|---|---|---|
+| down-left (and left) | A / ← | `cork` | 0 | off-axis 360 (axis tilted 45° toward the run direction), knees tucked, arms hugging | 12 frames over 0.62 s |
+| down-right (and right) | D / → | `spin` | 1 | flat 360 about the vertical, arms flung wide, legs together and pointed | 12 frames over 0.55 s |
+| up (any up-diagonal) | E | `split` | 2 | turns to face the camera, opens a side split with arms in a V, pulses, closes | 12 frames over 0.6 s |
+| straight down (within ~24°) | S / ↓ | `goo` | 3 | 0–3 melt into a pancake (tipped toward the camera so the face shows); 4–7 rippling pancake loop; 8–11 landing splat and spring back with overshoot | 0–3 in 0.22 s, 4–7 loop at 14 fps until landing, 8–11 over 0.3 s after landing |
 
-### Adding a new trick (recipe)
+- **Assets:** `assets/game/runner-trick{,-glass,-magnet,-x2,-rainbow}.webp`, one per power-up form. Each is 12 columns × 4 rows (cork, spin, split, goo), with a shared crop box. Drawn at the runner's pixel scale `217/182`, offset `TRICK_OFF` (crop origin minus `[118,209]`).
+- **Game code:**
+  - `TRK` (durations and labels), `TROW` (rows), `trickFrame(s)` (picks the cell), `flickDir`, `trick` are next to `wob()`.
+  - In `player()`, `const tf=trickFrame(s)` zeroes the tilt (the frames carry the orientation), and the draw call uses the trick cell instead of the run frame.
+  - Squash, wobble and power-up auras still stack on top.
+  - The step block `if(R.trk)` advances, scores and drips. The landing branch starts the goo splat (`T.land`).
+- **Scoring:** a trick finished in the air scores +3 and pops `NAME!`. Landing early lets it play out on the ground and scores nothing.
+- **Double-jump flip:** starting a trick cancels it (`R.flip = 0`).
+- **Reduced motion:** the frames still play (they are the state), but the goo loop holds one frame and there are no particles.
+- **Self-check** (browser console, game open): `[[0,-80],[0,80],[-70,70],[70,70]].map(v=>_cp.flickDir(...v))` → `split,goo,cork,spin`. `_cp.trick('cork')` fires one directly.
 
-1. Add `{d, n}` to `TRK`, and a direction or key in `flickDir` and the keydown map.
-2. A transform-only trick: add a branch in the trick channel of `player()` that edits only `sx`, `sy`, `rot` and `dy`, driven by `e`. It works on every skin automatically.
-3. A new pose: write `o_<name>(frame)` in `scripts/icons/objects.py` (copy `o_split`: it uses `runner_mats()` and `head_magnet()`, so all five skins work), register it in `OBJECTS`, and render each skin:
-   `for sk in gold glass blue green rainbow; do RUNNER_SKIN=$sk bl/bin/python scripts/icons/objects.py name-0,name-1,name-2,name-3 out/$sk 256 48 1; done`
-   Then pack the frames into one strip per skin with a shared crop box. Store `[x0-118, y0-209]` as the offset (runner pixel scale `217/182`; see `SPLIT_OFF`), and cross-fade it in like `tw` does for the split.
-4. Respect the principles above: loops from clocks, blend in/out at 80–120 ms, an RMQ fallback.
+### Re-rendering or adding a trick (recipe)
+
+1. **Pose:** in `scripts/icons/objects.py`, add a branch to `o_trick(kind, i)`.
+   - Build the pose in body space by lerping from `_rest_limbs()` with an envelope that is 0 at `u=0` and `u=1` (`sin(pi*u)` or `_ss`). That guarantees the seamless cut.
+   - Put the whole-body rotation in `rot` (a quaternion, applied after the base yaw and lean).
+   - Materials come from `runner_mats()`; the magnet from `head_magnet()`. Every skin works for free.
+2. **Register:** add the name to the `('cork', 'spin', 'split', 'goo')` tuple in `OBJECTS`.
+3. **Render all skins:** about 2 min per skin on 2 cores. Contact-sheet one skin at 8 samples first and check the frames.
+   ```
+   F=$(python3 -c "print(','.join(f'trick-{k}-{i}' for k in ('cork','spin','split','goo','new') for i in range(12)))")
+   for sk in gold glass blue green rainbow; do RUNNER_SKIN=$sk python scripts/icons/objects.py $F out/$sk 256 32 1; done
+   ```
+   - Skin → file: `gold` → `runner-trick`, `glass` → `-glass` (shield), `blue` → `-magnet`, `green` → `-x2`, `rainbow` → `-rainbow` (combo).
+4. **Pack:** one row per trick, 12 columns, a union crop box over all skins and frames with 2 px padding. Write `TRICK_OFF=[x0-118, y0-209]` into `index.html`.
+   - Keep everything inside the 256 px render. Check the alpha bbox: a frame touching 0 or 256 is clipped, so make the pose smaller rather than moving the camera, because the pixel scale must match the runner.
+5. **Game:** add `{d, n}` to `TRK`, the row to `TROW`, and a direction or key in `flickDir` and the keydown map. If it isn't a straight play-through, give it a branch in `trickFrame` (see goo: in, loop, out).
+6. **Rules:** no canvas fakery (no scaleX flips, no cross-fades between poses). Motion lives in the frames, and loops must close (frame n+1 ≡ frame 0).
 
 ## Transition rules (priority)
 
@@ -62,7 +77,7 @@ When states fight over a channel, higher wins:
 
 1. Dead / dance
 2. Checkpoint love flight (face, sheet)
-3. Flick trick (rotation/scale channel; the goo also takes over the landing squash)
+3. Flick trick (owns the sprite and its orientation; squash, wobble and auras still add on top)
 4. Take-off / landing squash (scale)
 5. Power-up form (skin, tint): orthogonal to 2 and 3. The love sheet exists per skin (`runner-love-<skin>.webp`), so the form persists through the flight.
 6. Gait (sheet row)
