@@ -629,3 +629,8 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - Walls hold the runner back instead of killing; the screen keeps scrolling and only leaving it on the left ends the run. Clearing the wall snaps the camera so the runner is mid-screen, then it drifts back to the usual spot.
 - Falling into a gap only ends the run once the runner drops off the bottom of the screen (camera stops following the fall), so a double jump can still save it.
 - Checked with a stepped simulation: wall without a jump ends after about 0.9 s blocked, wall with a jump recovers and snaps, gap without a jump ends, gap with an immediate double jump recovers, checkpoint rises 769 px. No page errors on desktop and phone.
+
+## Game: new pause menu
+- Stats (score, distance, best), graphics quality slider (Low: no background layers, ticker, speed lines or glow and fewer sparks, 1x pixels; Medium: the full look; High: runner glow), music and effects volume sliders with mute toggles, player name, screen shake (off/low/full), hold-to-jump-higher and vibration toggles, Resume, Restart, Exit.
+- Settings persist in localStorage (`cp-set`); the site's calculator slider decoration skips the pause sliders.
+- Headless desktop, phone and small phone: every control changes its setting, Resume and Restart work, no page errors; the menu scrolls when the screen is short.
