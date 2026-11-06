@@ -75,8 +75,8 @@ def face(targets, cx, cz, s=1.0):
         if LOVE:  # puppy eyes: bigger glossy black balls that pop out, each with a big and a small white shine
             r = 0.125 * s; e = uv_sphere(f'eye{k}', r, tuple(p + n * 0.035 * s), (1, 0.8, 1.1)); e.data.materials.append(f)
             e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
-            shine = principled('shine', (1, 1, 1), 0.2, emit=(1, 1, 1), emit_str=2.5)
-            for dx, dz, rr in ((-0.4, 0.42, 0.38), (0.3, -0.3, 0.18)):
+            shine = principled('shine', (0.85, 0.86, 0.9), 0.2, emit=(0.85, 0.86, 0.9), emit_str=0.5)  # a soft catch-light, not a white blob
+            for dx, dz, rr in ((-0.38, 0.4, 0.26), (0.32, -0.3, 0.12)):
                 q = p + n * (0.035 * s + r * 0.85) + Vector((dx * r, 0, dz * r)); sh = uv_sphere('shine', rr * r, tuple(q)); sh.data.materials.append(shine); out.append(sh)
             ch = _hit(targets, cx + k * 0.36 * s, cz - 0.24 * s)  # blush below each eye
             if ch:
