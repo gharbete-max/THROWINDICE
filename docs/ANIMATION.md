@@ -71,6 +71,88 @@ Every trick is a **rendered Blender sequence**, not a canvas transform or a fade
 5. **Game:** add `{d, n}` to `TRK`, the row to `TROW`, and a direction or key in `flickDir` and the keydown map. If it isn't a straight play-through, give it a branch in `trickFrame` (see goo: in, loop, out).
 6. **Rules:** no canvas fakery (no scaleX flips, no cross-fades between poses). Motion lives in the frames, and loops must close (frame n+1 ≡ frame 0).
 
+## Trick combos: plan (not built yet)
+
+Goal: flicking several times in one jump chains tricks together. The same direction twice continues and speeds up the current trick (double cork, 720 spin). Back and forth reverses it or combines two tricks into one move (a cork that flows into a spin). Every chain still lands cleanly. Build in the phases below; each phase is shippable on its own.
+
+### 1. Input: a gesture stream instead of one flick
+
+- After a flick, don't clear `fl`. **Re-anchor** it at the current pointer position and time, so the same press can produce more flicks. Each further 40 px segment is a new flick.
+- A **reversal** (angle change > 120° from the previous flick) counts as back-and-forth. A same-direction repeat (< 45°) counts as "again".
+- **Buffer:** flicks during a running trick go into `R.chain.q` (max 2). Older inputs drop off the end, so mashing never piles up.
+- **Keyboard:** the same key again = "again"; the opposite key (←/→) = reversal.
+- Self-check: extend the `flickDir` console check with a recorded sequence (down-left, down-left, down-right) → `cork, again, reverse`.
+
+### 2. Model: segments on a pose graph
+
+Every trick is cut into **segments** that join at named key poses. Chaining is always legal because segments only ever connect at a shared pose.
+
+```
+poses:    REST (runner fall 0) · TUCK · WIDE (arms out, legs together) · SPLIT · PANCAKE
+cork:     cork-in   REST→TUCK  (rotation 0→90°, 3 fr)   cork-loop  TUCK, 360° (12 fr, seamless)   cork-out  TUCK→REST (270→360°, 3 fr)
+spin:     spin-in   REST→WIDE  (3)                      spin-loop  WIDE, 360° (12)                spin-out  WIDE→REST (3)
+split:    split-in  REST→SPLIT (4)                      split-hold SPLIT pulse loop (8)           split-out SPLIT→REST (4)
+goo:      goo-in    REST→PANCAKE (4, as now)            goo-loop   ripple (4)                     goo-land  splat + spring (4, as now)
+bridges:  cork→spin TUCK→WIDE while the axis tilts upright (6) · spin→split WIDE→SPLIT ("star spin", 6)
+          split→goo SPLIT→PANCAKE ("splat split", 6) · goo→split PANCAKE→SPLIT ("pop", 6)
+```
+
+- **A single trick is unchanged:** in + loop frames 3–9 + out = 12 frames, the same timing as today.
+- **Loop entry and exit phases:** loops are entered at the 90° phase (frame 3) and exited at the 270° phase (frame 9), so in/out rotations line up.
+- **Bridges start at the loop's identity phase** (frame 0, facing the camera). A switch waits for the loop to reach frame 0, and the wait is shortened by the acceleration below.
+- **State:** `R.chain = {seg, f (float frame), rate, q:[], n, names:[]}` replaces `R.trk`. `trickFrame()` becomes a lookup of `SEG[seg].row`, `floor(f)`.
+
+### 3. Continuation and acceleration (same direction again)
+
+- **"Again" during a loop:** add one more loop pass (cork → double cork → triple) and `boost += 0.6`.
+  - Playback `f += dt * 20 * rate`, where `rate = 1 + boost` and `boost *= exp(-3 * dt)`, capped at `rate ≤ 2.6`.
+  - The trick visibly winds up, then settles.
+- **"Again" on split:** extends the hold by one pulse loop, and the pulse amplitude grows. On goo it slams: gravity ×1.8 until landing, with a bigger splat.
+- **Reverse on spin:** play `spin-loop` backwards. A reversed yaw sequence is a true opposite spin, so no new frames are needed. `rate` goes through 0 with a 120 ms ease, so the spin brakes and then turns back the other way ("rewind").
+- **Reverse on cork:** a cork's axis is tilted, so reversed frames would look wrong. Instead it bridges into the spin (`cork→spin`) and reverses there: the "twister".
+- **Back and forth repeatedly:** alternates the bridge pairs (spin ⇄ split, split ⇄ goo) as long as there's air time.
+
+### 4. Combined movement (physics coupling)
+
+Tricks nudge the arc slightly, so combos feel physical:
+
+| Trick | Effect on the arc |
+|---|---|
+| spin loop | gravity ×0.85 (hang time) |
+| split hold | ×0.7 (float) |
+| goo | ×1.6 (drop); goo "again" slams |
+| cork "again" | one extra hop `vy -= 140`, once per jump |
+| reversal | a small sideways squash pulse |
+
+- **Air budget:** at most +0.35 s of extra hang time per jump in total, so chains can't make the runner fly forever.
+
+### 5. Land-aware time warp (no snaps)
+
+- Every step, estimate time to ground `tg` from `y`, `vy` and the current gravity.
+- Remaining frames = the current segment, plus queued passes, plus the out segment. If they won't finish before landing, **raise `rate`** so the out segment ends exactly at touchdown, and drop queued extras that can't fit.
+- If even `rate = 2.6` can't make it, cut to the nearest out/bridge entry at the next phase point, then warp.
+- The runner never lands mid-rotation, and nothing pops back to the run sheet.
+
+### 6. Scoring and feedback
+
+- Chain count `n` per jump. Points `3·n·n` (1 → 3, 2 → 12, 3 → 27), paid on a clean landing. A goo slam always lands clean.
+- **Names, built from the segments:** DOUBLE CORK, 720, TWISTER (cork→spin), STAR SPIN (spin→split), SPLAT SPLIT, POP. Shown as one growing label above the runner that updates with each link instead of stacking pops.
+- The chain counter pulses with a growing pitch (`sfx` rate `1 + 0.12n`) and `vib(6+4n)`.
+
+### 7. Assets and rendering
+
+- **In `o_trick(kind, i)`:** add `kind` values for each segment (`cork-in`, `cork-loop`, …, `bridge-cork-spin`, …). Loops use the held pose with `env = 1` and `u` covering exactly one period with the endpoint excluded (`u = i/n`, not `i/(n-1)`), so frame n ≡ frame 0.
+- **Sheet:** 12 columns × about 13 rows per skin. Short segments share a row (in | out | bridge). This is roughly 100 frames per skin, about 4 min of rendering per skin on this box.
+- **Size:** about 0.6 MB per skin. Load the gold sheet with the game, and lazy-load the other four the first time that power-up is picked up (prefetch while the shield/magnet/2x is on screen).
+- **Continuity check script** (keep it in `scripts/icons/`): for every pair of segments that join, the mean absolute RGBA difference between the last frame of A and the first of B (and loop frame n−1 → 0) must be below a threshold. This catches pose mismatches before they ship.
+
+### 8. Build order
+
+1. **Input stream, queue, acceleration and chaining through REST, with today's sheets** (every trick already starts and ends at REST, so any chain works via its out segment), plus the land-aware warp and `n·n` scoring. *No renders.*
+2. **Re-render as in/loop/out segments.** Double cork, 720, spin rewind and split extensions.
+3. **Bridges and combo names.**
+4. **Physics coupling, lazy loading of the skin sheets, the continuity script, and checks at 30, 60 and 120 fps.**
+
 ## Transition rules (priority)
 
 When states fight over a channel, higher wins:
