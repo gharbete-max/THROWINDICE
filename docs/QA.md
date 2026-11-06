@@ -618,3 +618,7 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - Measured over 300k px of generated track: coins 1.15 -> 0.44 per 1000 px (about 2.6x rarer), power-ups 0.21 -> 0.10 (about 2x rarer), checkpoints every 5500 -> 11000 px (2x rarer).
 - Daily goals retuned to match: score 12 / 25 points, checkpoint 1 / 3, chain 3 coins.
 - Headless desktop and phone runs: no page errors.
+
+## Game in both worlds
+- The Game button now opens the game in the normal world too (it used to show "coming soon" outside Token World).
+- Headless: normal and Token World, desktop and phone, the game starts, runs and accepts jumps with no page errors.
