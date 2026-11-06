@@ -596,6 +596,12 @@ body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85
 .exploreCard .big:has(.e3d),.topic .symbol:has(.e3d),.catIcon:has(.e3d),.avatar:has(.e3d),.themeBtn:has(.e3d){background:none;box-shadow:none;border:0}
 .exploreCard .big .e3d,.topic .symbol .e3d,.catIcon .e3d{width:100%;height:100%;margin:0;vertical-align:0}
 .avatar .e3d,.themeBtn .e3d{width:120%;height:120%;margin:0;vertical-align:0}
+
+/* game over: the runner dances on top of the results window (12-frame loop, assets/game/dance.webp, 165x144 cells) */
+.gcDancer{--dw:120px;display:none;position:absolute;left:50%;top:0;width:var(--dw);height:calc(var(--dw)*144/165);transform:translate(-50%,calc(-100% + 2px));background:url(assets/game/dance.webp) 0 0/calc(var(--dw)*12) 100% no-repeat;animation:gcDance .9s steps(12) infinite;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.gameCard.slim .gcDancer{display:block}
+@keyframes gcDance{to{background-position-x:calc(var(--dw)*-12)}}
+@media(prefers-reduced-motion:reduce){.gcDancer{animation:none}}
 </style>
 </head>
 <body>
@@ -766,7 +772,7 @@ body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85
 <div class="gameHud"><b id="gScore" aria-label="Score"><canvas id="gScoreCv" height="28"></canvas></b><span class="gDist" id="gDist"></span><span class="gMult" id="gMult"></span></div>
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
 <div class="gameCard slim" id="gamePause" role="dialog" aria-label="Paused" hidden><h2>PAUSED</h2><div class="actions"><button class="btn" type="button" id="gpResume">Resume</button></div><div class="actions"><button class="btn secondary" type="button" id="gpMusic">Music: on</button><button class="btn secondary" type="button" id="gpSfx">Sounds: on</button></div><div class="actions"><button class="btn secondary" type="button" id="gpQuit">Exit game</button></div></div>
-<div class="gameCard" id="gameCard"><h2 id="gcTitle" class="gname">LIVE BALL BOUNCE</h2><p id="gcText"></p><ul><li>Tap to jump. Tap again in the air to jump twice.</li><li>Gaps and walls end the run.</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
+<div class="gameCard" id="gameCard"><div class="gcDancer" aria-hidden="true"></div><h2 id="gcTitle" class="gname">LIVE BALL BOUNCE</h2><p id="gcText"></p><ul><li>Tap to jump. Tap again in the air to jump twice.</li><li>Gaps and walls end the run.</li></ul><div class="actions"><button class="btn" type="button" id="gcGo">Start</button><button class="btn secondary" type="button" id="gcEnd" hidden>END EARLY!</button></div><p class="disclaimer" id="gcBest"></p></div></div>
 <div aria-live="polite" class="coinBubble" id="coinBubble" role="status"><strong>Real world</strong>Tap the coin for tokens.</div>
 <nav aria-label="Main navigation" class="bottomNav"><div class="navinner">
 <button aria-label="Enter Token World" class="tokenCoin" onclick="toggleTokenWorld()" title="Enter Token World">

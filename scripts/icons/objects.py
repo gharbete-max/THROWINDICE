@@ -334,6 +334,33 @@ def o_runner(gait, frame):
     hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(30))
     return [hub], []
 
+def o_dance(frame, n=12):
+    """game-over dance, a seamless loop: facing the camera, feet planted, the body sways side to side and dips
+    into a crouch at each side while the arms pump up and down in turn"""
+    P = smiley.PAL; body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
+    ph = 2 * math.pi * frame / n; sw = math.sin(ph)
+    bob = -0.05 + 0.05 * math.cos(2 * ph)          # 0 in the middle, lowest (crouched) at each side
+    up = link(bpy.data.objects.new('upper', None)); up.location = (0.17 * sw, 0, bob)
+    b = uv_sphere('rb', 0.8, (0.17 * sw, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
+    fc = face([b], 0.17 * sw, 0.3 + bob, 0.95)
+    parts = [b]
+    for side in (-1, 1):  # arms: one rises while the other falls
+        bA = math.radians(35 + 120 * (0.5 + 0.5 * sw * side)); sh = Vector((side * 0.74 + 0.17 * sw, 0.05, 0.12 + bob))
+        hand = sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))
+        parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
+        hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
+    bpy.context.view_layer.update()
+    for o in parts + fc:  # the upper body tilts into the sway
+        mw = o.matrix_world.copy(); o.parent = up; o.matrix_world = mw
+    up.rotation_euler = (0, math.radians(-10 * sw), 0); bpy.context.view_layer.update()
+    legs = []
+    for side in (-1, 1):  # feet stay planted; legs bend to follow the hips
+        hip = up.matrix_world @ (Vector((side * 0.28 + 0.17 * sw, 0, -0.42 + bob)) - up.location)
+        foot = Vector((side * 0.34, 0, -1.02)); knee = hip.lerp(foot, 0.5) + Vector((side * (0.08 - 3 * bob), -0.06, 0))
+        legs.append(tube('leg', [tuple(hip), tuple(knee), tuple(foot)], [0.09, 0.085, 0.08], limb))
+        f = uv_sphere('foot', 0.13, tuple(foot + Vector((0, -0.07, -0.02))), (0.9, 1.5, 0.6), 32, 16); f.data.materials.append(limb); legs.append(f)
+    return [up] + legs, []
+
 def star_mesh(mat, loc=(0, 0, 0), r=0.9):
     import bmesh
     me = bpy.data.meshes.new('star'); bm = bmesh.new()
@@ -445,7 +472,7 @@ def o_case():
     hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1), 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1), **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
