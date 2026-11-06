@@ -58,7 +58,8 @@ def _hit(objs, x, z):
 
 NOFACE = False
 DOLLAR = 0.0   # > 0: eyes are gold $ signs at this scale (2x power-up form)
-LOVE = os.environ.get('RUNNER_FACE') == 'love'   # smitten face: big glossy popped-out eyes with white shines, a hard smile, pink cheeks
+LOVE = os.environ.get('RUNNER_FACE', '').startswith('love')   # smitten face: big glossy popped-out eyes with white shines, a hard smile, pink cheeks
+NOEYES = os.environ.get('RUNNER_FACE') == 'love-noeyes'     # same, but the eyes are left out: the game draws huge heart eyes there (positions exported per frame)
 def face(targets, cx, cz, s=1.0):
     """black dot eyes + small smile on the front of `targets`, centred at (cx, cz), scaled by s"""
     if NOFACE: return []
@@ -72,11 +73,14 @@ def face(targets, cx, cz, s=1.0):
             e.data.body = '$'; e.data.size = 0.36 * s * DOLLAR; e.data.extrude = 0.035; e.data.bevel_depth = 0.012
             e.data.align_x = 'CENTER'; e.data.align_y = 'CENTER'; e.data.materials.append(principled('dollar', (1.0, 0.74, 0.18), 0.22, metallic=0.85, coat=0.8, emit=(1.0, 0.7, 0.15), emit_str=0.6))
             out.append(e); continue
+        if LOVE and NOEYES:  # an invisible marker where the eye would be; build() exports its pixel position
+            a_ = link(bpy.data.objects.new(f'eyeanchor{k}', None)); a_.location = tuple(p + n * 0.04 * s); out.append(a_)
         if LOVE:  # puppy eyes: bigger glossy black balls that pop out, each with a big and a small white shine
             r = 0.15 * s; e = uv_sphere(f'eye{k}', r, tuple(p + n * 0.035 * s), (1, 0.8, 1.1)); e.data.materials.append(f)
-            e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
+            if NOEYES: bpy.data.objects.remove(e)
+            else: e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
             shine = principled('shine', (0.85, 0.86, 0.9), 0.2, emit=(0.85, 0.86, 0.9), emit_str=0.5)  # a soft catch-light, not a white blob
-            for dx, dz, rr in ((-0.38, 0.4, 0.26), (0.32, -0.3, 0.12)):
+            for dx, dz, rr in (() if NOEYES else ((-0.38, 0.4, 0.26), (0.32, -0.3, 0.12))):
                 q = p + n * (0.035 * s + r * 0.85) + Vector((dx * r, 0, dz * r)); sh = uv_sphere('shine', rr * r, tuple(q)); sh.data.materials.append(shine); out.append(sh)
             ch = _hit(targets, cx + k * 0.4 * s, cz - 0.27 * s)  # blush below each eye
             if ch:
@@ -375,6 +379,24 @@ def o_dance(frame, n=12):
         f = uv_sphere('foot', 0.13, tuple(foot + Vector((0, -0.07, -0.02))), (0.9, 1.5, 0.6), 32, 16); f.data.materials.append(limb); legs.append(f)
     return [up] + legs, []
 
+def o_heart():
+    """a glossy pink heart, front-facing: two lobes and a point, solidified and rounded"""
+    import bmesh
+    pts = []
+    for a in range(0, 360, 6):  # classic heart curve
+        t = math.radians(a); x = 16 * math.sin(t) ** 3; z = 13 * math.cos(t) - 5 * math.cos(2 * t) - 2 * math.cos(3 * t) - math.cos(4 * t)
+        pts.append((x / 17, z / 17))
+    me = bpy.data.meshes.new('heart'); bm = bmesh.new(); vs = [bm.verts.new((x, 0, z)) for x, z in pts]; bm.faces.new(vs); bm.to_mesh(me); bm.free()
+    o = link(bpy.data.objects.new('heart', me))
+    o.data.materials.append(principled('heart', (0.85, 0.01, 0.2), 0.12, coat=1.0, coat_rough=0.02, emit=(1.0, 0.1, 0.35), emit_str=0.12))
+    bpy.context.view_layer.objects.active = o; bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.mesh.poke(); bpy.ops.mesh.subdivide(number_cuts=3); bpy.ops.object.mode_set(mode='OBJECT')   # grid the flat face so it can bulge
+    so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = 0.3; so.offset = 0
+    sub = o.modifiers.new('sub', 'SUBSURF'); sub.levels = 2; sub.render_levels = 2
+    cast = o.modifiers.new('puff', 'CAST'); cast.cast_type = 'SPHERE'; cast.factor = 0.55; cast.use_x = False; cast.use_z = False   # inflate front and back
+    o.rotation_euler = (0, math.radians(-12), math.radians(16))  # turned a little so the puff and gloss read
+    return [o], []
+
 def star_mesh(mat, loc=(0, 0, 0), r=0.9):
     import bmesh
     me = bpy.data.meshes.new('star'); bm = bmesh.new()
@@ -486,7 +508,7 @@ def o_case():
     hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
@@ -521,6 +543,12 @@ def build(name, out, res, samples, nfr):
         ang = sign * 2 * math.pi * i / nfr if name.startswith(('flag-', 'pu2-')) else sign * math.radians(25) * math.sin(2 * math.pi * i / nfr)
         pivot.rotation_quaternion = Quaternion((0, 0, 1), ang)
         render(f'{d}/{i:03d}.png')
+        anchors = sorted((o for o in bpy.data.objects if o.name.startswith('eyeanchor')), key=lambda o: o.name)
+        if anchors:
+            from bpy_extras.object_utils import world_to_camera_view
+            sc = bpy.context.scene; bpy.context.view_layer.update(); R_ = sc.render.resolution_x
+            px = [[round(c.x * R_, 1), round((1 - c.y) * R_, 1)] for c in (world_to_camera_view(sc, sc.camera, a.matrix_world.translation) for a in anchors)]
+            import json; json.dump(px, open(f'{d}/eyes.json', 'w'))
 
 if __name__ == '__main__':
     which, out = sys.argv[1], sys.argv[2]
