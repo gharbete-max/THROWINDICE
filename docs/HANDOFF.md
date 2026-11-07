@@ -42,7 +42,7 @@ If an item is blocked or a target can't be met, write why under it and move on.
 | 9 ✅ `1354e8a` | **M5 Rugpulls** (Token World only), with the rendered rug set | `MARKET.md` §7 | tell → yank → P&L follows the position; ≤ 2 per run; never fatal |
 | 10 ✅ `d9a18c4` | **M6 Results card lessons** | `MARKET.md` §8 | lesson line chosen from the run's events |
 | 11 ✅ `d214c47` | **B6 Economy**: hat prices 300 / 900 / 2500, daily gift; account for ETF yield | `BALANCE.md` §6 | prices updated; days-to-crown checked with and without the ETF |
-| 12 ✅ | **B7 Missions + portfolio level** | B7 | 3 missions on the Play tab; `cp-plevel` persists |
+| 12 ✅ `eb09826` | **B7 Missions + portfolio level** | B7 | 3 missions on the Play tab; `cp-plevel` persists |
 | 13 | **P1 Performance** (new, see below) | below | game opens with ≤ 0.9 MB of game images; other skins load on demand |
 | 14 | **B8 Re-tune pass + 5 human phone runs** (the owner plays; prepare a short checklist for them) | B8 | every `BALANCE.md` target holds; changelog at the bottom of `BALANCE.md` |
 | 15 | *(later)* Trick combos stages 2–4: segment re-renders, double rotations, spin rewind, bridges | `ANIMATION.md` "Trick combos" | optional, after 14 |
