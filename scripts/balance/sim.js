@@ -54,7 +54,7 @@ const BOT = ({ mode, sec }) => new Promise(done => {
   instrument(); const srv = await serve(), port = srv.address().port, b = await chromium.launch(), all = [];
   try {
     for (let run = 0; run < RUNS; run++) for (const mode of MODES) {
-      const p = await b.newPage({ viewport: { width: 390, height: 844 } }), errs = [];
+      const cx = await b.newContext({ viewport: { width: 390, height: 844 } }); await cx.addInitScript(() => localStorage.setItem('cp-learn', '5')); const p = await cx.newPage(), errs = [];   // bots are experienced players
       p.on('pageerror', e => errs.push(e.message));
       await p.goto(`http://localhost:${port}/_test.html`); await p.waitForTimeout(1200);
       await p.evaluate(() => { document.querySelectorAll('.modalShade').forEach(m => m.remove()); setPage('parallel') }); await p.waitForTimeout(600);
@@ -62,7 +62,7 @@ const BOT = ({ mode, sec }) => new Promise(done => {
       const r = await p.evaluate(BOT, { mode, sec: SEC }); r.mode = mode; r.errors = errs; all.push(r);
       const perMin = x => Math.round(x * 60 / r.gameSec);
       console.log(`${mode.padEnd(9)} score/min ${String(perMin(r.score)).padStart(4)} | bank ${String(r.bankPct).padStart(6)}% alpha ${String(r.alphaPct).padStart(5)}% (market share ${r.bankPct > 0 ? Math.round(100 * (r.bankPct - r.alphaPct) / r.bankPct) : '-'}%) | perfects/min ${perMin(r.perfects)} slips ${r.slips} | bull every ${r.bulls ? (r.gameSec / r.bulls).toFixed(1) : '-'}s | open ${r.openMin}..${r.openMax}% cap ${r.capFrames ? 'yes' : 'no'} | errors ${errs.length}`);
-      await p.close();
+      await p.close(); await cx.close();
     }
     fs.writeFileSync(path.join(ROOT, 'scripts/balance/last-run.json'), JSON.stringify(all, null, 1));
   } finally { await b.close(); srv.close(); fs.rmSync(TEST, { force: true }) }

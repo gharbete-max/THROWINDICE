@@ -34,7 +34,7 @@ If an item is blocked or a target can't be met, write why under it and move on.
 | 1 ✅ `82312ed` | **B1 Unified portfolio**: score = compounded profit; chains → alpha, PERFECT → +0.25%, slippage | `BALANCE.md` §4, B1 | harness: trader ≥ 60% market share; no `R.score+=` outside `bank()`; harness anchors updated |
 | 2 ✅ `089f9b4` | **B2 Pacing**: bull spacing 20000 → +1500 → 28000, `PNLK` 0.006, take-profit hint at 45% | `BALANCE.md` §5, B2 | bull interval 22–28 s |
 | 3 ✅ `3aa9d7c` | **B4 PERFECT window** | B4 | random taps ≤ 6 per minute |
-| 4 | **O1 Onboarding** (new, see below) | below | a first-time player sees one new control per run |
+| 4 ✅ | **O1 Onboarding** (new, see below) | below | a first-time player sees one new control per run |
 | 5 | **M2 Power-up renames and behaviour**: stop-loss, index fund, 2x | `MARKET.md` §4 | pops use the new names; stop-loss blocks a red tick and slippage |
 | 6 | **B5 / M4 Bull & bear phases**: terrain drift, red-tick density, phase icon (`cp-bull` frame / `bear.webp`) | `MARKET.md` §6, `BALANCE.md` B5 | passive long earns in bull and loses in bear; phase-reading trader bot ≥ 2× passive |
 | 7 | **B3 Momentum** (chain → small surge) | B3 | trickster bull interval about 10% shorter |
