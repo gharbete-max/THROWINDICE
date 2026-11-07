@@ -637,3 +637,7 @@ The Token World pages were already cut (see above); this pass finished the lefto
 
 ## Game: dancer on the intro window
 - The dancing runner now sits on top of the intro window as well as the results window. Headless desktop and phone: shown above the card, no page errors.
+
+## Market task M1: ticks replace coins
+- Coins are now tick candles (`tick-1..3` green, `tick-r1..2` red) that move the open P&L by their value times leverage; SHORT flips red ticks, CASH passes through (ghosted at 40%), DIVIDEND 2x doubles gains, red ticks spawn from level 2 away from gaps, open P&L is capped at +-60% with a "take profit!" / "cut losses!" hint.
+- Headless desktop checks: values, leverage, short flip, cash pass-through, cap and hint, spawn rules, reduced motion, no page errors or 4xx. Earlier movement, pause menu and play-through tests still pass.

@@ -136,10 +136,20 @@ Render recipes are in `CLAUDE.md` (repo root).
 | Task | Scope | Done when |
 |---|---|---|
 | ✅ M0 | Swipe positions, terrain P&L, bull banking and surge, arrows, cash/all-in runs | built |
-| M1 | Ticks replace coins (values, leverage, SHORT flips red, CASH passes through), red ticks, ±60% cap | coins gone from the code; pops show %; red ticks spawn from level 2 |
+| ✅ M1 | Ticks replace coins (values, leverage, SHORT flips red, CASH passes through), red ticks, ±60% cap | built: see the M1 notes below |
 | M2 | Power-up renames and behaviours (section 4) | pops/messages use the new names; stop-loss blocks a red tick |
 | M3 | Patterns: support, resistance + breakout, MA grind, cup & handle, bull flag, head & shoulders, double bottom | each pattern appears within ~3 min of play; name pop once per run |
 | M4 | Bull/bear phases, circuit breaker, earnings day | phase icon slides in; bear trends down |
 | M5 | Rugpulls (Token World) | tell → yank → P&L follows the position; max 2 per run, never fatal |
 | M6 | Results card lessons | the card shows the lesson line chosen by the run's events |
 | M7 | Balance pass: PNLK, tick values, phase lengths | a median run banks between −10% and +40% over 3 bulls |
+
+## M1 notes (built)
+
+- **Code names:** `R.coins`, `CT`, `COINI`, `placeCoins` are now `R.ticks`, `TK`, `TICKI`, `placeTicks` (`tickX` is the green spawn cursor, `redX` the red one). `TK[t]` = `{v, im, r, c, g, sfx}`; `t` 0-2 green (`tick-1..3`), 3-4 red (`tick-r1..2`). Sheets `coin-1..4.webp` are deleted.
+- **Pickup:** `open += v · lev`, doubled when it is a gain and DIVIDEND 2x is on, clamped to ±`OPENCAP` (60). SHORT turns a red tick's `v` positive. In CASH the tick is skipped entirely (drawn at 40% alpha). Pops show `+3%`; a red tick pop is red, resets the chain, shakes and flashes.
+- **Spawning:** green ticks keep the old cadence (one every 2000-3400 px, guide ticks over gaps). Red ticks come from level 2 on their own cursor (`redX`, one every 5000-10000 px, about 1 per 7 green in a headless sample), 70% `tick-r1` and 30% `tick-r2`, and only on open ground: `nearGap(x)` (14 candles each side) must be false, so a red tick is never on the only safe line through a gap.
+- **Points:** ticks no longer give score directly; only banking at the bull does. The chain counter still runs on green pickups (`CHAIN x5` pops, the "Chain 3 ticks" goal) but the old ×2/×3 multiplier is gone, so the HUD shows `chain n`.
+- **Cap:** terrain P&L and ticks both clamp at ±60. At the cap the HUD shows "take profit!" / "cut losses!", glows (`.gPnl.cap`, no pulse under reduced motion) and `msg()` says it once until the open % drops 5 below the cap. Banking resets it.
+- **Tested headlessly:** tick values 1/3/10, red -2/-5, SHORT flips to +5, ALL IN triples (+9 for a tick-2, -6 for a red tick-r1), CASH passes through, DIVIDEND doubles, cap at +60/-60 with hint, no red ticks below level 2 and none near gaps, reduced motion and no 4xx.
+- **Not done here (later tasks):** STOP-LOSS blocking a red tick (M2), bear phases adding more red ticks (M4), balance of values against `PNLK` (M7).
