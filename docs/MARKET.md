@@ -12,20 +12,36 @@
 
 ## 1. Core loop ✅ (built)
 
-**The ground is the price chart.** Your **position** (set by swiping) earns or loses as the price under the runner moves. The **diamond bull checkpoint** banks it.
+**The ground is the price chart.** Your **position** (set by swiping) earns or loses as the price under the runner moves. The **diamond bull checkpoint** banks it. **The body colour shows the position:**
 
-| Swipe | Key | Trick | Position | Look |
+| Swipe (on the ground) | Key | Trick | Position | Look |
 |---|---|---|---|---|
-| ↑ | E | split | **LONG 1x**; ↑ again → **LONG 2x** | 1 / 2 green 3D arrows out of the head |
-| ↓ | S / ↓ | goo | **SHORT 1x**; ↓ again → **SHORT 2x** | 1 / 2 red 3D arrows pointing down from the crotch |
-| ← | A / ← | corkspin | **CASH**: open P&L is realized into the cash bar (safe, frozen, earns nothing) | runs carrying a briefcase, bills flutter behind (`runner-cash*`) |
-| → | D / → | spin | **ALL IN**: cash + open back in at **LONG 3x** | confident strut, big sunglasses, 3 arrows (`runner-allin*`) |
+| ↑ | E | split | **LONG 1x**; ↑ again → **2x** | light green body (`runner-lgreen`); 2x = strong translucent green glass (`runner-ggreen`) |
+| ↓ | S / ↓ | goo | **SHORT 1x**; ↓ again → **2x** | light red (`runner-lred`); 2x = strong translucent red glass (`runner-gred`) |
+| ← | A / ← | corkspin | **CASH**: open P&L realized into the cash bar | gold, carrying a briefcase, bills flutter behind (`runner-cash`) |
+| → | D / → | spin | **ALL IN**: cash + open back in at **LONG 3x** | gold, **riding a skateboard** (`runner-skate`) |
 
-- **P&L:** `open += (prevGround − ground) · PNLK · dir · lev`, with `PNLK = 0.004` % per px. Gaps are real price gaps. A run starts LONG 1x.
-- **Bull checkpoint** (`cp-bull`, 16 frames, one slow turn per 4 s, diamond glow): launches the runner **up and forward** (`R.surge` 1.6 s, speed ×1.55) and **banks** `open + cash` into the score (1% = 1 pt, score floor 0), popping "+x% BANKED".
-- **HUD** `#gPnl`: open % (green/red), plus "· cash ±x%" when it isn't zero. Position changes flash through `msg()`.
-- **Code:** `setPos`, `bank`, `paintPnl`, `PNLK` next to `trick()`; the P&L and bill-trail tick at the top of the step's trick block; the sheet override (`CASHI`/`ALLINI`, `PROP_X0`) and arrows in `player()`; bills as fx with `f.b`.
-- **Tricks and chains** (`ANIMATION.md`) are unchanged: they still score style points through `chainName()` and `3·n²`.
+- **On the skateboard (ALL IN):**
+  - **Ride:** the frames are rendered for 5 slopes (−30, −15, 0, 15, 30°), and the nearest one to the ground slope is chosen. The board pitches while the body stays balanced.
+  - **Jumps:** the first jump is an **ollie**, the double jump a **kickflip**.
+  - **Swipes in the air are skate tricks** and keep you ALL IN: ↑ **JESUS** (arms out wide, board in the front hand), ↓ **INDY GRAB**, ← **360 SHOVE-IT**, → **TRE FLIP**. They chain and score like the ball tricks.
+  - **Swipes on the ground** change position as usual, which steps you off the board.
+- **Power-ups are auras**, never a body colour:
+  - **STOP-LOSS** (shield): a pink-violet bubble.
+  - **INDEX FUND** (magnet): blue field arcs circling.
+  - **2x**: gold `$` orbiting.
+  - **Combo:** they stack, plus a turning rainbow ring.
+  - Code: `auraFront()`, with the glow behind in `player()`.
+- **Hats:** 3 purchasable hats are drawn on every frame's head anchor (`HEADS`, exported by the renderer as `head.json`) and tilt with the head.
+  - **Prices:** top hat 150, propeller 250, crown 400 points.
+  - **Wallet:** every run's score is added to the wallet (`cp-wallet`). Owned hats are in `cp-hats`; the equipped one in `cp-hat`.
+- **Menus:** the start and game-over card has **Play / Style / Options** tabs.
+  - **Play:** the swipe legend.
+  - **Style:** the wallet, a live preview of the runner wearing the hat, and the hat shop (buy / wear).
+  - **Options:** the pause menu's settings sections, moved into the card (`hostSettings()`), so there's one set of controls.
+- **P&L:** `open += (prevGround − ground) · PNLK · dir · lev`, with `PNLK = 0.004` % per px. A run starts LONG 1x.
+- **Bull checkpoint** (`cp-bull`): launches up and forward (`R.surge`), and **banks** `open + cash` into the score.
+- **Code:** `skinOf`, `skateFrame` (`SKT`/`SKN`), `drawHat`, `auraFront` sit before `player()`; `setPos`, `bank`, `paintPnl`, `PNLK` sit next to `trick()`; the menu functions (`gcTab`, `paintStyle`, `prevRun`, `hostSettings`) sit before `setPause()`.
 
 ## 2. Score model (decision)
 
@@ -116,14 +132,14 @@ Plus one **lesson line** chosen by what happened, for example:
 
 | File | What | Generator (`scripts/icons/objects.py`) |
 |---|---|---|
-| `runner*.webp` (5 skins) | run/jog/walk/take-off/rise/fall, 35 frames | `o_runner` |
-| `runner-cash*.webp` (5) | same 35 frames, carrying a briefcase; crop x0 = 26 (`PROP_X0`) | `RUNNER_PROP=case` |
-| `runner-allin*.webp` (5) | same 35 frames, strut + sunglasses | `RUNNER_PROP=shades` |
+| `runner{,-lgreen,-ggreen,-lred,-gred}.webp` | position skins: gold, light/strong green, light/strong red | run/jog/walk/take-off/rise/fall, 35 frames | `o_runner` |
+| `runner-cash.webp` | cash run with a briefcase, crop x0 = 26 (`PROP_X0`) | `RUNNER_PROP=case` |
+| `runner-skate.webp` | ALL IN: ride loops at 5 slopes + ollie, kickflip, shove-it, tre flip, indy, jesus (74 frames, 10 columns) | `o_skate` |
+| `hat-top/prop/crown.webp` | purchasable hats (anchor in `HAT_META`) | `o_hat` |
 | `runner-trick*.webp` (5) | 4 tricks × 12 frames | `o_trick` |
 | `runner-love*.webp` (5) | checkpoint flight | `RUNNER_FACE=love-noeyes` |
 | `cp-bull.webp` | 16-frame diamond bull turn | `o_bull` |
 | `bear.webp` | ruby bear icon | `o_bear` |
-| `arrow-up.webp` / `arrow-down.webp` | position arrows | `o_arrow` |
 | `bill.webp` | banknote for the cash trail and dividend showers | `o_bill` |
 | `tick-1..3.webp`, `tick-r1..2.webp` | currency candles | `o_tick` |
 | `rug.webp`, `rug-roll.webp`, `rocket.webp`, `devwallet.webp`, `sign-100x.webp` | rugpull set | `o_rug`, `o_rocket`, `o_devwallet`, `o_sign100x` |

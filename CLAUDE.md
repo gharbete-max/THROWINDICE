@@ -25,7 +25,7 @@ python3 -c "h=open('index.html').read();open('_test.html','w').write(h.replace('
 python3 -m http.server 8765 &
 # Playwright: open /_test.html, remove .modalShade, setPage('parallel'), click .navbtn[data-page="game"], click #gcGo.
 # window.__R is the live state. Keys E/S/A/D = long/short/cash/all-in. Swipes: mouse down, move 40px+, up.
-# Useful: __R.nextCp = __R.sx + 400 (bring the bull), _cp.trick('cork'), _cp.flickDir(dx,dy).
+# Useful: __R.nextCp = __R.sx + 400 (bring the bull), _cp.trick('cork'), _cp.flickDir(dx,dy), __R.shield=true / __R.magT=5 / __R.x2T=5 (auras).
 ```
 
 **Delete `_test.html` afterwards; never commit it.** Check for `pageerror` and 4xx responses.
@@ -37,8 +37,8 @@ python3 -m http.server 8765 &
 
 | Variable | Values |
 |---|---|
-| `RUNNER_SKIN` | `gold` (default), `glass` (shield), `blue` (magnet), `green` (2x), `rainbow` (combo) |
-| `RUNNER_PROP` | `case` (cash run), `shades` (all-in strut) |
+| `RUNNER_SKIN` | `gold` (default; cash/all in), `lgreen`/`ggreen` (long 1x/2x), `lred`/`gred` (short 1x/2x). Power-ups are canvas auras, not skins. |
+| `RUNNER_PROP` | `case` (cash run). ALL IN is `o_skate` (skateboard), its own generator. |
 | `RUNNER_FACE` | `love`, `love-noeyes` |
 
 - **Runner frame list (35):** walk 8, jog 8, run 8, tko 3, rise 4, fall 4 → `runner-{gait}-{i}`.
@@ -47,7 +47,8 @@ python3 -m http.server 8765 &
   - The game draws at height 217, so the pixel scale is `217/182`.
   - The body centre sits at render x = 118, so a sheet with a different `x0` needs its offset in code (see `PROP_X0`).
 - **Render cost:** 256 px, 32–48 samples. About 1–2 min per 35-frame skin on 2 cores; glass skins are slower.
-- **Skin → file suffix:** gold → none, glass → `-glass`, blue → `-magnet`, green → `-x2`, rainbow → `-rainbow`.
+- **Skin → file suffix:** gold → none, lgreen → `-lgreen`, ggreen → `-ggreen`, lred → `-lred`, gred → `-gred`.
+- **Hats / head anchors:** every render with a ball named `rb` writes `head.json` (the top pole and a point above it, in render px). The packer turns these into `HEADS` in `index.html`. A new pose sheet needs its anchors added there, or hats won't sit on it.
 - Check every frame's alpha bounding box stays inside the 256 px render. Shrink the pose, never move the camera.
 - **Contact-sheet first:** render one skin at 8 samples and look at it before the full run.
 - Export `.webp`, quality about 86, `method=6`.

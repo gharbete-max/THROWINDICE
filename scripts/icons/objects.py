@@ -306,37 +306,26 @@ def rainbow_glass(name):
     b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
     return m
 
+POS_SK = {'lgreen': ((0.22, 0.82, 0.36), (0.1, 0.48, 0.2), False), 'ggreen': ((0.05, 0.95, 0.3), (0.02, 0.6, 0.18), True),
+          'lred': ((1.0, 0.3, 0.32), (0.62, 0.14, 0.16), False), 'gred': ((1.0, 0.06, 0.12), (0.7, 0.02, 0.08), True)}
+
 def runner_mats():
     """body + limb materials for the current RUNNER_SKIN"""
     P = smiley.PAL
-    SK = {'glass': ((0.98, 0.06, 0.22), (0.4, 0.05, 0.98), (0.85, 0.05, 0.25)),    # shield: red underneath -> purple on top
-          'blue':  ((0.05, 0.25, 1.0), (0.3, 0.85, 1.0), (0.1, 0.4, 1.0)),       # magnet: deep blue -> cyan
-          'green': ((0.02, 0.55, 0.12), (0.45, 1.0, 0.35), (0.05, 0.7, 0.2))}    # 2x: green -> lime
-    if RUNNER_SKIN in SK:  # powered up: translucent glass with an inner glow
-        bpy.context.scene.render.film_transparent = True
-        try: bpy.context.scene.cycles.film_transparent_glass = True
-        except Exception: pass
-        c0, c1, cl = SK[RUNNER_SKIN]
-        body = glass_grad('rglass', c0, c1, trans=0.6, emit=0.45, axis='Z', k=0.75)
-        limb = principled('rlimb', cl, 0.15, emit=cl, emit_str=0.5, coat=1.0, coat_rough=0.02)
-        limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
-    elif RUNNER_SKIN == 'rainbow':  # two or three power-ups at once
-        bpy.context.scene.render.film_transparent = True
-        try: bpy.context.scene.cycles.film_transparent_glass = True
-        except Exception: pass
-        body = rainbow_glass('rbow'); limb = rainbow_glass('rbowl')
+    if RUNNER_SKIN in POS_SK:  # market position: light = 1x (opaque, soft), strong = 2x (deep translucent glass)
+        c, cl, strong = POS_SK[RUNNER_SKIN]
+        if strong:
+            bpy.context.scene.render.film_transparent = True
+            try: bpy.context.scene.cycles.film_transparent_glass = True
+            except Exception: pass
+            body = glass_grad('pglass', tuple(x * 0.55 for x in c), c, trans=0.7, emit=0.5, axis='Z', k=0.75)
+            limb = principled('plimb', cl, 0.15, emit=cl, emit_str=0.45, coat=1.0, coat_rough=0.02)
+            limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
+        else:
+            body = principled('pbody', c, 0.22, coat=1.0, coat_rough=0.05); limb = principled('pleg', cl, 0.3, coat=0.6)
     else:
         body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
     return body, limb
-
-def head_magnet(bob):
-    """magnet form: a red horseshoe magnet stuck on top of the head"""
-    red = principled('magred', (0.9, 0.06, 0.08), 0.25, coat=1.0, coat_rough=0.03); pole = principled('pole', (0.86, 0.87, 0.9), 0.2, metallic=1.0)
-    top = Vector((0.05, 0, 1.0 + bob))
-    arc = [tuple(top + Vector((0.3 * math.cos(math.radians(a)), 0, 0.05 + 0.3 * math.sin(math.radians(a))))) for a in range(0, 181, 15)]
-    mag = tube('headmag', [tuple(top + Vector((0.3, 0, -0.17)))] + arc + [tuple(top + Vector((-0.3, 0, -0.17)))], [0.12] * (len(arc) + 2), red)
-    poles = [cyl(pole, tuple(top + Vector((x, 0, -0.24))), 0.125, 0.16, bv=0.02) for x in (-0.3, 0.3)]
-    return [mag] + poles
 
 def briefcase(hand, swing=0.0):
     """a small leather briefcase hanging from `hand` (handle up), swinging by `swing` rad about the hand"""
@@ -359,8 +348,6 @@ def o_runner(gait, frame):
         bob = bobA * math.cos(4 * math.pi * ph); legs = (st * c, -st * c); arms = (-armA * c, armA * c)
     else:
         bob, lean, legs, L, bend, arms = _air(gait, frame)
-    if RUNNER_PROP == 'shades':  # confident strut: leaning back, chest out, big loose arm swing
-        lean -= 9; arms = tuple(a * 1.35 for a in arms)
     b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
     parts = [b]
     for k, side in enumerate((-1, 1)):
@@ -377,10 +364,7 @@ def o_runner(gait, frame):
         hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
         if RUNNER_PROP == 'case' and side == -1: parts += briefcase(hand, math.radians(0.6 * arms[k]))
     global DOLLAR
-    if RUNNER_SKIN == 'green' and not LOVE:  # 2x: huge $ eyes that swell and shrink through the cycle (bouncy)
-        n_ = 8 if gait in GAITS else AIR[gait]; DOLLAR = 1.2 + 0.4 * abs(math.sin(2 * math.pi * frame / n_))
-    fc = face([b], 0, 0.3 + bob, 0.95 * (1.12 if LOVE else 1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
-    if RUNNER_SKIN == 'blue': parts += head_magnet(bob)
+    fc = face([b], 0, 0.3 + bob, 0.95 * (1.12 if LOVE else 1))
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
@@ -469,15 +453,13 @@ def o_trick(kind, i, n=TRICK_N):
     for sh, hd in arms:
         parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hd, 0.5)), tuple(hd)], [0.07, 0.065, 0.06], limb))
         h_ = uv_sphere('hand', 0.1, tuple(hd), seg=24, rings=12); h_.data.materials.append(limb); parts.append(h_)
-    if RUNNER_SKIN == 'blue': parts += head_magnet(ctr - 0.25 + (0.8 * (1 - 0.62 * max(0.0, min(1.2, sq))) - 0.8 if kind == 'goo' else 0))
     if kind == 'goo' and sq > 0:  # tip the pancake's top toward the camera so its face and splayed limbs read
         tilt = link(bpy.data.objects.new('tilt', None)); tilt.location = (0, 0, ctr); bpy.context.view_layer.update()
         for o in parts:
             mw = o.matrix_world.copy(); o.parent = tilt; o.matrix_world = mw
         tilt.rotation_euler = (math.radians(42) * min(1.0, sq) * (0.6 if i >= 2 * n4 else 1), 0, 0); bpy.context.view_layer.update(); parts = [tilt]
-    if RUNNER_SKIN == 'green': DOLLAR = 1.3
     gs = 1 - 0.15 * max(0.0, min(1.0, sq)); fz = ctr + 0.12 * max(0.0, min(1.0, sq)) + 0.05 * (1 - max(0.0, min(1.0, sq))) if kind == 'goo' else 0.3
-    fc = face([b], 0, fz, 0.95 * gs * (1.25 if RUNNER_SKIN == 'green' else 1)); DOLLAR = 0.0
+    fc = face([b], 0, fz, 0.95 * gs)
     hub = link(bpy.data.objects.new('turn', None)); hub.rotation_mode = 'QUATERNION'; bpy.context.view_layer.update()
     for o in parts + fc:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
@@ -639,20 +621,6 @@ def o_bull(i, n=16):
     hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, 2 * math.pi * i / n)
     return [hub], []
 
-def o_arrow(red=False):
-    """a fat glossy 3D arrow pointing up (green = long) or down (red = short)"""
-    c = (0.9, 0.06, 0.1) if red else (0.06, 0.78, 0.25)
-    m = principled('arrow', c, 0.18, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.35)
-    sh = box('shaft', m, (0, 0, -0.35), (0.34, 0.34, 0.9), bv=0.08)
-    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.62, radius2=0.0, depth=0.75, location=(0, 0, 0.42), rotation=(0, 0, math.radians(45)))
-    hd = bpy.context.active_object; hd.data.materials.append(m)
-    bv = hd.modifiers.new('bv', 'BEVEL'); bv.width = 0.05; bv.segments = 3
-    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
-    for o in (sh, hd):
-        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
-    hub.rotation_euler = (math.radians(180) if red else 0, 0, math.radians(30))
-    return [hub], []
-
 def o_bill():
     """a single green banknote with a dark seal, slightly tilted, for the cash trail"""
     note = plastic('note', (0.05, 0.42, 0.12), 0.45); ink_ = plastic('ink', (0.02, 0.2, 0.05), 0.5)
@@ -755,7 +723,124 @@ def o_bear():
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
     hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, math.radians(-30)); return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(16)}, 'arrow-up': (lambda: o_arrow(False), 0), 'arrow-down': (lambda: o_arrow(True), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+# ---------- ALL IN: the skateboard ----------
+SKATE_PITCH = (-30, -15, 0, 15, 30)   # ride frames are rendered per terrain slope (deg, + = uphill to the right)
+SKATE_SEQ = {'ollie': 6, 'kick': 8, 'shove': 10, 'tre': 10, 'indy': 10, 'jesus': 10}
+
+def skateboard():
+    """deck with kicktails, black grip, green underside, silver trucks, cream wheels; built along +x, wheels touching z = -0.95"""
+    grip = plastic('grip', (0.03, 0.03, 0.035), 0.9); under = principled('deck', (0.05, 0.75, 0.3), 0.25, coat=1.0)
+    metal = principled('truck', (0.75, 0.77, 0.8), 0.25, metallic=1.0); wheel = plastic('wheel', (0.96, 0.9, 0.72), 0.35)
+    z = -0.69; ps = [box('deck', under, (0, 0, z), (1.25, 0.44, 0.05), bv=0.02), box('gripc', grip, (0, 0, z + 0.03), (1.22, 0.42, 0.012), bv=0.005)]
+    for sx in (-1, 1):  # kicktails
+        t = box('tail', under, (sx * 0.78, 0, z + 0.06), (0.36, 0.44, 0.05), (0, sx * math.radians(-20), 0), bv=0.02); ps.append(t)
+        t2 = box('gript', grip, (sx * 0.775, 0, z + 0.088), (0.34, 0.42, 0.012), (0, sx * math.radians(-20), 0), bv=0.005); ps.append(t2)
+        ps.append(box('truck', metal, (sx * 0.45, 0, z - 0.09), (0.12, 0.5, 0.08), bv=0.02))
+        for sy in (-1, 1): ps.append(prim('cylinder', wheel, (sx * 0.45, sy * 0.27, -0.85), (math.radians(90), 0, 0), vertices=24, radius=0.1, depth=0.09))
+    return ps
+
+def o_skate(kind, i):
+    """ALL IN rider. kind 'ride-<pitch>': 4-frame crouch loop on a slope; else a trick sequence (frames 0 and n-1 = the flat ride pose).
+    ollie: pop the tail, board rises with tucked legs, land. kick: the board rolls 360 under tucked feet. shove: the board spins 360 flat.
+    tre: spin + roll (360 flip). indy: knees up, back hand grabs the toe edge. jesus: board in the right (front) hand, arms out wide like a cross, legs together."""
+    body, limb = runner_mats(); pitch = 0.0; n = 4
+    if kind.startswith('ride'):
+        pitch = float(kind.split('_')[1]); n = 4; ph = 2 * math.pi * i / n; crouch = 0.5 + 0.18 * math.sin(ph); u = 0.0
+    else:
+        n = SKATE_SEQ[kind]; u = i / (n - 1); crouch = 0.5; ph = 0.0
+    env = math.sin(math.pi * u)                       # 0 at both ends: tricks start and end on the ride pose
+    e = _ss(0, 1, u); hold = _ss(0, 0.3, u) * (1 - _ss(0.7, 1, u))
+    lift, tuck = 0.0, 0.0                              # body rise above the board, feet off the deck
+    bd = dict(dx=0.0, dz=0.0, roll=0.0, yaw=0.0, pit=0.0)
+    arms = [Vector((-0.98, -0.05, -0.05)), Vector((0.98, -0.05, -0.05))]   # balancing, slightly down
+    grab = None; legs_together = 0.0
+    if kind == 'ollie':
+        k = [0, 1, 2, 3, 4, 5][i]
+        crouch = [1.0, 0.25, 0.55, 0.6, 0.4, 0.75][k]; bd['pit'] = [0, 24, 8, 0, -4, 0][k]; bd['dz'] = [0, 0.05, 0.2, 0.22, 0.1, 0][k]
+        lift = [0, 0.12, 0.25, 0.26, 0.12, 0][k]; bd['dx'] = [0, -0.05, 0, 0, 0, 0][k]
+    elif kind in ('kick', 'shove', 'tre'):
+        tuck = env; lift = 0.28 * env; bd['dz'] = 0.36 * env; crouch = 0.5 + 0.3 * env   # the board rises with the tucked feet
+        if kind in ('kick', 'tre'): bd['roll'] = 360 * e
+        if kind in ('shove', 'tre'): bd['yaw'] = 360 * e * (-1 if kind == 'shove' else 1)
+    elif kind == 'indy':
+        tuck = 0.0; lift = 0.34 * env; bd['dz'] = 0.6 * env; crouch = 0.5 + 0.5 * env; bd['pit'] = 26 * hold   # knees to the chest, nose tipped up
+        grab = (-1, hold)                              # back hand to the toe edge
+    elif kind == 'jesus':
+        lift = 0.3 * env; crouch = 0.5 - 0.5 * hold; legs_together = hold; grab = (1, hold)
+    bob = 0.55 - 0.16 * crouch + lift
+    # body (ball, face, arms) in its own hub, pitched a third as much as the board so it stays balanced over it
+    b = uv_sphere('rb', 0.8, (0, 0, bob), seg=64, rings=32); b.data.materials.append(body); bparts = [b]
+    for k_, side in enumerate((-1, 1)):
+        sh = Vector((side * 0.74, 0.05, bob - 0.13)); tgt = sh + arms[k_] * 0.5
+        if kind == 'jesus': tgt = sh.lerp(Vector((side * 1.55, -0.05, bob - 0.08)), hold) if True else tgt   # arms straight out, cross
+        if grab and grab[0] == side and kind == 'indy': tgt = tgt.lerp(Vector((0.05, -0.32, -0.62 + bd['dz'] + 0.05)), grab[1])
+        bparts.append(tube('arm', [tuple(sh), tuple(sh.lerp(tgt, 0.5) + Vector((0, 0, 0.03))), tuple(tgt)], [0.07, 0.065, 0.06], limb))
+        h_ = uv_sphere('hand', 0.1, tuple(tgt), seg=24, rings=12); h_.data.materials.append(limb); bparts.append(h_)
+    fc = face([b], 0, bob + 0.05, 0.98)
+    bodyhub = link(bpy.data.objects.new('bodyhub', None)); bodyhub.location = (0, 0, -0.95); bpy.context.view_layer.update()
+    for o in bparts + fc:
+        mw = o.matrix_world.copy(); o.parent = bodyhub; o.matrix_world = mw
+    yaw = math.radians(20)
+    bodyhub.rotation_euler = (0, math.radians(-pitch * 0.35), yaw)
+    # board in its own hub, pivoting at the ground contact under its centre
+    bparts2 = skateboard(); boardhub = link(bpy.data.objects.new('boardhub', None)); boardhub.location = (0, 0, -0.95); bpy.context.view_layer.update()
+    for o in bparts2:
+        mw = o.matrix_world.copy(); o.parent = boardhub; o.matrix_world = mw
+    boardhub.rotation_mode = 'QUATERNION'; bpy.context.view_layer.update()
+    held = kind == 'jesus' and hold > 0.02
+    if held:  # the board hangs vertically from the right (front) hand, wheels toward the camera-right
+        hand = (bodyhub.matrix_world @ Vector((0, 0, 0.95)).to_4d()).to_3d() if False else None
+        hw = bodyhub.matrix_world @ (Vector((1.55, -0.05, bob - 0.08 + 0.95)) * 1)
+        q = Euler((0, 0, yaw)).to_quaternion() @ Quaternion(Vector((0, 1, 0)), math.radians(-90 * hold)) @ Quaternion(Vector((1, 0, 0)), math.radians(-25 * hold))
+        rest = Vector((0, 0, -0.95)) + Vector((bd['dx'], 0, bd['dz']))
+        boardhub.location = tuple(rest.lerp(hw + Vector((0.25, -0.1, -0.15)), hold))
+        boardhub.rotation_quaternion = q
+    else:
+        boardhub.location = (bd['dx'], 0, -0.95 + bd['dz'])
+        boardhub.rotation_quaternion = Euler((0, 0, yaw)).to_quaternion() @ Quaternion(Vector((0, 1, 0)), math.radians(-pitch - bd['pit'])) \
+            @ Quaternion(Vector((0, 0, 1)), math.radians(bd['yaw'])) @ Quaternion(Vector((1, 0, 0)), math.radians(bd['roll']))
+    bpy.context.view_layer.update()
+    # legs, built in world space: hips from the body hub to feet on the deck (or tucked up while the board flips / is held)
+    parts = [bodyhub, boardhub]
+    for side in (-1, 1):
+        hip = bodyhub.matrix_world @ Vector((side * 0.24, 0, bob - 0.6 + 0.95))
+        on = boardhub.matrix_world @ Vector((side * 0.38, 0.0, 0.32))         # deck top, above the trucks (hub sits at the wheels)
+        if held or legs_together > 0:
+            free = hip + Vector((side * 0.06, 0, -0.62)); ft = on.lerp(free, legs_together if held else 0)
+        else:
+            tk = hip + Vector((side * 0.32, -0.05, -0.22)); ft = on.lerp(tk, tuck) if tuck else on
+        kn = hip.lerp(ft, 0.5) + Vector((side * 0.12 * (1 - legs_together), -0.14 * (1 - legs_together), 0.05 * (crouch + tuck)))
+        parts.append(tube('leg', [tuple(hip), tuple(kn), tuple(ft)], [0.09, 0.085, 0.08], limb))
+        f = uv_sphere('foot', 0.13, tuple(ft + Vector((0.04, 0, 0.03))), (1.4, 0.9, 0.6), 32, 16); f.data.materials.append(limb); parts.append(f)
+    return parts, []
+
+def o_hat(kind):
+    """purchasable hats, built with the brim/base at the origin (the head anchor) and rendered alone at the runner's scale.
+    top: Wall Street top hat (black silk, green dollar band); crown: gold bull-market crown with gems; prop: propeller beanie"""
+    a = link(bpy.data.objects.new('eyeanchor0', None)); a.location = (0, 0, 0); ps = []
+    if kind == 'top':
+        silk = principled('silk', (0.02, 0.02, 0.025), 0.25, coat=1.0, coat_rough=0.1); band = plastic('band', (0.05, 0.6, 0.25), 0.35)
+        ps += [prim('cylinder', silk, (0, 0, 0.03), vertices=48, radius=0.72, depth=0.06), prim('cylinder', silk, (0, 0, 0.45), vertices=48, radius=0.46, depth=0.8),
+               prim('cylinder', band, (0, 0, 0.16), vertices=48, radius=0.475, depth=0.16)]
+        bpy.ops.object.text_add(location=(0, -0.47, 0.16), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
+        t.data.body = '$'; t.data.size = 0.2; t.data.extrude = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold()); ps.append(t)
+    elif kind == 'crown':
+        g_ = gold(); ps.append(prim('cylinder', g_, (0, 0, 0.12), vertices=64, radius=0.55, depth=0.24))
+        for k in range(8):
+            ang = 2 * math.pi * k / 8
+            ps.append(prim('cone', g_, (0.5 * math.cos(ang), 0.5 * math.sin(ang), 0.42), vertices=4, radius1=0.16, radius2=0.0, depth=0.42))
+            gem = principled('gem', [(0.1, 0.9, 0.4), (0.9, 0.1, 0.2), (0.2, 0.5, 1.0)][k % 3], 0.05, coat=1.0, emit=[(0.1, 0.9, 0.4), (0.9, 0.1, 0.2), (0.2, 0.5, 1.0)][k % 3], emit_str=0.6)
+            ps.append(prim('ico_sphere', gem, (0.56 * math.cos(ang), 0.56 * math.sin(ang), 0.12), subdivisions=1, radius=0.07, shade=False))
+    else:
+        f1 = plastic('bean1', (0.05, 0.7, 0.3), 0.6); f2 = plastic('bean2', (1.0, 0.35, 0.4), 0.6); stem = plastic('stem', (0.95, 0.85, 0.3), 0.3)
+        dome = uv_sphere('dome', 0.62, (0, 0, -0.05), (1, 1, 0.75)); dome.data.materials.append(f1); ps.append(dome)
+        bm = bpy.data.objects.get('dome'); ps.append(prim('torus', f2, (0, 0, 0.0), major_radius=0.6, minor_radius=0.07, major_segments=48, minor_segments=12))
+        ps.append(prim('cylinder', stem, (0, 0, 0.5), vertices=16, radius=0.035, depth=0.2))
+        for k in (0, 1):
+            ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
+    return ps + [a], []
+
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(16)}, **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(4)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
@@ -790,6 +875,14 @@ def build(name, out, res, samples, nfr):
         ang = sign * 2 * math.pi * i / nfr if name.startswith(('flag-', 'pu2-')) else sign * math.radians(25) * math.sin(2 * math.pi * i / nfr)
         pivot.rotation_quaternion = Quaternion((0, 0, 1), ang)
         render(f'{d}/{i:03d}.png')
+        rb = bpy.data.objects.get('rb')
+        if rb is not None:  # hats sit on this: the ball's top pole and its up direction, in render px
+            from bpy_extras.object_utils import world_to_camera_view
+            sc = bpy.context.scene; bpy.context.view_layer.update(); R_ = sc.render.resolution_x
+            zt = max(v.co.z for v in rb.data.vertices if abs(v.co.x) < 0.05 and abs(v.co.y) < 0.05)
+            pr = lambda z: world_to_camera_view(sc, sc.camera, rb.matrix_world @ Vector((0, 0, z)))
+            a, b_ = pr(zt), pr(zt + 0.4)
+            import json; json.dump([round(a.x * R_, 1), round((1 - a.y) * R_, 1), round(b_.x * R_, 1), round((1 - b_.y) * R_, 1)], open(f'{d}/head.json', 'w'))
         anchors = sorted((o for o in bpy.data.objects if o.name.startswith('eyeanchor')), key=lambda o: o.name)
         if anchors:
             from bpy_extras.object_utils import world_to_camera_view
