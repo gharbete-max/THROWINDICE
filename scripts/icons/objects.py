@@ -597,7 +597,7 @@ def o_pu_x2():
     t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
     return [t], []
 
-def o_bull(i, n=16):
+def o_bull(i, n=48):
     """checkpoint: a faceted, see-through diamond bull, turning slowly (frame i of n, one full turn)"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
@@ -620,6 +620,19 @@ def o_bull(i, n=16):
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
     hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, 2 * math.pi * i / n)
     return [hub], []
+
+def o_dolla():
+    """the Dolla: the game's currency note (Washington-bill layout with a smiley portrait; texture from dolla_texture.py), gently curled"""
+    tex = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'dolla_tex.png')
+    m = bpy.data.materials.new('dolla'); m.use_nodes = True; nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    t = nt.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(tex); hs = nt.nodes.new('ShaderNodeHueSaturation'); hs.inputs['Value'].default_value = 0.42; hs.inputs['Saturation'].default_value = 1.25
+    nt.links.new(t.outputs['Color'], hs.inputs['Color']); nt.links.new(hs.outputs['Color'], b.inputs['Base Color'])
+    b.inputs['Roughness'].default_value = 0.55; b.inputs['Coat Weight'].default_value = 0.25
+    bpy.ops.mesh.primitive_plane_add(size=1, location=(0, 0, 0)); o = bpy.context.active_object; o.scale = (3.3, 1.4, 1)
+    bpy.ops.object.transform_apply(scale=True); bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.subdivide(number_cuts=24); bpy.ops.object.mode_set(mode='OBJECT')
+    for v in o.data.vertices: v.co.z += 0.12 * math.sin(v.co.x * 1.6) + 0.05 * v.co.y * v.co.x   # a gentle S-curl
+    so = o.modifiers.new('th', 'SOLIDIFY'); so.thickness = 0.012; o.data.materials.append(m)
+    bpy.ops.object.shade_smooth(); o.rotation_euler = (math.radians(78), 0, math.radians(-6)); return [o], []
 
 def o_bill():
     """a single green banknote with a dark seal, slightly tilted, for the cash trail"""
@@ -705,8 +718,8 @@ def o_sign100x():
     t.data.body = '100x'; t.data.size = 0.9; t.data.extrude = 0.08; t.data.bevel_depth = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'
     t.data.materials.append(neon); t.rotation_euler = (math.radians(90), 0, math.radians(-12)); return [t], []
 
-def o_bear():
-    """bear market phase icon: a faceted ruby bear (the bull's counterpart)"""
+def o_bear(i=-1, n=48):
+    """bear market: a faceted ruby bear, the bull's counterpart. i >= 0: frame i of n of one slow turn (the bear-market checkpoint); i < 0: the static icon"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
     except Exception: pass
@@ -721,7 +734,7 @@ def o_bear():
     hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
     for o in parts:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
-    hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, math.radians(-30)); return [hub], []
+    hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, 2 * math.pi * i / n if i >= 0 else math.radians(-30)); return [hub], []
 
 # ---------- ALL IN: the skateboard ----------
 SKATE_PITCH = (-30, -15, 0, 15, 30)   # ride frames are rendered per terrain slope (deg, + = uphill to the right)
@@ -840,7 +853,7 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(16)}, **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(4)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(48)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(48)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(4)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}

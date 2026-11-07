@@ -101,3 +101,26 @@ The game loads about 2.6 MB of sprite sheets when it opens: 5 skins × runner, t
 - **Deploy:** nothing is live until the owner enables GitHub Pages (Settings → Pages → Source: GitHub Actions) and reruns the Deploy workflow. Mention it in your final report if it's still failing.
 - **Rendering new art:** follow `CLAUDE.md` (contact sheet first; head anchors for hats; blending rules for any new sheet).
 - **Report back:** when you stop, write a short status at the top of this file: what's done, numbers from the harness, and what's next.
+
+## New from the owner (Nov 7, evening): partly built, finish these
+
+**Built already (planning session):**
+- **Smoother bull:** 48 frames at 12 fps (`cp-bull.webp`).
+- **Ruby bear checkpoint:** in a bear market (`cp-bear.webp`, 48 frames) with a red glow.
+- **Bear market share:** about 25% of stretches. `phaseOf`: bull phases 3–5 stretches, bear 1–2.
+- **Sticky ↑ / ↓ toggles:**
+  - ↑ = LONG and ↓ = SHORT stay set until the next ↑ / ↓ swipe. Again = 2x, and it stays 2x; it never toggles itself off.
+  - ← CASH pauses the position but remembers the direction (`R.dirMem`). → ALL IN rides the board in that direction at 3x.
+  - On the board, ↑ / ↓ flip the direction and keep you on the board (no ball trick).
+- **Board colour:** strong green when ALL IN LONG, strong red when ALL IN SHORT (`runner-skate-ggreen/-gred.webp`, `SKATEI`). Messages: "ALL IN LONG 3x" / "ALL IN SHORT 3x".
+- **Dolla:** the currency is now the **Dolla** (note: `dolla.webp`; texture `scripts/icons/dolla_texture.py`; 3D `o_dolla`). The HUD score uses the site font (Inter 900) with the note icon; no pixel digits. Wallet, hats, ETF and missions say "Dolla". The cash-run trail drops Dolla notes.
+
+**Tasks:**
+
+| # | Item | Done when |
+|---|---|---|
+| 16 | **Bear checkpoint behaviour.** It banks like the bull, but there's no relief rally: launch at 75% height (`CPV*.75`), no forward surge, and a grumpier flight (keep the love face for the bull only; use the normal face, a red aura and a "BEAR MARKET BANKED" pop). If the stretch's open P&L is negative, add the lesson line "Banking in a bear locks the loss: cash or short next time". | the bear launch differs visibly; harness errors 0 |
+| 17 | **Re-tune for the 25% bear share** (B8 numbers moved: passive long now earns more on average). Lower bull-phase tilt or `PNLK` until passive is back in its band. | `BALANCE.md` §7 rows re-run; changelog entry |
+| 18 | **ALL IN SHORT balance.** Shorting on the board is now possible (3x). Check the trader bot with a bear-phase short-board strategy doesn't exceed 6× passive; if it does, cap all-in short to 2x or cut red-tick values while on the board. | harness numbers logged |
+| 19 | **Dolla juice.** On a bank, burst 6–12 Dolla notes (`bill.webp` is now a Dolla note) from the runner to the HUD counter, then tick the counter up. Mission and gift rewards fly to the wallet the same way in the menu. | visible in a headless screenshot sequence; reduced motion = instant |
+| 20 | *(later, cosmetics)* **Higher notes:** 5 / 20 / 100 Dolla notes with different smiley portraits (love eyes on 20, sunglasses on 100) for bigger pops and the shop. Same texture script, different portrait. | — |

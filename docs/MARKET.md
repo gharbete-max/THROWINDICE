@@ -16,10 +16,10 @@
 
 | Swipe (on the ground) | Key | Trick | Position | Look |
 |---|---|---|---|---|
-| ↑ | E | split | **LONG 1x**; ↑ again → **2x** | light green body (`runner-lgreen`); 2x = strong translucent green glass (`runner-ggreen`) |
+| ↑ | E | split | **LONG 1x**; ↑ again → **2x** (sticky: stays until the next ↑/↓) | light green body (`runner-lgreen`); 2x = strong translucent green glass (`runner-ggreen`) |
 | ↓ | S / ↓ | goo | **SHORT 1x**; ↓ again → **2x** | light red (`runner-lred`); 2x = strong translucent red glass (`runner-gred`) |
 | ← | A / ← | corkspin | **CASH**: open P&L realized into the cash bar | gold, carrying a briefcase, bills flutter behind (`runner-cash`) |
-| → | D / → | spin | **ALL IN**: cash + open back in at **LONG 3x** | gold, **riding a skateboard** (`runner-skate`) |
+| → | D / → | spin | **ALL IN**: cash + open back in at **3x in your last ↑/↓ direction** | **riding a skateboard**, strong green (long) or strong red (short) (`runner-skate-ggreen/-gred`); ↑/↓ on the board flip the direction and stay on it |
 
 - **On the skateboard (ALL IN):**
   - **Ride:** the frames are rendered for 5 slopes (−30, −15, 0, 15, 30°), and the nearest one to the ground slope is chosen. The board pitches while the body stays balanced.
@@ -192,6 +192,17 @@ Render recipes are in `CLAUDE.md` (repo root).
 - **Cap:** terrain P&L and ticks both clamp at ±60. At the cap the HUD shows "take profit!" / "cut losses!", glows (`.gPnl.cap`, no pulse under reduced motion) and `msg()` says it once until the open % drops 5 below the cap. Banking resets it.
 - **Tested headlessly:** tick values 1/3/10, red -2/-5, SHORT flips to +5, ALL IN triples (+9 for a tick-2, -6 for a red tick-r1), CASH passes through, DIVIDEND doubles, cap at +60/-60 with hint, no red ticks below level 2 and none near gaps, reduced motion and no 4xx.
 - **Not done here (later tasks):** STOP-LOSS blocking a red tick (M2), bear phases adding more red ticks (M4), balance of values against `PNLK` (M7).
+
+## 10b. Currency: the Dolla (built)
+
+- **What it is:** points are **Dolla**, a banknote in the Washington-bill layout with an engraved smiley in the portrait oval. "THE UNITED BALLS OF BOUNCE", "IN BULLS WE TRUST", "ONE DOLLA", a `$` seal and a `D` seal.
+- **Name:** "Dolla", never "dollar", so it can't be mistaken for real money. Plural: Dolla.
+- **Where it shows:**
+  - The HUD score (note icon + Inter 900; the old 8-bit pixel digits are gone).
+  - The wallet ("Dolla to spend"), hat prices, ETF value and away report, missions, and the daily gift.
+  - The cash-run trail (`bill.webp` is a padded Dolla note).
+- **Assets:** `dolla.webp` (tight, about 2.2:1) and `bill.webp` (square, for particles). Texture: `scripts/icons/dolla_texture.py` → `dolla_tex.png`; 3D curl and lighting: `o_dolla` in `objects.py`.
+- **Ideas for later (HANDOFF 19–20):** notes fly to the counter on banking; higher denominations (5 / 20 / 100) with other smiley portraits as cosmetics and for big pops.
 
 ## 11. Big Ball ETF (built)
 
