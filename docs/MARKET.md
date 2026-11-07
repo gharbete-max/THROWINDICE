@@ -24,8 +24,11 @@
 - **On the skateboard (ALL IN):**
   - **Ride:** the frames are rendered for 5 slopes (−30, −15, 0, 15, 30°), and the nearest one to the ground slope is chosen. The board pitches while the body stays balanced.
   - **Jumps:** the first jump is an **ollie**, the double jump a **kickflip**.
-  - **Swipes in the air are skate tricks** and keep you ALL IN: ↑ **JESUS** (arms out wide, board in the front hand), ↓ **INDY GRAB**, ← **360 SHOVE-IT**, → **TRE FLIP**. They chain and score like the ball tricks.
-  - **Swipes on the ground** change position as usual, which steps you off the board.
+  - **↑ / ↓ always set LONG / SHORT**, in the air too, which steps you off the board.
+  - **← in the air** is **JESUS** (arms out wide, board in the front hand); a second ← in the same jump is a **360 SHOVE-IT**.
+  - **→** (ground or air) is a **TRE FLIP**; a second → in the same jump is an **INDY GRAB**. On the ground, → jumps first.
+  - **← on the ground** goes to CASH (steps off).
+  - Board tricks chain and score like the ball tricks. The alternation counters (`R.skL`, `R.skR`) reset on landing.
 - **Power-ups are auras**, never a body colour:
   - **STOP-LOSS** (shield): a pink-violet bubble.
   - **INDEX FUND** (magnet): blue field arcs circling.
