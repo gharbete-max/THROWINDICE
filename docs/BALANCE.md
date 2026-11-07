@@ -155,3 +155,12 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 - Push your luck: https://meeplescorner.co.uk/blogs/boardgame-glossary/what-are-push-your-luck-games-everything-you-need-to-know-about-this-board-game-mechanic, https://teaching-kids-to-code.pages.dev/lessons/day-13.html
 - Session benchmarks: https://gameworldobserver.com/2019/07/02/hyper-casual-167m-sessions-a-year, https://gameindustrylibrary.com/documents/gameanalytics-mobile-gaming-benchmarks-2025/read?page=11, https://mwm.ai/glossary/session-length
 - Difficulty ramp pattern: https://seanking11.github.io/gamebootcamp/modules/04-endless-runner
+
+## Changelog (Claude Code, built from HANDOFF.md)
+
+- **Harness:** `sim.js` now fast-forwards (60 Hz steps in a tight loop; 300 s of play take about 10 s), has four bots (passive, trader, trickster, reader), logs per-phase banks, and prints the section 7 acceptance rows. Bots hold their jumps and respawn on a crash (no shield).
+- **B1:** `V0 = 1000`, `V *= 1 + clamp(open + cash)/100` on each bank, score = profit. Chains pay alpha `.25·n²` %, PERFECT `+.25` %, slippage `-1` %. Daily goals now "Earn 100 / 250 points".
+- **B2:** `CPD` 20000, `+1500` per bull, cap 28000 (`cpX(n)`, `lvlAt(x)`), `PNLK .006`, speed ramp `+8.75%` per bull (cap x1.7 at bull 8), take-profit hint at 45%. Bull interval 22.0-26.5 s in the harness.
+- **B4:** PERFECT window 55 ms before the edge and 12 ms after (was 110 / 25). Random taps 4-6 per minute.
+- **B5:** phases alternate every 2-3 stretches (first is bull). Terrain tilt `TILT = {bull: -1, bear: 11}` px per candle (the generator itself leans up by about +7% per stretch, so a bull needs little lift and a bear a lot of drop), kind weights shift with the phase, red ticks twice as dense in a bear. Tick values were **halved** (+0.5 / +1.5 / +5, red -1 / -2.5) and green spacing x1.5 (3000-5100 px) so ticks are not most of a passive player's income. Result over 300 s x4: passive long banks about +8-11% in a bull stretch and -8..-13% in a bear one; the phase-reading bot earns 5.9x passive.
+- **Open at B8 (not done in this pass):** at 60 s the passive bot still earns about 157 pts/min (target 20-60), trader/passive is 1.4x (target 2x), and the market/alpha share rows only make sense over more banks (300 s runs). Re-tune `PNLK`, tick values and alpha inside the +-25% bands, and decide whether the per-minute rows should be measured over 120 s runs.

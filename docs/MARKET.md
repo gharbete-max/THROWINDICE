@@ -106,6 +106,8 @@ Bull phases favour cups, flags and support; bear phases favour head & shoulders,
   - The bear tints the background slightly red/cool and makes terrain trend downward more often (shorts thrive).
 - **Real World events** (rare): **circuit breaker** (a sudden −drop, 0.4 s hit-stop, "TRADING HALTED" canvas stamp) and **earnings day** (a stretch of random gaps).
 
+**Built (M4 phases only; circuit breaker and earnings day are not built yet):** `phaseOf(n)` picks bull or bear per stretch (2-3 stretches each, the run starts in a bull), `R.phase` is the current one, the badge `#gPhase` slides in top-left with `cp-bull` frame 2 or `bear.webp` and a label that fades after 3 s, and a bear tints the sky red (`R.phT`).
+
 ## 7. Rugpulls: Token World only (task M5)
 
 All the art is rendered: `rug.webp` (tile), `rug-roll.webp` (mid-yank), `rocket.webp`, `devwallet.webp`, `sign-100x.webp`.
