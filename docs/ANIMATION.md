@@ -71,7 +71,7 @@ Every trick is a **rendered Blender sequence**, not a canvas transform or a fade
 5. **Game:** add `{d, n}` to `TRK`, the row to `TROW`, and a direction or key in `flickDir` and the keydown map. If it isn't a straight play-through, give it a branch in `trickFrame` (see goo: in, loop, out).
 6. **Rules:** no canvas fakery (no scaleX flips, no cross-fades between poses). Motion lives in the frames, and loops must close (frame n+1 ≡ frame 0).
 
-## Trick combos: plan (not built yet)
+## Trick combos: plan (stage 1 built, stages 2–4 to do)
 
 Goal: flicking several times in one jump chains tricks together. The same direction twice continues and speeds up the current trick (double cork, 720 spin). Back and forth reverses it or combines two tricks into one move (a cork that flows into a spin). Every chain still lands cleanly. Build in the phases below; each phase is shippable on its own.
 
@@ -146,9 +146,26 @@ Tricks nudge the arc slightly, so combos feel physical:
 - **Size:** about 0.6 MB per skin. Load the gold sheet with the game, and lazy-load the other four the first time that power-up is picked up (prefetch while the shield/magnet/2x is on screen).
 - **Continuity check script** (keep it in `scripts/icons/`): for every pair of segments that join, the mean absolute RGBA difference between the last frame of A and the first of B (and loop frame n−1 → 0) must be below a threshold. This catches pose mismatches before they ship.
 
+### Stage 1: what's built (Nov 2026)
+
+- **Input** (`#gameLayer` listeners):
+  - The anchor follows a stroke while it keeps going the same way (dot > 0.5). A turn of 40 px or more, or a new press-and-swipe, is the next flick. A stroke slower than 0.6 s re-anchors.
+  - A press while a trick is in the air waits: a release within 250 ms with no flick is the double jump. It calls `tap()` and skips `release()`'s short-hop cut via `stopImmediatePropagation`.
+- **`trick(k)`:** starts a trick, or queues it into `R.cq` (max 2).
+  - Each queued flick adds `boost` to the current trick: +0.6 for the same trick, +0.3 otherwise. `rate = min(2.6, 1 + boost)`, and boost decays as `exp(-3·dt)`.
+  - Goo ends a chain; goo again sets `R.slam` (gravity ×1.8 until landing).
+- **Hand-off:** when the current trick reaches its last frame (the shared rest pose), the next queued trick starts with half the boost. This chains through REST, which is seamless because every row starts and ends there.
+- **Land-aware warp:** in the step's `if(R.trk)` block, time to ground is estimated from `gy`, `vy` and the current gravity.
+  - Queued tricks that can't fit even at 2.6× are dropped.
+  - Otherwise the rate is raised so the chain ends at touchdown.
+- **Scoring:**
+  - `R.cn` and `R.cnames` count tricks completed in the air. The live label `R.clbl` above the runner grows and punches on each link.
+  - On landing the chain pays `3·n²` if clean (no trick mid-rotation; a goo landing is always clean), with the name from `chainName()`: DOUBLE/TRIPLE, spin degrees, CORKSPIN + SPIN → TWISTER, otherwise joined with `+`. A landing that isn't clean pays nothing.
+- **Not yet:** spin rewind, true double-rotation loops without passing through REST, and bridges/combined poses (stages 2–3). Physics coupling for spin/split/cork, and lazy loading of the sheets (stage 4).
+
 ### 8. Build order
 
-1. **Input stream, queue, acceleration and chaining through REST, with today's sheets** (every trick already starts and ends at REST, so any chain works via its out segment), plus the land-aware warp and `n·n` scoring. *No renders.*
+1. ✅ **Input stream, queue, acceleration and chaining through REST, with today's sheets** (every trick already starts and ends at REST, so any chain works via its out segment), plus the land-aware warp and `n·n` scoring. *No renders.*
 2. **Re-render as in/loop/out segments.** Double cork, 720, spin rewind and split extensions.
 3. **Bridges and combo names.**
 4. **Physics coupling, lazy loading of the skin sheets, the continuity script, and checks at 30, 60 and 120 fps.**
