@@ -1,7 +1,7 @@
 // Balance harness: plays the runner with bots and prints the economy numbers docs/BALANCE.md targets.
 // Usage (repo root): node scripts/balance/sim.js [seconds=60] [modes=passive,trader,trickster] [runs=1]
 // Needs playwright (npm i playwright). Writes _test.html (instrumented copy) and deletes it afterwards.
-// Bots are kept alive (shield every tick) on purpose: this measures the economy, not survival skill.
+// Bots are kept alive (crashes respawn) on purpose: this measures the economy, not survival skill.
 const fs = require('fs'), http = require('http'), path = require('path');
 const { chromium } = require('playwright');
 const ROOT = path.resolve(__dirname, '../..'), TEST = path.join(ROOT, '_test.html');
@@ -15,7 +15,7 @@ function instrument() {
   inj('function alpha(a){', 'function alpha(a){(window.__L.alpha=window.__L.alpha||[]).push(a);');
   inj('function slip(){', 'function slip(){(window.__L.slip=(window.__L.slip||0)+1);');
   inj('const al=.25*R.cn*R.cn;', 'const al=.25*R.cn*R.cn;(window.__L.chain=window.__L.chain||[]).push(R.cn);');
-  inj('function crash(why){', 'function crash(why){(window.__L.crash=window.__L.crash||[]).push(why);');
+  inj('function crash(why){', 'function crash(why){(window.__L.crash=window.__L.crash||[]).push(why);if(window.__L.immortal){respawn();return}');
   inj("alpha(.25);pop(R.sx,R.y-220*VK,'PERFECT'", "alpha(.25);window.__L.perf=(window.__L.perf||0)+1;pop(R.sx,R.y-220*VK,'PERFECT'");
   h = h.replace('<script>', '<script>window.__L={};');
   fs.writeFileSync(TEST, h);
@@ -30,7 +30,8 @@ function serve() {
 const BOT = ({ mode, sec }) => new Promise(done => {
   const K = ['cork', 'spin', 'split', 'goo'], t0 = performance.now(), R0 = window.__R, S = { openMin: 0, openMax: 0, capFrames: 0, pos: { long1: 0, long2: 0, short1: 0, short2: 0, cash: 0, allin: 0 }, g0: R0.t, bullAt: [] };
   let lastLvl = R0.lvl, lastT = performance.now();
-  const act = setInterval(() => { const R = window.__R; if (!R || R.dead) return; R.shield = true;
+  window.__L.immortal = true;   // crashes respawn instead of ending the run (the shield power-up would also floor P&L and block red ticks)
+  const act = setInterval(() => { const R = window.__R; if (!R || R.dead) return;
     if ((!R.air && Math.random() < .35) || (R.blocked && !R.air)) { _cp.hold = true; _cp.tap(); setTimeout(() => _cp.release(), R.blocked ? 420 : 150 + Math.random() * 260) }   // hold-to-jump: random hold length, a full hold against a wall
     if (mode === 'trader' && Math.random() < .08) _cp.trick(R.open > 8 ? 'cork' : Math.random() < .5 ? 'split' : 'goo');   // take risk, move to cash when up
     if (mode === 'trickster' && R.air && Math.random() < .3) _cp.trick(K[Math.random() * 4 | 0]);

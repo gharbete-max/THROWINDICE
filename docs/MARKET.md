@@ -81,6 +81,8 @@ Same pickups and forms (glass skins); only names, pops and behaviour change:
 | 2x | **DIVIDEND 2x** | Tick values ×2 (stacks with leverage). |
 | combo | **BULL RUN** | All of the above, and ticks spawn 1.5× denser. |
 
+**Built (M2):** `PU` names are STOP-LOSS / INDEX FUND / DIVIDEND 2x. STOP-LOSS floors open P&L at 0 while it is up and is used up by the next loss: a crash (respawn), a red tick or slippage. DIVIDEND doubles gains only (not red ticks). BULL RUN is all three at once (`R.bullRun`, a pop and message on the rising edge): green ticks spawn 1.5x denser (measured 1.46x). The balance harness no longer uses the shield; bots are kept alive by respawning on a crash (`__L.immortal`).
+
 ## 5. Chart patterns as terrain (task M3)
 
 Add pattern segments to the terrain generator's segment picker (`ground()` heights). Each one is a height recipe, optionally with a line object drawn on canvas. Pop the pattern's name once per run when it's cleared without a crash ("CUP & HANDLE ✓").

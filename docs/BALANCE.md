@@ -106,7 +106,7 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 
 - **What it does:**
   - Instruments a temporary copy of `index.html` (`_test.html`, auto-deleted) and serves it locally.
-  - Plays three bots with the shield always on: it measures the **economy**, not survival.
+  - Plays three bots that are kept alive (crashes respawn): it measures the **economy**, not survival.
   - Prints score per minute split into bank, chain and perfect, the bull interval, and the open P&L range. Raw data goes to `scripts/balance/last-run.json`.
 - **Keep it in step with the code:**
   - When B1 replaces `3·n²` points with alpha, update the injected anchors and add `alpha` and `slippage` logs.
