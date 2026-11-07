@@ -147,6 +147,8 @@ Plus one **lesson line** chosen by what happened, for example:
 - "Going to cash before the rug saved you."
 - "Leverage tripled your losses on that drop."
 
+**Built (M6):** the results card shows the banked total (`V/V0 - 1`), best bank, best chain, the patterns spotted (`R.patSeen`), the rug outcomes (`R.rugEv`) and one lesson line from `lessonLine()` (priority: rug outcome, unbanked open gains lost at death, a levered loss, best bank, slippage, alpha, default). Test hooks: `_cp.lesson()`, `_cp.results()`.
+
 ## 9. Asset inventory (all rendered, in `assets/game/`)
 
 | File | What | Generator (`scripts/icons/objects.py`) |
