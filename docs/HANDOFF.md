@@ -38,7 +38,7 @@ If an item is blocked or a target can't be met, write why under it and move on.
 | 5 ✅ `798c189` | **M2 Power-up renames and behaviour**: stop-loss, index fund, 2x | `MARKET.md` §4 | pops use the new names; stop-loss blocks a red tick and slippage |
 | 6 ✅ `4904035` | **B5 / M4 Bull & bear phases**: terrain drift, red-tick density, phase icon (`cp-bull` frame / `bear.webp`) | `MARKET.md` §6, `BALANCE.md` B5 | passive long earns in bull and loses in bear; phase-reading trader bot ≥ 2× passive |
 | 7 ✅ `368f9d8` | **B3 Momentum** (chain → small surge) | B3 | trickster bull interval about 10% shorter |
-| 8 ✅ | **M3 Chart patterns as terrain**: support, resistance + breakout, MA grind rail, cup & handle, bull flag, head & shoulders, double bottom | `MARKET.md` §5 | each appears within about 3 min; name pop once per run |
+| 8 ✅ `4f948d5` | **M3 Chart patterns as terrain**: support, resistance + breakout, MA grind rail, cup & handle, bull flag, head & shoulders, double bottom | `MARKET.md` §5 | each appears within about 3 min; name pop once per run |
 | 9 | **M5 Rugpulls** (Token World only), with the rendered rug set | `MARKET.md` §7 | tell → yank → P&L follows the position; ≤ 2 per run; never fatal |
 | 10 | **M6 Results card lessons** | `MARKET.md` §8 | lesson line chosen from the run's events |
 | 11 | **B6 Economy**: hat prices 300 / 900 / 2500, daily gift; account for ETF yield | `BALANCE.md` §6 | prices updated; days-to-crown checked with and without the ETF |
