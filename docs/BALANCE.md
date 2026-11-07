@@ -94,6 +94,10 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 | crown | 400 | **2500** | a goal for the first week |
 
 - **Future hats:** add at 4,000–8,000 so long-term players keep a target.
+- **Big Ball ETF interaction** (built, `MARKET.md` §11):
+  - **Yield:** idle wallet points can compound at the replayed index: about 7.8%/yr of market time, i.e. roughly +2% per real day on average, with crashes of up to about −50% over a couple of real weeks (2008).
+  - **Pricing:** price hats so that a player who invests their wallet reaches a hat about 10–20% sooner, not instantly.
+  - **Re-check:** if hat prices change, check how long a typical wallet (say 600) takes to reach the crown, both with and without investing.
 - **Free gift** (Crossy Road style, optional): +100 wallet when the first run of each day ends. It brings players back without timers in the run.
 
 ## 7. The balance harness (how every change is checked)

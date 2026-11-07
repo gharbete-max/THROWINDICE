@@ -172,3 +172,20 @@ Render recipes are in `CLAUDE.md` (repo root).
 - **Cap:** terrain P&L and ticks both clamp at ±60. At the cap the HUD shows "take profit!" / "cut losses!", glows (`.gPnl.cap`, no pulse under reduced motion) and `msg()` says it once until the open % drops 5 below the cap. Banking resets it.
 - **Tested headlessly:** tick values 1/3/10, red -2/-5, SHORT flips to +5, ALL IN triples (+9 for a tick-2, -6 for a red tick-r1), CASH passes through, DIVIDEND doubles, cap at +60/-60 with hint, no red ticks below level 2 and none near gaps, reduced motion and no 4xx.
 - **Not done here (later tasks):** STOP-LOSS blocking a red tick (M2), bear phases adding more red ticks (M4), balance of values against `PNLK` (M7).
+
+## 11. Big Ball ETF (built)
+
+Long-term investing for wallet points, in the menu's **Invest** tab (start and game-over card).
+
+- **What it is:** buy or sell in 100s or all. Value = units × price. Selling returns points to the wallet. No fees.
+- **The price is a replay of a big-cap index, 2000–2025:**
+  - It uses the yearly total returns (`BBE_Y`). Each year is split into 12 months of seeded noise, adjusted so the year sums to the real return.
+  - Famous shock months are kept (`BBE_SHOCK`: Sep 2001, Sep 2002, Oct/Nov 2008, Mar 2009, Feb–Apr 2020, Jun 2022).
+  - **Randomizer:** every player gets a random seed and a random start year (2000–2015) on first visit. After Dec 2025 it loops to 2000 and keeps compounding.
+- **Time:** 1 real day = 3 market months (`BBE_MPD`), advanced from the last visit (`cp-bbe.t`), so it moves while you're away.
+- **News:** on opening the game, the Play tab shows "▲ Big Ball ETF +x% while you were away →" (tap → Invest), and the Invest tab explains the move (from → to market date, %, points).
+- **Chart:** the last 3 market years, green or red, with the market date.
+- **Self-check** (`_cp.bbe`): `price(312)/price(0)` ≈ 7.5 for any seed, i.e. 2000–2025 total growth. Real data is about 7×; the year values are rounded.
+- **Storage:** `cp-bbe = {u units, b invested basis, c market month cursor, t last real ms, s seed}`; the wallet is still `cp-wallet`.
+- **Code:** the `BBE_*`, `bbeSeries`, `bbePrice`, `bbeAdvance`, `bbeAway` and `paintBBE` functions, plus the buy/sell buttons, sit just before the menu tabs code.
+- **Spirit:** labelled "a game, not advice"; no real ticker names (it's "Big Ball ETF"; the years are shown as history).
