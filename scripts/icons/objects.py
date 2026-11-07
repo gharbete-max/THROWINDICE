@@ -57,6 +57,7 @@ def _hit(objs, x, z):
     return best
 
 NOFACE = False
+SHADES = os.environ.get('RUNNER_PROP') == 'shades'   # all-in: big black sunglasses instead of eyes
 DOLLAR = 0.0   # > 0: eyes are gold $ signs at this scale (2x power-up form)
 LOVE = os.environ.get('RUNNER_FACE', '').startswith('love')   # smitten face: big glossy popped-out eyes with white shines, a hard smile, pink cheeks
 NOEYES = os.environ.get('RUNNER_FACE') == 'love-noeyes'     # same, but the eyes are left out: the game draws huge heart eyes there (positions exported per frame)
@@ -87,6 +88,14 @@ def face(targets, cx, cz, s=1.0):
                 cp_, cn = ch; bl = uv_sphere('blush', 0.12 * s, tuple(cp_ + cn * 0.005), (1.5, 0.25, 0.8)); bl.data.materials.append(principled('blush', (1.0, 0.35, 0.45), 0.5, emit=(1.0, 0.3, 0.4), emit_str=0.3))
                 bl.rotation_euler = (-cn).to_track_quat('Y', 'Z').to_euler(); out.append(bl)
             continue
+        if SHADES:  # a big glossy black lens over each eye, bridged across the nose
+            gl = principled('shades', (0.01, 0.01, 0.015), 0.04, coat=1.0, coat_rough=0.0, metallic=0.3)
+            ln = uv_sphere(f'lens{k}', 0.215 * s, tuple(p + n * 0.035 * s + Vector((0, 0, 0.02 * s))), (1.4, 0.28, 1.0)); ln.data.materials.append(gl)
+            ln.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(ln)
+            if k == 1:
+                hb = _hit(targets, cx, cz - 0.04 * s)
+                if hb: out.append(tube('bridge', [tuple(lp + ln_ * 0.05 * s) for lp, ln_ in ((pl, nl), hb, (p, n))], [0.028 * s] * 3, gl))
+            pl, nl = p, n; continue
         e = uv_sphere(f'eye{k}', 0.062 * s, tuple(p - n * 0.012 * s), (1, 0.55, 1.15)); e.data.materials.append(f)
         e.rotation_euler = (-n).to_track_quat('Y', 'Z').to_euler(); out.append(e)
     pts = []
@@ -278,6 +287,7 @@ def _air(name, i):
     if name == 'rise': return (0.06, -6, (42 + 10 * w, -12 - 10 * w), 0.48, 0.2, (150 + 14 * w, 160 - 14 * w))
     return (0.0, -10, (-42 + 24 * w, 40 - 24 * w), 0.56, 0.1, (95 + 40 * w, 95 - 40 * w))  # fall: arms windmill, legs kick
 AIR = {'tko': 3, 'rise': 4, 'fall': 4}
+RUNNER_PROP = os.environ.get('RUNNER_PROP', '')   # 'case' = going to cash (carries a briefcase), 'shades' = all in (strut + sunglasses)
 RUNNER_SKIN = os.environ.get('RUNNER_SKIN', 'gold')   # 'glass' = the powered-up look
 
 def rainbow_glass(name):
@@ -328,6 +338,18 @@ def head_magnet(bob):
     poles = [cyl(pole, tuple(top + Vector((x, 0, -0.24))), 0.125, 0.16, bv=0.02) for x in (-0.3, 0.3)]
     return [mag] + poles
 
+def briefcase(hand, swing=0.0):
+    """a small leather briefcase hanging from `hand` (handle up), swinging by `swing` rad about the hand"""
+    leather = plastic('leather', (0.07, 0.03, 0.012), 0.35); g_ = gold()
+    piv = link(bpy.data.objects.new('casepiv', None)); piv.location = tuple(hand)
+    ps = [box('case', leather, (hand.x, hand.y - 0.02, hand.z - 0.3), (0.56, 0.17, 0.4), bv=0.05),
+          prim('torus', g_, (hand.x, hand.y - 0.02, hand.z - 0.08), (math.radians(90), 0, 0), major_radius=0.08, minor_radius=0.022, major_segments=24, minor_segments=8)]
+    for x in (-0.16, 0.16): ps.append(box('latch', g_, (hand.x + x, hand.y - 0.11, hand.z - 0.16), (0.07, 0.03, 0.05), bv=0.01))
+    bpy.context.view_layer.update()
+    for o in ps:
+        mw = o.matrix_world.copy(); o.parent = piv; o.matrix_world = mw
+    piv.rotation_euler = (0, swing, 0); return [piv]
+
 def o_runner(gait, frame):
     """game runner: a smiley ball with legs and little arms, turned to face right (the run direction)"""
     P = smiley.PAL
@@ -337,6 +359,8 @@ def o_runner(gait, frame):
         bob = bobA * math.cos(4 * math.pi * ph); legs = (st * c, -st * c); arms = (-armA * c, armA * c)
     else:
         bob, lean, legs, L, bend, arms = _air(gait, frame)
+    if RUNNER_PROP == 'shades':  # confident strut: leaning back, chest out, big loose arm swing
+        lean -= 9; arms = tuple(a * 1.35 for a in arms)
     b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
     parts = [b]
     for k, side in enumerate((-1, 1)):
@@ -347,9 +371,11 @@ def o_runner(gait, frame):
         f = uv_sphere('foot', 0.13, tuple(foot + Vector((0.07, 0, -0.02))), (1.5, 0.9, 0.6), 32, 16); f.data.materials.append(limb); parts.append(f)
         # arm: on the visible left/right side of the ball (clear of the face), raised outward by its angle
         bA = math.radians(abs(arms[k]) * 0.8 + 18); sh = Vector((side * 0.74, 0.05, 0.12 + bob))
+        if RUNNER_PROP == 'case' and side == -1: bA = math.radians(14 + 0.25 * arms[k])  # the trailing arm hangs down, carrying the case
         hand = sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))
         parts.append(tube('arm', [tuple(sh), tuple(sh.lerp(hand, 0.5)), tuple(hand)], [0.07, 0.065, 0.06], limb))
         hd = uv_sphere('hand', 0.1, tuple(hand), seg=24, rings=12); hd.data.materials.append(limb); parts.append(hd)
+        if RUNNER_PROP == 'case' and side == -1: parts += briefcase(hand, math.radians(0.6 * arms[k]))
     global DOLLAR
     if RUNNER_SKIN == 'green' and not LOVE:  # 2x: huge $ eyes that swell and shrink through the cycle (bouncy)
         n_ = 8 if gait in GAITS else AIR[gait]; DOLLAR = 1.2 + 0.4 * abs(math.sin(2 * math.pi * frame / n_))
@@ -589,32 +615,147 @@ def o_pu_x2():
     t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
     return [t], []
 
-def o_case():
-    """checkpoint: an open briefcase full of green banknote bundles, with a face on the front"""
-    leather = plastic('leather', (0.06, 0.025, 0.01), 0.35); lining = plastic('lining', smiley.PAL['graphite'])
-    note = plastic('notes', (0.03, 0.32, 0.08)); band = plastic('band', smiley.PAL['sheen'])
-    base = box('base', leather, (0, 0, -0.3), (1.9, 1.05, 0.6), bv=0.07)
-    inner = box('inner', lining, (0, 0, -0.04), (1.72, 0.88, 0.1), bv=0.02)
-    lid = box('lid', leather, (0, 0.6, 0.42), (1.9, 0.14, 1.05), (math.radians(-12), 0, 0), bv=0.07)
-    lidin = box('lidin', lining, (0, 0.51, 0.42), (1.72, 0.04, 0.9), (math.radians(-12), 0, 0), bv=0.01)
-    handle = prim('torus', gold(), (0, 0.72, 0.98), (0, math.radians(90), 0), major_radius=0.22, minor_radius=0.05, major_segments=32, minor_segments=10)
-    handle.scale = (1, 1, 1.6)
-    parts = [base, inner, lid, lidin, handle]
-    for x in (-0.7, 0.7):  # gold latches and corners
-        parts.append(box('latch', gold(), (x, -0.54, -0.05), (0.2, 0.06, 0.14), bv=0.02))
-    for i, x in enumerate((-0.55, 0, 0.55)):     # banknote bundles, two layers, with paper bands
-        for j, y in enumerate((-0.2, 0.2)):
-            for k in range(2):
-                parts.append(box('bundle', note, (x, y, 0.06 + 0.13 * k), (0.48, 0.34, 0.12), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0.015))
-                parts.append(box('band', band, (x, y, 0.06 + 0.13 * k), (0.1, 0.36, 0.13), (0, 0, math.radians(5 * ((i + j + k) % 3 - 1))), bv=0))
-    fc = face([base], 0, -0.28, 0.75)
-    hub = link(bpy.data.objects.new('tilt', None)); bpy.context.view_layer.update()
-    for o in parts + fc:
+def o_bull(i, n=16):
+    """checkpoint: a faceted, see-through diamond bull, turning slowly (frame i of n, one full turn)"""
+    bpy.context.scene.render.film_transparent = True
+    try: bpy.context.scene.cycles.film_transparent_glass = True
+    except Exception: pass
+    dia = principled('diamond', (0.82, 0.93, 1.0), 0.0, coat=1.0, coat_rough=0.0, emit=(0.55, 0.85, 1.0), emit_str=0.25)
+    bsdf = dia.node_tree.nodes['Principled BSDF']; bsdf.inputs['Transmission Weight'].default_value = 0.85; bsdf.inputs['IOR'].default_value = 2.4
+    def gem(name, loc, scale, rot=(0, 0, 0)):  # low-poly flat-shaded ico = diamond facets
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=1, location=loc, rotation=rot); o = bpy.context.active_object
+        o.name = name; o.scale = scale; o.data.materials.append(dia); return o
+    def cone(loc, rot, r1, r2, d, v=6):
+        bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r1, radius2=r2, depth=d, location=loc, rotation=rot); o = bpy.context.active_object
+        o.data.materials.append(dia); return o
+    parts = [gem('body', (0, 0, 0), (1.05, 0.58, 0.55)), gem('hump', (0.35, 0, 0.22), (0.5, 0.48, 0.42)),
+             gem('head', (1.08, 0, 0.22), (0.38, 0.34, 0.36), (0, math.radians(20), 0)), gem('snout', (1.36, 0, 0.08), (0.2, 0.24, 0.19))]
+    for x, y in ((0.62, 0.28), (0.62, -0.28), (-0.62, 0.28), (-0.62, -0.28)): parts.append(cone((x, y, -0.62), (0, 0, 0), 0.12, 0.17, 0.75))
+    for sd in (-1, 1): parts.append(cone((1.0, sd * 0.42, 0.52), (sd * math.radians(-55), math.radians(-15), 0), 0.09, 0.03, 0.55))  # horns
+    parts.append(cone((-1.12, 0, 0.0), (0, math.radians(-125), 0), 0.05, 0.01, 0.6, 5))  # tail
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts:
         mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
-    hub.rotation_euler = (math.radians(28), 0, 0)  # tip toward the camera so the money inside shows
+    hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, 2 * math.pi * i / n)
     return [hub], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), 'cp-case': (o_case, 1),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+def o_arrow(red=False):
+    """a fat glossy 3D arrow pointing up (green = long) or down (red = short)"""
+    c = (0.9, 0.06, 0.1) if red else (0.06, 0.78, 0.25)
+    m = principled('arrow', c, 0.18, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.35)
+    sh = box('shaft', m, (0, 0, -0.35), (0.34, 0.34, 0.9), bv=0.08)
+    bpy.ops.mesh.primitive_cone_add(vertices=4, radius1=0.62, radius2=0.0, depth=0.75, location=(0, 0, 0.42), rotation=(0, 0, math.radians(45)))
+    hd = bpy.context.active_object; hd.data.materials.append(m)
+    bv = hd.modifiers.new('bv', 'BEVEL'); bv.width = 0.05; bv.segments = 3
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in (sh, hd):
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (math.radians(180) if red else 0, 0, math.radians(30))
+    return [hub], []
+
+def o_bill():
+    """a single green banknote with a dark seal, slightly tilted, for the cash trail"""
+    note = plastic('note', (0.05, 0.42, 0.12), 0.45); ink_ = plastic('ink', (0.02, 0.2, 0.05), 0.5)
+    b = box('bill', note, (0, 0, 0), (1.6, 0.02, 0.75), (0, math.radians(8), math.radians(-25)), bv=0.01)
+    c = uv_sphere('seal', 0.18, (0, -0.02, 0), (1, 0.12, 1)); c.data.materials.append(ink_); c.rotation_euler = (0, math.radians(8), math.radians(-25))
+    return [b, c], []
+
+def o_tick(tier=1, red=False):
+    """currency: a glossy candle. green = +1/+3/+10% (tier 1-3, bigger and brighter), red = -2/-5% (tier 1-2, a down-candle)"""
+    c = (0.9, 0.08, 0.12) if red else (0.05, 0.8, 0.3)
+    m = principled('tick', c, 0.12, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.25 + 0.2 * tier)
+    m.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.35
+    k = [0, 0.8, 1.0, 1.2][tier]
+    body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.12 * k)
+    wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.06 * k, 0.06 * k], m)
+    parts = [body, wick]
+    if tier == 3 and not red:  # the big one: a gold band and a sparkle
+        parts.append(box('band', gold(), (0, 0, 0.3 * k), (0.66 * k, 0.66 * k, 0.12 * k), bv=0.03))
+        star = prim('ico_sphere', principled('spark', (1, 1, 0.9), 0.1, emit=(1, 0.95, 0.7), emit_str=3.0), (0.32 * k, -0.3, 1.0 * k), subdivisions=1, radius=0.12)
+        star.scale = (0.4, 0.4, 1.6); parts.append(star)
+    fc = face([body], 0, 0.05, 0.62 * k)
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts + fc:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (0, math.radians(10 if red else -10), math.radians(25)); return [hub], []
+
+def _rug_mat():
+    """a woven crypto rug: purple base with cyan/pink stripes (wave texture, so it reads as woven)"""
+    m = principled('rug', (0.3, 0.08, 0.6), 0.75); nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    w = nt.nodes.new('ShaderNodeTexWave'); w.inputs['Scale'].default_value = 3.0; w.inputs['Distortion'].default_value = 1.5
+    r = nt.nodes.new('ShaderNodeValToRGB'); r.color_ramp.elements[0].color = (0.32, 0.06, 0.62, 1); r.color_ramp.elements[1].color = (0.1, 0.85, 1.0, 1)
+    e = r.color_ramp.elements.new(0.7); e.color = (1.0, 0.25, 0.65, 1)
+    nt.links.new(w.outputs['Fac'], r.inputs['Fac']); nt.links.new(r.outputs['Color'], b.inputs['Base Color']); return m
+
+def o_rug(rolled=False):
+    """rugpull: a flat crypto rug strip tipped toward the camera (tile), or the same rug half rolled up as it gets yanked"""
+    m = _rug_mat(); fr = plastic('fringe', (0.95, 0.9, 0.75), 0.6); parts = []
+    if rolled:
+        parts.append(prim('cylinder', m, (0.55, 0, 0.22), (math.radians(90), 0, 0), vertices=48, radius=0.32, depth=1.3))
+        parts.append(box('flat', m, (-0.45, 0, -0.08), (1.6, 1.3, 0.05), (0, math.radians(-8), 0), bv=0.01))
+        for y in [i * 0.13 - 0.585 for i in range(10)]: parts.append(box('tassel', fr, (-1.3, y, -0.12), (0.18, 0.03, 0.02), bv=0))
+    else:
+        parts.append(box('flat', m, (0, 0, 0), (2.8, 1.3, 0.06), bv=0.01))
+        for x in (-1.45, 1.45):
+            for y in [i * 0.13 - 0.585 for i in range(10)]: parts.append(box('tassel', fr, (x, y, 0), (0.18, 0.03, 0.02), bv=0))
+    hub = link(bpy.data.objects.new('tilt', None)); bpy.context.view_layer.update()
+    for o in parts:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (math.radians(30), 0, 0); return [hub], []
+
+def o_rocket():
+    """a pump token: a chunky cartoon rocket with a coin porthole and a flame"""
+    body = principled('rkt', (0.92, 0.92, 0.96), 0.2, coat=1.0); red = plastic('fin', (0.9, 0.12, 0.25), 0.25)
+    fl = principled('flame', (1.0, 0.55, 0.1), 0.5, emit=(1.0, 0.5, 0.08), emit_str=6.0)
+    hull = uv_sphere('hull', 0.42, (0, 0, 0), (1, 1, 2.1)); hull.data.materials.append(body)
+    nose = prim('cone', red, (0, 0, 0.95), vertices=32, radius1=0.3, radius2=0.0, depth=0.4)
+    port = prim('cylinder', gold(), (0, -0.38, 0.2), (math.radians(90), 0, 0), vertices=32, radius=0.17, depth=0.08)
+    parts = [hull, nose, port]
+    for a in (0, 120, 240):
+        f = box('fin', red, (0.38 * math.cos(math.radians(a)), 0.38 * math.sin(math.radians(a)), -0.62), (0.32, 0.06, 0.42), (0, 0, math.radians(a)), bv=0.03); parts.append(f)
+    fla = uv_sphere('flame', 0.2, (0, 0, -1.05), (1, 1, 2.0)); fla.data.materials.append(fl); parts.append(fla)
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.rotation_euler = (0, math.radians(35), math.radians(20)); return [hub], []
+
+def o_devwallet():
+    """rugpull tell: a shady brown wallet with a sly face and sunglasses, a gold 'DEV' tag"""
+    global SHADES
+    leather = plastic('wallet', (0.16, 0.08, 0.04), 0.4)
+    w = box('wallet', leather, (0, 0, 0), (1.5, 0.3, 1.05), bv=0.1)
+    flap = box('flap', leather, (0, -0.1, 0.32), (1.52, 0.18, 0.45), (math.radians(-6), 0, 0), bv=0.08)
+    bpy.ops.object.text_add(location=(0.42, -0.21, 0.32), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
+    t.data.body = 'DEV'; t.data.size = 0.22; t.data.extrude = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
+    SHADES = True; fc = face([w], -0.1, -0.05, 0.85); SHADES = os.environ.get('RUNNER_PROP') == 'shades'
+    return [w, flap, t], fc
+
+def o_sign100x():
+    """pump tell: a neon '100x' sign"""
+    neon = principled('neon', (1.0, 0.2, 0.7), 0.3, emit=(1.0, 0.15, 0.65), emit_str=1.4)
+    bpy.ops.object.text_add(location=(0, 0, 0), rotation=(math.radians(90), 0, 0)); t = bpy.context.active_object
+    t.data.body = '100x'; t.data.size = 0.9; t.data.extrude = 0.08; t.data.bevel_depth = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'
+    t.data.materials.append(neon); t.rotation_euler = (math.radians(90), 0, math.radians(-12)); return [t], []
+
+def o_bear():
+    """bear market phase icon: a faceted ruby bear (the bull's counterpart)"""
+    bpy.context.scene.render.film_transparent = True
+    try: bpy.context.scene.cycles.film_transparent_glass = True
+    except Exception: pass
+    ruby = principled('ruby', (1.0, 0.3, 0.35), 0.0, coat=1.0, emit=(0.9, 0.1, 0.2), emit_str=0.3)
+    b_ = ruby.node_tree.nodes['Principled BSDF']; b_.inputs['Transmission Weight'].default_value = 0.85; b_.inputs['IOR'].default_value = 1.77
+    def gem(loc, sc):
+        bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=1, location=loc); o = bpy.context.active_object; o.scale = sc; o.data.materials.append(ruby); return o
+    parts = [gem((0, 0, 0), (1.0, 0.62, 0.62)), gem((0.95, 0, 0.25), (0.45, 0.42, 0.42)), gem((1.3, 0, 0.15), (0.18, 0.2, 0.16)),
+             gem((0.85, -0.25, 0.62), (0.13, 0.08, 0.13)), gem((0.85, 0.25, 0.62), (0.13, 0.08, 0.13))]
+    for x, y in ((0.55, 0.3), (0.55, -0.3), (-0.55, 0.3), (-0.55, -0.3)):
+        bpy.ops.mesh.primitive_cone_add(vertices=6, radius1=0.2, radius2=0.22, depth=0.6, location=(x, y, -0.62)); o = bpy.context.active_object; o.data.materials.append(ruby); parts.append(o)
+    hub = link(bpy.data.objects.new('turn', None)); bpy.context.view_layer.update()
+    for o in parts:
+        mw = o.matrix_world.copy(); o.parent = hub; o.matrix_world = mw
+    hub.scale = (0.8, 0.8, 0.8); hub.rotation_euler = (math.radians(8), 0, math.radians(-30)); return [hub], []
+
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(16)}, 'arrow-up': (lambda: o_arrow(False), 0), 'arrow-down': (lambda: o_arrow(True), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}

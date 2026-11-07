@@ -31,16 +31,18 @@ Integration notes for Claude Code: how every animation in the Live Ball Bounce g
 
 ## Flick tricks (real 3D frames)
 
+Swipes snap to 4 directions, and each also sets the market position (long/short/cash/all in). See `MARKET.md` §1.
+
 Press = jump as before. While the press is held, a drag of 40 px or more within 0.6 s is a flick, and a flick starts a trick (`trick(k)`). A flick on the ground jumps first. Only one trick runs at a time (`R.trk = {k, t, d, ok, land}`).
 
 Every trick is a **rendered Blender sequence**, not a canvas transform or a fade. The body really rotates in 3D (the face turns away and comes back) and the limbs tuck or splay. The goo is a deformed mesh with rim ripples. **Frames 0 and 11 of every row are exactly the runner's `fall` frame 0**, so the game cuts from the run sheet into a trick and back with no fade and no pop.
 
 | Flick (screen) | Key | `k` | Row | What the frames show | Playback |
 |---|---|---|---|---|---|
-| down-left (and left) | A / ← | `cork` | 0 | off-axis 360 (axis tilted 45° toward the run direction), knees tucked, arms hugging | 12 frames over 0.62 s |
-| down-right (and right) | D / → | `spin` | 1 | flat 360 about the vertical, arms flung wide, legs together and pointed | 12 frames over 0.55 s |
-| up (any up-diagonal) | E | `split` | 2 | turns to face the camera, opens a side split with arms in a V, pulses, closes | 12 frames over 0.6 s |
-| straight down (within ~24°) | S / ↓ | `goo` | 3 | 0–3 melt into a pancake (tipped toward the camera so the face shows); 4–7 rippling pancake loop; 8–11 landing splat and spring back with overshoot | 0–3 in 0.22 s, 4–7 loop at 14 fps until landing, 8–11 over 0.3 s after landing |
+| ← left | A / ← | `cork` | 0 | off-axis 360 (axis tilted 45° toward the run direction), knees tucked, arms hugging | 12 frames over 0.62 s |
+| → right | D / → | `spin` | 1 | flat 360 about the vertical, arms flung wide, legs together and pointed | 12 frames over 0.55 s |
+| ↑ up | E | `split` | 2 | turns to face the camera, opens a side split with arms in a V, pulses, closes | 12 frames over 0.6 s |
+| ↓ down | S / ↓ | `goo` | 3 | 0–3 melt into a pancake (tipped toward the camera so the face shows); 4–7 rippling pancake loop; 8–11 landing splat and spring back with overshoot | 0–3 in 0.22 s, 4–7 loop at 14 fps until landing, 8–11 over 0.3 s after landing |
 
 - **Assets:** `assets/game/runner-trick{,-glass,-magnet,-x2,-rainbow}.webp`, one per power-up form. Each is 12 columns × 4 rows (cork, spin, split, goo), with a shared crop box. Drawn at the runner's pixel scale `217/182`, offset `TRICK_OFF` (crop origin minus `[118,209]`).
 - **Game code:**
@@ -51,7 +53,7 @@ Every trick is a **rendered Blender sequence**, not a canvas transform or a fade
 - **Scoring:** a trick finished in the air scores +3 and pops `NAME!`. Landing early lets it play out on the ground and scores nothing.
 - **Double-jump flip:** starting a trick cancels it (`R.flip = 0`).
 - **Reduced motion:** the frames still play (they are the state), but the goo loop holds one frame and there are no particles.
-- **Self-check** (browser console, game open): `[[0,-80],[0,80],[-70,70],[70,70]].map(v=>_cp.flickDir(...v))` → `split,goo,cork,spin`. `_cp.trick('cork')` fires one directly.
+- **Self-check** (browser console, game open): `[[0,-80],[0,80],[-80,10],[80,10]].map(v=>_cp.flickDir(...v))` → `split,goo,cork,spin`. `_cp.trick('cork')` fires one directly.
 
 ### Re-rendering or adding a trick (recipe)
 

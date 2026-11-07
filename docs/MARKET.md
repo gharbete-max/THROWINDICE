@@ -1,128 +1,145 @@
-# Runner game: market redesign (plan)
+# Runner game: the market pivot (decisions + build plan)
 
-Turn the runner from "collect coins" into "grow a portfolio", while keeping the spirit: a happy bouncy ball, short runs, forgiving, readable on a phone. Each step below ships on its own. Animation rules live in `ANIMATION.md`.
+**Status: decided.** This file is the single source of truth for the pivot from "collect coins" to "trade the chart". Sections marked ✅ are built; the rest are tasks for Claude Code, in order (section 10). All 3D models the plan needs are already rendered and committed (section 9), so the remaining work is game code only.
 
-## 0. Guardrails (apply to every step)
+## 0. Spirit (non-negotiable)
 
-- **It's still a game about a bouncing ball.** Losses are rare, telegraphed and partial. The market never ends a run by itself (only the existing crashes do).
-- **No real tickers, logos or prices.** Nothing that reads as advice. Rugpulls are framed as a scam lesson (Token World).
-- **Phone readability:**
-  - Token value is shown by colour and size. A number appears only in the pickup pop.
-  - One headline number on the HUD (the % return); the portfolio value is small.
-- **Reduced motion:** every new effect falls back to a static state change.
+- It's a happy bouncing ball first. Runs are short, controls are one finger, and the market **never ends a run** (only the existing crashes do). Losses are telegraphed and partial.
+- **Teach by playing:** long/short/cash, taking profit, leverage risk, chart patterns and scam tells are learned by doing, never by text walls.
+- **No real tickers, logos, prices or advice.** Rugpulls are framed as a scam lesson.
+- **Phone first:** one headline number, values shown by colour and size, numbers only in pops.
+- **Reduced motion** (`RMQ.matches`): every effect has a static fallback.
 
-## 1. Score = portfolio, gains are open until banked
+## 1. Core loop ✅ (built)
 
-- The run starts at **100** (index points; shown as "$1,000" in the results card).
-- **Open gains** (`R.open`, %) are what pickups add to. They are shaky:
-  - red candles, rugpulls and sloppy landings take from them
-  - they show as a pulsing green/red bar under the HUD number
-- **Banked** (`R.bank`): the briefcase checkpoint becomes **TAKE PROFIT**.
-  - Open gains compound into the portfolio: `value *= 1 + open/100`, then `open = 0`.
-  - A dividend shower of ticks plays, and "+12.4% banked" pops.
-- **HUD headline:** total return `value·(1+open/100)/100 − 1` as **+38.2%**.
-- **Pushback, built in:**
-  - Compounding happens **only when banking**. Between checkpoints gains add linearly, so early ticks aren't worthless and the numbers stay sane.
-  - `open` is capped at +60% per stretch: the "bubble". Reaching the cap makes the bar glow and hints "take profit!".
-- **High scores** become the best return. Old coin high scores are migrated once by showing them as "classic best".
+**The ground is the price chart.** Your **position** (set by swiping) earns or loses as the price under the runner moves. The **diamond bull checkpoint** banks it.
 
-## 2. Currency: ticks
+| Swipe | Key | Trick | Position | Look |
+|---|---|---|---|---|
+| ↑ | E | split | **LONG 1x**; ↑ again → **LONG 2x** | 1 / 2 green 3D arrows out of the head |
+| ↓ | S / ↓ | goo | **SHORT 1x**; ↓ again → **SHORT 2x** | 1 / 2 red 3D arrows pointing down from the crotch |
+| ← | A / ← | corkspin | **CASH**: open P&L is realized into the cash bar (safe, frozen, earns nothing) | runs carrying a briefcase, bills flutter behind (`runner-cash*`) |
+| → | D / → | spin | **ALL IN**: cash + open back in at **LONG 3x** | confident strut, big sunglasses, 3 arrows (`runner-allin*`) |
 
-| Was | Now | Value | Look |
-|---|---|---|---|
-| coin tier 1 / 2 / 3 | **tick** small / medium / big | +1% / +3% / +10% open | glossy green up-candle with a wick; bigger ones get a glow |
-| — | **red tick** | −2% / −5% open | red down-candle; dodge it (or short it, see 4) |
-| briefcase cash | **dividend** | +2% per banked checkpoint, ×streak | banknotes burst from the case on TAKE PROFIT |
+- **P&L:** `open += (prevGround − ground) · PNLK · dir · lev`, with `PNLK = 0.004` % per px. Gaps are real price gaps. A run starts LONG 1x.
+- **Bull checkpoint** (`cp-bull`, 16 frames, one slow turn per 4 s, diamond glow): launches the runner **up and forward** (`R.surge` 1.6 s, speed ×1.55) and **banks** `open + cash` into the score (1% = 1 pt, score floor 0), popping "+x% BANKED".
+- **HUD** `#gPnl`: open % (green/red), plus "· cash ±x%" when it isn't zero. Position changes flash through `msg()`.
+- **Code:** `setPos`, `bank`, `paintPnl`, `PNLK` next to `trick()`; the P&L and bill-trail tick at the top of the step's trick block; the sheet override (`CASHI`/`ALLINI`, `PROP_X0`) and arrows in `player()`; bills as fx with `f.b`.
+- **Tricks and chains** (`ANIMATION.md`) are unchanged: they still score style points through `chainName()` and `3·n²`.
 
-- **Rendering:** add `o_tick(tier, red)` to `scripts/icons/objects.py`. Re-use the coin's spin and proximity code; only the sprite and the value change.
-- **Sounds:** the coin "ding" pitch rises with tier. The red tick gets a soft "bonk" plus a down-blip.
+## 2. Score model (decision)
 
-## 3. Power-ups → finance concepts (same forms, new meaning)
+- **The score stays in points.** Goals, high scores and the daily-goal system keep working unchanged.
+- Market P&L reaches the score **only by banking at the bull** (1% = 1 pt). Coins/ticks and tricks also give points as today. This keeps one number and no migration.
+- **Open P&L cap:** ±60% per checkpoint stretch ("bubble"/"margin call"). At the cap the HUD glows and hints "take profit!" (or "cut losses!"). *Task M1.*
 
-| Power-up | Now called | Effect |
+## 3. Currency: ticks (task M1)
+
+Coins become **tick candles** (rendered, with faces). They add to **open %**, so they are only *yours* once banked. That is the lesson.
+
+| Old coin tier (`CT`) | New sprite | Value |
 |---|---|---|
-| shield (purple-red glass) | **STOP-LOSS** | blocks one loss: a red tick, a rugpull drain or a sloppy-landing fee |
-| magnet (blue glass) | **INDEX FUND** | pulls every tick nearby: "own the whole market" |
-| 2x (green, $ eyes) | **LEVERAGE 2x** | doubles gains **and** losses on open. More honest than plain 2x. |
-| combo (rainbow) | **BULL RUN** | everything stacks; ticks spawn denser |
+| 0 (1 pt), 1 (2 pts) | `tick-1` | +1% open |
+| 2 (5 pts) | `tick-2` | +3% open |
+| 3 (15 pts) | `tick-3` (gold band, sparkle) | +10% open |
+| new hazard | `tick-r1` / `tick-r2` (red down-candles) | −2% / −5% open |
 
-Only the labels, pop texts and the loss doubling change; the forms and sheets stay.
+- **Leverage multiplies ticks too** (`lev`), so ALL IN also triples pickups (and red ticks).
+- **SHORT flips red ticks:** they pay +2% / +5% and burst green. Red ticks become something to hunt while short.
+- **CASH: ticks pass through you** (dim them to 40% alpha while in cash). Cash is safe, but it doesn't grow.
+- **Spawning:** red ticks appear from level 2, about 1 per 6 green, more in bear phases. Never put a red tick on the only safe line through a gap.
+- **Draw:** reuse the coin spin, proximity and pickup code; swap `COINI` for tick sprites (`tick-1..3`, `tick-r1..2`), keeping the coin's scale-X spin. Pickup pop shows "+3%".
+- The coin sheets `coin-1..4.webp` can be deleted once ticks ship.
 
-## 4. Tricks as trading moves
+## 4. Power-ups → finance (task M2)
 
-The swipe tricks stop being score garnish and become how you **interact with the market**. Each keeps its existing animation.
+Same pickups and forms (glass skins); only names, pops and behaviour change:
 
-| Flick | Trick | Market move | What it does |
-|---|---|---|---|
-| ↙ | Corkspin | **SHORT** | For the duration, **red ticks pay instead of hurt**: touching one gives its value as a gain, and it bursts green. Turns hazards into skill pickups. |
-| ↘ | Spin | **SCALP** | A small spin vortex pulls ticks within about 140 px. Ticks caught mid-spin are worth +50%. A quick, greedy grab. |
-| ↑ | Split | **STOCK SPLIT** | Legs out = a wide pickup hitbox (+80% width). Every tick caught in the split is split 2:1 into two pops (same total, double count toward chains). Also **breaks resistance** (see 5). |
-| ↓ | Pancake goo | **BUY THE DIP** | Slamming onto a dip, support line or cup bottom = "BOUGHT THE BOTTOM", +5% open. Goo squashes red ticks it lands on (no loss). **Goo is sticky:** goo when a rug pulls means you stick, and keep half the open gains (see 6). |
-
-### Chains = alpha
-
-- A clean landing of an n-trick chain adds **+0.5·n² % open**, on top of the trick points: 1 → +0.5%, 2 → +2%, 3 → +4.5%. It shows in the chain pop: "TWISTER +2% alpha".
-- **Sloppy landing** (mid-rotation) = **slippage**: −1% open. The stop-loss blocks it.
-- **Market names for chain combos** (`chainName()` swaps these in when the market mode is on):
-
-| Chain | Name |
-|---|---|
-| cork → spin | **HEDGED** (short + long) |
-| split → goo | **SPLIT & DIP** |
-| spin → spin | **HIGH FREQUENCY** |
-| cork → cork | **DOUBLE SHORT** |
-| goo slam | **CAPITULATION** |
-| 3+ tricks | **ALPHA ×n** |
-
-## 5. Technical patterns as terrain
-
-The terrain generator already draws a candle chart with gaps and a smooth moving-average line. Add **pattern segments** to the generator's segment picker: each is a short height recipe, plus an optional object.
-
-| Pattern | Shape in the run | Interaction |
+| Pickup | New name | Behaviour |
 |---|---|---|
-| **Cup & handle** | U bowl, small dip, rise | A half-pipe. A trick launched off the handle lip = **BREAKOUT**, ×2 on that chain's alpha. |
-| **Bull flag** | steep pole, then a gently falling channel | A speed ramp: ticks line the channel. |
-| **Double bottom (W)** | two dips | Goo-slam both bottoms = **DOUBLE BOTTOM** bonus. |
-| **Head & shoulders** | three humps, then a drop at the "neckline" | Telegraphs a fall: red ticks after it; SHORT through it to profit. |
-| **Support** | a thin green horizontal line | A one-way platform: catches you from above (and saves you over a gap). |
-| **Resistance** | a thin red horizontal line above the path | A ceiling you bonk (bounce down) unless you hit it in **split** or with leverage active: then you smash through for **BREAKOUT +3%**. |
-| **Moving average** | the existing smooth line | A **grind rail**: land on it in split pose (legs straddling) and slide with sparks; ticks along it. |
-| **Gaps** | already there | Pits. Support lines sometimes bridge them. |
+| shield | **STOP-LOSS** | Blocks the next **loss event**: a crash (as now), a red tick, or a rugpull drain. Also floors open P&L at 0 while active. |
+| magnet | **INDEX FUND** | Pulls every tick in range (green only; red ticks are not pulled unless SHORT). |
+| 2x | **DIVIDEND 2x** | Tick values ×2 (stacks with leverage). |
+| combo | **BULL RUN** | All of the above, and ticks spawn 1.5× denser. |
 
-- Clearing a pattern segment cleanly pops its name ("CUP & HANDLE ✓") once per run. Players learn the names by playing.
-- Patterns are chosen by phase (6): bull phases favour cups, flags and support; bear phases favour head & shoulders, resistance and red ticks.
+## 5. Chart patterns as terrain (task M3)
 
-## 6. Market moods and rugpulls
+Add pattern segments to the terrain generator's segment picker (`ground()` heights). Each one is a height recipe, optionally with a line object drawn on canvas. Pop the pattern's name once per run when it's cleared without a crash ("CUP & HANDLE ✓").
 
-- **Bull / bear phases:** every 45–70 s.
-  - The background tint, music filter and speed shift.
-  - In a **bear** phase ticks are worth +1 tier ("buy the dip") but red ticks are denser.
-  - The phase name slides in small at the top: "BEAR MARKET".
-- **Circuit breaker** (Real World): a sudden red cascade triggers a 0.4 s hit-stop with a "TRADING HALTED" stamp, then play resumes.
-- **Earnings day** (Real World): a stretch of random gap-ups and gap-downs.
-- **Rugpull (Token World only):**
-  - **Telegraph:** a too-good pump stretch with rocket ticks, a "100x" sign and a little "dev wallet" icon that blinks, 2–3 s ahead.
-  - **The pull:** the floor segment is yanked away like a rug sliding out, and you drop to the next level.
-  - **Cost:** open gains drain with a red ticker roll. Never the run.
-  - **Saves:** stop-loss blocks it; goo sticks (keep half); jumping before the yank avoids it entirely ("DODGED THE RUG").
-  - **At most twice per run.**
+| Pattern | Shape | Interaction |
+|---|---|---|
+| **Support** | thin green horizontal line | One-way platform: lands you from above, can bridge a gap. |
+| **Resistance** | thin red line above the path | A ceiling you bounce off, unless you hit it during a **split** (↑) or while ALL IN: then **BREAKOUT** (+3% open, a burst). |
+| **Moving average** | the existing smooth line | Grind rail: landing on it during a trick slides you along it with sparks; ticks line it. |
+| **Cup & handle** | U bowl, small dip, rise | A half-pipe. Going ↑ LONG at the handle lip = BREAKOUT. |
+| **Bull flag** | steep pole, then a gently falling channel | A speed ramp with ticks along the channel. |
+| **Head & shoulders** | 3 humps, then a drop at the neckline | Telegraphs a fall: red ticks after it. Shorts profit naturally. |
+| **Double bottom** | W | Goo-slam (↓↓) both bottoms = DOUBLE BOTTOM +2%. |
 
-## 7. Results card
+Bull phases favour cups, flags and support; bear phases favour head & shoulders, resistance and red ticks.
+
+## 6. Market phases (task M4)
+
+- **Phase shifts:** bull ⇄ bear every 45–70 s.
+  - A small icon slides in top-left: the diamond bull (`cp-bull` frame 2) or the ruby bear (`bear.webp`), with "BULL MARKET" / "BEAR MARKET".
+  - The bear tints the background slightly red/cool and makes terrain trend downward more often (shorts thrive).
+- **Real World events** (rare): **circuit breaker** (a sudden −drop, 0.4 s hit-stop, "TRADING HALTED" canvas stamp) and **earnings day** (a stretch of random gaps).
+
+## 7. Rugpulls: Token World only (task M5)
+
+All the art is rendered: `rug.webp` (tile), `rug-roll.webp` (mid-yank), `rocket.webp`, `devwallet.webp`, `sign-100x.webp`.
+
+1. **Tell (2–3 s ahead):**
+   - A too-good pump stretch: steep green climb with `rocket` tokens as ticks (+3% each).
+   - A floating `sign-100x` above it, and a blinking `devwallet` icon at the top of the pump.
+   - The pump floor is drawn with the `rug` tile on top of the candles.
+2. **The pull:** once the runner is about 60% across, the rug slides out (draw `rug-roll` rolling away to the right). The floor under the pump **drops** into a deep red gap-down: a real price crash, so the P&L does the lesson by itself.
+   - **LONG** loses (×lev).
+   - **SHORT** makes a fortune ("SHORTED THE RUG").
+   - **CASH** is safe ("DODGED THE RUG").
+   - **STOP-LOSS** blocks the loss.
+3. **Rules:** never a run-ender (always land on something). Max 2 per run. Not before level 2.
+
+## 8. Results card (task M6)
 
 Show:
-- total return
-- banked versus lost to rugpulls and slippage
-- best chain
+- banked P&L total, best bank and best chain
 - patterns spotted
-- a one-line "lesson" chosen by what happened (for example "Taking profit protected 18% of your gains"), matched to the site's education tone
+- rugs dodged or shorted
 
-## 8. Build order
+Plus one **lesson line** chosen by what happened, for example:
+- "Taking profit at the bull locked in 18%."
+- "Going to cash before the rug saved you."
+- "Leverage tripled your losses on that drop."
 
-1. **Ticks + % scoring + TAKE PROFIT** (sections 1–2, coin swap only). This changes the feel the most for the least work.
-2. **Power-up renames, and leverage doubling losses** (3).
-3. **Tricks as trading moves + chain alpha + market chain names** (4). Uses today's animations.
-4. **Patterns: support, resistance, MA grind rail, cup & handle, bull flag** (5).
-5. **Bull/bear phases, rugpulls in Token World, circuit breaker and earnings day** (6).
-6. **Results card lessons** (7).
+## 9. Asset inventory (all rendered, in `assets/game/`)
 
-Each step: test in the browser (`_test.html` harness, never committed), check reduced motion, and update this file's status.
+| File | What | Generator (`scripts/icons/objects.py`) |
+|---|---|---|
+| `runner*.webp` (5 skins) | run/jog/walk/take-off/rise/fall, 35 frames | `o_runner` |
+| `runner-cash*.webp` (5) | same 35 frames, carrying a briefcase; crop x0 = 26 (`PROP_X0`) | `RUNNER_PROP=case` |
+| `runner-allin*.webp` (5) | same 35 frames, strut + sunglasses | `RUNNER_PROP=shades` |
+| `runner-trick*.webp` (5) | 4 tricks × 12 frames | `o_trick` |
+| `runner-love*.webp` (5) | checkpoint flight | `RUNNER_FACE=love-noeyes` |
+| `cp-bull.webp` | 16-frame diamond bull turn | `o_bull` |
+| `bear.webp` | ruby bear icon | `o_bear` |
+| `arrow-up.webp` / `arrow-down.webp` | position arrows | `o_arrow` |
+| `bill.webp` | banknote for the cash trail and dividend showers | `o_bill` |
+| `tick-1..3.webp`, `tick-r1..2.webp` | currency candles | `o_tick` |
+| `rug.webp`, `rug-roll.webp`, `rocket.webp`, `devwallet.webp`, `sign-100x.webp` | rugpull set | `o_rug`, `o_rocket`, `o_devwallet`, `o_sign100x` |
+| `heart.webp`, `dance.webp`, `pu-*.webp` | love eyes, game-over dance, power-ups | existing |
+
+Render recipes are in `CLAUDE.md` (repo root).
+
+## 10. Build order (each task: implement, test with the `_test.html` harness, check reduced motion, update this file's ✅)
+
+| Task | Scope | Done when |
+|---|---|---|
+| ✅ M0 | Swipe positions, terrain P&L, bull banking and surge, arrows, cash/all-in runs | built |
+| M1 | Ticks replace coins (values, leverage, SHORT flips red, CASH passes through), red ticks, ±60% cap | coins gone from the code; pops show %; red ticks spawn from level 2 |
+| M2 | Power-up renames and behaviours (section 4) | pops/messages use the new names; stop-loss blocks a red tick |
+| M3 | Patterns: support, resistance + breakout, MA grind, cup & handle, bull flag, head & shoulders, double bottom | each pattern appears within ~3 min of play; name pop once per run |
+| M4 | Bull/bear phases, circuit breaker, earnings day | phase icon slides in; bear trends down |
+| M5 | Rugpulls (Token World) | tell → yank → P&L follows the position; max 2 per run, never fatal |
+| M6 | Results card lessons | the card shows the lesson line chosen by the run's events |
+| M7 | Balance pass: PNLK, tick values, phase lengths | a median run banks between −10% and +40% over 3 bulls |
