@@ -4,6 +4,8 @@ Single-page site (`index.html`, no build step). It has the investing pages, Toke
 
 ## Where things are decided
 
+- **`docs/HANDOFF.md`**: the ordered work queue. **Start every session here.**
+
 - **`docs/MARKET.md`**: the market pivot. Decisions, the ordered task list (M1–M7) and the asset inventory. **Start here for game work.**
 - **`docs/BALANCE.md`**: how all systems integrate into one portfolio, measured baseline, targets, and balancing tasks B1–B8. Check every gameplay-number change with `node scripts/balance/sim.js` (needs playwright).
 - **`docs/ANIMATION.md`**: animation rules (blend, loops, priorities), flick tricks, trick chains, and the recipe for adding a trick.
