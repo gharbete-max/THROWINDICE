@@ -14,6 +14,7 @@ function instrument() {
   inj('function step(dt){if(R.dead)return;', 'function step(dt){window.__R=R;if(R.dead)return;');
   inj('function bank(){', 'function bank(){(window.__L.bank=window.__L.bank||[]).push(+(R.open+R.cash).toFixed(2));(window.__L.bph=window.__L.bph||[]).push(phaseOf(Math.max(0,R.lvl-1)));');
   inj('function alpha(a){', 'function alpha(a){(window.__L.alpha=window.__L.alpha||[]).push(a);');
+  inj('function rugPull(q){', 'function rugPull(q){(window.__L.rug=window.__L.rug||[]).push(R.lvl);');
   inj('function slip(){', 'function slip(){(window.__L.slip=(window.__L.slip||0)+1);');
   inj('const al=.25*R.cn*R.cn;', 'const al=.25*R.cn*R.cn;(window.__L.chain=window.__L.chain||[]).push(R.cn);');
   inj('function crash(why){', 'function crash(why){(window.__L.crash=window.__L.crash||[]).push(why);if(window.__L.immortal){respawn();return}');
@@ -56,7 +57,7 @@ const BOT = ({ mode, sec, NT }) => {
   const al = (L.alpha || []).reduce((a, b) => a + b, 0), bk = (L.bank || []).reduce((a, b) => a + b, 0);
   return { gameSec: +(R.t - S.g0).toFixed(1), score: R.score, V: Math.round(R.V), bulls: R.lvl, bullAt: S.bullAt, banks: L.bank || [], bankPhases: L.bph || [], bankPct: +bk.toFixed(1),
     alphaPct: +al.toFixed(1), chains: ch, perfects: L.perf || 0, slips: L.slip || 0, crashes: (L.crash || []).length,
-    patSeenAt: R.patSeenAt || {}, openMin: +S.openMin.toFixed(1), openMax: +S.openMax.toFixed(1), capFrames: S.capFrames, posSec: Object.fromEntries(Object.entries(S.pos).map(([k, v]) => [k, +v.toFixed(1)])) };
+    patSeenAt: R.patSeenAt || {}, rugLvls: L.rug || [], openMin: +S.openMin.toFixed(1), openMax: +S.openMax.toFixed(1), capFrames: S.capFrames, posSec: Object.fromEntries(Object.entries(S.pos).map(([k, v]) => [k, +v.toFixed(1)])) };
 };
 
 (async () => {
@@ -67,6 +68,7 @@ const BOT = ({ mode, sec, NT }) => {
       p.on('pageerror', e => errs.push(e.message));
       await p.goto(`http://localhost:${port}/_test.html`); await p.waitForTimeout(1200);
       await p.evaluate(() => { document.querySelectorAll('.modalShade').forEach(m => m.remove()); setPage('parallel') }); await p.waitForTimeout(600);
+      if (process.env.TW) await p.evaluate(() => document.body.classList.add('token-world'));   // TW=1: play in Token World (rugpulls)
       await p.click('.navbtn[data-page="game"]'); await p.waitForTimeout(800); await p.click('#gcGo'); await p.waitForTimeout(500);
       const r = await p.evaluate(BOT, { mode, sec: SEC, NT: NOTICKS }); r.mode = mode; r.errors = errs; all.push(r);
       const perMin = x => Math.round(x * 60 / r.gameSec);
@@ -89,6 +91,7 @@ const BOT = ({ mode, sec, NT }) => {
     if (MODES.includes('trickster')) { chk('trickster alpha share %', avg('trickster', ashare), avg('trickster', ashare) >= 35 && avg('trickster', ashare) <= 55, '35-55'); const cr = all.filter(r => r.mode === 'trickster' && r.capFrames).length / Math.max(1, all.filter(r => r.mode === 'trickster').length); chk('trickster cap runs %', 100 * cr, cr <= .3, '<= 30') }
     const bis = all.map(bi).filter(Number.isFinite); if (bis.length) { const b = bis.reduce((a, c) => a + c, 0) / bis.length; chk('bull interval s', b, b >= 22 && b <= 28, '22-28') }
     { const kinds = ['support', 'resist', 'rail', 'cup', 'flag', 'hs', 'dbl'], runs = all.filter(r => r.gameSec >= 180); if (runs.length) { const frac = k => runs.filter(r => r.patSeenAt[k] != null && r.patSeenAt[k] <= 180).length / runs.length; console.log('patterns seen within 180 s: ' + kinds.map(k => k + ' ' + Math.round(100 * frac(k)) + '%').join(', ')); chk('every pattern within 3 min in >= 80% of runs', Math.min(...kinds.map(frac)) * 100, Math.min(...kinds.map(frac)) >= .8, '>= 80%') } }
+    if (process.env.TW) { const rl = all.flatMap(r => r.rugLvls), per = all.map(r => r.rugLvls.length); chk('rugpulls: max per run', Math.max(...per), Math.max(...per) <= 2, '<= 2'); chk('rugpulls: earliest bull level', rl.length ? Math.min(...rl) : NaN, !rl.length || Math.min(...rl) >= 3, '>= 3'); console.log('rugpulls per run: ' + per.join(', ')) }
     chk('page errors', all.reduce((s, r) => s + r.errors.length, 0), all.every(r => r.errors.length === 0), '0');
     console.log(rows.join('\n'));
   } finally { await b.close(); srv.close(); fs.rmSync(TEST, { force: true }) }

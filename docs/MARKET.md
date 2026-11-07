@@ -133,6 +133,8 @@ All the art is rendered: `rug.webp` (tile), `rug-roll.webp` (mid-yank), `rocket.
    - **STOP-LOSS** blocks the loss.
 3. **Rules:** never a run-ender (always land on something). Max 2 per run. Not before level 2.
 
+**Built (M5):** the `rugp` pattern kind (Token World only: `isTW()`, from bull 3, max 2 per run via `R.rugN`, in the pattern bag with weight 2). Layout: 14 flat candles, a 16-candle pump (800 px) with 4 rocket ticks (`TK[5]`, +2% each), a 14-candle plateau covered with the `rug` tile, a 100x sign floating above the base and a blinking dev wallet at the top; the cliff behind the plateau is 1700 px deep. When the runner is 62% across (`pullX`) `rugPull(q)` lowers the floor ahead to the landing level (a real gap-down edge 3 candles ahead), rolls the rug away (`R.rugAnim`, `rug-roll`), and applies the position: LONG pays an 8% x leverage dev-wallet drain on top of the crash, SHORT gets "SHORTED THE RUG" (the crash pays), CASH "DODGED THE RUG", STOP-LOSS is used up and freezes P&L for 2 s. Headless result (one rug, from a long 1x start): long 1x -3.7%, long 2x -6%, all in -10.2%, short +13.2%, cash 0, long with stop-loss +13.6%; nobody died. Reduced motion: the roll sprite does not slide, the sign does not bob.
+
 ## 8. Results card (task M6)
 
 Show:
