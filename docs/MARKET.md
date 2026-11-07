@@ -99,6 +99,16 @@ Add pattern segments to the terrain generator's segment picker (`ground()` heigh
 
 Bull phases favour cups, flags and support; bear phases favour head & shoulders, resistance and red ticks.
 
+**Built (M3):** one pattern every 200-300 candles from a shuffled bag of the seven (`nextPattern(phase)` favours cup, flag, support, rail in a bull and head & shoulders, resistance, double bottom in a bear), so each shows up within one bag (about 100 s). Each is a `kind` in `addSeg` and a `pat()` record in `R.pats` (`x0`, `x1`, extras). Things placed relative to candles (`y` of lines, tick heights, guide ticks) are resolved after the phase tilt (`R.fix`).
+- **Support:** a pit with a one-way line 115 px above the left edge; `gnd(x)` is the floor in step (you land from above, pass through from below), the line bridges the gap.
+- **Resistance:** a red dashed ceiling 300 px above the end of a rising stretch (and 900 px beyond); a bump sends you back down; breaking it needs a split (swipe up) or ALL IN: BREAKOUT +3% alpha.
+- **Moving average rail:** a smooth 14-candle rail with a gold glow lined with 4 ticks; landing on it mid-trick grinds (+0.5% alpha, sparks, a short surge) instead of slipping.
+- **Cup and handle:** a bowl, a small dip (the handle), a rise; swipe up within 420 px of the lip for BREAKOUT +3%.
+- **Bull flag:** steep pole, then a falling channel with 3 ticks and a 0.7 s speed ramp.
+- **Head and shoulders:** three humps, then the neckline gap down and 2 red ticks.
+- **Double bottom:** a W; goo-slam (down, then down again) near each bottom, both = +2%.
+- Each name pops once per run (`R.patSeen`) when cleared without a crash. Not drawn yet: pattern outlines (necklines, the cup rim). Test hook: `_cp.gen(kind)`.
+
 ## 6. Market phases (task M4)
 
 - **Phase shifts:** bull ⇄ bear every 45–70 s.

@@ -56,7 +56,7 @@ const BOT = ({ mode, sec, NT }) => {
   const al = (L.alpha || []).reduce((a, b) => a + b, 0), bk = (L.bank || []).reduce((a, b) => a + b, 0);
   return { gameSec: +(R.t - S.g0).toFixed(1), score: R.score, V: Math.round(R.V), bulls: R.lvl, bullAt: S.bullAt, banks: L.bank || [], bankPhases: L.bph || [], bankPct: +bk.toFixed(1),
     alphaPct: +al.toFixed(1), chains: ch, perfects: L.perf || 0, slips: L.slip || 0, crashes: (L.crash || []).length,
-    openMin: +S.openMin.toFixed(1), openMax: +S.openMax.toFixed(1), capFrames: S.capFrames, posSec: Object.fromEntries(Object.entries(S.pos).map(([k, v]) => [k, +v.toFixed(1)])) };
+    patSeenAt: R.patSeenAt || {}, openMin: +S.openMin.toFixed(1), openMax: +S.openMax.toFixed(1), capFrames: S.capFrames, posSec: Object.fromEntries(Object.entries(S.pos).map(([k, v]) => [k, +v.toFixed(1)])) };
 };
 
 (async () => {
@@ -88,6 +88,7 @@ const BOT = ({ mode, sec, NT }) => {
     if (MODES.includes('reader') && MODES.includes('passive')) { const v = avg('reader', spm) / pass; chk('reader / passive', v, v >= 2, '>= 2x') }
     if (MODES.includes('trickster')) { chk('trickster alpha share %', avg('trickster', ashare), avg('trickster', ashare) >= 35 && avg('trickster', ashare) <= 55, '35-55'); const cr = all.filter(r => r.mode === 'trickster' && r.capFrames).length / Math.max(1, all.filter(r => r.mode === 'trickster').length); chk('trickster cap runs %', 100 * cr, cr <= .3, '<= 30') }
     const bis = all.map(bi).filter(Number.isFinite); if (bis.length) { const b = bis.reduce((a, c) => a + c, 0) / bis.length; chk('bull interval s', b, b >= 22 && b <= 28, '22-28') }
+    { const kinds = ['support', 'resist', 'rail', 'cup', 'flag', 'hs', 'dbl'], runs = all.filter(r => r.gameSec >= 180); if (runs.length) { const frac = k => runs.filter(r => r.patSeenAt[k] != null && r.patSeenAt[k] <= 180).length / runs.length; console.log('patterns seen within 180 s: ' + kinds.map(k => k + ' ' + Math.round(100 * frac(k)) + '%').join(', ')); chk('every pattern within 3 min in >= 80% of runs', Math.min(...kinds.map(frac)) * 100, Math.min(...kinds.map(frac)) >= .8, '>= 80%') } }
     chk('page errors', all.reduce((s, r) => s + r.errors.length, 0), all.every(r => r.errors.length === 0), '0');
     console.log(rows.join('\n'));
   } finally { await b.close(); srv.close(); fs.rmSync(TEST, { force: true }) }
