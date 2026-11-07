@@ -644,3 +644,7 @@ The Token World pages were already cut (see above); this pass finished the lefto
 
 ## HANDOFF items 1-13 (Claude Code)
 - Each item was checked with scripted headless runs (desktop and phone sizes, reduced motion where it adds an effect) and the balance harness; 0 page errors and 0 4xx. Details and numbers: `docs/HANDOFF.md` status and the `docs/BALANCE.md` changelog.
+
+## Dolla juice (HANDOFF 19)
+- On a bank of +0.5% or more, 6-12 Dolla notes (`flyNotes`, `#gJuice`) fly from the runner to the score counter; the counter holds its old value until they land and then ticks up (`juiceShown`). Mission rewards fly to the counter too. After a run, a daily gift or mission payout flies from the results card to the Style tab (the wallet) and the tab pulses. Reduced motion: no notes, the counter updates instantly.
+- Headless: 13 notes in flight (9 for the bank, 4 for a mission), counter 0 -> 120 after about 1.9 s; with reduced motion no notes and an instant counter; gift notes and the tab pulse appear after game over. 0 page errors.
