@@ -36,6 +36,7 @@ const BOT = ({ mode, sec, NT }) => {
   let lastLvl = R0.lvl, relAt = -1, cashedLvl = -1;
   const act = i => { const R = window.__R; if (!R || R.dead) return; if (NT) R.ticks.length = 0;
     if ((!R.air && Math.random() < .35) || (R.blocked && !R.air)) { _cp.hold = true; _cp.tap(); relAt = i + Math.round((R.blocked ? .42 : .15 + Math.random() * .26) * 60) }   // hold-to-jump: random hold length, a full hold against a wall
+    if (R.pos.flat && mode !== 'reader') { _cp.trick('split'); return }   // runs start NEUTRAL: passive/trader/trickster go long first, so the baseline still means 'long 1x'
     if (mode === 'trader' && Math.random() < .08) _cp.trick(R.open > 8 ? 'cork' : Math.random() < .5 ? 'split' : 'goo');   // take risk, move to cash when up
     if (mode === 'trickster' && R.air && Math.random() < .3) _cp.trick(K[Math.random() * 4 | 0]);
     if (mode === 'reader') {   // reads the phase: long in a bull market, short in a bear one, cash once up 8% until the next bull
