@@ -149,6 +149,8 @@ Plus one **lesson line** chosen by what happened, for example:
 
 **Built (M6):** the results card shows the banked total (`V/V0 - 1`), best bank, best chain, the patterns spotted (`R.patSeen`), the rug outcomes (`R.rugEv`) and one lesson line from `lessonLine()` (priority: rug outcome, unbanked open gains lost at death, a levered loss, best bank, slippage, alpha, default). Test hooks: `_cp.lesson()`, `_cp.results()`.
 
+**Built (B7):** market missions and the portfolio level, see `BALANCE.md` changelog (B7). Test hooks: `_cp.goals()`, `_cp.plevel()`.
+
 ## 9. Asset inventory (all rendered, in `assets/game/`)
 
 | File | What | Generator (`scripts/icons/objects.py`) |
