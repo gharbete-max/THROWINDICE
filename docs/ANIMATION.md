@@ -172,6 +172,28 @@ Tricks nudge the arc slightly, so combos feel physical:
 3. **Bridges and combo names.**
 4. **Physics coupling, lazy loading of the skin sheets, the continuity script, and checks at 30, 60 and 120 fps.**
 
+## Blending under spam (built)
+
+Players swipe and jump constantly, so every switch in `player()` must blend. The rules:
+
+1. **Sheet or move change → 0.11 s fade.**
+   - Every draw branch sets `D` (drawImage args) and a family key `fam`: `run<skin><cash>`, `tr<skin>`, `love<skin>`, or `sk<ride|ollie|kick|trick>`.
+   - When `fam` changes, the previous frame (`s.lastD`) is drawn on top at alpha `fadeT/0.11` while it fades out (`R.fadeT`, ticked in step). This covers skin/position changes, trick in and out, board on and off, ollie → kickflip, and the bull flight.
+   - The hat anchor interpolates from the old frame's anchor (`s.fadeH`), so hats never jump.
+   - Normal gait frames inside one family don't fade; they're already continuous.
+2. **Tilt is eased; spins are not.**
+   - `rot` (arc tilt, slope lean, the zeroing for tricks/board) eases toward its target with `1 − e^(−16·dt)` into `s.rs`.
+   - Full-turn spins (double-jump flip, power-up and checkpoint reaction spins) go in `spin` and are added after easing, so they never unwind.
+3. **Flips are never cut:**
+   - A trick swiped during a double-jump flip is held in `R.pend`, while the flip runs 3× faster, then the trick starts.
+   - A double jump during a trick doesn't start a flip.
+   - The bull launch lets a running flip finish.
+4. **Queues reset on landing** (`R.cq`, `R.pend`), so stale inputs never fire on the next jump.
+5. **Position changes add a small jelly wobble** (`wob(.09,15)`) as a cue alongside the colour fade.
+6. **Reduced motion:** no fades and no easing; instant states.
+7. **Stress check** (headless, no errors expected): fire `_cp.tap()` / `_cp.trick(random)` every 60–150 ms for 10 s, and record `__R.rs` each animation frame. The largest per-frame change should stay under about 0.12 rad at 30 fps (before blending it reached 0.35 rad).
+8. **New animations must join this system:** set `D` + `fam` (+ `hd`), and never call `drawImage` for the body directly.
+
 ## Transition rules (priority)
 
 When states fight over a channel, higher wins:
