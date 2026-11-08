@@ -14,10 +14,14 @@ function instrument() {
   inj('function step(dt){if(R.dead)return;', 'function step(dt){window.__R=R;if(R.dead)return;');
   inj('function bank(){', 'function bank(){(window.__L.bank=window.__L.bank||[]).push(+(R.open+R.cash).toFixed(2));(window.__L.bph=window.__L.bph||[]).push(phaseOf(Math.max(0,R.lvl-1)));');
   inj('function alpha(a){', 'function alpha(a){(window.__L.alpha=window.__L.alpha||[]).push(a);');
+  inj('function bank(){', 'function bank(){window.__L.cpX=cpX;');
+  inj('const mv=(R.pg-gy)*PNLK*P.d*P.lev;', 'const mv=(R.pg-gy)*PNLK*P.d*P.lev;(window.__L.ter=(window.__L.ter||0)+mv);');
+  inj('R.open=Math.max(-OPENCAP,Math.min(OPENCAP,R.open+v));paintPnl();react(gain', '(window.__L.tk=(window.__L.tk||0)+v);R.open=Math.max(-OPENCAP,Math.min(OPENCAP,R.open+v));paintPnl();react(gain');
   inj('function rugPull(q){', 'function rugPull(q){(window.__L.rug=window.__L.rug||[]).push(R.lvl);');
+  inj('R.shAbs=(R.shAbs||0)-R.open;', 'R.shAbs=(R.shAbs||0)-R.open;(window.__L.floor=(window.__L.floor||0)-R.open);');
   inj('function slip(){', 'function slip(){(window.__L.slip=(window.__L.slip||0)+1);');
-  inj('const al=.25*R.cn*R.cn;', 'const al=.25*R.cn*R.cn;(window.__L.chain=window.__L.chain||[]).push(R.cn);');
-  inj('function crash(why){', 'function crash(why){(window.__L.crash=window.__L.crash||[]).push(why);if(window.__L.immortal){respawn();return}');
+  inj('const al=.2*R.cn*R.cn;', 'const al=.2*R.cn*R.cn;(window.__L.chain=window.__L.chain||[]).push(R.cn);');
+  inj('function crash(why){', 'function crash(why){(window.__L.crash=window.__L.crash||[]).push(why);if(window.__L.immortal&&!R.shield){respawn();return}');
   inj("alpha(.25);pop(R.sx,R.y-220*VK,'PERFECT'", "alpha(.25);window.__L.perf=(window.__L.perf||0)+1;pop(R.sx,R.y-220*VK,'PERFECT'");
   h = h.replace('<script>', '<script>window.__L={};');
   fs.writeFileSync(TEST, h);
@@ -36,9 +40,15 @@ const BOT = ({ mode, sec, NT }) => {
   let lastLvl = R0.lvl, relAt = -1, cashedLvl = -1;
   const act = i => { const R = window.__R; if (!R || R.dead) return; if (NT) R.ticks.length = 0;
     if ((!R.air && Math.random() < .35) || (R.blocked && !R.air)) { _cp.hold = true; _cp.tap(); relAt = i + Math.round((R.blocked ? .42 : .15 + Math.random() * .26) * 60) }   // hold-to-jump: random hold length, a full hold against a wall
-    if (R.pos.flat && mode !== 'reader') { _cp.trick('split'); return }   // runs start NEUTRAL: passive/trader/trickster go long first, so the baseline still means 'long 1x'
+    if (R.pos.flat && mode !== 'reader' && mode !== 'boarder') { _cp.trick('split'); return }   // runs start NEUTRAL: passive/trader/trickster go long first, so the baseline still means 'long 1x'
     if (mode === 'trader' && Math.random() < .08) _cp.trick(R.open > 8 ? 'cork' : Math.random() < .5 ? 'split' : 'goo');   // take risk, move to cash when up
     if (mode === 'trickster' && R.air && Math.random() < .3) _cp.trick(K[Math.random() * 4 | 0]);
+    if (mode === 'boarder') {   // phase reader that rides the board (ALL IN 3x) in a bear market: the all-in short balance check (HANDOFF 18)
+      const P = R.pos;
+      if (R.open > 12 && P.d !== 0) { _cp.trick('cork'); cashedLvl = R.lvl }
+      else if (P.flat || (P.d === 0 && cashedLvl !== R.lvl)) { if (R.phase === 'bull') _cp.trick('split'); else { _cp.trick('goo'); _cp.trick('spin') } }
+      else if (P.d !== 0) { if (R.phase === 'bear' && !(P.d < 0 && P.allin)) { _cp.trick('goo'); if (!R.pos.allin) _cp.trick('spin') } else if (R.phase === 'bull' && (P.d < 0 || P.allin)) { _cp.trick('split') } }
+    }
     if (mode === 'reader') {   // reads the phase: long in a bull market, short in a bear one, cash once up 8% until the next bull
       const P = R.pos;
       if (R.open > 8 && P.d !== 0) { _cp.trick('cork'); cashedLvl = R.lvl }
@@ -50,13 +60,14 @@ const BOT = ({ mode, sec, NT }) => {
     const R = window.__R; if (R.dead) break;
     if (i % 7 === 0) act(i);
     if (i === relAt) _cp.release();
-    _cp.step(dt); n++;
+    _cp.step(dt); n++; if (R.shield) S.shieldSec = (S.shieldSec || 0) + dt;
     S.openMin = Math.min(S.openMin, R.open); S.openMax = Math.max(S.openMax, R.open); if (Math.abs(R.open) >= 59.9) S.capFrames++;
     const P = R.pos, k = P.d === 0 ? 'cash' : P.allin ? 'allin' : (P.d > 0 ? 'long' : 'short') + (P.lev >= 2 ? 2 : 1); S.pos[k] += dt;
     if (R.lvl !== lastLvl) { S.bullAt.push(+(R.t - S.g0).toFixed(1)); lastLvl = R.lvl } }
   const R = window.__R, L = window.__L, ch = L.chain || [];
   const al = (L.alpha || []).reduce((a, b) => a + b, 0), bk = (L.bank || []).reduce((a, b) => a + b, 0);
-  return { gameSec: +(R.t - S.g0).toFixed(1), score: R.score, V: Math.round(R.V), bulls: R.lvl, bullAt: S.bullAt, banks: L.bank || [], bankPhases: L.bph || [], bankPct: +bk.toFixed(1),
+  let terr = []; if (L.cpX) { const T = R.top, CW = 46; for (let n = 0; n < (L.bank || []).length; n++) { const a = Math.floor(L.cpX(n) / CW), e = Math.floor(L.cpX(n + 1) / CW); let ya = null, ye = null; for (let j = a; j < e; j++) if (T[j] != null) { ya = T[j]; break } for (let j = e; j > a; j--) if (T[j] != null) { ye = T[j]; break } terr.push(ya == null || ye == null ? null : +((ya - ye) * .006).toFixed(1)) } }
+  return { parts: { ter: +(L.ter || 0).toFixed(1), ticks: +(L.tk || 0).toFixed(1), alpha: +al.toFixed(1), slip: L.slip || 0, shieldSec: +(S.shieldSec || 0).toFixed(0), floor: +(L.floor || 0).toFixed(1), bank: +bk.toFixed(1) }, terr, gameSec: +(R.t - S.g0).toFixed(1), score: R.score, V: Math.round(R.V), bulls: R.lvl, bullAt: S.bullAt, banks: L.bank || [], bankPhases: L.bph || [], bankPct: +bk.toFixed(1),
     alphaPct: +al.toFixed(1), chains: ch, perfects: L.perf || 0, slips: L.slip || 0, crashes: (L.crash || []).length,
     patSeenAt: R.patSeenAt || {}, rugLvls: L.rug || [], openMin: +S.openMin.toFixed(1), openMax: +S.openMax.toFixed(1), capFrames: S.capFrames, posSec: Object.fromEntries(Object.entries(S.pos).map(([k, v]) => [k, +v.toFixed(1)])) };
 };
@@ -74,6 +85,8 @@ const BOT = ({ mode, sec, NT }) => {
       const r = await p.evaluate(BOT, { mode, sec: SEC, NT: NOTICKS }); r.mode = mode; r.errors = errs; all.push(r);
       const perMin = x => Math.round(x * 60 / r.gameSec);
       console.log(`${mode.padEnd(9)} score/min ${String(perMin(r.score)).padStart(4)} | bank ${String(r.bankPct).padStart(6)}% alpha ${String(r.alphaPct).padStart(5)}% (market share ${r.bankPct > 0 ? Math.round(100 * (r.bankPct - r.alphaPct) / r.bankPct) : '-'}%) | perfects/min ${perMin(r.perfects)} slips ${r.slips} | bull every ${r.bulls ? (r.gameSec / r.bulls).toFixed(1) : '-'}s | open ${r.openMin}..${r.openMax}% cap ${r.capFrames ? 'yes' : 'no'} | errors ${errs.length}`);
+      if (process.env.DIAG) console.log('          parts (sum %): ' + JSON.stringify(r.parts));
+      if (process.env.DIAG) console.log('          stretch: bank% / terrain% / phase -> ' + r.banks.map((v, i) => v + '/' + r.terr[i] + '/' + r.bankPhases[i][0]).join('  '));
       { const by = { bull: [], bear: [] }; r.banks.forEach((v, i) => by[r.bankPhases[i]] && by[r.bankPhases[i]].push(v)); const av = a => a.length ? (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1) : '-'; console.log(`          banks by phase: bull ${av(by.bull)}% (n=${by.bull.length}) bear ${av(by.bear)}% (n=${by.bear.length})`) }
       await p.close(); await cx.close();
     }
@@ -88,6 +101,7 @@ const BOT = ({ mode, sec, NT }) => {
     const pass = avg('passive', spm);
     if (MODES.includes('passive')) { chk('passive score/min', pass, pass >= 20 && pass <= 60, '20-60'); chk('passive perfects/min', avg('passive', r => r.perfects * 60 / r.gameSec), avg('passive', r => r.perfects * 60 / r.gameSec) <= 6, '<= 6'); chk('passive never hits the cap', all.filter(r => r.mode === 'passive' && r.capFrames).length, !all.some(r => r.mode === 'passive' && r.capFrames), '0 runs') }
     if (MODES.includes('trader') && MODES.includes('passive')) { const v = avg('trader', spm) / pass; chk('trader / passive', v, v >= 2, '>= 2x'); chk('trader market share %', avg('trader', share), avg('trader', share) >= 60, '>= 60') }
+    if (MODES.includes('boarder') && MODES.includes('passive')) { const v = avg('boarder', spm) / pass; chk('boarder (all-in short in a bear) / passive', v, v <= 6, '<= 6x') }
     if (MODES.includes('reader') && MODES.includes('passive')) { const v = avg('reader', spm) / pass; chk('reader / passive', v, v >= 2, '>= 2x') }
     if (MODES.includes('trickster')) { chk('trickster alpha share %', avg('trickster', ashare), avg('trickster', ashare) >= 35 && avg('trickster', ashare) <= 55, '35-55'); const cr = all.filter(r => r.mode === 'trickster' && r.capFrames).length / Math.max(1, all.filter(r => r.mode === 'trickster').length); chk('trickster cap runs %', 100 * cr, cr <= .3, '<= 30') }
     const bis = all.map(bi).filter(Number.isFinite); if (bis.length) { const b = bis.reduce((a, c) => a + c, 0) / bis.length; chk('bull interval s', b, b >= 22 && b <= 28, '22-28') }

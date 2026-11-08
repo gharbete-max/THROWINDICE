@@ -81,6 +81,8 @@ Same pickups and forms (glass skins); only names, pops and behaviour change:
 | 2x | **DIVIDEND 2x** | Tick values ×2 (stacks with leverage). |
 | combo | **BULL RUN** | All of the above, and ticks spawn 1.5× denser. |
 
+**Changed in B8:** STOP-LOSS now lasts 15 s and is used up after absorbing 3% of losses (it floored every loss for as long as it was up, which was too strong).
+
 **Built (M2):** `PU` names are STOP-LOSS / INDEX FUND / DIVIDEND 2x. STOP-LOSS floors open P&L at 0 while it is up and is used up by the next loss: a crash (respawn), a red tick or slippage. DIVIDEND doubles gains only (not red ticks). BULL RUN is all three at once (`R.bullRun`, a pop and message on the rising edge): green ticks spawn 1.5x denser (measured 1.46x). The balance harness no longer uses the shield; bots are kept alive by respawning on a crash (`__L.immortal`).
 
 ## 5. Chart patterns as terrain (task M3)
