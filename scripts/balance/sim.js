@@ -81,7 +81,7 @@ const BOT = ({ mode, sec, NT }) => {
       await p.goto(`http://localhost:${port}/_test.html`); await p.waitForTimeout(1200);
       await p.evaluate(() => { document.querySelectorAll('.modalShade').forEach(m => m.remove()); setPage('parallel') }); await p.waitForTimeout(600);
       if (process.env.TW) await p.evaluate(() => document.body.classList.add('token-world'));   // TW=1: play in Token World (rugpulls)
-      await p.click('.navbtn[data-page="game"]'); await p.waitForTimeout(800); await p.click('#gcGo'); await p.waitForTimeout(500);
+      await p.evaluate(() => navGame(document.querySelector('.navbtn[data-page="game"]'))); await p.waitForTimeout(800); await p.click('#gcGo'); await p.waitForTimeout(500);
       const r = await p.evaluate(BOT, { mode, sec: SEC, NT: NOTICKS }); r.mode = mode; r.errors = errs; all.push(r);
       const perMin = x => Math.round(x * 60 / r.gameSec);
       console.log(`${mode.padEnd(9)} score/min ${String(perMin(r.score)).padStart(4)} | bank ${String(r.bankPct).padStart(6)}% alpha ${String(r.alphaPct).padStart(5)}% (market share ${r.bankPct > 0 ? Math.round(100 * (r.bankPct - r.alphaPct) / r.bankPct) : '-'}%) | perfects/min ${perMin(r.perfects)} slips ${r.slips} | bull every ${r.bulls ? (r.gameSec / r.bulls).toFixed(1) : '-'}s | open ${r.openMin}..${r.openMax}% cap ${r.capFrames ? 'yes' : 'no'} | errors ${errs.length}`);

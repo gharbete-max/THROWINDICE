@@ -26,7 +26,7 @@ Single-page site (`index.html`, no build step). It has the investing pages, Toke
 ```
 python3 -c "h=open('index.html').read();open('_test.html','w').write(h.replace('function step(dt){if(R.dead)return;','function step(dt){window.__R=R;if(R.dead)return;'))"
 python3 -m http.server 8765 &
-# Playwright: open /_test.html, remove .modalShade, setPage('parallel'), click .navbtn[data-page="game"], click #gcGo.
+# Playwright: open /_test.html, remove .modalShade, setPage('parallel'), call navGame(document.querySelector(".navbtn[data-page=game]")) (the bottom bar is hidden in the Apple-style UI, so a click times out), click #gcGo.
 # window.__R is the live state. Keys E/S/A/D = long/short/cash/all-in. Swipes: mouse down, move 40px+, up.
 # Useful: __R.nextCp = __R.sx + 400 (bring the bull), _cp.trick('cork'), _cp.flickDir(dx,dy), __R.shield=true / __R.magT=5 / __R.x2T=5 (auras).
 ```
