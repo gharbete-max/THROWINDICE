@@ -628,8 +628,100 @@ body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85
 @keyframes gcDance{to{background-position-x:calc(var(--dw)*-12)}}
 @media(prefers-reduced-motion:reduce){.gcDancer{animation:none}}
 </style>
+<style id="appleStyle">
+/* Apple style: quiet and empty. System font, white or black, hairlines instead of tiles, no bottom bar (a Menu sheet instead). Everything below is a layer on top of the earlier styles. */
+html body.apple{--r:12px;--bg:#fff;--surface:#f5f5f7;--surface2:#f5f5f7;--line:#d2d2d7;--text:#1d1d1f;--muted:#6e6e73;--ink:#1d1d1f;--accent-text:#8f6b3a;font:17px/1.47 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Inter,Arial,sans-serif;letter-spacing:-.011em;-webkit-font-smoothing:antialiased}
+:root[data-theme=dark] body.apple{--bg:#000;--surface:#1c1c1e;--surface2:#1c1c1e;--line:#38383a;--text:#f5f5f7;--muted:#a1a1a6;--ink:#f5f5f7;--accent-text:#cea85c}
+html body.apple.token-world{--bg:#000;--surface:#111113;--surface2:#111113;--line:#2c2c30;--text:#f5f5f7;--muted:#a1a1a6;--ink:#f5f5f7}
+body.apple::before,body.apple::after{display:none!important}
+body.apple .bottomNav,body.apple #vig,body.apple .invPop,body.apple .coinBubble{display:none!important}
+body.apple .shell{max-width:980px;margin:0 auto;padding:0 22px 96px}
+/* top bar */
+body.apple .top{position:sticky;top:0;z-index:15;margin:0 -22px 0;padding:12px 22px;background:color-mix(in srgb,var(--bg) 78%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--line)}
+body.apple .brand{font-weight:600;font-size:15px;letter-spacing:-.01em;gap:8px}
+body.apple .brandMark svg{height:18px;width:auto}
+body.apple .brand .tag{display:none}
+body.apple .topright .regBtn,body.apple .topright .themeBtn,body.apple .topright .avatar{display:none}
+body.apple .menuBtn{font:inherit;font-size:15px;font-weight:500;color:var(--text);background:none;border:0;padding:6px 2px;cursor:pointer;letter-spacing:-.01em}
+body.apple .menuBtn:hover{opacity:.6}
+/* titles and text */
+body.apple .shell h1{font-weight:700;letter-spacing:-.03em;line-height:1.05;font-size:clamp(40px,7vw,64px);margin:56px 0 12px}
+body.apple .shell h2,body.apple .modal h2{font-weight:600;letter-spacing:-.022em;font-size:clamp(24px,3.4vw,32px);margin:0 0 10px}
+body.apple .shell h3{font-weight:600;letter-spacing:-.015em}
+body.apple .shell p,body.apple .shell li,body.apple .modal p{color:var(--muted)}
+body.apple .shell b,body.apple .shell strong{color:var(--text);font-weight:600}
+body.apple .eyebrow{color:var(--muted);letter-spacing:.04em;font-weight:500;text-transform:none;font-size:14px}
+body.apple .pageTitle{margin-bottom:28px}
+body.apple .pageTitle p{font-size:21px;line-height:1.3;color:var(--muted)}
+body.apple .disclaimer{font-size:12px;color:var(--muted)}
+body.apple .page{margin-top:0}
+/* no tiles: cards, topics and categories become plain sections and list rows */
+html body.apple .card,html body.apple .exploreCard,html body.apple .tokenCategory,html body.apple .tokenCase,html body.apple .brokerCard,html body.apple .tokenMetric,html body.apple .tokenDataCard,html body.apple .startNote{background:none!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:0!important;backdrop-filter:none!important}
+html body.apple .card{margin:0 0 56px}
+html body.apple .exploreCard,html body.apple .tokenCase,html body.apple .brokerCard{padding:20px 0!important;border-top:.5px solid var(--line)!important}
+html body.apple .tokenCategory{min-height:0!important;padding:18px 0!important;border-top:.5px solid var(--line)!important}
+body.apple .topicGrid{display:block}
+html body.apple .topic{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:100%;min-height:0!important;padding:18px 0!important;background:none!important;border:0!important;border-top:.5px solid var(--line)!important;box-shadow:none!important;border-radius:0!important;text-align:left;color:var(--text);font:inherit}
+html body.apple .topic::after{content:"›";color:var(--muted);font-size:26px;line-height:1;font-weight:300}
+html body.apple .topic:last-child{border-bottom:.5px solid var(--line)!important}
+html body.apple .topic .symbol,html body.apple .topic .e3d{display:none!important}
+html body.apple .topic b{font-size:21px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
+html body.apple .topic:hover b{opacity:.65}
+body.apple .noteList li>span{display:none}
+body.apple .noteList{gap:14px}
+body.apple .noteList p,body.apple .noteList li{font-size:21px;line-height:1.3;color:var(--text);font-weight:500;letter-spacing:-.02em}
+body.apple .e3d{display:none}
+body.apple .game .e3d,body.apple .gameLayer .e3d{display:inline}
+/* quotes: no box */
+html body.apple .q{background:none;border:0;border-radius:0;padding:0;margin:28px 0 0;font-size:21px;line-height:1.3;font-style:normal;font-weight:500;letter-spacing:-.02em;color:var(--text)}
+html body.apple .q cite{display:block;margin-top:6px;font-size:14px;font-style:normal;font-weight:400;color:var(--muted)}
+/* buttons: text links and one quiet pill */
+html body.apple .shell .btn,html body.apple .modal .btn{background:none!important;border:0!important;box-shadow:none!important;color:var(--accent-text)!important;padding:6px 0;font-weight:500;font-size:17px;letter-spacing:-.011em;border-radius:0;width:auto}
+html body.apple .shell .btn:hover,html body.apple .modal .btn:hover{text-decoration:underline}
+html body.apple .shell .btn.small,html body.apple .modal .btn.small{font-size:17px}
+html body.apple .shell .btn::before,html body.apple .shell .btn::after,html body.apple .modal .btn::before,html body.apple .modal .btn::after{display:none!important}
+html body.apple .filter{background:none!important;box-shadow:none!important;border:.5px solid var(--line)!important;border-radius:999px!important;padding:7px 14px;font-size:14px;font-weight:500;color:var(--muted)}
+html body.apple .filter.active{background:var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important}
+html body.apple .filters{gap:8px;margin:0 0 24px}
+/* menu sheet */
+.amenu{position:fixed;inset:0;z-index:600;background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);overflow:auto;padding:0 22px 48px;color:var(--text)}
+.amenu[hidden]{display:none}
+.amenuBar{display:flex;justify-content:space-between;align-items:center;max-width:980px;margin:0 auto;padding:12px 0;position:sticky;top:0}
+.amenuBar b{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.amenuBar button{font:inherit;font-size:15px;font-weight:500;background:none;border:0;color:var(--text);cursor:pointer;padding:6px 2px}
+.amenuList{max-width:980px;margin:24px auto 0;display:grid}
+.amenuList button{font:inherit;display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);cursor:pointer;padding:10px 0;font-size:clamp(30px,6vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.15}
+.amenuList button:hover{opacity:.6}
+.amenuList button.sub{font-size:clamp(20px,3.6vw,26px);font-weight:500;color:var(--muted);padding:6px 0 6px 2px;letter-spacing:-.02em}
+.amenuList button.small{font-size:19px;font-weight:500;color:var(--muted);letter-spacing:-.015em;padding:7px 0}
+.amenuList hr{border:0;border-top:.5px solid var(--line);margin:22px 0 14px;width:100%}
+/* the tile roll becomes a plain list: every row visible, no wheel, no round arrow buttons */
+html body.apple .carCtl{display:none!important}
+html body.apple .wOff{display:block!important}
+html body.apple .topic.wOff,html body.apple .topic.pile{display:flex!important}
+html body.apple .pile small{white-space:nowrap;margin-left:auto;margin-right:14px;font-size:15px;color:var(--muted)}
+html body.apple .pile b{font-size:21px!important}
+body.apple .page,body.apple [id]{scroll-margin-top:72px}
+html body.apple .exploreRows,html body.apple .tokenCategoryGrid,html body.apple .tokenCaseGrid,html body.apple .brokerGrid,html body.apple .fgrid,html body.apple .tokenMetrics,html body.apple .tokenDataGrid{perspective:none!important;padding:0!important;margin:0 0 32px!important;border-bottom:.5px solid var(--line)}
+html body.apple .exploreRows>*,html body.apple .tokenCategoryGrid>*,html body.apple .tokenCaseGrid>*,html body.apple .brokerGrid>*,html body.apple .fgrid>*,html body.apple .tokenMetrics>*,html body.apple .tokenDataGrid>*{width:100%!important;max-width:none!important;margin:0!important;padding:20px 0!important;transform:none!important;opacity:1!important;filter:none!important;position:static!important;visibility:visible!important;border-radius:0!important;background:none!important;box-shadow:none!important;border:0!important;border-top:.5px solid var(--line)!important;text-align:left}
+html body.apple .exploreCard .big,html body.apple .tokenTopic .big{display:none}
+html body.apple .exploreRows h3,html body.apple .tokenCategoryGrid h3,html body.apple .tokenCaseGrid h3,html body.apple .brokerGrid h3{font-size:24px;font-weight:600;letter-spacing:-.022em;color:var(--text);margin:0 0 4px}
+html body.apple .pileHead{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin:32px 0 6px;text-transform:none}
+html body.apple .vsBox *{box-shadow:none!important}
+html body.apple .vsBox [class*=bar],html body.apple .vsBox i,html body.apple .vsBox span[style]{background-image:none!important}
+html body.apple details,html body.apple summary{color:var(--text)}
+html body.apple .control{min-width:0}html body.apple select,html body.apple input:not([type=range]){max-width:100%;box-sizing:border-box}html body.apple .control select{width:100%;font-size:16px}
+html body.apple input,html body.apple select{font:inherit;background:var(--surface);border:0;border-radius:10px;color:var(--text)}
+html body.apple .regGrid{display:block!important;margin:12px 0 4px;max-height:62vh;overflow:auto}
+html body.apple .regGrid button{display:flex;width:100%;gap:12px;text-align:left;padding:13px 0!important;font-size:19px!important;font-weight:500;letter-spacing:-.015em;border:0!important;border-top:.5px solid var(--line)!important;border-radius:0!important;background:none!important;transform:none!important;color:var(--text)}
+html body.apple .regGrid button span{display:none}
+html body.apple .regGrid button.on::after{content:"\2713";margin-left:auto;color:var(--accent-text)}
+html body.apple .modal{border-radius:18px;background:var(--bg);box-shadow:0 20px 60px rgba(0,0,0,.25);border:0}
+@media(max-width:560px){body.apple .shell{padding:0 18px 72px}body.apple .top{margin:0 -18px;padding:12px 18px}.amenu{padding:0 18px 40px}}
+@media(prefers-reduced-motion:no-preference){.amenu{animation:amFade .22s ease}@keyframes amFade{from{opacity:0}}}
+</style>
 </head>
-<body>
+<body class="apple">
 <div aria-label="Loading demo" class="loadingScreen" id="loadingScreen">
 <div class="loadingBrand"><span class="loadingMarkSvg"><svg aria-label="Real-world assets logo" class="real-logo" role="img" viewbox="0 0 100 76">
 <path d="M8 20V8H61" fill="none" stroke="#0e0e10" stroke-linecap="square" stroke-linejoin="miter" stroke-width="4"></path>
@@ -665,7 +757,7 @@ body.token-world .e3d:not([src*="flag-"]){filter:hue-rotate(205deg) saturate(.85
 <path d="M61 2L94 35L61 68L28 35Z" fill="none" stroke="#a9b0ba" stroke-linejoin="miter" stroke-width="4"></path>
 <circle cx="51" cy="25" fill="#a9b0ba" r="4.5"></circle><circle cx="69" cy="43" fill="#a9b0ba" r="4.5"></circle>
 </svg></span><span>THROWINDICE</span><span class="tag">CONCEPT</span></div>
-<div class="topright"><button class="regBtn" id="regBtn" onclick="regOpen()" type="button" aria-label="Choose your region"><span id="regEmoji">📍</span><span class="rl" id="regLbl">Where are you?</span></button><button aria-label="Switch light/dark theme" class="themeBtn" onclick="toggleTheme()" title="Light / dark" type="button">☾</button><button aria-label="Open profile" class="avatar" onclick="openProfile()" title="Profile" type="button">★</button></div>
+<div class="topright"><button class="menuBtn" id="menuBtn" type="button" aria-haspopup="dialog" aria-controls="amenu">Menu</button><button class="regBtn" id="regBtn" onclick="regOpen()" type="button" aria-label="Choose your region"><span id="regEmoji">📍</span><span class="rl" id="regLbl">Where are you?</span></button><button aria-label="Switch light/dark theme" class="themeBtn" onclick="toggleTheme()" title="Light / dark" type="button">☾</button><button aria-label="Open profile" class="avatar" onclick="openProfile()" title="Profile" type="button">★</button></div>
 </header>
 <main>
 <section class="page active" id="dashboard">
@@ -1941,6 +2033,25 @@ new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(docum
    if(last){f.append(n.data.slice(last));n.replaceWith(f)}}};
  const run=()=>{swap(document.body);new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')swap(m.target.parentNode||document.body);else m.addedNodes.forEach(x=>{if(x.nodeType===1)swap(x);else if(x.nodeType===3&&x.parentNode)swap(x.parentNode)})}}).observe(document.body,{childList:true,subtree:true,characterData:true})};
  document.readyState==='loading'?addEventListener('DOMContentLoaded',run):run()})();
+</script>
+<div class="amenu" id="amenu" role="dialog" aria-modal="true" aria-label="Menu" hidden><div class="amenuBar"><b>THROWINDICE</b><button id="amenuClose" type="button">Close</button></div><nav class="amenuList" id="amenuList"></nav></div>
+<script>
+/* the Menu sheet: the old bottom bar's destinations as big plain rows */
+(()=>{const M=document.getElementById('amenu'),L=document.getElementById('amenuList'),B=document.getElementById('menuBtn');if(!M||!L||!B)return;let last=null;
+const T=()=>document.body.classList.contains('token-world'),nb=s=>document.querySelector(s);
+function close(){M.hidden=true;document.body.style.overflow='';if(last&&last.focus)last.focus()}
+function row(label,fn,cls){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;b.onclick=()=>{close();setTimeout(fn,30)};L.appendChild(b)}
+function build(){L.innerHTML='';const t=T(),dark=document.documentElement.dataset.theme==='dark';
+ row(t?'Home':'Dashboard',()=>navAction(nb('.navbtn.home'),'dashboard','home'));
+ if(!t){row('Investing',()=>navAction(nb('#invBtn'),'world',''));[['World & regions','world'],['Sectors & themes','sectors'],['Commodities','commodities'],['ETF explorer','etfs']].forEach(([l,k])=>row(l,()=>k==='etfs'?openPage('etfs'):navAction(nb('#invBtn'),k,''),'sub'))}
+ else{row('Explore',()=>navAction(nb('#invBtn'),'today','today'));[['Options','today'],['Networks','networks'],['Issuance','issuance']].forEach(([l,k])=>row(l,()=>navAction(nb('#invBtn'),k,k),'sub'))}
+ row('Basics',()=>navAction(nb('.navbtn[data-page="basics"]'),'basics','basics'));
+ row('Game',()=>navGame(nb('.navbtn[data-page="game"]')));
+ L.appendChild(document.createElement('hr'));
+ row(t?'Back to the real world':'Token World',()=>toggleTokenWorld(),'small');
+ row('Region',()=>regOpen(),'small');if(!t)row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
+function open(){last=document.activeElement;build();M.hidden=false;document.body.style.overflow='hidden';const f=L.querySelector('button');if(f)f.focus()}
+B.onclick=open;document.getElementById('amenuClose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape'&&!M.hidden)close()})})();
 </script>
 </body>
 </html>
