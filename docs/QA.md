@@ -656,3 +656,9 @@ The Token World pages were already cut (see above); this pass finished the lefto
 ## Apple-style UI
 - `body.apple` (the `<style id="appleStyle">` layer at the end of the head) restyles the site: system font, white or black, hairlines instead of tiles (cards, topics, categories and the tile roll become plain sections and list rows with a chevron), plain text links instead of 3D buttons, no bottom bar and no 3D emoji icons. Navigation is a **Menu** button in the top bar that opens a full-screen sheet (`#amenu`): Dashboard/Home, Investing or Explore with its pages, Basics, Game, Token World / back to the real world, Region, Appearance (real world only), Saved. The sheet calls the same handlers as the old bottom bar, which is hidden but still in the DOM. The game screens, their menu card and the bubble layers keep their own look.
 - Checked headless on phone (320, 390), tablet (768) and desktop: no page errors, no 4xx, no horizontal overflow, light, dark and Token World, the region modal, the game card opened from the menu.
+
+## Fund panel: fee, concentration, top holdings + Apple "10% flavor"
+- New `data/holdings.json` (121 of 197 fund balls; top-10 holdings, weight, holdings count, top-10 share) built by `node scripts/build-data/holdings.mjs` (stockanalysis.com via curl; Node fetch ignores the proxy). Funds without a company list (metal, coins, futures) show a fallback note.
+- `#fundHold` under the four boxes: Fee (value, €/10k, cheap/middle/pricey scale, 20-year cost at 5%), Concentration (top-10 share bar, count, biggest holding, Spread out / Medium / Concentrated), Top holdings list with weight bars. Ball card (`selBall`) also shows top-10 share and the top 3 names.
+- Flavor: coloured dots on rows/menu entries, gold pill on primary CTAs, gold bars, press/hover bounce (only when motion is allowed).
+- Tested headless: phone light/dark + desktop, Token World menu; VOO/GLD/EWG/XLK; no page errors, no 4xx, no horizontal overflow.
