@@ -668,3 +668,8 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - → (ALL IN 3x) keeps your current side: long stays long, short stays short. From NEUTRAL or cash it follows the market phase (bull = long 3x, bear = short 3x).
 - Ticks pay by side: long/neutral: green +, red -. Short: red +, green -. Same at 3x, no more half pay for red on the board. Magnet pulls only the ticks that pay.
 - Headless: stance sequence neutral→all in→neutral→short→all in short→flip→off→long→2x→all in long all correct; tick test (1x/short/all-in, green/red) signs and sizes correct, no page errors.
+
+## Default stance = LONG 1x (holding)
+- A run starts gold and holding: LONG 1x, the price moves your P&L, green ticks pay, red hurt (like owning the stock). No more separate "neutral" that did nothing; CASH (←) is now the only flat-out-of-the-market stance.
+- ↑ ladder: long 1x (default) → 2x → 3x; ↓ short 1x → 2x → 3x. ↑ from short or cash starts long 1x. → ALL IN 3x on the board as before; ← from the board returns to gold LONG 1x.
+- Headless: ↑↑↑ = 1→2→3, ↓↓ = short 1→2, ← = cash, ↑ from cash = long 1x. Balance sim not rerun: the passive bot now holds long from the start, so BALANCE.md baselines need a re-measure.
