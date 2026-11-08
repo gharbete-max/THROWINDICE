@@ -72,7 +72,7 @@ If an item is blocked or a target can't be met, write why under it and move on.
 | 11 ✅ `d214c47` | **B6 Economy**: hat prices 300 / 900 / 2500, daily gift; account for ETF yield | `BALANCE.md` §6 | prices updated; days-to-crown checked with and without the ETF |
 | 12 ✅ `eb09826` | **B7 Missions + portfolio level** | B7 | 3 missions on the Play tab; `cp-plevel` persists |
 | 13 ✅ `844fe83` | **P1 Performance** (new, see below) | below | game opens with ≤ 0.9 MB of game images; other skins load on demand |
-| 14 ◐ | **B8 Re-tune pass + 5 human phone runs** (the owner plays; prepare a short checklist for them) | B8 | every `BALANCE.md` target holds; changelog at the bottom of `BALANCE.md` |
+| 14 ◐ `a195ee6` | **B8 Re-tune pass + 5 human phone runs** (the owner plays; prepare a short checklist for them) | B8 | every `BALANCE.md` target holds; changelog at the bottom of `BALANCE.md` |
 | 15 | *(later)* Trick combos stages 2–4: segment re-renders, double rotations, spin rewind, bridges | `ANIMATION.md` "Trick combos" | optional, after 14 |
 
 ### O1: Onboarding (new)
@@ -122,8 +122,8 @@ The game loads about 2.6 MB of sprite sheets when it opens: 5 skins × runner, t
 | # | Item | Done when |
 |---|---|---|
 | 16 ✅ `61d0aa6` | **Bear checkpoint behaviour.** It banks like the bull, but there's no relief rally: launch at 75% height (`CPV*.75`), no forward surge, and a grumpier flight (keep the love face for the bull only; use the normal face, a red aura and a "BEAR MARKET BANKED" pop). If the stretch's open P&L is negative, add the lesson line "Banking in a bear locks the loss: cash or short next time". | the bear launch differs visibly; harness errors 0 |
-| 17 ✅ | **Re-tune for the 25% bear share** (B8 numbers moved: passive long now earns more on average). Lower bull-phase tilt or `PNLK` until passive is back in its band. | `BALANCE.md` §7 rows re-run; changelog entry |
-| 18 ✅ | **ALL IN SHORT balance.** Shorting on the board is now possible (3x). Check the trader bot with a bear-phase short-board strategy doesn't exceed 6× passive; if it does, cap all-in short to 2x or cut red-tick values while on the board. | harness numbers logged |
+| 17 ✅ `a195ee6` | **Re-tune for the 25% bear share** (B8 numbers moved: passive long now earns more on average). Lower bull-phase tilt or `PNLK` until passive is back in its band. | `BALANCE.md` §7 rows re-run; changelog entry |
+| 18 ✅ `a195ee6` | **ALL IN SHORT balance.** Shorting on the board is now possible (3x). Check the trader bot with a bear-phase short-board strategy doesn't exceed 6× passive; if it does, cap all-in short to 2x or cut red-tick values while on the board. | harness numbers logged |
 | 19 ✅ `10e24e3` | **Dolla juice.** On a bank, burst 6–12 Dolla notes (`bill.webp` is now a Dolla note) from the runner to the HUD counter, then tick the counter up. Mission and gift rewards fly to the wallet the same way in the menu. | visible in a headless screenshot sequence; reduced motion = instant |
 | 20 | *(later, cosmetics)* **Higher notes:** 5 / 20 / 100 Dolla notes with different smiley portraits (love eyes on 20, sunglasses on 100) for bigger pops and the shop. Same texture script, different portrait. | — |
 | 21 ✅ `6ac6f3f` | **NEUTRAL start (built Nov 7):** runs now start in a 5th state: gold, no position (`R.pos.flat`), ticks still collected, no price P&L; the first ↑ = LONG 1x. Check the O1 run-1 copy ("the bull banks the default LONG" is no longer true: say "swipe ↑ to go long" when run 2 teaches it) and re-run the harness (bots go long at the start, so the baselines are comparable). | onboarding text matches; harness rows logged |
