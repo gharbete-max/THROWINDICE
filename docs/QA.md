@@ -662,3 +662,9 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - `#fundHold` under the four boxes: Fee (value, €/10k, cheap/middle/pricey scale, 20-year cost at 5%), Concentration (top-10 share bar, count, biggest holding, Spread out / Medium / Concentrated), Top holdings list with weight bars. Ball card (`selBall`) also shows top-10 share and the top 3 names.
 - Flavor: coloured dots on rows/menu entries, gold pill on primary CTAs, gold bars, press/hover bounce (only when motion is allowed).
 - Tested headless: phone light/dark + desktop, Token World menu; VOO/GLD/EWG/XLK; no page errors, no 4xx, no horizontal overflow.
+
+## Stance rules: ALL IN toggle, direction-aware ticks
+- ← while ALL IN steps off the board to NEUTRAL (gold, flat); from there ↑/↓ = 1x, again = 2x. (In the air it no longer does board tricks; → keeps TRE FLIP / INDY GRAB.)
+- → (ALL IN 3x) keeps your current side: long stays long, short stays short. From NEUTRAL or cash it follows the market phase (bull = long 3x, bear = short 3x).
+- Ticks pay by side: long/neutral: green +, red -. Short: red +, green -. Same at 3x, no more half pay for red on the board. Magnet pulls only the ticks that pay.
+- Headless: stance sequence neutral→all in→neutral→short→all in short→flip→off→long→2x→all in long all correct; tick test (1x/short/all-in, green/red) signs and sizes correct, no page errors.
