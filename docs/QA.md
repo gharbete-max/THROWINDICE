@@ -648,3 +648,7 @@ The Token World pages were already cut (see above); this pass finished the lefto
 ## Dolla juice (HANDOFF 19)
 - On a bank of +0.5% or more, 6-12 Dolla notes (`flyNotes`, `#gJuice`) fly from the runner to the score counter; the counter holds its old value until they land and then ticks up (`juiceShown`). Mission rewards fly to the counter too. After a run, a daily gift or mission payout flies from the results card to the Style tab (the wallet) and the tab pulses. Reduced motion: no notes, the counter updates instantly.
 - Headless: 13 notes in flight (9 for the bank, 4 for a mission), counter 0 -> 120 after about 1.9 s; with reduced motion no notes and an instant counter; gift notes and the tab pulse appear after game over. 0 page errors.
+
+## Live counter and locked swipes
+- The HUD Dolla counter now shows banked score plus open P&L and cash (what you would have if you banked now), easing to the live value, so it moves with the percentage. Banking, the wallet, NEW BEST and missions still use the banked score; unbanked gains are lost at the end of a run (the lesson line says so).
+- Swiping a direction that onboarding has not unlocked yet now shows a hint ("← CASH unlocks in a later run (or in the pause menu)") and the pause menu has an "Unlock all swipes" button while `cp-learn` is below 5. Swiping left to cash works from level 3 (checked with real mouse swipes at levels 5 and 2).
