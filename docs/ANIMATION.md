@@ -35,16 +35,16 @@ Swipes snap to 4 directions, and each also sets the market position (long/short/
 
 Press = jump as before. While the press is held, a drag of 40 px or more within 0.6 s is a flick, and a flick starts a trick (`trick(k)`). A flick on the ground jumps first. Only one trick runs at a time (`R.trk = {k, t, d, ok, land}`).
 
-Every trick is a **rendered Blender sequence**, not a canvas transform or a fade. The body really rotates in 3D (the face turns away and comes back) and the limbs tuck or splay. The goo is a deformed mesh with rim ripples. **Frames 0 and 11 of every row are exactly the runner's `fall` frame 0**, so the game cuts from the run sheet into a trick and back with no fade and no pop.
+Every trick is a **rendered Blender sequence**, not a canvas transform or a fade. The body really rotates in 3D (the face turns away and comes back) and the limbs tuck or splay. The goo is a deformed mesh with rim ripples. **Frames 0 and 23 of every row are exactly the runner's `fall` frame 0**, so the game cuts from the run sheet into a trick and back with no fade and no pop.
 
 | Flick (screen) | Key | `k` | Row | What the frames show | Playback |
 |---|---|---|---|---|---|
-| ← left | A / ← | `cork` | 0 | off-axis 360 (axis tilted 45° toward the run direction), knees tucked, arms hugging | 12 frames over 0.62 s |
-| → right | D / → | `spin` | 1 | flat 360 about the vertical, arms flung wide, legs together and pointed | 12 frames over 0.55 s |
-| ↑ up | E | `split` | 2 | turns to face the camera, opens a side split with arms in a V, pulses, closes | 12 frames over 0.6 s |
-| ↓ down | S / ↓ | `goo` | 3 | 0–3 melt into a pancake (tipped toward the camera so the face shows); 4–7 rippling pancake loop; 8–11 landing splat and spring back with overshoot | 0–3 in 0.22 s, 4–7 loop at 14 fps until landing, 8–11 over 0.3 s after landing |
+| ← left | A / ← | `cork` | 0 | off-axis 360 (axis tilted 45° toward the run direction), knees tucked, arms hugging | 24 frames over 0.62 s |
+| → right | D / → | `spin` | 1 | flat 360 about the vertical, arms flung wide, legs together and pointed | 24 frames over 0.55 s |
+| ↑ up | E | `split` | 2 | turns to face the camera, opens a side split with arms in a V, pulses, closes | 24 frames over 0.6 s |
+| ↓ down | S / ↓ | `goo` | 3 | 0–7 melt into a pancake (tipped toward the camera so the face shows); 8–15 rippling pancake loop; 16–23 landing splat and spring back with overshoot | 0–7 in 0.22 s, 8–15 loop at 28 fps until landing, 16–23 over 0.3 s after landing |
 
-- **Assets:** `assets/game/runner-trick{,-glass,-magnet,-x2,-rainbow}.webp`, one per power-up form. Each is 12 columns × 4 rows (cork, spin, split, goo), with a shared crop box. Drawn at the runner's pixel scale `217/182`, offset `TRICK_OFF` (crop origin minus `[118,209]`).
+- **Assets:** `assets/game/runner-trick{,-glass,-magnet,-x2,-rainbow}.webp`, one per power-up form. Each is 24 columns × 4 rows (cork, spin, split, goo), with a shared crop box. Drawn at the runner's pixel scale `217/182`, offset `TRICK_OFF` (crop origin minus `[118,209]`).
 - **Game code:**
   - `TRK` (durations and labels), `TROW` (rows), `trickFrame(s)` (picks the cell), `flickDir`, `trick` are next to `wob()`.
   - In `player()`, `const tf=trickFrame(s)` zeroes the tilt (the frames carry the orientation), and the draw call uses the trick cell instead of the run frame.
@@ -64,7 +64,7 @@ Every trick is a **rendered Blender sequence**, not a canvas transform or a fade
 2. **Register:** add the name to the `('cork', 'spin', 'split', 'goo')` tuple in `OBJECTS`.
 3. **Render all skins:** about 2 min per skin on 2 cores. Contact-sheet one skin at 8 samples first and check the frames.
    ```
-   F=$(python3 -c "print(','.join(f'trick-{k}-{i}' for k in ('cork','spin','split','goo','new') for i in range(12)))")
+   F=$(python3 -c "print(','.join(f'trick-{k}-{i}' for k in ('cork','spin','split','goo','new') for i in range(24)))")
    for sk in gold glass blue green rainbow; do RUNNER_SKIN=$sk python scripts/icons/objects.py $F out/$sk 256 32 1; done
    ```
    - Skin → file: `gold` → `runner-trick`, `glass` → `-glass` (shield), `blue` → `-magnet`, `green` → `-x2`, `rainbow` → `-rainbow` (combo).
@@ -223,3 +223,18 @@ Additive channels (wobble, proximity glow, particles) never get priority. They s
 - [ ] Results card fade-in and dance start sync.
 - [ ] Optional: a shared `ease(k, target, rate, dt)` helper once there are three or more blended weights. Inline until then.
 - [ ] Test at 30, 60 and 120 fps (throttle `dt`) to confirm that no loop depends on the frame rate.
+
+## Frame rate and frame counts (60 fps pass)
+
+The game runs at the display rate (60 fps on phones); sprite loops are timed in seconds, so more frames means smoother motion, not faster motion.
+
+| Sheet | Frames | Playback |
+|---|---|---|
+| `runner-trick*.webp` | 24 per trick (24 × 4 grid, `TRICK_N` in objects.py) | stretched over the trick duration |
+| `runner-skate-{ggreen,gred}.webp` | ride 5 slopes × 12, ollie 12, kickflip 16, shove-it/tre/indy/jesus 20 (168, 10 columns) | ride loop 18 fps; tricks stretched over their duration |
+| `cp-bull.webp`, `cp-bear.webp` | 96 | 24 fps (one turn every 4 s) |
+
+- **No main-thread decode:** `ok(im)` only reports a sheet ready once an `ImageBitmap` built from the fetched blob exists (`bmMake`; decode happens off the main thread). `cx.drawImage` is patched to draw `im._bm`. Bitmaps are evicted LRU past `BM_BUDGET` (110 MB). New sheets need no extra code: `GIMG`/`ld` do it.
+- **Cached effects:** glows (`glowSprite`) and auras (`AURAC`) are pre-rendered sprites, not per-frame gradients. Keep new effects as cached sprites.
+- **Theme palette:** `pal()` (cached in `PALC` per theme and size) holds the background wash, candle and line colours for light and dark. Canvas colours come from `P_`, never hard-coded, so the scene follows the site's glass theme.
+- **Bigger sheets:** a 60 fps target does not mean 60 unique frames per second of animation; keep each skin under ~30 MB decoded (phones).

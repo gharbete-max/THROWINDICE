@@ -107,8 +107,8 @@ The game loads about 2.6 MB of sprite sheets when it opens: 5 skins × runner, t
 ## New from the owner (Nov 7, evening): partly built, finish these
 
 **Built already (planning session):**
-- **Smoother bull:** 48 frames at 12 fps (`cp-bull.webp`).
-- **Ruby bear checkpoint:** in a bear market (`cp-bear.webp`, 48 frames) with a red glow.
+- **Smoother bull:** 96 frames at 24 fps (`cp-bull.webp`).
+- **Ruby bear checkpoint:** in a bear market (`cp-bear.webp`, 96 frames) with a red glow.
 - **Bear market share:** about 25% of stretches. `phaseOf`: bull phases 3–5 stretches, bear 1–2.
 - **Sticky ↑ / ↓ toggles:**
   - ↑ = LONG and ↓ = SHORT stay set until the next ↑ / ↓ swipe. Again = 2x, and it stays 2x; it never toggles itself off.

@@ -45,6 +45,7 @@ python3 -m http.server 8765 &
 | `RUNNER_FACE` | `love`, `love-noeyes` |
 
 - **Runner frame list (35):** walk 8, jog 8, run 8, tko 3, rise 4, fall 4 → `runner-{gait}-{i}`.
+- **Other sheets:** tricks 24 frames each, skate 168, bull/bear 96 (see `docs/ANIMATION.md`, "Frame rate and frame counts"). Sheets decode off the main thread (`bmMake`); canvas colours come from the theme palette `pal()`.
 - **Runner sheet packing:**
   - Crop box `(x0, 27, x1, 209)`, frames side by side, cell height 182.
   - The game draws at height 217, so the pixel scale is `217/182`.

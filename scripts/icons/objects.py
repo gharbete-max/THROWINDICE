@@ -371,7 +371,12 @@ def o_runner(gait, frame):
     hub.rotation_mode = 'XYZ'; hub.rotation_euler = (0, math.radians(lean), math.radians(14 if LOVE else 30))  # love frames turn toward the camera so the whole happy face shows
     return [hub], []
 
-TRICK_N = 12
+TRICK_N = 24   # frames per trick row (24 = ~40 fps over a 0.6 s trick)
+
+def _keys(vals, u):
+    """evenly spaced keyframes, eased between: lets hand-keyed poses render at any frame count"""
+    x = max(0.0, min(1.0, u)) * (len(vals) - 1); i = min(int(x), len(vals) - 2); f = x - i; f = f * f * (3 - 2 * f)
+    return vals[i] + (vals[i + 1] - vals[i]) * f
 def _ss(a, b, x):
     t = max(0.0, min(1.0, (x - a) / (b - a))); return t * t * (3 - 2 * t)
 
@@ -426,7 +431,7 @@ def o_trick(kind, i, n=TRICK_N):
         if i < n4: sq = _ss(0, 1, (i + 1) / n4); ph = 0                                # melt in
         elif i < 2 * n4: sq = 1.0; ph = 2 * math.pi * (i - n4) / n4                   # loop (period = n4 frames)
         else:                                                                          # land: splat, then spring back with overshoot
-            t = (i - 2 * n4) / (n4 - 1); sq = [1.0, 0.5, -0.18, 0.0][min(3, round(t * 3))] if n4 == 4 else 1.2 * (1 - t); ph = 0
+            t = (i - 2 * n4) / (n4 - 1); sq = _keys([1.0, 0.5, -0.18, 0.0], t); ph = 0   # splat, spring back with overshoot
             ctr = 0.25 + (-0.3 - 0.25) * (1 - _ss(0, 1, t)) * (1 if t < 1 else 0); ctr = 0.25 if t >= 1 else ctr
         rip = 0.07 * max(0.0, min(1.0, sq)) if i < 2 * n4 or sq > 0.9 else 0.0
         yaw *= 1 - 0.6 * max(0.0, min(1.0, sq)); lean *= 1 - max(0.0, min(1.0, sq))
@@ -597,7 +602,7 @@ def o_pu_x2():
     t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
     return [t], []
 
-def o_bull(i, n=48):
+def o_bull(i, n=96):
     """checkpoint: a faceted, see-through diamond bull, turning slowly (frame i of n, one full turn)"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
@@ -718,7 +723,7 @@ def o_sign100x():
     t.data.body = '100x'; t.data.size = 0.9; t.data.extrude = 0.08; t.data.bevel_depth = 0.02; t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'
     t.data.materials.append(neon); t.rotation_euler = (math.radians(90), 0, math.radians(-12)); return [t], []
 
-def o_bear(i=-1, n=48):
+def o_bear(i=-1, n=96):
     """bear market: a faceted ruby bear, the bull's counterpart. i >= 0: frame i of n of one slow turn (the bear-market checkpoint); i < 0: the static icon"""
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
@@ -738,7 +743,8 @@ def o_bear(i=-1, n=48):
 
 # ---------- ALL IN: the skateboard ----------
 SKATE_PITCH = (-30, -15, 0, 15, 30)   # ride frames are rendered per terrain slope (deg, + = uphill to the right)
-SKATE_SEQ = {'ollie': 6, 'kick': 8, 'shove': 10, 'tre': 10, 'indy': 10, 'jesus': 10}
+SKATE_SEQ = {'ollie': 12, 'kick': 16, 'shove': 20, 'tre': 20, 'indy': 20, 'jesus': 20}   # doubled for smooth playback
+SKATE_RIDE_N = 12
 
 def skateboard():
     """deck with kicktails, black grip, green underside, silver trucks, cream wheels; built along +x, wheels touching z = -0.95"""
@@ -758,7 +764,7 @@ def o_skate(kind, i):
     tre: spin + roll (360 flip). indy: knees up, back hand grabs the toe edge. jesus: board in the right (front) hand, arms out wide like a cross, legs together."""
     body, limb = runner_mats(); pitch = 0.0; n = 4
     if kind.startswith('ride'):
-        pitch = float(kind.split('_')[1]); n = 4; ph = 2 * math.pi * i / n; crouch = 0.5 + 0.18 * math.sin(ph); u = 0.0
+        pitch = float(kind.split('_')[1]); n = SKATE_RIDE_N; ph = 2 * math.pi * i / n; crouch = 0.5 + 0.18 * math.sin(ph); u = 0.0
     else:
         n = SKATE_SEQ[kind]; u = i / (n - 1); crouch = 0.5; ph = 0.0
     env = math.sin(math.pi * u)                       # 0 at both ends: tricks start and end on the ride pose
@@ -768,9 +774,8 @@ def o_skate(kind, i):
     arms = [Vector((-0.98, -0.05, -0.05)), Vector((0.98, -0.05, -0.05))]   # balancing, slightly down
     grab = None; legs_together = 0.0
     if kind == 'ollie':
-        k = [0, 1, 2, 3, 4, 5][i]
-        crouch = [1.0, 0.25, 0.55, 0.6, 0.4, 0.75][k]; bd['pit'] = [0, 24, 8, 0, -4, 0][k]; bd['dz'] = [0, 0.05, 0.2, 0.22, 0.1, 0][k]
-        lift = [0, 0.12, 0.25, 0.26, 0.12, 0][k]; bd['dx'] = [0, -0.05, 0, 0, 0, 0][k]
+        crouch = _keys([1.0, 0.25, 0.55, 0.6, 0.4, 0.75], u); bd['pit'] = _keys([0, 24, 8, 0, -4, 0], u); bd['dz'] = _keys([0, 0.05, 0.2, 0.22, 0.1, 0], u)
+        lift = _keys([0, 0.12, 0.25, 0.26, 0.12, 0], u); bd['dx'] = _keys([0, -0.05, 0, 0, 0, 0], u)
     elif kind in ('kick', 'shove', 'tre'):
         tuck = env; lift = 0.28 * env; bd['dz'] = 0.36 * env; crouch = 0.5 + 0.3 * env   # the board rises with the tucked feet
         if kind in ('kick', 'tre'): bd['roll'] = 360 * e
@@ -853,7 +858,7 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(48)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(48)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(4)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
