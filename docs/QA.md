@@ -684,3 +684,8 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - Opening a pile (Menu > ETF explorer > a theme) now shows a glass list of fund cards sorted cheapest first: fee (+ $ per $1,000), 1-year change and yearly swings (from data/facts.json when the fund is in it), spread bar (top-10 share, holdings count, Spread out/Medium/Concentrated), top 5 holdings, then "Full details" to the fund panel. Funds with no holdings list say so. Cheap/Middle/Pricey chips still dim cards; region "show more" still works.
 - Falling-ball physics is no longer used (code left in place, unreachable). Confetti/scraps/blast are no-ops and the tap-to-reveal balloons on long paragraphs are off (text is just shown).
 - Headless: phone, dark phone, desktop; cards render, no overflow, Full details opens the fund panel, no page errors or 4xx.
+
+## Sync with the art/animation session
+- origin/main (brand mark and wordmark, scroll-scrubbed hero, 3D icons in slots, glass game UI, 60 fps pass, adaptive game resolution, lighter first load) already contained my commits; merged cleanly, no conflicts.
+- Checked after the merge: home, Menu panel (wordmark shows), Tokens page, ETF cards, game run (trick swipes, HUD) on phone/dark/desktop: no page errors, no 4xx, no overflow. Game pixel ratio is now the other session's adaptive one; Low-effects (no background/ticker) from my change still applies.
+- Small fixes: ETF card icon slot hidden when no 3D icon exists; Back button focus ring only for keyboard focus.
