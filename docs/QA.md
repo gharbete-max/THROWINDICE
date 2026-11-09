@@ -673,3 +673,9 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - A run starts gold and holding: LONG 1x, the price moves your P&L, green ticks pay, red hurt (like owning the stock). No more separate "neutral" that did nothing; CASH (←) is now the only flat-out-of-the-market stance.
 - ↑ ladder: long 1x (default) → 2x → 3x; ↓ short 1x → 2x → 3x. ↑ from short or cash starts long 1x. → ALL IN 3x on the board as before; ← from the board returns to gold LONG 1x.
 - Headless: ↑↑↑ = 1→2→3, ↓↓ = short 1→2, ← = cash, ↑ from cash = long 1x. Balance sim not rerun: the passive bot now holds long from the start, so BALANCE.md baselines need a re-measure.
+
+## Glass UI, Tokens page, low graphics only
+- Glass: header, cards, fund panel and modals are translucent with blur over a faint colour wash; the Menu is a rounded glass panel on a blurred scrim (tap outside or ✕ to close), 17px rows with colour dots.
+- Token World is no longer reachable (no coin, no menu rows). New page **Tokens** (Menu / dashboard): plain explanation (token, stablecoin, tokenized asset, how it works, risks), one combined list of crypto funds (tap = fund panel with fee, concentration, holdings) and the stocks inside BLOK + BKCH (from `data/holdings.json`). The old Token World pages and game rug-pull code are left dormant in the file, not deleted.
+- Game graphics: Low is the only mode (`ST.gfx=0` forced, slider removed, saved settings ignored). Pixel ratio 1, no background ticker.
+- Headless: phone/dark/desktop, no horizontal overflow, 7 funds + 16 stocks listed, fund tap opens panel, no page errors or 4xx.

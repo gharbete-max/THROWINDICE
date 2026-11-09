@@ -685,17 +685,6 @@ html body.apple .filter{background:none!important;box-shadow:none!important;bord
 html body.apple .filter.active{background:var(--text)!important;color:var(--bg)!important;border-color:var(--text)!important}
 html body.apple .filters{gap:8px;margin:0 0 24px}
 /* menu sheet */
-.amenu{position:fixed;inset:0;z-index:600;background:color-mix(in srgb,var(--bg) 97%,transparent);-webkit-backdrop-filter:blur(30px);backdrop-filter:blur(30px);overflow:auto;padding:0 22px 48px;color:var(--text)}
-.amenu[hidden]{display:none}
-.amenuBar{display:flex;justify-content:space-between;align-items:center;max-width:980px;margin:0 auto;padding:12px 0;position:sticky;top:0}
-.amenuBar b{font-size:15px;font-weight:600;letter-spacing:-.01em}
-.amenuBar button{font:inherit;font-size:15px;font-weight:500;background:none;border:0;color:var(--text);cursor:pointer;padding:6px 2px}
-.amenuList{max-width:980px;margin:24px auto 0;display:grid}
-.amenuList button{font:inherit;display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);cursor:pointer;padding:10px 0;font-size:clamp(30px,6vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.15}
-.amenuList button:hover{opacity:.6}
-.amenuList button.sub{font-size:clamp(20px,3.6vw,26px);font-weight:500;color:var(--muted);padding:6px 0 6px 2px;letter-spacing:-.02em}
-.amenuList button.small{font-size:19px;font-weight:500;color:var(--muted);letter-spacing:-.015em;padding:7px 0}
-.amenuList hr{border:0;border-top:.5px solid var(--line);margin:22px 0 14px;width:100%}
 /* the tile roll becomes a plain list: every row visible, no wheel, no round arrow buttons */
 html body.apple .carCtl{display:none!important}
 html body.apple .wOff{display:block!important}
@@ -718,20 +707,45 @@ html body.apple .regGrid button{display:flex;width:100%;gap:12px;text-align:left
 html body.apple .regGrid button span{display:none}
 html body.apple .regGrid button.on::after{content:"\2713";margin-left:auto;color:var(--accent-text)}
 html body.apple .modal{border-radius:18px;background:var(--bg);box-shadow:0 20px 60px rgba(0,0,0,.25);border:0}
-@media(max-width:560px){body.apple .shell{padding:0 18px 72px}body.apple .top{margin:0 -18px;padding:12px 18px}.amenu{padding:0 18px 40px}}
-@media(prefers-reduced-motion:no-preference){.amenu{animation:amFade .22s ease}@keyframes amFade{from{opacity:0}}}
 /* 10% flavor: a few playful touches on the flat Apple layer */
 html body.apple .topic::before{content:"";flex:none;width:10px;height:10px;border-radius:50%;margin-right:14px;background:var(--dot,var(--c1,#c9a24d));box-shadow:0 0 0 4px color-mix(in srgb,var(--dot,var(--c1,#c9a24d)) 18%,transparent)}
 html body.apple .topic:nth-child(6n+2){--dot:var(--c2)}html body.apple .topic:nth-child(6n+3){--dot:var(--c3)}html body.apple .topic:nth-child(6n+4){--dot:var(--c4)}html body.apple .topic:nth-child(6n+5){--dot:var(--c5)}html body.apple .topic:nth-child(6n+6){--dot:var(--c6)}
-html body.apple .amenuList button::before{content:"";display:inline-block;width:.32em;height:.32em;border-radius:50%;margin-right:.45em;vertical-align:.18em;background:var(--dot,var(--c1,#c9a24d))}
-html body.apple .amenuList button:nth-of-type(6n+2){--dot:var(--c2)}html body.apple .amenuList button:nth-of-type(6n+3){--dot:var(--c3)}html body.apple .amenuList button:nth-of-type(6n+4){--dot:var(--c4)}html body.apple .amenuList button:nth-of-type(6n+5){--dot:var(--c5)}html body.apple .amenuList button:nth-of-type(6n+6){--dot:var(--c6)}
-html body.apple .amenuList .sub::before,html body.apple .amenuList .small::before{display:none}
 html body.apple #gcGo,html body.apple #etfCalcBtn,html body.apple #etfBuyBtn{background:linear-gradient(180deg,#e8c56a,#c9a24d)!important;color:#2a1f05!important;border-radius:99px!important;font-weight:700!important;box-shadow:0 6px 16px rgba(201,162,77,.35)}
 html body.apple .hTag{background:color-mix(in srgb,currentColor 10%,transparent)}
 html body.apple .hBar i,html body.apple .hW i{background:linear-gradient(90deg,#e8c56a,#c9a24d)}
 html body.apple .topic:active,html body.apple .amenuList button:active{transform:scale(.985)}
 html body.apple .bub{filter:drop-shadow(0 8px 14px rgba(0,0,0,.14))}
 @media (prefers-reduced-motion:no-preference){html body.apple .topic,html body.apple .amenuList button{transition:transform .25s cubic-bezier(.2,.9,.25,1.5)}html body.apple .topic:hover::before{transform:scale(1.35);transition:transform .3s cubic-bezier(.2,.9,.25,1.5)}}
+/* glass: soft colour wash behind translucent, blurred surfaces */
+html body.apple{background:radial-gradient(60vw 40vh at 12% -5%,color-mix(in srgb,var(--c1,#c9a24d) 16%,transparent),transparent 70%),radial-gradient(55vw 45vh at 100% 8%,color-mix(in srgb,var(--c4,#6aa7ff) 14%,transparent),transparent 70%),var(--bg);background-attachment:fixed}
+html body.apple .top{background:color-mix(in srgb,var(--bg) 62%,transparent)!important;-webkit-backdrop-filter:saturate(1.8) blur(22px);backdrop-filter:saturate(1.8) blur(22px)}
+html body.apple .card,html body.apple #etfSelected,html body.apple .modal{background:color-mix(in srgb,var(--bg) 58%,transparent)!important;-webkit-backdrop-filter:saturate(1.6) blur(24px);backdrop-filter:saturate(1.6) blur(24px);border:.5px solid color-mix(in srgb,var(--text) 10%,transparent)!important;border-radius:22px!important;box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 10px 30px rgba(0,0,0,.06)!important;padding:22px!important;margin-bottom:16px}
+html body.apple .card .topic:first-of-type,html body.apple .card .topic:first-child{border-top:0!important}
+/* menu: a glass panel on a blurred scrim */
+.amenu{position:fixed;inset:0;z-index:600;background:rgba(10,10,14,.28);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);overflow:auto;padding:12px;color:var(--text)}
+.amenu[hidden]{display:none}
+.amenuPanel{max-width:400px;margin:0 0 0 auto;border-radius:28px;padding:10px 10px 12px;background:color-mix(in srgb,var(--bg) 70%,transparent);-webkit-backdrop-filter:saturate(1.8) blur(30px);backdrop-filter:saturate(1.8) blur(30px);border:.5px solid color-mix(in srgb,#fff 45%,transparent);box-shadow:0 24px 60px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.55) inset}
+.amenuBar{display:flex;justify-content:space-between;align-items:center;padding:8px 10px 10px}
+.amenuBar b{font-size:13px;font-weight:600;letter-spacing:.12em;color:var(--muted)}
+.amenuBar button{font:inherit;font-size:14px;width:30px;height:30px;border-radius:50%;border:0;background:color-mix(in srgb,var(--text) 9%,transparent);color:var(--text);cursor:pointer}
+.amenuList{display:grid;gap:2px}
+.amenuList button{font:inherit;display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:0;border-radius:14px;color:var(--text);cursor:pointer;padding:12px 14px;font-size:17px;font-weight:500;letter-spacing:-.01em;line-height:1.2}
+.amenuList button:hover{background:color-mix(in srgb,var(--text) 7%,transparent)}
+.amenuList button::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--dot,var(--c1,#c9a24d))}
+.amenuList button:nth-of-type(6n+2){--dot:var(--c2)}.amenuList button:nth-of-type(6n+3){--dot:var(--c3)}.amenuList button:nth-of-type(6n+4){--dot:var(--c4)}.amenuList button:nth-of-type(6n+5){--dot:var(--c5)}.amenuList button:nth-of-type(6n+6){--dot:var(--c6)}
+.amenuList button.sub{font-size:15px;color:var(--muted);padding:8px 14px 8px 34px}.amenuList button.small{font-size:15px;color:var(--muted)}
+.amenuList .sub::before,.amenuList .small::before{display:none}
+.amenuList hr{border:0;border-top:.5px solid color-mix(in srgb,var(--text) 14%,transparent);margin:8px 14px;width:auto}
+@media(max-width:560px){.amenu{padding:8px}.amenuPanel{max-width:none}}
+@media(prefers-reduced-motion:no-preference){.amenu{animation:amFade .2s ease}.amenuPanel{animation:amPop .28s cubic-bezier(.2,.9,.25,1.2)}@keyframes amFade{from{opacity:0}}@keyframes amPop{from{opacity:0;transform:translateY(-8px) scale(.97)}}}
+.tkList{display:grid;margin-top:6px}
+html body.apple .tkRow{display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:10px;align-items:baseline;width:100%;text-align:left;font:inherit;color:var(--text);background:none;border:0;border-top:.5px solid color-mix(in srgb,var(--text) 12%,transparent);padding:12px 2px;border-radius:0}
+html body.apple .tkRow:first-child{border-top:0}
+.tkRow b{font-size:15px;letter-spacing:.02em}.tkRow span{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tkRow small{font-size:13px;color:var(--muted);text-align:right}
+@media(max-width:430px){html body.apple .tkRow{grid-template-columns:54px minmax(0,1fr);}.tkRow small{grid-column:2;text-align:left}}
+button.tkRow{cursor:pointer}button.tkRow:hover{background:color-mix(in srgb,var(--text) 5%,transparent)}
+#tokens .dgMore{display:none!important}
+html body.apple .card .topic b{flex:1;text-align:left}
 </style>
 </head>
 <body class="apple">
@@ -787,6 +801,7 @@ html body.apple .bub{filter:drop-shadow(0 8px 14px rgba(0,0,0,.14))}
 <button class="topic" onclick="openPage('sectors')"><div class="symbol">◈</div><b>Sectors &amp; themes</b></button>
 <button class="topic" onclick="openPage('commodities')"><div class="symbol">⚒</div><b>Commodities</b></button>
 <button class="topic" onclick="openPage('etfs')"><div class="symbol">▤</div><b>ETF explorer</b></button>
+<button class="topic" onclick="openPage('tokens')"><div class="symbol">🔑</div><b>Tokens</b></button>
 </div>
 </section>
 </section>
@@ -813,6 +828,21 @@ html body.apple .bub{filter:drop-shadow(0 8px 14px rgba(0,0,0,.14))}
 <div class="fgrid" id="fund4" style="margin-top:18px"></div><div id="fundHold"></div><p class="disclaimer" id="etfSource"></p><button class="btn" id="etfCalcBtn" onclick="openPage('fees')" style="width:100%;margin-top:18px">Try the fee calculator →</button><div class="actions"><button class="btn secondary" id="etfChartBtn" type="button" onclick="openChart(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">📈 Show chart</button><button class="btn secondary" id="etfSaveBtn" onclick="saveCurrentETF()" type="button">☆ Save</button><button class="btn" id="etfBuyBtn" type="button" onclick="openBuy(document.getElementById('etfName').dataset.ticker,etfFacts[document.getElementById('etfName').dataset.ticker].name)">Where to buy</button></div><p class="disclaimer">Brokers shown are placeholders, not partners yet. Third-party sites are not run by THROWINDICE.</p></section>
 
 </div>
+</section>
+<section class="page" id="tokens">
+<div class="pageTitle"><h1>Tokens, simply.</h1><p>Not advice.</p></div>
+<section class="card startNote"><h2>The simple version</h2><ul class="noteList">
+<li><span>🔑</span><p>A token is a digital receipt on a shared public ledger (a blockchain). It says who owns what.</p></li>
+<li><span>₿</span><p>Coins like bitcoin and ether are traded for their own price. Their price can swing a lot.</p></li>
+<li><span>💵</span><p>A stablecoin is a token meant to stay worth one dollar. It is how money moves between coins and banks.</p></li>
+<li><span>🏛</span><p>A tokenized asset is a real thing, like a bond, a fund share or gold, with a token as its receipt. It can trade at any hour and be split into small pieces.</p></li></ul></section>
+<section class="card"><h2>How it works</h2><ul class="noteList">
+<li><span>1</span><p>A real thing is held by a company or a bank.</p></li>
+<li><span>2</span><p>A token is made on a blockchain that points to that thing.</p></li>
+<li><span>3</span><p>You keep the token in a wallet. Whoever has the key owns it, so a lost key is lost money.</p></li></ul>
+<p class="disclaimer">Risks: big price swings, scams, bugs in the code, and rules that differ by country. You can also skip all of it. A broad fund is fine.</p></section>
+<section class="card"><h2>Funds that follow tokens</h2><p style="color:var(--muted)">Funds are the simple way in: no wallet, no keys. Tap one to see fee and what is inside.</p><div class="tkList" id="tokFunds"></div></section>
+<section class="card"><h2>Stocks that drive it</h2><p style="color:var(--muted)">The companies inside the two company funds (BLOK and BKCH): exchanges, stablecoin makers, brokers and miners.</p><div class="tkList" id="tokStocks"></div><p class="disclaimer">From the funds' own holdings lists. Weights change often.</p></section>
 </section>
 <section class="page" id="basics">
 <div class="pageTitle"><h1>Basics</h1></div>
@@ -903,7 +933,7 @@ html body.apple .bub{filter:drop-shadow(0 8px 14px rgba(0,0,0,.14))}
 <div class="gameMsg" id="gMsg" aria-live="polite"></div>
 <div class="gameCard slim gpMenu" id="gamePause" role="dialog" aria-label="Paused" hidden><h2>PAUSED</h2><p class="gpWho" id="gpWho"></p>
 <div class="gpStats"><div><b id="gpScore">0</b><span>Score</span></div><div><b id="gpDist">0 m</b><span>Distance</span></div><div><b id="gpBest">0</b><span>Best</span></div></div>
-<div class="gpSec"><h3>Graphics</h3><label class="gpRow"><span>Quality</span><input type="range" class="gpR" id="gpGfx" min="0" max="2" step="1" aria-label="Graphics quality"><output id="gpGfxV"></output></label><p class="gpNote" id="gpGfxN"></p></div>
+
 <div class="gpSec"><h3>Sound</h3><label class="gpRow"><span>Music</span><input type="range" class="gpR" id="gpMv" min="0" max="100" step="5" aria-label="Music volume"><output id="gpMvV"></output></label><label class="gpRow"><span>Effects</span><input type="range" class="gpR" id="gpSv" min="0" max="100" step="5" aria-label="Sound effects volume"><output id="gpSvV"></output></label><div class="gpRow gpBtns"><span>Mute</span><button class="btn secondary" type="button" id="gpMusic">On</button><button class="btn secondary" type="button" id="gpSfx">On</button></div></div>
 <div class="gpSec"><h3>Player</h3><label class="gpRow"><span>Name</span><input type="text" id="gpName" maxlength="12" placeholder="Player" autocomplete="off" aria-label="Player name"></label><label class="gpRow"><span>Screen shake</span><input type="range" class="gpR" id="gpShake" min="0" max="2" step="1" aria-label="Screen shake"><output id="gpShakeV"></output></label><div class="gpRow gpBtns" id="gpUnlockRow"><span>Swipes</span><button class="btn secondary" type="button" id="gpUnlock">Unlock all swipes</button></div><div class="gpRow gpBtns"><span>Controls</span><button class="btn secondary" type="button" id="gpHold" title="Hold the button to jump higher">Hold-jump: on</button><button class="btn secondary" type="button" id="gpVib">Vibrate: on</button></div></div>
 <div class="actions"><button class="btn" type="button" id="gpResume">Resume</button></div><div class="actions"><button class="btn secondary" type="button" id="gpRestart">Restart</button><button class="btn secondary" type="button" id="gpQuit">Exit game</button></div></div>
@@ -931,7 +961,7 @@ html body.apple .bub{filter:drop-shadow(0 8px 14px rgba(0,0,0,.14))}
 <div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Back">← Back</button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><button type="button" class="bkey fl" onclick="bubKey(this,'fl')">Cheap</button><button type="button" class="bkey fm" onclick="bubKey(this,'fm')">Middle</button><button type="button" class="bkey fh" onclick="bubKey(this,'fh')">Pricey</button></div><div class="bubField" id="bubField"></div><div class="bubCard" id="bubCard" hidden></div></div>
 <div class="toast" id="toast"></div>
 <script>
-const pages=['dashboard','basics','fees','world','sectors','commodities','etfs','parallel'];
+const pages=['dashboard','basics','fees','world','sectors','commodities','etfs','tokens'];
 function setPage(id){const token=id==='parallel';setTimeout(()=>window._dgRun&&window._dgRun(),120);if(document.body.classList.contains('token-world')!==token){const sp=document.getElementById('etfSelected');if(sp){sp.hidden=true;sp.classList.remove('picked')}window.scrollTo(0,0)}dockPanel(token);document.body.classList.toggle('token-world',token);if(token){document.body.dataset.tview='';showTView('parallel')}document.body.classList.toggle('real-world',!token);document.querySelector('.tokenCoin')?.classList.toggle('in-token-world',token);document.querySelector('.tokenCoin')?.setAttribute('aria-label',token?'Return to Real-World Assets':'Enter Token World');document.querySelector('.tokenCoin')?.setAttribute('title',token?'Return to Real-World Assets':'Enter Token World');const coinLabel=document.querySelector('.tokenCoin .coinLabel');if(coinLabel){coinLabel.textContent=token?'Real world':'Tokenized';window.arcSet&&window.arcSet()}invClose();document.querySelectorAll('.navbtn').forEach(b=>{b.classList.toggle('active',token?b.classList.contains('home'):(b.dataset.pages||b.dataset.page||'').split(' ').includes(id||'dashboard'))});const bubble=document.getElementById('coinBubble');if(bubble){bubble.innerHTML=token?'<strong>Token world</strong>Tap the coin to go back.':'<strong>Real world</strong>Tap the coin for tokens.';bubble.classList.add('show');clearTimeout(window._cbT);window._cbT=setTimeout(()=>bubble.classList.remove('show'),3500)}}
 const TVG={parallel:'home',tBasics:'learn',tWallets:'learn',tToday:'explore',tNetworks:'explore',tIssuance:'explore'};
 function showTView(id){const B=document.body,g=TVG[id]||'home';if(B.dataset.tview===g)return;B.dataset.tview=g;document.querySelectorAll('.tp').forEach(x=>x.classList.toggle('tcur',TVG[x.id]===g));window.scrollTo(0,0)}
@@ -1533,7 +1563,7 @@ regLabel();if(!REGION)regOpen();
    Collect coins, grab power-ups, survive the falls (fall damage). Every checkpoint the run and the music speed up. No cash out: keep going. */
 const G=2300,JV=1000,HOLDG=.55,CW=46,DESC=900,SP0=820,CPD=20000,CPS=2000,CPM=32000,AX=.16,SLIDE=100,VG=140,UP=290,MINV=520,CPV=1900;/* gravity, jump speed, hold-jump gravity factor, candle width, max slope the runner can stick to, start speed, checkpoint distance */
 let bestD=0;try{bestD=+localStorage.getItem('cp-bestd')||0}catch(e){}
-const ST=Object.assign({gfx:1,mv:100,sv:100,shake:2,vib:1,holdj:1,name:''},(()=>{try{return JSON.parse(localStorage.getItem('cp-set'))||{}}catch(e){return{}}})()),saveST=()=>{try{localStorage.setItem('cp-set',JSON.stringify(ST))}catch(e){}};/* pause-menu settings: graphics 0-2, music and sound volume, shake 0-2, vibration, hold-to-jump-higher, name */
+const ST=Object.assign({gfx:0,mv:100,sv:100,shake:2,vib:1,holdj:1,name:''},(()=>{try{return JSON.parse(localStorage.getItem('cp-set'))||{}}catch(e){return{}}})()),saveST=()=>{try{localStorage.setItem('cp-set',JSON.stringify(ST))}catch(e){}};ST.gfx=0;/* simple art style is the only mode (was a Low/Normal/High slider) *//* pause-menu settings: graphics 0-2, music and sound volume, shake 0-2, vibration, hold-to-jump-higher, name */
 /* portfolio level (B7): each completed set of three missions raises the starting portfolio by 5% (max +50%) */
 let PLEVEL=0;try{PLEVEL=Math.max(0,Math.min(10,+localStorage.getItem('cp-plevel')||0))}catch(e){}let V0=1000*(1+.05*PLEVEL);
 let W=0,H=0,dpr=1,Z=.4,VK=1,R=null,raf=0,hold=false,best=0,paused=false,WAL=0;try{WAL=+localStorage.getItem('cp-wallet')||0}catch(e){}try{best=+localStorage.getItem('cp-best')||0}catch(e){}
@@ -1902,9 +1932,9 @@ mb.onclick=()=>setMute(!mute);gpM.onclick=()=>setMute(!mute);gpS.onclick=()=>{sf
 window.coinpullOpen=function(){ldStart();paintLegend();paintMis();const c=document.getElementById('gameCard');c.classList.remove('liq','slim');paused=false;document.getElementById('gamePause').hidden=true;size();L.hidden=false;document.body.style.overflow='hidden';musicOn('menu');reset();c.hidden=false;gcTab('play');paintStyle();{const a=bbeAway(),nb=document.getElementById('bbeNews');nb.hidden=!a;if(a){const up=a.includes('rose');nb.textContent=(up?'▲ ':'▼ ')+'Big Ball ETF '+(up?'+':'−')+a.split(/rose |fell /)[1].split('%')[0]+'% while you were away →';nb.style.color=up?'#5fd38a':'#ff5a6a';const e=document.getElementById('bbeAway');e.hidden=false;e.textContent=a}}setGT('LIVE BALL BOUNCE',1);document.getElementById('gcText').textContent='';document.getElementById('gcGo').textContent='Start';document.getElementById('gcEnd').hidden=true;document.getElementById('gcBest').textContent=best?'Best '+fmt(best):'';paintScore(0);cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop);document.getElementById('gcGo').focus()};
 const GFXN=['Low','Medium','High'],GFXT=['Fast: no background, no ticker, fewer sparks.','Balanced: the full look.','Best: sharp, with a glow around the runner.'],SHKN=['Off','Low','Full'],$=id=>document.getElementById(id);
 function musicVol(){if(cur&&AC)try{cur.gn.gain.cancelScheduledValues(AC.currentTime);cur.gn.gain.setTargetAtTime(TR[cur.name].vol*ST.mv/100,AC.currentTime,.05)}catch(e){}}
-function paintSet(){$('gpUnlockRow').hidden=LEARN>=5;$('gpGfx').value=ST.gfx;$('gpGfxV').textContent=GFXN[ST.gfx];$('gpGfxN').textContent=GFXT[ST.gfx];$('gpMv').value=ST.mv;$('gpMvV').textContent=ST.mv+'%';$('gpSv').value=ST.sv;$('gpSvV').textContent=ST.sv+'%';$('gpShake').value=ST.shake;$('gpShakeV').textContent=SHKN[ST.shake];$('gpName').value=ST.name;$('gpHold').textContent='Hold-jump: '+(ST.holdj?'on':'off');$('gpHold').setAttribute('aria-pressed',!!ST.holdj);$('gpVib').textContent='Vibrate: '+(ST.vib?'on':'off');$('gpVib').setAttribute('aria-pressed',!!ST.vib);$('gpWho').textContent=ST.name?'Playing as '+ST.name:''}
+function paintSet(){$('gpUnlockRow').hidden=LEARN>=5;$('gpMv').value=ST.mv;$('gpMvV').textContent=ST.mv+'%';$('gpSv').value=ST.sv;$('gpSvV').textContent=ST.sv+'%';$('gpShake').value=ST.shake;$('gpShakeV').textContent=SHKN[ST.shake];$('gpName').value=ST.name;$('gpHold').textContent='Hold-jump: '+(ST.holdj?'on':'off');$('gpHold').setAttribute('aria-pressed',!!ST.holdj);$('gpVib').textContent='Vibrate: '+(ST.vib?'on':'off');$('gpVib').setAttribute('aria-pressed',!!ST.vib);$('gpWho').textContent=ST.name?'Playing as '+ST.name:''}
 function paintStats(){if(!R)return;$('gpScore').textContent=fmt(R.score);$('gpDist').textContent=Math.max(0,Math.floor((R.sx-700)/100))+' m';$('gpBest').textContent=fmt(Math.max(best,R.score))}
-$('gpGfx').oninput=e=>{ST.gfx=+e.target.value;saveST();paintSet();size()};$('gpMv').oninput=e=>{ST.mv=+e.target.value;saveST();paintSet();musicVol()};$('gpSv').oninput=e=>{ST.sv=+e.target.value;saveST();paintSet()};$('gpSv').onchange=()=>sfx('c1');$('gpShake').oninput=e=>{ST.shake=+e.target.value;saveST();paintSet()};
+$('gpMv').oninput=e=>{ST.mv=+e.target.value;saveST();paintSet();musicVol()};$('gpSv').oninput=e=>{ST.sv=+e.target.value;saveST();paintSet()};$('gpSv').onchange=()=>sfx('c1');$('gpShake').oninput=e=>{ST.shake=+e.target.value;saveST();paintSet()};
 $('gpName').oninput=e=>{ST.name=e.target.value.replace(/[<>&]/g,'').slice(0,12);saveST();$('gpWho').textContent=ST.name?'Playing as '+ST.name:''};$('gpName').addEventListener('keydown',e=>e.stopPropagation());
 $('gpUnlock').onclick=()=>{LEARN=5;saveLearn();paintLegend();paintSet();sfx('c1')};$('gpHold').onclick=()=>{ST.holdj=ST.holdj?0:1;saveST();paintSet()};$('gpVib').onclick=()=>{ST.vib=ST.vib?0:1;saveST();paintSet();if(ST.vib)vib(30)};$('gpRestart').onclick=()=>{setPause(false);start()};paintSet();
 /* ---- Big Ball ETF: wallet points invested in a replay of a big-cap index (yearly total returns 2000-2025, each year split into 12 months
@@ -2055,24 +2085,34 @@ new MutationObserver(()=>{clearTimeout(t);t=setTimeout(build,80)}).observe(docum
  const run=()=>{swap(document.body);new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')swap(m.target.parentNode||document.body);else m.addedNodes.forEach(x=>{if(x.nodeType===1)swap(x);else if(x.nodeType===3&&x.parentNode)swap(x.parentNode)})}}).observe(document.body,{childList:true,subtree:true,characterData:true})};
  document.readyState==='loading'?addEventListener('DOMContentLoaded',run):run()})();
 </script>
-<div class="amenu" id="amenu" role="dialog" aria-modal="true" aria-label="Menu" hidden><div class="amenuBar"><b>THROWINDICE</b><button id="amenuClose" type="button">Close</button></div><nav class="amenuList" id="amenuList"></nav></div>
+<script>
+/* Tokens page: one combined list. Funds come from etfFacts (crypto theme), stocks from data/holdings.json (BLOK + BKCH). */
+(()=>{const F=['IBIT','FBTC','ETHA','FETH','BTCW','ABTC','ETHW','AETH','BLOK','BKCH'],
+NOTE={COIN:'Crypto exchange',CRCL:'Makes the USDC stablecoin',HOOD:'Broker with crypto trading',XYZ:'Payments and bitcoin (Block)',GLXY:'Crypto trading and banking',FIGR:'Loans recorded on a blockchain',MSTR:'Holds a lot of bitcoin',IBM:'Blockchain software',OPRA:'Browser with a crypto wallet',BMNR:'Holds ether',CUBI:'Bank for crypto firms'};
+const row=(t,n,s,tag)=>'<'+(tag||'div')+' class="tkRow"'+(tag?' type="button" onclick="openPage(\'etfs\');pickFund(\''+t+'\')"':'')+'><b>'+t+'</b><span>'+n+'</span><small>'+s+'</small></'+(tag||'div')+'>';
+const funds=document.getElementById('tokFunds');if(funds)funds.innerHTML=F.filter(t=>etfFacts[t]).map(t=>{const f=etfFacts[t],fe=feeOf(t);return row(t,f.name.replace(/ ETF| Trust| Fund/g,''),(fe!=null?fe+'%':''),'button')}).join('');
+fetch('data/holdings.json').then(r=>r.ok?r.json():null).then(j=>{const H=j&&j.t,box=document.getElementById('tokStocks');if(!H||!box)return;const m={};['BLOK','BKCH'].forEach(k=>{(H[k]&&H[k].h||[]).forEach(([t,n,w])=>{if(t==='n/a')return;(m[t]=m[t]||{n,k:{}}).k[k]=w})});
+const L=Object.entries(m).sort((a,b)=>Object.keys(b[1].k).length-Object.keys(a[1].k).length||Math.max(...Object.values(b[1].k))-Math.max(...Object.values(a[1].k)));
+box.innerHTML=L.map(([t,o])=>row(t,o.n.replace(/,? (Inc|Corp|Limited|Ltd|Holdings|Global|Group)\.?/g,'').replace(/\.$/,''),NOTE[t]||'in '+Object.keys(o.k).join(' + ')))
+.join('')}).catch(()=>{})})();
+</script>
+<div class="amenu" id="amenu" role="dialog" aria-modal="true" aria-label="Menu" hidden><div class="amenuPanel"><div class="amenuBar"><b>THROWINDICE</b><button id="amenuClose" type="button" aria-label="Close">✕</button></div><nav class="amenuList" id="amenuList"></nav></div></div>
 <script>
 /* the Menu sheet: the old bottom bar's destinations as big plain rows */
 (()=>{const M=document.getElementById('amenu'),L=document.getElementById('amenuList'),B=document.getElementById('menuBtn');if(!M||!L||!B)return;let last=null;
-const T=()=>document.body.classList.contains('token-world'),nb=s=>document.querySelector(s);
+const nb=s=>document.querySelector(s);
 function close(){M.hidden=true;document.body.style.overflow='';if(last&&last.focus)last.focus()}
 function row(label,fn,cls){const b=document.createElement('button');b.type='button';b.textContent=label;if(cls)b.className=cls;b.onclick=()=>{close();setTimeout(fn,30)};L.appendChild(b)}
-function build(){L.innerHTML='';const t=T(),dark=document.documentElement.dataset.theme==='dark';
- row(t?'Home':'Dashboard',()=>navAction(nb('.navbtn.home'),'dashboard','home'));
- if(!t){row('Investing',()=>navAction(nb('#invBtn'),'world',''));[['World & regions','world'],['Sectors & themes','sectors'],['Commodities','commodities'],['ETF explorer','etfs']].forEach(([l,k])=>row(l,()=>k==='etfs'?openPage('etfs'):navAction(nb('#invBtn'),k,''),'sub'))}
- else{row('Explore',()=>navAction(nb('#invBtn'),'today','today'));[['Options','today'],['Networks','networks'],['Issuance','issuance']].forEach(([l,k])=>row(l,()=>navAction(nb('#invBtn'),k,k),'sub'))}
+function build(){L.innerHTML='';const dark=document.documentElement.dataset.theme==='dark';
+ row('Dashboard',()=>navAction(nb('.navbtn.home'),'dashboard','home'));
+ row('Investing',()=>navAction(nb('#invBtn'),'world',''));[['World & regions','world'],['Sectors & themes','sectors'],['Commodities','commodities'],['ETF explorer','etfs']].forEach(([l,k])=>row(l,()=>openPage(k),'sub'));
+ row('Tokens',()=>openPage('tokens'));
  row('Basics',()=>navAction(nb('.navbtn[data-page="basics"]'),'basics','basics'));
  row('Game',()=>navGame(nb('.navbtn[data-page="game"]')));
  L.appendChild(document.createElement('hr'));
- row(t?'Back to the real world':'Token World',()=>toggleTokenWorld(),'small');
- row('Region',()=>regOpen(),'small');if(!t)row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
+ row('Region',()=>regOpen(),'small');row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
 function open(){last=document.activeElement;build();M.hidden=false;document.body.style.overflow='hidden';const f=L.querySelector('button');if(f)f.focus()}
-B.onclick=open;document.getElementById('amenuClose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape'&&!M.hidden)close()})})();
+M.onclick=e=>{if(e.target===M)close()};B.onclick=open;document.getElementById('amenuClose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape'&&!M.hidden)close()})})();
 </script>
 </body>
 </html>
