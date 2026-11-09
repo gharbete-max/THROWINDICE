@@ -65,6 +65,16 @@ python3 -m http.server 8765 &
 - **Game canvas resolution is adaptive:** it starts at the screen density (max 2x) and drops 0.5x (or straight to 1x) when the frame-time average stays above ~18.2 ms (under ~55 fps) over 1.5 s (`dprCur`, `ftA` in `loop`). It never steps back up.
 - **Scroll listeners** must not force layout when their effect is hidden (the vignette returns early in the Apple UI).
 
+## Brand
+
+- **Name:** written `throwindice` (lowercase) with `indice` in gold: throw + indice (index). Wordmark is Inter ExtraBold (800), tracking -0.045em, outlined to SVG paths so it looks the same on every device.
+- **Mark:** the price-tag bracket with its hole and a gold die (two pips) tipping into it. Token World swaps the die and `indice` to blue-violet (`.brandWord .g` fill `#bwt`).
+- **Shared gradients** live once in a hidden-but-rendered `<svg>` at the top of `<body>`; inline copies (header, loading screen, menu) reference them. Don't put gradient `<defs>` inside elements that can be `display:none`.
+- **Rebuild:** `python3 scripts/brand/build.py <inter-800.ttf> <logo3d.png>` writes `assets/brand/` (mark/logo light+dark SVGs, `favicon.svg` that follows dark mode, app icons from the 3D render) and prints the inline snippets. Inter: npm `@fontsource/inter` → `files/inter-latin-800-normal.woff2`, saved as TTF with fontTools.
+- **3D mark:** `logo3d` in `objects.py` (smoked-glass tag, honey-glass gold die), 1024 px, 96 samples → `apple-touch-icon.png`, `icon-192/512.png`, `icon-maskable-512.png` (60% fill for the safe zone).
+- **Share image:** `assets/brand/og.jpg` (1200 × 630: lockup, headline, hero poster). `og:image` uses the GitHub Pages URL `https://gharbete-max.github.io/throwindice/`; change it if the site moves.
+- `manifest.webmanifest` at the root (install name, icons, colours).
+
 ## Site hero and icons
 
 - **Home hero:** `o_hero(i)` in `objects.py` (`hero-0..23`, 720 px, 40 samples, about 1 min a frame) is a glass candle chart, the gold glass runner and the diamond bull, turned -20° to +20°. Packed to `assets/hero/hero.webp` (6 × 4 grid, cropped to the union box) and `hero-poster.webp` (frame 12, first paint). The script at the end of `index.html` scrubs the frame with scroll on a canvas; reduced motion shows the poster frame.

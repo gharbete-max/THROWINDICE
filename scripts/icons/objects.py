@@ -679,6 +679,26 @@ def o_hero(i, n=24):
     root.rotation_euler = (0, 0, math.radians(-20 + 40 * i / (n - 1)))
     return [root], []
 
+def o_logo3d():
+    """the throwindice mark in 3D (app icon / share image): a smoked-glass price-tag bracket with its hole,
+    and a gold honey-glass die (two pips) tumbling into it. Mark units: the 100 x 76 SVG viewBox."""
+    glass_on()
+    M = lambda x, y, d=0.0: ((x - 50) / 30, d, (38 - y) / 30)
+    ink = principled('ink', (0.035, 0.035, 0.04), 0.12, coat=1.0, coat_rough=0.02)
+    br = [(58, 8), (16, 8), (11, 8), (9, 10), (9, 14), (9, 52), (9, 56), (11, 58), (16, 58), (58, 58)]
+    tag = tube('tag', [M(x, y) for x, y in br], [0.115] * len(br), ink, res=32)
+    hole = uv_sphere('hole', 0.16, M(20, 38)); hole.data.materials.append(ink)
+    die_m = glass_grad('die', (0.5, 0.26, 0.02), (1.0, 0.68, 0.16), trans=0.38, emit=0.3, axis='Z', k=0.8)
+    hub = link(bpy.data.objects.new('diehub', None)); hub.location = M(62, 36, -0.15)
+    d = box('die', die_m, (0, 0, 0), (1.4, 1.4, 1.4), bv=0.36)
+    pip_m = principled('pip', (1.0, 0.98, 0.94), 0.25, coat=1.0, emit=(1, 0.97, 0.9), emit_str=0.25)
+    pips = []
+    for (px, pz) in ((-0.3, 0.3), (0.3, -0.3)):
+        s = uv_sphere('pip', 0.16, (px, -0.66, pz), (1, 0.45, 1)); s.data.materials.append(pip_m); pips.append(s)
+    for o in [d] + pips: o.parent = hub
+    hub.rotation_euler = (math.radians(14), math.radians(45), math.radians(-18))
+    return [tag, hole, hub], []
+
 def o_bull(i, n=96):
     """checkpoint: a faceted, see-through diamond bull, turning slowly (frame i of n, one full turn)"""
     bpy.context.scene.render.film_transparent = True
@@ -942,7 +962,7 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(DANCE_N)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(DANCE_N)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), 'logo3d': (o_logo3d, 0), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, GAIT_N) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
