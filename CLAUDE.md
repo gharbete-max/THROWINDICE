@@ -57,3 +57,9 @@ python3 -m http.server 8765 &
 - Check every frame's alpha bounding box stays inside the 256 px render. Shrink the pose, never move the camera.
 - **Contact-sheet first:** render one skin at 8 samples and look at it before the full run.
 - Export `.webp`, quality about 86, `method=6`.
+
+## Site hero and icons
+
+- **Home hero:** `o_hero(i)` in `objects.py` (`hero-0..23`, 720 px, 40 samples, about 1 min a frame) is a glass candle chart, the gold glass runner and the diamond bull, turned -20° to +20°. Packed to `assets/hero/hero.webp` (6 × 4 grid, cropped to the union box) and `hero-poster.webp` (frame 12, first paint). The script at the end of `index.html` scrubs the frame with scroll on a canvas; reduced motion shows the poster frame.
+- **3D icons in the Apple UI:** inline emoji in running text stay hidden (`body.apple .e3d{display:none}`); icons are shown only in their slots: topic/pile rows (36 px, replacing the coloured dot), World/Sectors/Commodities rows (52 px, left of the title) and the home-page note bullets (30 px).
+- **Game particles** are cached glass beads (`bead(colour)`); running dust (`puff`, `d:1`) stays a soft dot.

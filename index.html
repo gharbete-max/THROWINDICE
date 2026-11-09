@@ -665,13 +665,23 @@ body.apple .topicGrid{display:block}
 html body.apple .topic{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;width:100%;min-height:0!important;padding:18px 0!important;background:none!important;border:0!important;border-top:.5px solid var(--line)!important;box-shadow:none!important;border-radius:0!important;text-align:left;color:var(--text);font:inherit}
 html body.apple .topic::after{content:"›";color:var(--muted);font-size:26px;line-height:1;font-weight:300}
 html body.apple .topic:last-child{border-bottom:.5px solid var(--line)!important}
-html body.apple .topic .symbol,html body.apple .topic .e3d{display:none!important}
 html body.apple .topic b{font-size:21px;font-weight:600;letter-spacing:-.02em;color:var(--text)}
 html body.apple .topic:hover b{opacity:.65}
-body.apple .noteList li>span{display:none}
 body.apple .noteList{gap:14px}
 body.apple .noteList p,body.apple .noteList li{font-size:21px;line-height:1.3;color:var(--text);font-weight:500;letter-spacing:-.02em}
 body.apple .e3d{display:none}
+html body.apple .topic .e3d,html body.apple .noteList li>span .e3d,html body.apple .exploreCard .big .e3d,html body.apple .tokenTopic .big .e3d{display:inline-block}
+html body.apple .exploreRows .exploreCard,html body.apple .exploreRows .exploreCard.wOff{display:grid!important;grid-template-columns:52px 1fr;column-gap:16px;align-items:center}
+html body.apple .exploreRows .exploreCard>.big{grid-row:1/3;width:52px;height:52px;margin:0;display:block;background:none;border:0;box-shadow:none}
+html body.apple .exploreRows .exploreCard>h3{margin:0;align-self:end}
+html body.apple .exploreRows .exploreCard>.actions{grid-column:2;margin:2px 0 0;align-self:start}
+html body.apple .noteList li>span{display:block;width:30px;height:30px;font-size:30px;line-height:1;margin-top:2px}
+html body.apple .noteList li>span .e3d{width:30px;height:30px;margin:0;vertical-align:0}
+html body.apple .topic:has(.symbol .e3d)::before{display:none}
+html body.apple .topic .symbol{display:grid;place-items:center;flex:none;width:36px!important;height:36px!important;margin:0 14px 0 0!important;background:none!important;border:0!important;box-shadow:none!important;animation:none;font-size:0}
+html body.apple .topic .symbol:not(:has(.e3d)){display:none}
+html body.apple .topic .symbol .e3d{width:36px;height:36px;margin:0}
+html body.apple .pileHead .e3d{display:none}
 body.apple .game .e3d,body.apple .gameLayer .e3d{display:inline}
 /* quotes: no box */
 html body.apple .q{background:none;border:0;border-radius:0;padding:0;margin:28px 0 0;font-size:21px;line-height:1.3;font-style:normal;font-weight:500;letter-spacing:-.02em;color:var(--text)}
@@ -694,7 +704,6 @@ html body.apple .pile b{font-size:21px!important}
 body.apple .page,body.apple [id]{scroll-margin-top:72px}
 html body.apple .exploreRows,html body.apple .tokenCategoryGrid,html body.apple .tokenCaseGrid,html body.apple .brokerGrid,html body.apple .fgrid,html body.apple .tokenMetrics,html body.apple .tokenDataGrid{perspective:none!important;padding:0!important;margin:0 0 32px!important;border-bottom:.5px solid var(--line)}
 html body.apple .exploreRows>*,html body.apple .tokenCategoryGrid>*,html body.apple .tokenCaseGrid>*,html body.apple .brokerGrid>*,html body.apple .fgrid>*,html body.apple .tokenMetrics>*,html body.apple .tokenDataGrid>*{width:100%!important;max-width:none!important;margin:0!important;padding:20px 0!important;transform:none!important;opacity:1!important;filter:none!important;position:static!important;visibility:visible!important;border-radius:0!important;background:none!important;box-shadow:none!important;border:0!important;border-top:.5px solid var(--line)!important;text-align:left}
-html body.apple .exploreCard .big,html body.apple .tokenTopic .big{display:none}
 html body.apple .exploreRows h3,html body.apple .tokenCategoryGrid h3,html body.apple .tokenCaseGrid h3,html body.apple .brokerGrid h3{font-size:24px;font-weight:600;letter-spacing:-.022em;color:var(--text);margin:0 0 4px}
 html body.apple .pileHead{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:.02em;margin:32px 0 6px;text-transform:none}
 html body.apple .vsBox *{box-shadow:none!important}
@@ -793,6 +802,17 @@ html:not([data-theme=dark]) body.apple #gameLayer .gpRow output{color:var(--text
 html body.apple #gameLayer .gpRow input[type=text]{background:color-mix(in srgb,var(--text) 6%,transparent);color:var(--text);border:.5px solid color-mix(in srgb,var(--text) 14%,transparent)}
 html body.apple #gameLayer .gpRow input[type=range]{accent-color:var(--accent-text)}
 @media (prefers-reduced-transparency:reduce){html body.apple #gameLayer :is(.gameCard,.gameClose,.gameMsg:not(:empty),.gPnl,.gPhase){background:var(--bg)!important;-webkit-backdrop-filter:none;backdrop-filter:none}}
+
+/* home hero: a rendered 3D scene that turns as you scroll (assets/hero, scripts/icons/objects.py o_hero) */
+.hero3d{position:relative;width:min(100%,720px);margin:-6px auto 6px;aspect-ratio:var(--har,2/1)}
+.hero3d canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero3d::after{content:"";position:absolute;left:12%;right:12%;bottom:2%;height:14%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--text) 10%,transparent),transparent);z-index:-1}
+.heroPlay{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:0 0 18px;padding:14px 18px;border-radius:22px;text-align:left;cursor:pointer;color:var(--text);font:inherit;
+ background:color-mix(in srgb,var(--bg) 62%,transparent);-webkit-backdrop-filter:saturate(1.8) blur(24px);backdrop-filter:saturate(1.8) blur(24px);border:.5px solid color-mix(in srgb,var(--text) 12%,transparent)}
+.heroPlay span{font-size:12px;font-weight:600;letter-spacing:.02em;color:var(--muted)}
+.heroPlay b{font-size:17px;font-weight:700;color:var(--accent-text)}
+.heroPlay:active{transform:scale(.985)}
+@media (min-width:760px){.heroPlay{width:auto;margin:0 auto 24px;align-items:center}}
 </style>
 </head>
 <body class="apple">
@@ -836,6 +856,8 @@ html body.apple #gameLayer .gpRow input[type=range]{accent-color:var(--accent-te
 <main>
 <section class="page active" id="dashboard">
 <div class="pageTitle dashboardIntro"><h1>Investing, simply.</h1><p>Not advice.</p></div>
+<div class="hero3d" aria-hidden="true"><canvas></canvas></div>
+<button class="heroPlay" type="button" onclick="navGame(document.querySelector('.navbtn[data-page=game]'))"><span>Live Ball Bounce</span><b>Play the market game →</b></button>
 <section class="card startNote" aria-label="Start here"><h2>The simple version</h2><ul class="noteList">
 <li><span>🧺</span><p>A fund is a basket of many companies.</p></li>
 <li><span>📈</span><div class="vsBox" data-vs></div></li></ul>
@@ -1709,7 +1731,7 @@ const vib=p=>{if(!RMQ.matches&&!sfxOff&&ST.vib&&navigator.vibrate)try{navigator.
 function shake(a){if(!RMQ.matches&&ST.shake)R.shk=Math.max(R.shk,a*ST.shake/2)}
 function hitStop(f){R.stop=Math.max(R.stop,f/60)}
 function pop(x,y,t,c,sz){R.pops.push({x,y,t,c,sz:sz||1,l:1.1})}
-function puff(x,y,n,c){for(let i=0;i<n;i++)R.fx.push({x:x+rnd(-20,20),y,vx:rnd(-240,80),vy:rnd(-170,-20),l:rnd(.25,.5),c:c||'#a9b0ba',g:.3})}
+function puff(x,y,n,c){for(let i=0;i<n;i++)R.fx.push({x:x+rnd(-20,20),y,vx:rnd(-240,80),vy:rnd(-170,-20),l:rnd(.25,.5),c:c||'#a9b0ba',g:.3,d:1})}
 /* daily goals: three of seven, the same all day, kept in localStorage */
 /* market missions (B7): three a day, a wallet reward each; all three raise the portfolio level */
 const MIS=[['bank15','Bank +15% in one stretch',200,s=>s.bestBank>=15],['shortwin','Bank +3% while short',150,s=>s.shortWin],['twister','Land a TWISTER',200,s=>s.twister],['rugcash','Dodge a rug in cash (Token World)',300,s=>s.rugEv.includes('cash')],['allin','Bank +10% while ALL IN',250,s=>s.allinWin],['break','Break a resistance',200,s=>s.brks>0],['c100','Earn 100 Dolla',100,s=>s.score>=100],['cp3','Reach checkpoint 3',150,s=>s.lvl>=3],['pf4','Land 4 perfect jumps',100,s=>s.perfects>=4],['cb3','Chain 3 ticks',100,s=>s.bestCombo>=3]];
@@ -1809,7 +1831,7 @@ function draw(){const g=cx,s=R,ax=W*AX,ay=H*.6,P_=pal();g.clearRect(0,0,W,H);g.d
  if(ST.gfx>1&&!s.dead){const gl=g.createRadialGradient(s.sx,s.y-80*VK,10,s.sx,s.y-80*VK,260*VK);gl.addColorStop(0,'rgba(235,189,78,.22)');gl.addColorStop(1,'rgba(235,189,78,0)');g.fillStyle=gl;g.beginPath();g.arc(s.sx,s.y-80*VK,260*VK,0,6.3);g.fill()}/* high graphics: a soft glow around the runner */
  if(s.bearT>0&&!s.dead)glow(s.sx,s.y-100*VK,230*VK,'255,70,90',.38*Math.min(1,s.bearT));/* a bear checkpoint: a red aura */
  if(!s.dead)player(s.sx,s.y,s);
- s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*2));if(f.h&&ok(HEART)){const z=f.h*VK*(1+.15*Math.sin(f.l*20));g.drawImage(HEART,f.x-z/2,f.y-z/2,z,z)}else if(f.b&&ok(BILL)){const z=f.b*2*VK;f.r+=f.vr*.016;g.save();g.translate(f.x+Math.sin(f.l*6+f.vr)*12,f.y);g.rotate(f.r);g.scale(1,.55+.45*Math.cos(f.l*9+f.vr));g.drawImage(BILL,-z/2,-z/2,z,z);g.restore()}else{g.fillStyle=f.c;g.beginPath();g.arc(f.x,f.y,8,0,6.3);g.fill()}});g.globalAlpha=1;
+ s.fx.forEach(f=>{g.globalAlpha=Math.max(0,Math.min(1,f.l*2));if(f.h&&ok(HEART)){const z=f.h*VK*(1+.15*Math.sin(f.l*20));g.drawImage(HEART,f.x-z/2,f.y-z/2,z,z)}else if(f.b&&ok(BILL)){const z=f.b*2*VK;f.r+=f.vr*.016;g.save();g.translate(f.x+Math.sin(f.l*6+f.vr)*12,f.y);g.rotate(f.r);g.scale(1,.55+.45*Math.cos(f.l*9+f.vr));g.drawImage(BILL,-z/2,-z/2,z,z);g.restore()}else if(f.d){g.globalAlpha*=.55;g.fillStyle=f.c;g.beginPath();g.arc(f.x,f.y,7,0,6.3);g.fill()}else{const z=26*(.55+.45*Math.min(1,f.l*3));g.drawImage(bead(f.c),f.x-z/2,f.y-z/2,z,z)}});g.globalAlpha=1;
  s.rings.forEach(q=>{g.globalAlpha=Math.max(0,q.l/.35)*.8;g.strokeStyle=P_.ring;g.lineWidth=6;g.beginPath();g.ellipse(q.x,q.y,q.r*VK,q.r*.35*VK,0,0,6.3);g.stroke()});g.globalAlpha=1;
  if(s.clbl&&s.air){const k=1+.35*Math.max(0,s.clblT-1.1)/.3,sz=52*VK*k*(s.cn>1?1.15:1);g.globalAlpha=1;g.font='800 '+sz+'px '+FONT;g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=sz*.14;g.strokeStyle=P_.halo;const ty=s.y-300*VK;g.strokeText(s.clbl+(s.cn>1?'  x'+s.cn:''),s.sx,ty);g.fillStyle=s.cn>1?'#ff7ab8':'#ebbd4e';g.fillText(s.clbl+(s.cn>1?'  x'+s.cn:''),s.sx,ty)}
   s.pops.forEach(q=>{const sz=64*VK*q.sz;g.globalAlpha=Math.min(1,q.l*2.2);g.font='800 '+sz+'px '+FONT;g.textAlign='center';g.textBaseline='middle';g.lineJoin='round';g.lineWidth=sz*.14;g.strokeStyle=P_.halo;g.strokeText(q.t,q.x,q.y);g.fillStyle=q.c;g.fillText(q.t,q.x,q.y)});g.globalAlpha=1;g.restore();
@@ -1831,7 +1853,12 @@ let lastScoreTxt='';function paintScore(n,col){col=col||'#ebbd4e';const t=fmt(n)
 var DOLLA=new Image();DOLLA.onload=()=>{lastScoreTxt='';if(R)paintScore(R.score)};DOLLA.src='assets/game/dolla.webp';
 const GIMG=n=>{const i=new Image();i._n=n;return i},ld=i=>{if(i&&!i._ld&&!i.src){i._ld=1;i.onload=()=>bmMake(i);i.src='assets/game/'+i._n+'.webp'}return i},/* decode right after download, off the main thread */RUNNER=GIMG('runner'),RUNI={gold:RUNNER,lg:GIMG('runner-lgreen'),gg:GIMG('runner-ggreen'),lr:GIMG('runner-lred'),gr:GIMG('runner-gred')},SKATEI={gg:GIMG('runner-skate-ggreen'),gr:GIMG('runner-skate-gred')},HATI={top:GIMG('hat-top'),crown:GIMG('hat-crown'),prop:GIMG('hat-prop')},BULL=GIMG('cp-bull'),BEARCP=GIMG('cp-bear'),BILL=GIMG('bill'),CASH=GIMG('runner-cash'),PROP_X0={cash:26},LOVEI={gold:GIMG('runner-love'),lg:GIMG('runner-love-lgreen'),gg:GIMG('runner-love-ggreen'),lr:GIMG('runner-love-lred'),gr:GIMG('runner-love-gred')},HEART=GIMG('heart'),TRICK_OFF=[-88,-177],TRICKI={gold:GIMG('runner-trick'),lg:GIMG('runner-trick-lgreen'),gg:GIMG('runner-trick-ggreen'),lr:GIMG('runner-trick-lred'),gr:GIMG('runner-trick-gred')},LOVE_EYES=[[85.8,95.0,115.2,90.6],[85.8,95.0,115.2,90.6],[85.8,95.0,115.2,90.6],[85.8,95.0,115.2,90.6],[85.4,100.6,114.6,93.9],[85.4,100.6,114.6,93.9],[85.4,100.6,114.6,93.9],[85.4,100.6,114.6,93.9]]/* eye centres per love frame, sheet px (exported by objects.py) */,TICKI=TK.map(t=>GIMG(t.im)),RUGI=GIMG('rug'),RUGROLLI=GIMG('rug-roll'),WALLETI=GIMG('devwallet'),SIGNI=GIMG('sign-100x'),PUI={shield:GIMG('pu-shield'),magnet:GIMG('pu-magnet'),x2:GIMG('pu-x2')},PUGLOW={shield:'170,205,255',magnet:'70,150,255',x2:'120,215,110'};
 const ldSkin=sk=>{ld(RUNI[sk]);ld(LOVEI[sk]);ld(TRICKI[sk])},ldStart=()=>{/* what the game opens with: the gold and light-green runner (the start skin), its trick and love sheets, the bull, ticks, hats */[RUNNER,BULL,BILL,HEART,HATI.top,HATI.crown,HATI.prop,...TICKI.slice(0,5)].forEach(ld);ldSkin('lg');setTimeout(()=>Object.values(PUI).forEach(ld),1500)};/* power-up sheets just after start, so the first one never shows the placeholder disc */
-const GLOWC={};function glowSprite(rgb){let c=GLOWC[rgb];if(!c){c=document.createElement('canvas');c.width=c.height=128;const q=c.getContext('2d'),gr=q.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba('+rgb+',1)');gr.addColorStop(1,'rgba('+rgb+',0)');q.fillStyle=gr;q.fillRect(0,0,128,128);GLOWC[rgb]=c}return c}
+const GLOWC={};/* glass bead particle, cached per colour: tinted body, darker rim, white specular */
+const BEADC={};function bead(c){let s=BEADC[c];if(s)return s;s=BEADC[c]=document.createElement('canvas');s.width=s.height=36;const q=s.getContext('2d');
+ q.fillStyle=c;q.globalAlpha=.88;q.beginPath();q.arc(18,18,16,0,6.283);q.fill();q.globalAlpha=1;
+ let r=q.createRadialGradient(18,18,9,18,18,16.5);r.addColorStop(0,'rgba(0,0,0,0)');r.addColorStop(1,'rgba(0,0,0,.28)');q.fillStyle=r;q.beginPath();q.arc(18,18,16,0,6.283);q.fill();
+ r=q.createRadialGradient(13,12,0,13,12,9);r.addColorStop(0,'rgba(255,255,255,.95)');r.addColorStop(1,'rgba(255,255,255,0)');q.fillStyle=r;q.beginPath();q.arc(13,12,9,0,6.283);q.fill();return s}
+function glowSprite(rgb){let c=GLOWC[rgb];if(!c){c=document.createElement('canvas');c.width=c.height=128;const q=c.getContext('2d'),gr=q.createRadialGradient(64,64,0,64,64,64);gr.addColorStop(0,'rgba('+rgb+',1)');gr.addColorStop(1,'rgba('+rgb+',0)');q.fillStyle=gr;q.fillRect(0,0,128,128);GLOWC[rgb]=c}return c}
 function glow(x,y,r,rgb,a){if(!(r>0)||!(a>0))return;const g=cx,o=g.globalCompositeOperation,ga=g.globalAlpha;const lt=PALC&&!PALC.dk;g.globalCompositeOperation=lt?'source-over':'lighter';g.globalAlpha=Math.min(1,lt?a*.55:a);g.drawImage(glowSprite(rgb),x-r,y-r,2*r,2*r);g.globalAlpha=ga;g.globalCompositeOperation=o}/* cached tinted falloff, no per-call gradient */
 const powered=s=>s.shield||s.magT>0||s.x2T>0;
 /* the powered form follows the strongest active power-up: 2x (green, $ eyes, pulsing) > magnet (blue, magnet on the head) > shield (purple-red) */
@@ -2191,6 +2218,20 @@ function build(){L.innerHTML='';const dark=document.documentElement.dataset.them
  row('Region',()=>regOpen(),'small');row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
 function open(){last=document.activeElement;build();M.hidden=false;document.body.style.overflow='hidden';const f=L.querySelector('button');if(f)f.focus()}
 M.onclick=e=>{if(e.target===M)close()};B.onclick=open;document.getElementById('amenuClose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape'&&!M.hidden)close()})})();
+</script>
+<script>
+/* home hero scrub: poster first, then the 24-frame sheet (decoded off the main thread); frame = scroll progress through the hero */
+(()=>{const box=document.querySelector('.hero3d');if(!box)return;const cv=box.querySelector('canvas'),g=cv.getContext('2d'),N=24,COLS=6,RM=matchMedia('(prefers-reduced-motion: reduce)');
+let sheet=null,poster=null,f=-1,cw=0,ch=0;
+const pick=()=>{if(RM.matches||!sheet)return 12;const r=box.getBoundingClientRect(),vh=innerHeight,p=Math.min(1,Math.max(0,(vh-r.top)/(vh+r.height)));return Math.round(p*(N-1))};
+const draw=()=>{const k=pick();if(k===f&&cv.width)return;f=k;g.clearRect(0,0,cv.width,cv.height);
+ if(sheet)g.drawImage(sheet,(k%COLS)*cw,Math.floor(k/COLS)*ch,cw,ch,0,0,cv.width,cv.height);else if(poster)g.drawImage(poster,0,0,cv.width,cv.height)};
+const size=()=>{const r=box.getBoundingClientRect(),d=Math.min(2,devicePixelRatio||1);cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);f=-1;draw()};
+const bm=src=>fetch(src).then(r=>r.blob()).then(b=>self.createImageBitmap?createImageBitmap(b):new Promise(ok=>{const i=new Image();i.onload=()=>ok(i);i.src=URL.createObjectURL(b)}));
+bm('assets/hero/hero-poster.webp').then(im=>{poster=im;box.style.setProperty('--har',im.width+'/'+im.height);size()}).catch(()=>{});
+const more=()=>bm('assets/hero/hero.webp').then(im=>{sheet=im;cw=im.width/COLS;ch=im.height/Math.ceil(N/COLS);f=-1;draw()}).catch(()=>{});
+if(document.readyState==='complete')setTimeout(more,300);else addEventListener('load',()=>setTimeout(more,300));
+let q=0;addEventListener('scroll',()=>{if(!q)q=requestAnimationFrame(()=>{q=0;draw()})},{passive:true});addEventListener('resize',size);RM.addEventListener?.('change',()=>{f=-1;draw()})})();
 </script>
 </body>
 </html>
