@@ -679,3 +679,8 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - Token World is no longer reachable (no coin, no menu rows). New page **Tokens** (Menu / dashboard): plain explanation (token, stablecoin, tokenized asset, how it works, risks), one combined list of crypto funds (tap = fund panel with fee, concentration, holdings) and the stocks inside BLOK + BKCH (from `data/holdings.json`). The old Token World pages and game rug-pull code are left dormant in the file, not deleted.
 - Game graphics: Low is the only mode (`ST.gfx=0` forced, slider removed, saved settings ignored). Pixel ratio 1, no background ticker.
 - Headless: phone/dark/desktop, no horizontal overflow, 7 funds + 16 stocks listed, fund tap opens panel, no page errors or 4xx.
+
+## ETF browser: list instead of balls, no confetti
+- Opening a pile (Menu > ETF explorer > a theme) now shows a glass list of fund cards sorted cheapest first: fee (+ $ per $1,000), 1-year change and yearly swings (from data/facts.json when the fund is in it), spread bar (top-10 share, holdings count, Spread out/Medium/Concentrated), top 5 holdings, then "Full details" to the fund panel. Funds with no holdings list say so. Cheap/Middle/Pricey chips still dim cards; region "show more" still works.
+- Falling-ball physics is no longer used (code left in place, unreachable). Confetti/scraps/blast are no-ops and the tap-to-reveal balloons on long paragraphs are off (text is just shown).
+- Headless: phone, dark phone, desktop; cards render, no overflow, Full details opens the fund panel, no page errors or 4xx.
