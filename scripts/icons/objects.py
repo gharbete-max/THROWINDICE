@@ -281,12 +281,21 @@ def o_compass():
 # runner poses. Ground gaits: (stride deg, leg length, bob, lean deg, arm swing deg, knee bend), 8 frames each.
 GAITS = {'walk': (22, 0.56, 0.04, 0, 20, 0.04), 'jog': (34, 0.58, 0.07, 8, 38, 0.08), 'run': (54, 0.62, 0.13, 18, 64, 0.17)}
 # Air poses, one tuple per frame: (bob, lean, (front leg, back leg) deg, leg length, knee bend, (arm 1, arm 2) deg)
+def _lerp_pose(a, b, u):
+    if isinstance(a, tuple): return tuple(_lerp_pose(x, y, u) for x, y in zip(a, b))
+    return a + (b - a) * u
+
+TKO_KEYS = [(-0.16, 6, (24, -18), 0.42, 0.22, (-55, -40)), (0.05, 2, (-6, 8), 0.7, 0.0, (125, 150)), (0.1, -4, (44, -24), 0.46, 0.2, (150, 165))]
+
 def _air(name, i):
-    w = math.sin(2 * math.pi * i / 4)
-    if name == 'tko': return [(-0.16, 6, (24, -18), 0.42, 0.22, (-55, -40)), (0.05, 2, (-6, 8), 0.7, 0.0, (125, 150)), (0.1, -4, (44, -24), 0.46, 0.2, (150, 165))][i]
+    w = math.sin(2 * math.pi * i / AIR[name])
+    if name == 'tko':  # AIR['tko'] frames blended through the three key poses (eased)
+        u = i / (AIR['tko'] - 1) * 2; k = min(1, int(u)); f = u - k; f = f * f * (3 - 2 * f)
+        return _lerp_pose(TKO_KEYS[k], TKO_KEYS[k + 1], f)
     if name == 'rise': return (0.06, -6, (42 + 10 * w, -12 - 10 * w), 0.48, 0.2, (150 + 14 * w, 160 - 14 * w))
     return (0.0, -10, (-42 + 24 * w, 40 - 24 * w), 0.56, 0.1, (95 + 40 * w, 95 - 40 * w))  # fall: arms windmill, legs kick
-AIR = {'tko': 3, 'rise': 4, 'fall': 4}
+GAIT_N = 24   # frames per walk/jog/run cycle (was 8): the game steps them by distance, 30-75 fps
+AIR = {'tko': 9, 'rise': 12, 'fall': 12}   # was 3/4/4
 RUNNER_PROP = os.environ.get('RUNNER_PROP', '')   # 'case' = going to cash (carries a briefcase), 'shades' = all in (strut + sunglasses)
 RUNNER_SKIN = os.environ.get('RUNNER_SKIN', 'gold')   # 'glass' = the powered-up look
 
@@ -368,12 +377,12 @@ def o_runner(gait, frame):
     P = smiley.PAL
     body, limb = runner_mats()
     if gait in GAITS:
-        st, L, bobA, lean, armA, bend = GAITS[gait]; ph = frame / 8; c = math.sin(2 * math.pi * ph)
+        st, L, bobA, lean, armA, bend = GAITS[gait]; ph = frame / GAIT_N; c = math.sin(2 * math.pi * ph)
         bob = bobA * math.cos(4 * math.pi * ph); legs = (st * c, -st * c); arms = (-armA * c, armA * c)
     else:
         bob, lean, legs, L, bend, arms = _air(gait, frame)
     b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
-    parts = [b] + coin_heart(0, 0.25 + bob, 0.35 * math.sin(2 * math.pi * frame / 8))
+    parts = [b] + coin_heart(0, 0.25 + bob, 0.35 * math.sin(2 * math.pi * frame / (GAIT_N if gait in GAITS else AIR[gait])))
     for k, side in enumerate((-1, 1)):
         a = math.radians(legs[k]); hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
         knee = hip + Vector((math.sin(a) * L * 0.5 + bend, 0, -math.cos(a) * L * 0.5))
@@ -495,7 +504,9 @@ def o_trick(kind, i, n=TRICK_N):
     hub.rotation_quaternion = Euler((0, lean, yaw)).to_quaternion() @ rot
     return [hub], []
 
-def o_dance(frame, n=12):
+DANCE_N = 54   # 0.9 s loop at 60 fps
+
+def o_dance(frame, n=DANCE_N):
     """game-over dance, a seamless loop: facing the camera, feet planted, the body sways side to side and dips
     into a crouch at each side while the arms pump up and down in turn"""
     body, limb = runner_mats()
@@ -931,8 +942,8 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
-           **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(DANCE_N)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+           **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, GAIT_N) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
 

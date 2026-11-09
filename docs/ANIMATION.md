@@ -230,7 +230,9 @@ The game runs at the display rate (60 fps on phones); sprite loops are timed in 
 
 | Sheet | Frames | Playback |
 |---|---|---|
+| `runner*.webp`, `runner-cash.webp` | 105: walk/jog/run 24 each, take-off 9, rise 12, fall 12 (2 rows of 53) | gaits by distance (30–75 fps), rise 36 fps, fall 45 fps |
 | `runner-trick*.webp` | 24 per trick (24 × 4 grid, `TRICK_N` in objects.py) | stretched over the trick duration |
+| `dance.webp` (menu) | 54 | 60 fps (0.9 s loop), CSS `steps(54)` on a transform layer |
 | `runner-skate-{ggreen,gred}.webp` | ride 5 slopes × 12, ollie 12, kickflip 16, shove-it/tre/indy/jesus 20 (168, 10 columns) | ride loop 18 fps; tricks stretched over their duration |
 | `cp-bull.webp`, `cp-bear.webp` | 96 | 24 fps (one turn every 4 s) |
 

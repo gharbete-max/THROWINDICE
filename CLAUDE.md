@@ -45,7 +45,8 @@ python3 -m http.server 8765 &
 | `RUNNER_FACE` | `love`, `love-noeyes` |
 | `GLASS_STYLE` | `1` (default): the glass family. Every skin is a glass ball (gold = amber "honey glass" with gold limbs) with a glowing gold $ coin floating inside (`coin_heart`, the runner's signature; it rocks with the stride and squashes in the goo). Ticks are clear glass candles with a glowing core; power-ups are glass. `0` = the old opaque plastic. |
 
-- **Runner frame list (35):** walk 8, jog 8, run 8, tko 3, rise 4, fall 4 → `runner-{gait}-{i}`.
+- **Runner frame list (105):** walk 24, jog 24, run 24 (`GAIT_N`), tko 9 (blended through 3 key poses), rise 12, fall 12 (`AIR`) → `runner-{gait}-{i}`. Sheets are 2 rows of 53 (`RC` in `index.html`; one row would pass WebP's 16383 px limit for the cash sheet). The game steps gaits by distance (30-75 fps), rise at 36 fps, fall at 45 fps. The love sheets keep their old 8 frames (rise 0-3, fall 0-3 of a 4-frame cycle = new rise/fall frames 0, 3, 6, 9); their hat anchors map to `HEADS.run[81+3i]` / `[93+3i]`.
+- **Menu dancer:** 54 frames (`DANCE_N`), a 0.9 s loop at 60 fps, slid by `transform` on `.gcDancer::before` (no repaint).
 - **Other sheets:** tricks 24 frames each, skate 168, bull/bear 96 (see `docs/ANIMATION.md`, "Frame rate and frame counts"). Sheets decode off the main thread (`bmMake`); canvas colours come from the theme palette `pal()`.
 - **Runner sheet packing:**
   - Crop box `(x0, 27, x1, 209)`, frames side by side, cell height 182.
@@ -57,6 +58,12 @@ python3 -m http.server 8765 &
 - Check every frame's alpha bounding box stays inside the 256 px render. Shrink the pose, never move the camera.
 - **Contact-sheet first:** render one skin at 8 samples and look at it before the full run.
 - Export `.webp`, quality about 86, `method=6`.
+
+## 60 fps rules
+
+- **CSS:** animate only `transform` and `opacity` (keyframes and anything that loops). No looping `left`/`box-shadow`/`filter`/`background-position`; move a sheen with `translateX`, a glow with an opacity-animated pseudo-element, a sprite strip with a stepped `translateX` on its own layer.
+- **Game canvas resolution is adaptive:** it starts at the screen density (max 2x) and drops 0.5x (or straight to 1x) when the frame-time average stays above ~18.2 ms (under ~55 fps) over 1.5 s (`dprCur`, `ftA` in `loop`). It never steps back up.
+- **Scroll listeners** must not force layout when their effect is hidden (the vignette returns early in the Apple UI).
 
 ## Site hero and icons
 
