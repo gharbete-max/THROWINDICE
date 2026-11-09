@@ -168,7 +168,8 @@ Plus one **lesson line** chosen by what happened, for example:
 | `bill.webp` | banknote for the cash trail and dividend showers | `o_bill` |
 | `tick-1..3.webp`, `tick-r1..2.webp` | currency candles | `o_tick` |
 | `rug.webp`, `rug-roll.webp`, `rocket.webp`, `devwallet.webp`, `sign-100x.webp` | rugpull set | `o_rug`, `o_rocket`, `o_devwallet`, `o_sign100x` |
-| `heart.webp`, `dance.webp`, `pu-*.webp` | love eyes, game-over dance, power-ups | existing |
+| `heart.webp`, `dance.webp` | love eyes, game-over dance | existing |
+| `pu-shield.webp`, `pu-magnet.webp`, `pu-x2.webp` | STOP-LOSS (glass shield, gold rim), INDEX FUND (sapphire glass magnet), DIVIDEND (money plant: glass pot, gold coin leaves) | `pu2-shield`, `pu2-magnet`, `pu2-dividend` (24-frame turntable) |
 
 Render recipes are in `CLAUDE.md` (repo root).
 

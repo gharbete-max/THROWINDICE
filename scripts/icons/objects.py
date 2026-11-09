@@ -306,6 +306,13 @@ def rainbow_glass(name):
     b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
     return m
 
+GLASS = os.environ.get('GLASS_STYLE', '1') == '1'   # glass family: see-through bodies with a glowing core
+
+def glass_on():
+    bpy.context.scene.render.film_transparent = True
+    try: bpy.context.scene.cycles.film_transparent_glass = True
+    except Exception: pass
+
 POS_SK = {'lgreen': ((0.22, 0.82, 0.36), (0.1, 0.48, 0.2), False), 'ggreen': ((0.05, 0.95, 0.3), (0.02, 0.6, 0.18), True),
           'lred': ((1.0, 0.3, 0.32), (0.62, 0.14, 0.16), False), 'gred': ((1.0, 0.06, 0.12), (0.7, 0.02, 0.08), True)}
 
@@ -321,11 +328,28 @@ def runner_mats():
             body = glass_grad('pglass', tuple(x * 0.55 for x in c), c, trans=0.7, emit=0.5, axis='Z', k=0.75)
             limb = principled('plimb', cl, 0.15, emit=cl, emit_str=0.45, coat=1.0, coat_rough=0.02)
             limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
+        elif GLASS:
+            glass_on(); body = glass_grad('lglass', tuple(0.7 * x for x in c), c, trans=0.3, emit=0.35, axis='Z', k=0.75)
+            limb = principled('pleg', cl, 0.15, coat=1.0, coat_rough=0.02)
         else:
             body = principled('pbody', c, 0.22, coat=1.0, coat_rough=0.05); limb = principled('pleg', cl, 0.3, coat=0.6)
+    elif GLASS:  # honey glass: amber body, polished gold limbs
+        glass_on(); body = glass_grad('amber', (0.62, 0.3, 0.03), (1.0, 0.72, 0.22), trans=0.72, emit=0.32, axis='Z', k=0.75)
+        limb = gold()
     else:
         body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
     return body, limb
+
+def coin_heart(x, z, rock=0.0, sz=1.0):
+    """the runner's signature: a glowing gold $ coin floating inside the glass body. rock = small turn (rad) so it never goes edge-on; sz squashes it vertically (goo)"""
+    if not GLASS: return []
+    m = principled('heart', (1.0, 0.72, 0.18), 0.2, metallic=0.6, coat=1.0, coat_rough=0.03, emit=(1.0, 0.62, 0.12), emit_str=1.6)
+    hub = link(bpy.data.objects.new('coinhub', None)); hub.location = (x, -0.05, z)
+    c = cyl(m, (0, 0, 0), 0.3, 0.08, (math.radians(90), 0, 0), 48, 0.02)
+    bpy.ops.object.text_add(location=(0, -0.045, -0.01), rotation=(math.radians(90), 0, 0)); d = bpy.context.active_object
+    d.data.body = '$'; d.data.size = 0.42; d.data.extrude = 0.012; d.data.align_x = 'CENTER'; d.data.align_y = 'CENTER'; d.data.materials.append(gold())
+    for o in (c, d): o.parent = hub
+    hub.rotation_euler = (0, 0, rock); hub.scale = (1, 1, sz); return [hub]
 
 def briefcase(hand, swing=0.0):
     """a small leather briefcase hanging from `hand` (handle up), swinging by `swing` rad about the hand"""
@@ -349,7 +373,7 @@ def o_runner(gait, frame):
     else:
         bob, lean, legs, L, bend, arms = _air(gait, frame)
     b = uv_sphere('rb', 0.8, (0, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
-    parts = [b]
+    parts = [b] + coin_heart(0, 0.25 + bob, 0.35 * math.sin(2 * math.pi * frame / 8))
     for k, side in enumerate((-1, 1)):
         a = math.radians(legs[k]); hip = Vector((0.05 * side, side * 0.22, -0.4 + bob))
         knee = hip + Vector((math.sin(a) * L * 0.5 + bend, 0, -math.cos(a) * L * 0.5))
@@ -451,7 +475,7 @@ def o_trick(kind, i, n=TRICK_N):
             x, y, z = v.co; r = math.hypot(x, y) / 0.8; th = math.atan2(y, x)
             v.co = Vector((x * wide, y * wide, z * tall + rip * r * r * math.sin(5 * th + ph) + 0.03 * flat * (z < 0) * r))
         b.location = (0, 0, ctr)
-    parts = [b]
+    parts = [b] + coin_heart(0, b.location.z, 0, tall if kind == 'goo' else 1.0)
     for hip, kn, ft, fs in legs:
         parts.append(tube('leg', [tuple(hip), tuple(kn), tuple(ft)], [0.09, 0.085, 0.08], limb))
         d = (ft - kn).normalized(); w_ = min(1.0, (fs - Vector((1.5, 0.9, 0.6))).length / 0.5); f = uv_sphere('foot', 0.13, tuple(ft + Vector((0.07, 0, -0.02)).lerp(d * 0.07, w_)), tuple(fs), 32, 16); f.data.materials.append(limb); parts.append(f)  # at rest: the same foot as o_runner
@@ -474,13 +498,13 @@ def o_trick(kind, i, n=TRICK_N):
 def o_dance(frame, n=12):
     """game-over dance, a seamless loop: facing the camera, feet planted, the body sways side to side and dips
     into a crouch at each side while the arms pump up and down in turn"""
-    P = smiley.PAL; body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
+    body, limb = runner_mats()
     ph = 2 * math.pi * frame / n; sw = math.sin(ph)
     bob = -0.05 + 0.05 * math.cos(2 * ph)          # 0 in the middle, lowest (crouched) at each side
     up = link(bpy.data.objects.new('upper', None)); up.location = (0.17 * sw, 0, bob)
     b = uv_sphere('rb', 0.8, (0.17 * sw, 0, 0.25 + bob), seg=64, rings=32); b.data.materials.append(body)
     fc = face([b], 0.17 * sw, 0.3 + bob, 0.95)
-    parts = [b]
+    parts = [b] + coin_heart(0.17 * sw, 0.25 + bob, 0.3 * sw)
     for side in (-1, 1):  # arms: one rises while the other falls
         bA = math.radians(35 + 120 * (0.5 + 0.5 * sw * side)); sh = Vector((side * 0.74 + 0.17 * sw, 0.05, 0.12 + bob))
         hand = sh + Vector((side * math.sin(bA) * 0.42, -0.06, -math.cos(bA) * 0.42))
@@ -583,12 +607,14 @@ def o_pu_shield():
         o = link(bpy.data.objects.new('sh', me)); o.location = (0, y, 0); o.data.materials.append(mat)
         so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = th; so.offset = 0; return bevel(o, 0.05, 4)
     rim = slab(1.0, 0.28, gold(), 0)
-    face_ = slab(0.84, 0.3, principled('plat', (0.86, 0.87, 0.9), 0.25, metallic=0.9, coat=0.6), -0.04)
+    if GLASS: glass_on()
+    face_ = slab(0.84, 0.3, glass_grad('shg', (0.55, 0.75, 1.0), (0.92, 0.97, 1.0), trans=0.85, emit=0.2) if GLASS else principled('plat', (0.86, 0.87, 0.9), 0.25, metallic=0.9, coat=0.6), -0.04)
     return [rim, face_], face([face_], 0, 0.05, 0.85)
 
 def o_pu_magnet():
     """power-up: a chunky horseshoe magnet, bronze with platinum poles, with a face on the bend"""
-    mb = principled('mag', smiley.PAL['bronze'], 0.3, coat=0.9, coat_rough=0.04); tip = principled('pole', (0.86, 0.87, 0.9), 0.22, metallic=1.0)
+    if GLASS: glass_on()
+    mb = glass_grad('mag', (0.05, 0.25, 0.85), (0.35, 0.7, 1.0), trans=0.75, emit=0.3, axis='Z', k=0.9) if GLASS else principled('mag', smiley.PAL['bronze'], 0.3, coat=0.9, coat_rough=0.04); tip = principled('pole', (0.86, 0.87, 0.9), 0.22, metallic=1.0)
     arc = [(0.48 * math.cos(math.radians(a)), 0, 0.15 + 0.48 * math.sin(math.radians(a))) for a in range(0, 181, 10)]
     pts = [(0.48, 0, -0.45)] + arc + [(-0.48, 0, -0.45)]
     body = tube('magnet', pts, [0.22] * len(pts), mb)
@@ -601,6 +627,20 @@ def o_pu_x2():
     t.data.body = '2x'; t.data.size = 1.35; t.data.extrude = 0.16; t.data.bevel_depth = 0.05; t.data.bevel_resolution = 4
     t.data.align_x = 'CENTER'; t.data.align_y = 'CENTER'; t.data.materials.append(gold())
     return [t], []
+
+def o_dividend():
+    """DIVIDEND power-up: a little money plant (your money grows) — a glass pot, a green glass stem, gold coin leaves, a face on the pot"""
+    glass_on()
+    pot_m = glass_grad('pot', (0.55, 0.75, 1.0), (0.92, 0.97, 1.0), trans=0.85, emit=0.2)
+    stem_m = principled('stem', (0.1, 0.75, 0.3), 0.15, coat=1.0, emit=(0.1, 0.8, 0.3), emit_str=0.4)
+    bpy.ops.mesh.primitive_cone_add(vertices=48, radius1=0.42, radius2=0.58, depth=0.7, location=(0, 0, -0.55)); pot = bpy.context.active_object
+    pot.data.materials.append(pot_m); pot = bevel(pot, 0.04, 3); smooth(pot)
+    soil = cyl(gold(), (0, 0, -0.22), 0.52, 0.06, bv=0.02)
+    stem = tube('stem', [(0, 0, -0.2), (0.05, 0, 0.25), (-0.04, 0, 0.6), (0, 0, 0.85)], [0.06, 0.055, 0.05, 0.045], stem_m)
+    parts = [pot, soil, stem]
+    for (x, z, ry) in ((0.36, 0.38, 35), (-0.36, 0.62, -35), (0.0, 1.05, 0)):  # coin leaves, tilted toward the camera
+        parts.append(cyl(gold(), (x, -0.05, z), 0.24, 0.06, (math.radians(80), math.radians(ry), 0), 48, 0.02))
+    return parts, face([pot], 0, -0.55, 0.5)
 
 def o_bull(i, n=96):
     """checkpoint: a faceted, see-through diamond bull, turning slowly (frame i of n, one full turn)"""
@@ -649,12 +689,19 @@ def o_bill():
 def o_tick(tier=1, red=False):
     """currency: a glossy candle. green = +1/+3/+10% (tier 1-3, bigger and brighter), red = -2/-5% (tier 1-2, a down-candle)"""
     c = (0.9, 0.08, 0.12) if red else (0.05, 0.8, 0.3)
-    m = principled('tick', c, 0.12, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.25 + 0.2 * tier)
-    m.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.35
     k = [0, 0.8, 1.0, 1.2][tier]
-    body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.12 * k)
-    wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.06 * k, 0.06 * k], m)
-    parts = [body, wick]
+    if GLASS:  # clear tinted glass shell, a bright core bar inside
+        glass_on(); m = glass_grad('tick', tuple(0.45 * x for x in c), tuple(min(1, 0.35 + x) for x in c), trans=0.8, emit=0.25, axis='Z', k=0.6)
+        core = principled('core', c, 0.2, emit=c, emit_str=1.2 + 0.5 * tier)
+        body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.14 * k)
+        wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.05 * k, 0.05 * k], core)
+        parts = [body, wick, box('corebar', core, (0, 0, 0), (0.26 * k, 0.26 * k, 0.8 * k), bv=0.08 * k)]
+    else:
+        m = principled('tick', c, 0.12, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.25 + 0.2 * tier)
+        m.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.35
+        body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.12 * k)
+        wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.06 * k, 0.06 * k], m)
+        parts = [body, wick]
     if tier == 3 and not red:  # the big one: a gold band and a sparkle
         parts.append(box('band', gold(), (0, 0, 0.3 * k), (0.66 * k, 0.66 * k, 0.12 * k), bv=0.03))
         star = prim('ico_sphere', principled('spark', (1, 1, 0.9), 0.1, emit=(1, 0.95, 0.7), emit_str=3.0), (0.32 * k, -0.3, 1.0 * k), subdivisions=1, radius=0.12)
@@ -787,7 +834,7 @@ def o_skate(kind, i):
         lift = 0.3 * env; crouch = 0.5 - 0.5 * hold; legs_together = hold; grab = (1, hold)
     bob = 0.55 - 0.16 * crouch + lift
     # body (ball, face, arms) in its own hub, pitched a third as much as the board so it stays balanced over it
-    b = uv_sphere('rb', 0.8, (0, 0, bob), seg=64, rings=32); b.data.materials.append(body); bparts = [b]
+    b = uv_sphere('rb', 0.8, (0, 0, bob), seg=64, rings=32); b.data.materials.append(body); bparts = [b] + coin_heart(0, bob, 0.2)
     for k_, side in enumerate((-1, 1)):
         sh = Vector((side * 0.74, 0.05, bob - 0.13)); tgt = sh + arms[k_] * 0.5
         if kind == 'jesus': tgt = sh.lerp(Vector((side * 1.55, -0.05, bob - 0.08)), hold) if True else tgt   # arms straight out, cross
@@ -858,7 +905,7 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(12)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, 8) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}

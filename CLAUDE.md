@@ -43,6 +43,7 @@ python3 -m http.server 8765 &
 | `RUNNER_SKIN` | `gold` (default; cash/all in), `lgreen`/`ggreen` (long 1x/2x), `lred`/`gred` (short 1x/2x). Power-ups are canvas auras, not skins. |
 | `RUNNER_PROP` | `case` (cash run). ALL IN is `o_skate` (skateboard), its own generator. |
 | `RUNNER_FACE` | `love`, `love-noeyes` |
+| `GLASS_STYLE` | `1` (default): the glass family. Every skin is a glass ball (gold = amber "honey glass" with gold limbs) with a glowing gold $ coin floating inside (`coin_heart`, the runner's signature; it rocks with the stride and squashes in the goo). Ticks are clear glass candles with a glowing core; power-ups are glass. `0` = the old opaque plastic. |
 
 - **Runner frame list (35):** walk 8, jog 8, run 8, tko 3, rise 4, fall 4 → `runner-{gait}-{i}`.
 - **Other sheets:** tricks 24 frames each, skate 168, bull/bear 96 (see `docs/ANIMATION.md`, "Frame rate and frame counts"). Sheets decode off the main thread (`bmMake`); canvas colours come from the theme palette `pal()`.
@@ -50,7 +51,7 @@ python3 -m http.server 8765 &
   - Crop box `(x0, 27, x1, 209)`, frames side by side, cell height 182.
   - The game draws at height 217, so the pixel scale is `217/182`.
   - The body centre sits at render x = 118, so a sheet with a different `x0` needs its offset in code (see `PROP_X0`).
-- **Render cost:** 256 px, 32–48 samples. About 1–2 min per 35-frame skin on 2 cores; glass skins are slower.
+- **Render cost:** 256 px, 32–48 samples (glass needs ≥36 or it looks grainy). About 3 min per 35-frame glass skin on 2 cores; the whole runner set (5 skins × run, love, tricks, plus cash, dance, 2 skate skins) is ~1,100 frames, about 1.5–2 h.
 - **Skin → file suffix:** gold → none, lgreen → `-lgreen`, ggreen → `-ggreen`, lred → `-lred`, gred → `-gred`.
 - **Hats / head anchors:** every render with a ball named `rb` writes `head.json` (the top pole and a point above it, in render px). The packer turns these into `HEADS` in `index.html`. A new pose sheet needs its anchors added there, or hats won't sit on it.
 - Check every frame's alpha bounding box stays inside the 256 px render. Shrink the pose, never move the camera.
