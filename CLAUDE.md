@@ -64,6 +64,7 @@ python3 -m http.server 8765 &
 - **CSS:** animate only `transform` and `opacity` (keyframes and anything that loops). No looping `left`/`box-shadow`/`filter`/`background-position`; move a sheen with `translateX`, a glow with an opacity-animated pseudo-element, a sprite strip with a stepped `translateX` on its own layer.
 - **Game canvas resolution is adaptive:** it starts at the screen density (max 2x) and drops 0.5x (or straight to 1x) when the frame-time average stays above ~18.2 ms (under ~55 fps) over 1.5 s (`dprCur`, `ftA` in `loop`). It never steps back up.
 - **Scroll listeners** must not force layout when their effect is hidden (the vignette returns early in the Apple UI).
+- **Page weight:** preload an image only if the element that uses it is rendered (`getClientRects().length`); the Apple UI hides the bottom nav, invest popup and token coin, whose spin sheets are ~1.8 MB. First visit is ~0.85 MB (index.html + data JSON + small icons); the hero sheet loads after `load`. Shared JSON fetches go through one promise (`window.__hold`).
 
 ## Brand
 

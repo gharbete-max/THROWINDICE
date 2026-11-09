@@ -70,6 +70,7 @@ THEMES = {
     'spark-star':      ((1.0, 0.75, 0.15),  DARK, 'star',        1, {'noball': True}),
     'spark-coin':      ((1.0, 0.7, 0.18),   DARK, 'coin',       -1, {'noball': True}),
     'chain':    (PAL['platinum'],   DARK,  'chain',      -1, {}),
+    'quantum':  (PAL['violet'],     DARK,  'atom',        1, {'acc_scale': 1.0}),
 }
 
 GOLD = None
@@ -117,6 +118,15 @@ def accessory(kind, opts, feat):
         m = principled('roof', col, 0.35, coat=0.5, coat_rough=0.1)
         r = prim('cone', m, (0, 0, 1.1), (0, 0, math.radians(45)), vertices=4, radius1=0.62, radius2=0.0, depth=0.4, shade=False)
         out += [bevel(r, 0.02), bevel(prim('cube', m, (0.22, 0.1, 1.2), scale=(0.06, 0.06, 0.12), shade=False), 0.01)]
+    elif kind == 'atom':  # quantum: two tilted electron orbits around the ball, a glowing electron on each
+        ring = principled('orbit', (0.12, 0.2, 0.85), 0.12, metallic=0.3, coat=1.0, emit=(0.2, 0.3, 1.0), emit_str=0.25)
+        el = principled('electron', (0.7, 0.85, 1.0), 0.2, emit=(0.6, 0.8, 1.0), emit_str=3.0)
+        for tilt, ph, rz in ((70, 0.6, 28), (-70, 3.6, -28)):
+            r = prim('torus', ring, (0, 0, 0), (math.radians(tilt), math.radians(18), math.radians(rz)), major_radius=1.3, minor_radius=0.05, major_segments=96, minor_segments=12)
+            out.append(r)
+            v = Vector((1.3 * math.cos(ph), 1.3 * math.sin(ph), 0))  # in the torus plane
+            v.rotate(Euler((math.radians(tilt), math.radians(18), math.radians(rz))))
+            out.append(prim('uv_sphere', el, tuple(v), radius=0.1))
     elif kind == 'mortarboard':
         m = principled('cap', INK, 0.35, coat=0.5, coat_rough=0.1)
         out.append(prim('cylinder', m, (0, 0, 0.98), vertices=48, radius=0.36, depth=0.16))
