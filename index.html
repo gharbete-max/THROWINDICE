@@ -880,7 +880,7 @@ html body.apple #gameCard .gLesson{color:var(--text);background:color-mix(in srg
 <div aria-labelledby="regTitle" aria-modal="true" class="modalShade" id="regionModal" role="dialog"><div class="modal" style="max-width:520px"><h2 id="regTitle">Where are you?</h2><div class="regGrid" id="regGrid"></div><p class="disclaimer" style="margin:8px 0 0">Not advice.</p></div></div>
 <div aria-labelledby="focusTitle" aria-modal="true" class="modalShade" id="focusModal" role="dialog"><div class="modal wide" style="max-width:760px"><div class="eyebrow" id="focusEye">FOCUS</div><h2 id="focusTitle" style="margin-top:8px">Focus</h2><div class="actions" style="margin:10px 0"><button class="btn small" id="focusEtf" type="button">See ETFs →</button><a class="btn small secondary" id="focusNews" target="_blank" rel="noopener noreferrer">More news ↗</a><a class="btn small secondary" id="focusExch" target="_blank" rel="noopener noreferrer">Exchange news ↗</a><button class="btn secondary small" onclick="closeFocus()" type="button">Close</button></div><div id="focusBox" style="min-height:300px"></div><p class="disclaimer">News by TradingView. Not advice.</p></div></div>
 <div aria-labelledby="chartTitle" aria-modal="true" class="modalShade" id="chartModal" role="dialog"><div class="modal wide" style="max-width:720px"><div class="eyebrow">CHART</div><h2 id="chartTitle" style="margin-top:8px">Chart</h2><div id="chartBox" style="min-height:300px;margin:12px 0"></div><p class="disclaimer" id="chartFallback" hidden>Chart could not load. Use the link.</p><div class="actions" style="margin-top:12px"><a class="btn small" id="chartLink" href="https://www.tradingview.com/" target="_blank" rel="noopener noreferrer">Open on TradingView ↗</a><button class="btn secondary small" onclick="closeChart()" type="button">Close</button></div><p class="disclaimer">Chart by TradingView. Not advice.</p></div></div>
-<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Back">← Back</button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><button type="button" class="bkey fl" onclick="bubKey(this,'fl')">Cheap</button><button type="button" class="bkey fm" onclick="bubKey(this,'fm')">Middle</button><button type="button" class="bkey fh" onclick="bubKey(this,'fh')">Pricey</button></div><div class="bubField" id="bubField"></div><div class="bubCard" id="bubCard" hidden></div></div>
+<div aria-labelledby="bubTitle" aria-modal="true" class="bubLayer" hidden id="bubbleLayer" role="dialog"><div class="bubTop"><button class="goBack" id="bubBack" onclick="closeBubbles()" type="button" aria-label="Back">← Back</button><div class="bubHead"><b id="bubTitle"></b><span id="bubNote"></span></div></div><div class="bubModes" id="bubModes"><button type="button" id="bubReg" onclick="regOpen()"></button><button type="button" id="bubAll" onclick="regToggleAll()" hidden></button><button type="button" class="bkey fl" onclick="bubKey(this,'fl')">Cheap</button><button type="button" class="bkey fm" onclick="bubKey(this,'fm')">Middle</button><button type="button" class="bkey fh" onclick="bubKey(this,'fh')">Pricey</button></div><div class="bubField" id="bubField"></div><div class="bubCard" id="bubCard" hidden></div></div>
 <div class="toast" id="toast"></div>
 <script>
 const pages=['dashboard','basics','fees','world','sectors','commodities','etfs','tokens'];
@@ -1359,6 +1359,12 @@ function regBadge(t){const d=domOf(t),a=regAvail(t);return(d?'<s class="bflag" t
 function regStatusText(t){const a=regAvail(t);return a===2?'✅ You can usually buy this':a===1?'⚠︎ Ask your broker first':'🚫 Not sold in your region'}
 function regRow(t){const el=document.getElementById('etfRegion');if(!el)return;const d=domOf(t),n=REGION&&regAvail(t)<2?regNote(t):'';el.innerHTML=(d?'<span class="rf">'+flagSvg(d)+'Domiciled in '+(DOMS[d]||d)+'</span>':'')+(REGION&&REGION!=='any'?'<span class="rs">'+regStatusText(t)+'</span>':'')+(n?'<span style="font-weight:600;flex-basis:100%">'+n+'</span>':'')}
 function regLabel(){const r=REG[REGION];document.getElementById('regEmoji').textContent=r?r[1]:'📍';document.getElementById('regLbl').textContent=r?r[0]:'Where are you?'}
+function regGuess(){let z='';try{z=Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){}const[a,b='']=z.split('/');
+ if(a==='Europe')return b==='London'||b==='Belfast'||b==='Guernsey'||b==='Jersey'||b==='Isle_of_Man'?'uk':b==='Zurich'?'ch':['Moscow','Istanbul','Minsk','Kiev','Kyiv','Volgograd','Samara','Ulyanovsk','Kirov','Astrakhan','Saratov','Kaliningrad'].includes(b)?null:'eu';
+ if(a==='America')return /Argentina|Sao_Paulo|Santiago|Bogota|Lima|Caracas|Montevideo|Asuncion|La_Paz|Guayaquil|Recife|Fortaleza|Belem|Manaus|Bahia|Cuiaba|Campo_Grande|Porto_Velho|Boa_Vista|Rio_Branco|Maceio|Araguaina|Santarem|Noronha|Punta_Arenas|Paramaribo|Cayenne|Guyana/.test(b)?'sa':'na';
+ if(a==='Australia'||z==='Pacific/Auckland')return'oc';if(a==='Africa')return'af';
+ if(a==='Asia')return{Shanghai:'cn',Chongqing:'cn',Urumqi:'cn',Hong_Kong:'hk',Tokyo:'jp',Taipei:'tw',Seoul:'kr',Kolkata:'in',Calcutta:'in',Singapore:'sg',Dubai:'me',Riyadh:'me',Qatar:'me',Kuwait:'me',Bahrain:'me',Tehran:'me',Jerusalem:'me',Tel_Aviv:'me',Amman:'me',Beirut:'me',Baghdad:'me',Muscat:'me',Aden:'me',Damascus:'me'}[b]||null;
+ return null}
 function regOpen(){const m=document.getElementById('regionModal');document.getElementById('regGrid').innerHTML=Object.keys(REG).map(k=>'<button type="button" data-r="'+k+'"'+(k===REGION?' class="on"':'')+' onclick="regSet(\''+k+'\')"><span aria-hidden="true">'+REG[k][1]+'</span>'+REG[k][0]+'</button>').join('');lastFocus=document.activeElement;m.classList.add('show');m.querySelector('button').focus()}
 function regSet(k){REGION=k;SHOWALL=false;try{localStorage.setItem('td-region',k)}catch(e){}document.getElementById('regionModal').classList.remove('show');regLabel();if(bub)openBubbles(bub.key);const t=document.getElementById('etfName').dataset.ticker;if(t)regRow(t);if(lastFocus&&lastFocus.focus)lastFocus.focus()}
 function regToggleAll(){SHOWALL=!SHOWALL;if(bub)openBubbles(bub.key)}
@@ -1389,7 +1395,7 @@ function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);co
    +(h?'<div class="fz"><small>Spread: top 10 = '+h.top10.toFixed(0)+'% of '+(h.n?h.n.toLocaleString()+' holdings':'the fund')+' · <b>'+c[0]+'</b></small><span class="fbar"><i style="width:'+Math.min(100,h.top10)+'%"></i></span></div><ul class="fh">'+hold+'</ul>':'<p class="fn">Holds metal, coins or contracts, not a list of companies.</p>')
    +'<button class="fgo" type="button" onclick="closeBubbles(true);openPage(\'etfs\');pickFund(\''+id+'\')">Full details →</button></article>'}).join('');
  F.scrollTop=0;bub={items:[],W:0,H:0,raf:0,reduced:true,key};
- {const A=document.getElementById('bubAll');A.hidden=!(RS.hidden||SHOWALL);A.textContent=SHOWALL?'Hide the ones not for me':'🌍 Show '+RS.hidden+' more';if(RS.none)document.getElementById('bubNote').textContent='None of these are sold in your region. Showing them so you can learn.'}
+ {const r=REG[REGION];document.getElementById('bubReg').textContent=r&&REGION!=='any'?r[1]+' Funds for '+r[0]+' · change':'📍 Where are you?';const A=document.getElementById('bubAll');A.hidden=!(RS.hidden||SHOWALL);A.textContent=SHOWALL?'Hide the ones not for me':'🌍 Show '+RS.hidden+' more';if(RS.none)document.getElementById('bubNote').textContent='None of these are sold in your region. Showing them so you can learn.'}
  document.getElementById('bubBack').focus()}
 
 const pctl=(arr,v)=>arr.filter(x=>x<=v).length/arr.length;
@@ -1437,7 +1443,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeBubbles()});
 window.addEventListener('resize',()=>{if(!bub||bub.reduced)return;const F=document.getElementById('bubField');bub.W=F.clientWidth;bub.H=F.clientHeight;bub.items.forEach(b=>{b.x=Math.min(b.x,bub.W-b.r);b.y=Math.min(b.y,bub.H-b.r)})});
 document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-theme]:not([data-focus])');if(c)goTheme(c.dataset.theme)});
 
-regLabel();if(!REGION)regOpen();
+if(!REGION)REGION=regGuess();regLabel();if(!REGION)regOpen();/* no gate: guess the region from the time zone (not saved, so the picker still saves a real choice); ask only if the guess fails */
 
 
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');{const di=cx.drawImage.bind(cx);cx.drawImage=(im,...a)=>di(im&&im._bm||im,...a)}/* draw sprite sheets from their decoded bitmaps */
@@ -2036,7 +2042,7 @@ function build(){L.innerHTML='';const dark=document.documentElement.dataset.them
  row('Basics',()=>navAction(null,'basics','basics'));
  row('Game',()=>navGame());
  L.appendChild(document.createElement('hr'));
- row('Region',()=>regOpen(),'small');row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
+ row('Region: '+(REG[REGION]?REG[REGION][0]:'not set'),()=>regOpen(),'small');row('Appearance: '+(dark?'Dark':'Light'),()=>toggleTheme(),'small');row('Saved',()=>openProfile(),'small')}
 function open(){last=document.activeElement;build();M.hidden=false;document.body.style.overflow='hidden';const f=L.querySelector('button');if(f)f.focus()}
 M.onclick=e=>{if(e.target===M)close()};B.onclick=open;document.getElementById('amenuClose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape'&&!M.hidden)close()})})();
 </script>
