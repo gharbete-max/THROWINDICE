@@ -6,8 +6,9 @@
 <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <title>throwindice — Investing, simply.</title>
 <meta name="description" content="Investing, simply: funds, tokens and a market game you play with one finger. A concept, not advice.">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0e0e10" media="(prefers-color-scheme: dark)">
+<script>if(/[?&]embed\b/.test(location.search))document.documentElement.classList.add("embed")</script>
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/brand/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
@@ -619,7 +620,7 @@ button.tkRow{cursor:pointer}button.tkRow:hover{background:color-mix(in srgb,var(
 html body.apple .card .topic b{flex:1;text-align:left}
 /* ETF browser: glass list */
 html body.apple .bubLayer{background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:saturate(1.8) blur(28px);backdrop-filter:saturate(1.8) blur(28px)}
-.bubField.list{overflow:auto;padding:156px 16px 48px;-webkit-overflow-scrolling:touch}
+.bubField.list{overflow:auto;padding:206px 16px 48px;-webkit-overflow-scrolling:touch}
 .bubField.list .fc{max-width:760px;margin:0 auto 14px;padding:20px;border-radius:22px;background:color-mix(in srgb,var(--bg) 62%,transparent);border:.5px solid color-mix(in srgb,var(--text) 12%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.07),0 1px 0 rgba(255,255,255,.5) inset;border-left:4px solid var(--dot,#c9a24d)}
 .fc.fl{--dot:#3fb97c}.fc.fm{--dot:#e2b13c}.fc.fh{--dot:#e5605a}.fc.dim{opacity:.3}.fc.nope{opacity:.55}
 .fc header{display:flex;gap:12px;align-items:center}.fc .fi{font-size:28px}.fc h3{margin:0;font-size:19px;letter-spacing:-.02em}.fc header small{color:var(--muted)}.fc header>div{flex:1;min-width:0}
@@ -705,6 +706,55 @@ html body.apple .brandMark svg{height:22px;width:auto;color:var(--text)}
 
 html body.apple #gameCard .gLesson{color:var(--text);background:color-mix(in srgb,var(--accent-text) 12%,transparent);border-color:color-mix(in srgb,var(--accent-text) 35%,transparent);font-weight:700}
 </style>
+<style id="tpStyle">
+/* throwindice wears throwpaper's design system (DESIGN.md there): paper and ink, gold fill, bronze words, platinum greys,
+   flat cards, glass only on things that float, 44px controls, Inter 16/1.55. Values are throwpaper's own derived tokens. */
+html body.apple{--r:10px;--bg:#fafaf8;--surface:#e9ebee;--surface2:#e9ebee;--line:#7c8188;--text:#0e0e10;--muted:#4a4e55;--ink:#0e0e10;--accent-text:#8f6b3a;
+--tp-gold:#cea85c;--tp-heading:#0e0e10;--tp-focus:#8f6b3a;--tp-ok:#2f6b45;--tp-warn:#8a5f00;--tp-bad:#a12b25;
+--tp-glass:rgb(238 240 241 / .68);--tp-glass-edge:rgb(124 129 136 / .7);--tp-glass-hairline:rgb(255 255 255 / .55);
+--tp-shadow:0 1px 2px rgb(0 0 0 / .04),0 1px 3px rgb(0 0 0 / .06);--tp-overlay:0 4px 8px rgb(0 0 0 / .05),0 16px 32px rgb(0 0 0 / .12);
+--tp-ease:cubic-bezier(.66,0,.34,1);--c1:#cea85c;--c2:#cea85c;--c3:#cea85c;--c4:#cea85c;--c5:#cea85c;--c6:#cea85c;
+font:400 16px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;letter-spacing:normal;
+background-color:var(--bg);background-attachment:fixed;
+background-image:radial-gradient(60rem 40rem at 15% -10%,color-mix(in srgb,var(--tp-gold) 6%,transparent),transparent),radial-gradient(50rem 35rem at 95% 5%,color-mix(in srgb,#8f6b3a 5%,transparent),transparent)}
+:root[data-theme=dark] body.apple{--bg:#0e0e10;--surface:#1c1c1e;--surface2:#1c1c1e;--line:#6c7178;--text:#fafaf8;--muted:#9aa0a8;--ink:#fafaf8;--accent-text:#cea85c;--tp-heading:#cea85c;--tp-focus:#e0c47f;--tp-ok:#5fb27f;--tp-warn:#d9a83a;--tp-bad:#e5736d;
+--tp-glass:rgb(20 20 22 / .72);--tp-glass-edge:rgb(108 113 120 / .55);--tp-glass-hairline:rgb(255 255 255 / .10);--tp-shadow:0 1px 2px rgb(0 0 0 / .3);--tp-overlay:0 4px 8px rgb(0 0 0 / .3),0 16px 32px rgb(0 0 0 / .45)}
+html body.apple :focus-visible{outline:2px solid var(--tp-focus);outline-offset:2px}
+/* type */
+html body.apple .shell h1{font-weight:600;letter-spacing:-.015em;line-height:1.15;font-size:clamp(31.25px,6vw,39.063px);color:var(--tp-heading);margin:40px 0 8px}
+html body.apple .shell h2,html body.apple .modal h2{font-weight:600;letter-spacing:-.015em;line-height:1.15;font-size:25px;color:var(--tp-heading)}
+html body.apple .shell h3{font-weight:600;letter-spacing:-.015em;font-size:20px}
+html body.apple .shell p,html body.apple .shell li{line-height:1.55}
+html body.apple .shell a,html body.apple .textlink{color:var(--accent-text)}
+html body.apple .shell small,html body.apple .disclaimer{font-size:12.8px;line-height:1.4}
+/* flat cards: surface fill, 1px border, lg radius, 24px */
+html body.apple .card,html body.apple #etfSelected,html body.apple .bubField.list .fc{background:var(--surface)!important;-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--line)!important;border-radius:17.5px!important;box-shadow:var(--tp-shadow)!important;padding:24px!important}
+html body.apple .bubField.list .fc{border-left-width:1px!important}
+html body.apple .fc .fs>div{background:var(--bg);border:1px solid color-mix(in srgb,var(--line) 45%,transparent)}
+html body.apple .fc.fl{--dot:var(--tp-ok)}html body.apple .fc.fm{--dot:var(--tp-warn)}html body.apple .fc.fh{--dot:var(--tp-bad)}
+html body.apple .fc header::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--dot);order:3;flex:none}
+html body.apple .fbar i,html body.apple .hBar i,html body.apple .hW i{background:var(--tp-gold)}
+html body.apple .topic::before,html body.apple .amenuList button::before{background:var(--tp-gold);box-shadow:none}
+/* buttons: three tiers. primary = gold fill, ink label and ink edge; quiet = outlined; bare = text */
+html body.apple .shell .btn,html body.apple .modal .btn{min-height:44px;padding:8px 16px;border-radius:10px!important;border:1px solid var(--line)!important;background:transparent!important;color:var(--text)!important;font-weight:500;font-size:16px;letter-spacing:normal;box-shadow:none}
+html body.apple #gcGo,html body.apple #etfCalcBtn,html body.apple #etfBuyBtn,html body.apple .fc .fgo,html body.apple .shell .btn.goldbtn{min-height:44px;background:var(--tp-gold)!important;color:#0e0e10!important;border:1px solid #0e0e10!important;border-radius:10px!important;font-weight:600;box-shadow:inset 0 1px 0 var(--tp-glass-hairline)!important;background-image:none!important}
+:root[data-theme=dark] body.apple #gcGo,:root[data-theme=dark] body.apple #etfCalcBtn,:root[data-theme=dark] body.apple .fc .fgo{border-color:var(--tp-gold)!important}
+html body.apple .bubModes button,html body.apple .goBack{min-height:44px;border-radius:999px;border:1px solid var(--line)!important;background:var(--bg)!important;color:var(--text);-webkit-backdrop-filter:none;backdrop-filter:none}
+html body.apple .bkey.on{background:var(--tp-gold)!important;color:#0e0e10;border-color:#0e0e10!important}
+html body.apple .tkRow,html body.apple .topic{border-color:var(--line)!important}
+/* glass: only what floats (top bar, menu, dialogs, toasts) */
+html body.apple .top,html body.apple .amenuPanel,html body.apple .modal,html body.apple .toast,html body.apple .bubLayer{background:var(--tp-glass)!important;-webkit-backdrop-filter:blur(20px) saturate(1.7);backdrop-filter:blur(20px) saturate(1.7);border-color:var(--tp-glass-edge)!important}
+html body.apple .top{border-bottom:1px solid var(--tp-glass-edge);box-shadow:inset 0 1px 0 var(--tp-glass-hairline)}
+html body.apple .amenuPanel,html body.apple .modal,html body.apple .toast{border:1px solid var(--tp-glass-edge);box-shadow:inset 0 1px 0 var(--tp-glass-hairline),var(--tp-overlay)!important}
+html body.apple .amenu{background:rgb(14 14 16 / .28)}
+html body.apple .amenuList button{font-size:16px;font-weight:500;letter-spacing:normal}
+@media(prefers-reduced-transparency:reduce){html body.apple .top,html body.apple .amenuPanel,html body.apple .modal,html body.apple .toast,html body.apple .bubLayer,html body.apple .amenu{background:var(--bg)!important;-webkit-backdrop-filter:none;backdrop-filter:none}}
+@supports not (backdrop-filter:blur(1px)){html body.apple .top,html body.apple .amenuPanel,html body.apple .modal,html body.apple .bubLayer{background:var(--bg)!important}}
+@media(prefers-reduced-motion:reduce){html body.apple *{scroll-behavior:auto!important}}
+/* as a page inside another site: ?embed hides the wordmark, keeps the menu */
+html.embed body.apple .top .brand{visibility:hidden}
+</style>
+
 </head>
 <body class="apple">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="hrf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6dc8c"/><stop offset=".55" stop-color="#d9a84a"/><stop offset="1" stop-color="#a87a30"/></linearGradient><linearGradient id="hrs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9c6f2a"/><stop offset="1" stop-color="#6e4c1c"/></linearGradient><linearGradient id="htf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b4c0ff"/><stop offset=".55" stop-color="#7d86f2"/><stop offset="1" stop-color="#5145c8"/></linearGradient><linearGradient id="hts" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b3fb0"/><stop offset="1" stop-color="#2f2780"/></linearGradient><linearGradient id="bwg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9bf62"/><stop offset="1" stop-color="#a87a30"/></linearGradient><linearGradient id="bwt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9b4ff"/><stop offset="1" stop-color="#5f52d8"/></linearGradient></defs></svg>
@@ -1388,7 +1438,7 @@ function openBubbles(key){const T=THEMES[key];if(!T)return;closeBubbles(true);co
  const RS=regSplit(T[2]),ids=RS.ids.slice().sort((a,b)=>(feeOf(a)??.3)-(feeOf(b)??.3));document.getElementById('bubNote').textContent=T[3]||'Sorted cheapest first. Tap a fund for everything.';
  const esc=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;'),pc=v=>(v>0?'+':'')+v.toFixed(0)+'%';
  F.className='bubField list';F.innerHTML=ids.map(id=>{const f=etfFacts[id],fe=feeOf(id),h=HOLD&&HOLD[id],k=FACT&&FACT[id],c=h?concOf(h):null;
-  const st=[['Fee',fe!=null?fe.toFixed(2)+'%':'–',fe!=null?'$'+(fe*10).toFixed(0)+' per $1,000 a year':'']];
+  const st=[['Fee · '+({fl:'cheap',fm:'middle',fh:'pricey'}[feeCls(id)]),fe!=null?fe.toFixed(2)+'%':'–',fe!=null?'$'+(fe*10).toFixed(0)+' per $1,000 a year':'']];
   if(k&&k.change1y!=null)st.push(['1 year',pc(k.change1y),'past, not a promise']);
   if(k&&k.volatility3y!=null)st.push(['Swings',k.volatility3y.toFixed(0)+'%','typical yearly up and down']);
   const hold=h?h.h.filter(x=>x[0]!=='n/a').slice(0,5).map(x=>'<li><b>'+esc(x[0].replace(/^[A-Z]+:/,''))+'</b> '+esc(x[1].replace(/,? (Inc|Corp|Corporation|Limited|Ltd|Holdings|Company|Co)\.?$/i,'').slice(0,24))+' <em>'+x[2].toFixed(1)+'%</em></li>').join(''):'';
@@ -1445,7 +1495,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeBubbles()});
 window.addEventListener('resize',()=>{if(!bub||bub.reduced)return;const F=document.getElementById('bubField');bub.W=F.clientWidth;bub.H=F.clientHeight;bub.items.forEach(b=>{b.x=Math.min(b.x,bub.W-b.r);b.y=Math.min(b.y,bub.H-b.r)})});
 document.addEventListener('click',e=>{if(e.target.closest('button,a,summary'))return;const c=e.target.closest('.exploreCard[data-theme]:not([data-focus])');if(c)goTheme(c.dataset.theme)});
 
-if(!REGION)REGION=regGuess();regLabel();if(!REGION)regOpen();/* no gate: guess the region from the time zone (not saved, so the picker still saves a real choice); ask only if the guess fails */
+if(!REGION)REGION=regGuess()||'any';regLabel();/* no gate: guess the region from the time zone (not saved, so the picker still saves a real choice); ask only if the guess fails */
 
 
 (function(){const L=document.getElementById('gameLayer'),cv=document.getElementById('gameCv'),cx=cv.getContext('2d');{const di=cx.drawImage.bind(cx);cx.drawImage=(im,...a)=>di(im&&im._bm||im,...a)}/* draw sprite sheets from their decoded bitmaps */

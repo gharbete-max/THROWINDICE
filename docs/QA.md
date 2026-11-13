@@ -689,3 +689,9 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - origin/main (brand mark and wordmark, scroll-scrubbed hero, 3D icons in slots, glass game UI, 60 fps pass, adaptive game resolution, lighter first load) already contained my commits; merged cleanly, no conflicts.
 - Checked after the merge: home, Menu panel (wordmark shows), Tokens page, ETF cards, game run (trick swipes, HUD) on phone/dark/desktop: no page errors, no 4xx, no overflow. Game pixel ratio is now the other session's adaptive one; Low-effects (no background/ticker) from my change still applies.
 - Small fixes: ETF card icon slot hidden when no 3D icon exists; Back button focus ring only for keyboard focus.
+
+## Final pass: throwpaper styling, region default, packaging
+- `tpStyle` block: throwpaper tokens (paper/ink/gold/bronze/platinum, derived dark), flat 17.5px cards with 1px border, three button tiers (gold fill + ink edge primary), glass only on top bar, menu, dialogs, toasts (reduced-transparency and no-backdrop fallbacks), Inter 16/1.55, headings 600 / -0.015em, two body gradients like throwpaper's. Fee cards use status colours (ok/warn/bad) plus a text label (cheap/middle/pricey).
+- First visit no longer opens the region picker when the time zone is unknown: default "Show me everything" (picker still in the menu).
+- Pages workflow now ships `data/` and `manifest.webmanifest` (it shipped only index.html and assets, so fund facts and holdings would have been missing live). Packaged copy tested at `/throwindice/` under a plain static server: Tokens list 16 stocks, ETF cards render, no page errors or 4xx, `?embed` and `#play` work.
+- Balance sim re-run: see BALANCE.md section 8.

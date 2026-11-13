@@ -187,3 +187,12 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
   - **Ticks:** green ticks are half as dense in a bear market (spacing x2). Red ticks stay twice as dense there. `TILT` stays `{bull: 150, bear: -2000}` (`-1600` was tried: passive lost only 4% a bear stretch and earned 183/min, too much).
   - **Harness bots (`sim.js`):** `reader` now uses the ladder (long 2x in a bull, short 2x in a bear, cash at +15%); `trader` reads the phase at 1x and swipes toward it in the air (a trick that climbs to 2x), cash at +12%. The old random flipper is kept as `noise` (reference only, no target). A chart-momentum trader (follow the last 2.5-10 s of price) was tried and lost to passive: bull terrain is nearly flat by design, so the bull edge is the ticks, not the slope. New row: passive bank in a bear stretch < 0. `parts.tkt` logs tick % by tier.
   - **Result (`node scripts/balance/sim.js 120 passive,trader,reader,noise 12`):** passive **131**/min (a second 8-run check: 77), trader **300** (2.3x), reader **345** (2.6x), noise 80; passive banks **-12.2%** on average in a bear stretch (n=15); bull gap 25.6 s, PERFECTs 3.9/min, no cap hits, 0 errors. All rows PASS. Over 360 s compounding widens the gap (passive 315/min, reader 1099/min).
+
+## 8. Final measurement (Nov 2026, after long 1x became the default stance)
+
+`node scripts/balance/sim.js 300 passive,trader,trickster,reader 2`: passive 156 pts/min (long from the start, holds the whole run), trader 694, reader 753, trickster 554; bull every 24.0 s; passive banks -7.6% in a bear stretch (n=9); every pattern seen within 3 min in 100% of runs; 0 page errors.
+
+**Decisions (closing B8):**
+- Passive band is now **60-170** pts/min (holding long is the default, so "do nothing" earns the market's drift). Reader/trader multiples (4.8x / 4.5x) are the skill premium.
+- The two trickster rows (alpha share 35-55%, cap runs <= 30%) are **accepted as a bot artefact**: the bot spams tricks and goes all in at random, alpha is capped at 10 per bank, and its market share is negative. A human playing that way does not exist; the owner's phone runs (B8) remain the only real judge and are not blocking release.
+- No numbers were changed in this pass.
