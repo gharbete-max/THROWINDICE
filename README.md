@@ -13,6 +13,7 @@ Educational, not financial advice: no forecasts, no scores, no individual stocks
 | | |
 |---|---|
 | `docs/HANDOFF.md` | **Start here.** What exists and the ordered work queue. |
+| `docs/AUDIT-2026-11.md` | Usability and code audit, and where the project goes. |
 | `CLAUDE.md` | Rules for working in the repo: editing, testing, rendering, 60 fps, brand. |
 | `docs/MARKET.md`, `docs/BALANCE.md`, `docs/ANIMATION.md` | Game design, balance targets and the balance harness, animation rules. |
 | `docs/QA.md`, `docs/UPDATING.md` | Site QA log, content updates. |
