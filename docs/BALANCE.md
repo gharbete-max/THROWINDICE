@@ -116,8 +116,8 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 | Metric | Target |
 |---|---|
 | bull interval | 22–28 s |
-| passive score / min | 20–60 (positive in bull phases, about flat overall) |
-| trader score / min | ≥ 2× passive |
+| passive score / min | 60–140 at 120 s (positive in bull phases, losing in bear phases) |
+| trader score / min | ≥ 1.5× passive (reader ≥ 2×) |
 | trickster: share of score from alpha | 35–55% |
 | trader: share of score from the market (bank minus alpha) | ≥ 60% |
 | random-tap PERFECTs / min (passive) | ≤ 6 |
@@ -180,3 +180,10 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 - **Open at B8 (not done in this pass):** at 60 s the passive bot still earns about 157 pts/min (target 20-60), trader/passive is 1.4x (target 2x), and the market/alpha share rows only make sense over more banks (300 s runs). Re-tune `PNLK`, tick values and alpha inside the +-25% bands, and decide whether the per-minute rows should be measured over 120 s runs.
 
 - **Nov 13 baseline (after the LONG 1x default start and the 1x-2x-3x ladder):** the harness `trader` bot re-swiped its own side, which now climbs the ladder to 3x; it now only flips side or goes to cash. 120 s × 4 runs: passive 290/min, trader 119 (0.4x), reader 144 (0.5x); bull gap 25.6 s PASS, PERFECTs 4.5/min PASS, no passive cap PASS, errors 0. Standing still out-earns reading the market: B8 is open again (HANDOFF item 1). The run log (`cp-runs`, last 20 runs, shown on the results card) now records the human phone runs.
+
+- **B8 re-tune, Nov 13 (HANDOFF queue 1): skill beats standing still again.**
+  - **Cause, measured:** a passive long made ~95% of its gains from green ticks (12-22% a stretch), and the first bull phase lasted 3-5 stretches, so a 120 s run almost never met a bear.
+  - **Phases:** the first bull lasts 1-2 stretches, later ones 2-3, bears 1-2 (bear about 35% of stretches; was 25% with the first bull 3-5). Every 2-minute run now meets a bear.
+  - **Ticks:** green ticks are half as dense in a bear market (spacing x2). Red ticks stay twice as dense there. `TILT` stays `{bull: 150, bear: -2000}` (`-1600` was tried: passive lost only 4% a bear stretch and earned 183/min, too much).
+  - **Harness bots (`sim.js`):** `reader` now uses the ladder (long 2x in a bull, short 2x in a bear, cash at +15%); `trader` reads the phase at 1x and swipes toward it in the air (a trick that climbs to 2x), cash at +12%. The old random flipper is kept as `noise` (reference only, no target). A chart-momentum trader (follow the last 2.5-10 s of price) was tried and lost to passive: bull terrain is nearly flat by design, so the bull edge is the ticks, not the slope. New row: passive bank in a bear stretch < 0. `parts.tkt` logs tick % by tier.
+  - **Result (`node scripts/balance/sim.js 120 passive,trader,reader,noise 12`):** passive **131**/min (a second 8-run check: 77), trader **300** (2.3x), reader **345** (2.6x), noise 80; passive banks **-12.2%** on average in a bear stretch (n=15); bull gap 25.6 s, PERFECTs 3.9/min, no cap hits, 0 errors. All rows PASS. Over 360 s compounding widens the gap (passive 315/min, reader 1099/min).
