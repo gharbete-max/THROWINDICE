@@ -807,7 +807,7 @@ html.embed body.apple .top .brand{visibility:hidden}
 <div class="pageTitle"><h1>Pick a fund</h1></div>
 <div class="grid">
 
-<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>Pick a pile</h2></div></div>
+<section class="card span7" id="fundExplorer"><div class="sectionHead"><div><h2>Pick a country or theme</h2></div></div>
 <div id="pileGrid"></div>
 
 </section>
@@ -1250,7 +1250,7 @@ function renderFund(t){const f=etfFacts[t],p=proOf(t),d=F4[p],ucits=f.kind!=='US
  const fv=feeOf(t),fee=fv==null?['Check the fund page','Fees differ by share class. The links above show the exact number.'+extra+acc]:[fv.toFixed(2)+'% a year','About €'+(fv*100).toFixed(0)+' a year on €10,000.'+extra+acc];
  const box=(e,l,q,a,x)=>'<div class="fbox"><span class="letter">'+e+' '+l+'</span><b>'+a+'</b><small>'+String(x).split('. ')[0].replace(/\.$/,'')+'.</small></div>';
  const PEX='<small class="peExp"><strong>P/E?</strong> The price you pay for €1 of yearly profit. P/E 20 = €20 for every €1 the companies earn in a year. Higher means pricier.</small>';
- document.getElementById('fund4').innerHTML=box('💸','FAIR PRICE','Is the price fair?',d.fair[0],d.fair[1],d.fair[2],/P\/E/.test(d.fair.join(' '))?PEX:'')+box('🧾','FEES','What does it cost?',fee[0],fee[1],look)+box('🎢','FLUCTUATION','How much does it jump around?',d.flu[0],d.flu[1],'The chart shows past waves, like seasons: good years and bad years. Waves come back, but nobody knows when.')+box('🔄','FLOW','Easy to buy and sell?',flow[0],flow[1]+(ucits||p==='coin'?'':' US-listed funds are often not sold to people in Europe.'),'On the fund site: how many shares trade each day (more is better) and the gap between the buy price and the sell price (smaller is better).')}
+ document.getElementById('fund4').innerHTML=box('💸','FAIR PRICE','Is the price fair?',d.fair[0],d.fair[1],d.fair[2],/P\/E/.test(d.fair.join(' '))?PEX:'')+box('🧾','FEES','What does it cost?',fee[0],fee[1],look)+box('🎢','PRICE SWINGS','How much does it jump around?',d.flu[0],d.flu[1],'The chart shows past waves, like seasons: good years and bad years. Waves come back, but nobody knows when.')+box('🔄','FLOW','Easy to buy and sell?',flow[0],flow[1]+(ucits||p==='coin'?'':' US-listed funds are often not sold to people in Europe.'),'On the fund site: how many shares trade each day (more is better) and the gap between the buy price and the sell price (smaller is better).')}
 let HOLD=null;(window.__hold||(window.__hold=fetch('data/holdings.json').then(r=>r.ok?r.json():null).catch(()=>null))).then(j=>{HOLD=j&&j.t||null;const t=document.getElementById('etfName').dataset.ticker;if(HOLD&&t)renderHold(t);if(HOLD&&typeof bub!=='undefined'&&bub&&bub.sel)selBall(bub.sel)}).catch(()=>{});
 const concOf=h=>!h?null:h.n&&h.n<=15||h.top10>=60?['Concentrated','c-hi','Few names carry the fund. If one falls hard, you feel it.']:h.top10>=35?['Medium','c-mid','The biggest names matter, but the rest still counts.']:['Spread out','c-lo','Many names share the load. One bad company hurts little.'];
 function renderHold(t){const E=document.getElementById('fundHold');if(!E)return;const f=etfFacts[t],h=HOLD&&HOLD[t],fv=feeOf(t),esc=x=>String(x).replace(/&/g,'&amp;').replace(/</g,'&lt;');let o='';
@@ -1663,7 +1663,10 @@ function lessonLine(){const e=R.rugEv,last=e[e.length-1],o=R.open;
  if(R.slips>=2)return'Landing mid-trick costs 1% each time. Finish the trick first.';
  if(R.aTot>=2)return'Clean tricks added '+R.aTot.toFixed(1)+'% of alpha.';
  return'Bank at the diamond bull to keep what you earn.'}
-function resultsHtml(){const ret=(R.V/R.V0-1)*100,pn=Object.keys(R.patSeen).map(k=>PATN[k]).filter(Boolean),re=R.rugEv,cnt=k=>re.filter(x=>x===k).length,rug=re.length?'<br><small>rugs: '+[cnt('cash')?'dodged '+cnt('cash'):'',cnt('short')?'shorted '+cnt('short'):'',cnt('stop')?'stop-loss '+cnt('stop'):'',cnt('long')?'hit '+cnt('long'):''].filter(Boolean).join(', ')+'</small>':'';return'<small>banked '+(ret>=0?'+':'')+ret.toFixed(1)+'% · best bank '+(R.bestBank>0?'+':'')+R.bestBank.toFixed(1)+'% · best chain '+R.bestCombo+'<br>patterns: '+(pn.length?pn.join(', '):'none yet')+'</small>'+rug+'<div class="gLesson">'+lessonLine()+'</div>'}
+/* each lesson links to where it is explained: rugs and tokens to Tokens, the rest to Basics */
+function lessonTo(){const l=R.rugEv[R.rugEv.length-1];return l?'tokens':'basics'}
+function learnMore(pg){coinpullClose();setTimeout(()=>openPage(pg),60)}window.learnMore=learnMore;
+function resultsHtml(){const ret=(R.V/R.V0-1)*100,pn=Object.keys(R.patSeen).map(k=>PATN[k]).filter(Boolean),re=R.rugEv,cnt=k=>re.filter(x=>x===k).length,rug=re.length?'<br><small>rugs: '+[cnt('cash')?'dodged '+cnt('cash'):'',cnt('short')?'shorted '+cnt('short'):'',cnt('stop')?'stop-loss '+cnt('stop'):'',cnt('long')?'hit '+cnt('long'):''].filter(Boolean).join(', ')+'</small>':'';return'<small>banked '+(ret>=0?'+':'')+ret.toFixed(1)+'% · best bank '+(R.bestBank>0?'+':'')+R.bestBank.toFixed(1)+'% · best chain '+R.bestCombo+'<br>patterns: '+(pn.length?pn.join(', '):'none yet')+'</small>'+rug+'<div class="gLesson">'+lessonLine()+' <button type="button" class="textlink" onclick="learnMore(\''+lessonTo()+'\')">Learn why →</button></div>'}
 function runsLine(rs){if(rs.length<2)return'';const s=rs.map(r=>r.s).sort((a,b)=>a-b),med=s[s.length>>1];return'<small class="gRuns">last runs '+rs.slice(-5).map(r=>r.s).join(' · ')+' s · typical '+med+' s</small>'}
 /* share a run: a 1200x630 card (brand, score, the chart you rode, the bulls you banked at), sent with the share sheet or downloaded */
 function shareRun(){if(!R)return;const cv=document.createElement('canvas');cv.width=1200;cv.height=630;const g=cv.getContext('2d'),F='Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif',ret=(R.V/R.V0-1)*100,dist=Math.max(0,Math.floor((R.sx-700)/100));

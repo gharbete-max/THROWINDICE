@@ -695,3 +695,7 @@ The Token World pages were already cut (see above); this pass finished the lefto
 - First visit no longer opens the region picker when the time zone is unknown: default "Show me everything" (picker still in the menu).
 - Pages workflow now ships `data/` and `manifest.webmanifest` (it shipped only index.html and assets, so fund facts and holdings would have been missing live). Packaged copy tested at `/throwindice/` under a plain static server: Tokens list 16 stocks, ETF cards render, no page errors or 4xx, `?embed` and `#play` work.
 - Balance sim re-run: see BALANCE.md section 8.
+
+## Lesson links and plain labels
+- Results card: each lesson line ends with "Learn why →" (Tokens after a rug event, Basics otherwise); it closes the game and opens the page. Tested by calling `learnMore('basics')`: game hidden, Basics shown, no errors.
+- Labels: "Pick a country or theme"; fund box "PRICE SWINGS".
