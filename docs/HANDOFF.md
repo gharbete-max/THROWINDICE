@@ -1,3 +1,11 @@
+# RELEASE STATE (Nov 2026): finished, ready to host as its own page
+
+- **Done:** queue items 1-13, 16-19, 21; B8 closed in `BALANCE.md` section 8; Tokens page replaces Token World (Token World pages and rug-pull code stay in the file, unreachable); ETF browser = fund cards; Low graphics is the only mode; stance rules (long 1x default, ALL IN toggles off, ticks pay by side).
+- **Styling matches throwpaper** (`gharbete-max/throwpaper` `DESIGN.md`): the `tpStyle` block at the end of `<head>`. Paper `#fafaf8`, ink `#0e0e10`, gold `#cea85c` fill, bronze `#8f6b3a` words, platinum greys, flat cards, glass only on the header, menu, dialogs and toasts, 44 px controls, Inter 16/1.55, dark derived (page `#0e0e10`, cards `#1c1c1e`).
+- **Hosting:** `docs/EMBEDDING.md` + `scripts/package.sh` (also used by the Pages workflow). `?embed` hides the wordmark; `#play` opens the game.
+- **Not built (deliberately):** trick combos (15) and higher notes (20); deleting the dormant Token World code; bundling the Inter font (same as throwpaper).
+- **Owner still to do:** play five phone runs; enable Pages if using GitHub Pages; upload `dist/throwindice/` to the website.
+
 # Handoff: throwindice, Nov 13 2026
 
 **Read this first, then `CLAUDE.md`.** One page: what exists, then the ordered queue. Finished history is in `docs/archive/HANDOFF-2026-11.md`.

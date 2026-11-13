@@ -1,6 +1,6 @@
 # throwindice: notes for Claude Code
 
-Single-page site (`index.html`, no build step). It has the investing pages, Token World mode, and a canvas runner game ("Live Ball Bounce"). All game code is inside one closure in `index.html` (state `R`, `step(dt)`, `player()`, the draw loop).
+Single-page site (`index.html`, no build step). It has the investing pages, a Tokens page (Token World is retired: its code is dormant, unreachable), and a canvas runner game ("Live Ball Bounce"). All game code is inside one closure in `index.html` (state `R`, `step(dt)`, `player()`, the draw loop).
 
 ## Where things are decided
 
@@ -12,6 +12,9 @@ Single-page site (`index.html`, no build step). It has the investing pages, Toke
 - `docs/QA.md`, `docs/UPDATING.md`: site QA and content updates.
 
 ## Rules
+
+- **Styling follows throwpaper** (`gharbete-max/throwpaper/DESIGN.md`): edit the `tpStyle` block at the end of `<head>`, not the earlier Apple layer. Flat cards, glass only on things that float, gold fill / bronze text, no decorative gradients, no extra hues (status colours only for status).
+- **Hosting as a sub-page:** `scripts/package.sh` and `docs/EMBEDDING.md`. Keep every asset path relative.
 
 - **Commits:** author `gharbete-max <gh.arbete@gmail.com>`. Push to `main` (rebase on `origin/main` first; another session may push concurrently).
 - **Deploy:** GitHub Pages must be enabled once by the owner (Settings → Pages → Source: GitHub Actions). Until then the Deploy workflow fails at configure-pages.
