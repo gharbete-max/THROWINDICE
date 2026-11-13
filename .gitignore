@@ -1,27 +1,6 @@
-
-!.vscode/extensions.json
-# Editor directories and files
-# Logs
-*.local
-*.log
-*.njsproj
-*.ntvs*
-*.sln
-*.suo
-*.sw?
-.DS_Store
-.idea
-.vscode/*
-dist
-dist-ssr
-lerna-debug.log*
-logs
-node_modules
-npm-debug.log*
-pnpm-debug.log*
-scripts/mascots/frames/
-yarn-debug.log*
-yarn-error.log*
 __pycache__/
 _test.html
+node_modules
 scripts/balance/last-run.json
+scripts/mascots/frames/
+.DS_Store
