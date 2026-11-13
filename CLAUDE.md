@@ -1,4 +1,4 @@
-# THROWINDICE: notes for Claude Code
+# throwindice: notes for Claude Code
 
 Single-page site (`index.html`, no build step). It has the investing pages, Token World mode, and a canvas runner game ("Live Ball Bounce"). All game code is inside one closure in `index.html` (state `R`, `step(dt)`, `player()`, the draw loop).
 

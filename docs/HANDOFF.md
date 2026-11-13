@@ -1,129 +1,40 @@
-# Handoff to Claude Code: runner game, Nov 2026
+# Handoff: throwindice, Nov 13 2026
 
-## Status (Claude Code: items 1-13, 16, 17, 18, 19, 21 done; 14 re-tuned, phone runs pending)
+**Read this first, then `CLAUDE.md`.** One page: what exists, then the ordered queue. Finished history is in `docs/archive/HANDOFF-2026-11.md`.
 
-**Update (second pass):** item 21 (onboarding copy), 16 (bear checkpoint), 19 (Dolla juice), 17 and 18 (re-tune and the ALL IN SHORT check) are done and pushed; 14 is re-tuned but the five human phone runs are still the owner's. The re-tune found and fixed a harness bug (a held STOP-LOSS floored P&L forever) and made STOP-LOSS weaker; full numbers and the remaining FAIL rows (passive band, reader over short runs, the random all-in trickster) are in the `BALANCE.md` changelog under "B8 re-tune". Items 20 (higher notes, cosmetic) and 15 (trick combos) are not started.
+## What exists
 
-**Done and pushed to `main`, one commit per item, hashes in the table below.** Each item was tested with scripted headless runs of the game (stepping `_cp.step`, Playwright) and, for numbers, `node scripts/balance/sim.js`. No page errors or 4xx in any run.
+- **Site:** Apple-style glass UI, light/dark, Real World + Token World. Scroll-scrubbed 3D hero, 3D icons in list slots, ETF fund cards (fee, rates, spread, holdings). Brand: `throw·indice` wordmark, die-into-tag mark, favicons, app icons, share image (`CLAUDE.md` → Brand). First visit is ~0.85 MB.
+- **Game (Live Ball Bounce):** one-finger runner on a candle chart.
+  - **Positions:** ↑ long, ↓ short (1x–2x–3x ladder), ← cash, → ALL IN on a skateboard. Runs start holding LONG 1x.
+  - **Market:** bull/bear phases (~25% bear), diamond bull / ruby bear checkpoints that bank P&L, chart patterns as terrain, rugpulls in Token World.
+  - **Economy:** score = compounded profit, Dolla notes (1/5/20/100), wallet, hats, missions, portfolio level, Big Ball ETF.
+  - **Look:** glass family. Gold glass runner with a $ coin heart, 105-frame run cycle, 24-frame tricks, 96-frame bull/bear, adaptive resolution, 60 fps.
+  - **Run log:** each run's length / checkpoints / score / cause goes to `localStorage['cp-runs']` (last 20); the results card shows the last runs and the typical length.
+- **Tools:** balance harness `scripts/balance/sim.js`, Blender generators `scripts/icons/`, brand build `scripts/brand/`.
 
-| Item | Result |
-|---|---|
-| B1 portfolio | score = `V - V0` (compounded profit); chains pay alpha, PERFECT +0.25%, slippage -1%; no `R.score+=` outside `bank()` |
-| B2 pacing | bulls every 24-26 s (20000 px, +1500 per bull, cap 28000); `PNLK .006`; hint at 45% |
-| B4 PERFECT | 55 ms window; random taps 3.6-6 a minute; deliberate timing still lands |
-| O1 onboarding | `cp-learn` 1-5, swipes gated until taught, cue per run, legend highlights the new direction |
-| M2 power-ups | STOP-LOSS / INDEX FUND / DIVIDEND 2x / BULL RUN (ticks x1.46 denser); stop-loss blocks crash, red tick, slippage, rug drain |
-| B5/M4 phases | bull/bear every 2-3 stretches, tilt, red ticks x2 in a bear, badge + red sky. 300 s: passive long +8..11% per bull stretch, -8..-13% per bear stretch; phase reader 5.9x passive |
-| B3 momentum | clean chain n>=2 surges; trickster bulls 10% sooner (20.0 s vs 22.3 s) |
-| M3 patterns | all seven, each seen within 180 s in 100% of runs; every interaction tested by stepping |
-| M5 rugpulls | Token World, from bull 3, max 2 a run, never fatal; long 1x -3.7%, long 2x -6%, all in -10.2%, short +13.2%, cash 0, stop-loss blocks |
-| M6 results | banked total, best bank/chain, patterns, rugs, one lesson line |
-| B6 economy | hats 300 / 900 / 2500, +100 first run of the day; ETF saves 0-1 day (table in `BALANCE.md`) |
-| B7 missions | ten missions, three a day on the Play tab with wallet rewards; a full set = portfolio level (+5% start, max +50%) |
-| P1 performance | page load 2 KB of game images (was about 2.6 MB), game open 480 KB, other skins/sheets on demand (a full tour of all positions is 1.3 MB) |
+## Queue (top to bottom)
 
-**Harness at the end (`BALANCE.md` section 7 rows).** 60 s x5: bull interval PASS (24.3 s), passive PERFECTs PASS, no passive cap PASS, errors PASS. FAIL: passive 229 pts/min (target 20-60), trader/passive 1.7x, reader/passive 0.8x (a 60 s run only banks about 2 stretches, so the phase read does not pay yet), trickster alpha share 62% (35-55). 300 s x3: trader share 78% PASS, trader and reader well above passive PASS, every pattern PASS; FAIL: trickster alpha share 89% and trickster hits the cap in 3/3 runs (compounding plus alpha is strong over 5 minutes), bull interval 21.2 s (the speed ramp shortens later stretches).
-
-**Deviations from the docs (all logged in the `BALANCE.md` changelog):** tick values halved (+0.5 / +1.5 / +5, red -1 / -2.5) and green tick spacing x1.5, because ticks were most of a passive player's income; terrain tilt `{bull: -1, bear: 11}` because the generator itself leans up; rocket ticks +2% and an 8% x leverage rug drain; the harness bots now fast-forward, hold their jumps and respawn instead of using a shield.
-
-**Next (item 14, B8):** re-tune `PNLK`, tick values, alpha factor and `CPD` until every section 7 row holds (the FAIL rows above, mostly passive earning too much per minute and alpha being too strong over long runs), then the five phone runs; the checklist for the owner is in `BALANCE.md` section 7 ("Humans beat bots"). Not built: circuit breaker and earnings day (M4 extras), pattern outlines (necklines), the Deploy workflow still needs GitHub Pages enabled by the owner.
-
-**Read this first, then `CLAUDE.md`.** It's the ordered work queue. Each item points to the doc with the details. Work top to bottom.
-
-For each item:
-1. Implement it.
-2. Test it: the headless harness from `CLAUDE.md`, plus `node scripts/balance/sim.js` for anything that changes numbers.
-3. Check reduced motion and 0 page errors.
-4. Commit one item per commit, rebase on `origin/main`, push.
-5. Tick the item here (✅ plus the commit hash).
-
-If an item is blocked or a target can't be met, write why under it and move on.
-
-## Where things stand (built)
-
-- **Market core:**
-  - Swipe positions: ↑ long (2x), ↓ short (2x), ← cash, → all in on a skateboard.
-  - Terrain P&L, and the diamond bull that banks and launches you.
-  - Ticks and red ticks (M1), and the ±60% cap.
-- **Looks:**
-  - Body colour = position.
-  - Power-ups = auras.
-  - Rendered 3D tricks and board tricks (Jesus, indy, shove-it, tre flip, ollie, kickflip).
-  - Trick chains with queue and speed-up; blending under spam (`ANIMATION.md`).
-- **Meta:**
-  - Hats (3) with wallet, and the Play / Style / Invest / Options menu.
-  - **Big Ball ETF:** invest the wallet; it grows while away (`MARKET.md` §11).
-- **Tools:** the balance bot harness `scripts/balance/sim.js`, with its baseline in `BALANCE.md` §3.
-
-## Work queue
-
-| # | Item | Details | Done when |
-|---|---|---|---|
-| 1 ✅ `82312ed` | **B1 Unified portfolio**: score = compounded profit; chains → alpha, PERFECT → +0.25%, slippage | `BALANCE.md` §4, B1 | harness: trader ≥ 60% market share; no `R.score+=` outside `bank()`; harness anchors updated |
-| 2 ✅ `089f9b4` | **B2 Pacing**: bull spacing 20000 → +1500 → 28000, `PNLK` 0.006, take-profit hint at 45% | `BALANCE.md` §5, B2 | bull interval 22–28 s |
-| 3 ✅ `3aa9d7c` | **B4 PERFECT window** | B4 | random taps ≤ 6 per minute |
-| 4 ✅ `b7501ef` | **O1 Onboarding** (new, see below) | below | a first-time player sees one new control per run |
-| 5 ✅ `798c189` | **M2 Power-up renames and behaviour**: stop-loss, index fund, 2x | `MARKET.md` §4 | pops use the new names; stop-loss blocks a red tick and slippage |
-| 6 ✅ `4904035` | **B5 / M4 Bull & bear phases**: terrain drift, red-tick density, phase icon (`cp-bull` frame / `bear.webp`) | `MARKET.md` §6, `BALANCE.md` B5 | passive long earns in bull and loses in bear; phase-reading trader bot ≥ 2× passive |
-| 7 ✅ `368f9d8` | **B3 Momentum** (chain → small surge) | B3 | trickster bull interval about 10% shorter |
-| 8 ✅ `4f948d5` | **M3 Chart patterns as terrain**: support, resistance + breakout, MA grind rail, cup & handle, bull flag, head & shoulders, double bottom | `MARKET.md` §5 | each appears within about 3 min; name pop once per run |
-| 9 ✅ `1354e8a` | **M5 Rugpulls** (Token World only), with the rendered rug set | `MARKET.md` §7 | tell → yank → P&L follows the position; ≤ 2 per run; never fatal |
-| 10 ✅ `d9a18c4` | **M6 Results card lessons** | `MARKET.md` §8 | lesson line chosen from the run's events |
-| 11 ✅ `d214c47` | **B6 Economy**: hat prices 300 / 900 / 2500, daily gift; account for ETF yield | `BALANCE.md` §6 | prices updated; days-to-crown checked with and without the ETF |
-| 12 ✅ `eb09826` | **B7 Missions + portfolio level** | B7 | 3 missions on the Play tab; `cp-plevel` persists |
-| 13 ✅ `844fe83` | **P1 Performance** (new, see below) | below | game opens with ≤ 0.9 MB of game images; other skins load on demand |
-| 14 ◐ `a195ee6` | **B8 Re-tune pass + 5 human phone runs** (the owner plays; prepare a short checklist for them) | B8 | every `BALANCE.md` target holds; changelog at the bottom of `BALANCE.md` |
-| 15 | *(later)* Trick combos stages 2–4: segment re-renders, double rotations, spin rewind, bridges | `ANIMATION.md` "Trick combos" | optional, after 14 |
-
-### O1: Onboarding (new)
-
-The game now has many verbs for one finger. Teach one per run, with the same 2-second `msg()` cues already used for tips. Use a `cp-learn` level stored in `localStorage`; existing players (best > 0) skip straight to level 5.
-
-1. **Run 1:** jump only. Swipes are ignored, and the bull banks the default LONG.
-2. **Run 2:** "Swipe ↑ = LONG, ↓ = SHORT". The green/red colour is the cue.
-3. **Run 3:** "← CASH keeps your gains safe".
-4. **Run 4:** "→ ALL IN rides the board: 3x".
-5. **Run 5+:** everything, plus a one-time "swipe in the air on the board for tricks".
-
-The Play tab's swipe legend highlights the newly unlocked direction.
-
-### P1: Performance (new)
-
-The game loads about 2.6 MB of sprite sheets when it opens: 5 skins × runner, trick and love sheets, plus the skateboard sheet and props.
-
-- **Load at open:** the gold and light-green sheets only (the start skin).
-- **Load on demand:** the others the first time that position is taken (fallback to gold until loaded; the blend system already fades the swap in).
-- **Measure:** page weight at game open with the browser's network panel, or Playwright `page.on('response')` sizes.
-
-## Final notes from the planning session
-
-- **Balance before content.** Items 1–3 change what every other system is worth. Don't tune patterns or rugs on the old scoring.
-- **Keep the spirit** (`MARKET.md` §0): the market never ends a run; no real tickers or advice; cosmetics never change stats.
-- **Two sessions may push to `main`.** Always `git fetch && git rebase origin/main` before pushing. If a rebase conflicts in `index.html`, re-apply your edits by exact-string script on top of `origin/main` rather than hand-merging.
-- **Deploy:** nothing is live until the owner enables GitHub Pages (Settings → Pages → Source: GitHub Actions) and reruns the Deploy workflow. Mention it in your final report if it's still failing.
-- **Rendering new art:** follow `CLAUDE.md` (contact sheet first; head anchors for hats; blending rules for any new sheet).
-- **Report back:** when you stop, write a short status at the top of this file: what's done, numbers from the harness, and what's next.
-
-## New from the owner (Nov 7, evening): partly built, finish these
-
-**Built already (planning session):**
-- **Smoother bull:** 96 frames at 24 fps (`cp-bull.webp`).
-- **Ruby bear checkpoint:** in a bear market (`cp-bear.webp`, 96 frames) with a red glow.
-- **Bear market share:** about 25% of stretches. `phaseOf`: bull phases 3–5 stretches, bear 1–2.
-- **Sticky ↑ / ↓ toggles:**
-  - ↑ = LONG and ↓ = SHORT stay set until the next ↑ / ↓ swipe. Again = 2x, and it stays 2x; it never toggles itself off.
-  - ← CASH pauses the position but remembers the direction (`R.dirMem`). → ALL IN rides the board in that direction at 3x.
-  - On the board, ↑ / ↓ flip the direction and keep you on the board (no ball trick).
-- **Board colour:** strong green when ALL IN LONG, strong red when ALL IN SHORT (`runner-skate-ggreen/-gred.webp`, `SKATEI`). Messages: "ALL IN LONG 3x" / "ALL IN SHORT 3x".
-- **Dolla:** the currency is now the **Dolla** (note: `dolla.webp`; texture `scripts/icons/dolla_texture.py`; 3D `o_dolla`). The HUD score uses the site font (Inter 900) with the note icon; no pixel digits. Wallet, hats, ETF and missions say "Dolla". The cash-run trail drops Dolla notes.
-
-**Tasks:**
+For each item: implement, test (headless harness from `CLAUDE.md`; `sim.js` for anything that moves numbers), reduced motion and 0 page errors, one commit per item, rebase on `origin/main`, push, tick it here.
 
 | # | Item | Done when |
 |---|---|---|
-| 16 ✅ `61d0aa6` | **Bear checkpoint behaviour.** It banks like the bull, but there's no relief rally: launch at 75% height (`CPV*.75`), no forward surge, and a grumpier flight (keep the love face for the bull only; use the normal face, a red aura and a "BEAR MARKET BANKED" pop). If the stretch's open P&L is negative, add the lesson line "Banking in a bear locks the loss: cash or short next time". | the bear launch differs visibly; harness errors 0 |
-| 17 ✅ `a195ee6` | **Re-tune for the 25% bear share** (B8 numbers moved: passive long now earns more on average). Lower bull-phase tilt or `PNLK` until passive is back in its band. | `BALANCE.md` §7 rows re-run; changelog entry |
-| 18 ✅ `a195ee6` | **ALL IN SHORT balance.** Shorting on the board is now possible (3x). Check the trader bot with a bear-phase short-board strategy doesn't exceed 6× passive; if it does, cap all-in short to 2x or cut red-tick values while on the board. | harness numbers logged |
-| 19 ✅ `10e24e3` | **Dolla juice.** On a bank, burst 6–12 Dolla notes (`bill.webp` is now a Dolla note) from the runner to the HUD counter, then tick the counter up. Mission and gift rewards fly to the wallet the same way in the menu. | visible in a headless screenshot sequence; reduced motion = instant |
-| 20 ✅ (Nov 13) | *(later, cosmetics)* **Higher notes (done):** `dolla-5/20/100.webp` (wink / heart eyes / sunglasses + gold ribbon, tinted paper; `dolla_texture.py <v>` then `objects.py dolla-<v>`). The HUD counter note steps up at 100 / 500 / 2,000; bank notes fly as 5 / 20 / 100 from +3 / +8 / +20%; the Style-tab wallet note steps up at the hat prices (300 / 900 / 2,500). Original brief: 5 / 20 / 100 Dolla notes with different smiley portraits (love eyes on 20, sunglasses on 100) for bigger pops and the shop. Same texture script, different portrait. | — |
-| 21 ✅ `6ac6f3f` | **NEUTRAL start (built Nov 7):** runs now start in a 5th state: gold, no position (`R.pos.flat`), ticks still collected, no price P&L; the first ↑ = LONG 1x. Check the O1 run-1 copy ("the bull banks the default LONG" is no longer true: say "swipe ↑ to go long" when run 2 teaches it) and re-run the harness (bots go long at the start, so the baselines are comparable). | onboarding text matches; harness rows logged |
+| 1 | **B8 balance re-tune: skill must beat standing still.** Baseline (Nov 13, 120 s × 4 runs, trader bot fixed for the ladder): passive **290**/min, trader **119** (0.4×), reader **144** (0.5×); bull gap 25.6 s PASS; PERFECTs PASS; errors 0. Cause: since runs start holding LONG 1x (`d7218de`), a passive long rides every bull stretch, and bear stretches don't reliably drop (passive banked +6% to +23% in some bear stretches). Levers: `TILT` (bull 150 / bear -2000) and the drift controller, `PNLK` (.0045), tick values/spacing, bear red-tick density. Re-read `BALANCE.md` §7: the passive target should be about 60–140/min at 120 s (the 20–60 band contradicts §6). Run ≥ 4 runs per check: variance is large. | reader ≥ 2× passive and trader ≥ 1.5× at 120 s; passive long loses in bear stretches on average; changelog at the bottom of `BALANCE.md` |
+| 2 | **Owner: 5 phone runs.** Nothing to build: the run log records them. The owner plays 5 runs and reads the results card (typical run length; target median 60–120 s for a new player). | numbers noted in `BALANCE.md` |
+| 3 | **Remove the dead non-Apple UI.** `<body class="apple">` is hard-coded, so the old bottom nav, tiles, invest popup, coin bubble, the `.e3d` inline-emoji machinery outside the slots, and their CSS/JS are dead weight in a 450 KB `index.html`. Delete in small, tested steps (screenshots light/dark/Token World before and after each). | `index.html` noticeably smaller; no visual change; 0 errors |
+| 4 | **Trick combos stages 2–4** (segment re-renders, double rotations, spin rewind, bridges) | `ANIMATION.md` "Trick combos" |
+| 5 | **Deploy** (owner): Settings → Pages → Source: GitHub Actions, re-run Deploy. | site live; share card shows |
+
+## Ideas if the queue is done (keep the spirit: market never ends a run, no real tickers or advice, one finger, phone first)
+
+- **Share a run:** a results-card button that renders a 1200×630 image of the run (score, best bank, the chart you rode) with the brand, via `navigator.share`.
+- **Daily chart:** one seeded run per day that everyone plays (seed = day key), with a local best.
+- **Sound pass:** short glassy sfx to match the glass art (tick pickup chime per tier, bank cash-register, bear growl), with the existing mute.
+- **More patterns:** ascending triangle, gap-up / gap-down, dead-cat bounce, each with a name pop and a one-line lesson.
+- **Haptics per event** where `navigator.vibrate` exists (already used for crashes): ticks, banks, PERFECT.
+
+## Notes
+
+- Two sessions may push to `main`: always `git fetch && git rebase origin/main` first. On an `index.html` conflict, re-apply your edits by exact-string script on top of `origin/main`.
+- Assets are rendered, not drawn: follow `CLAUDE.md` (contact sheet first, head anchors for hats, 60 fps rules).
+- When you stop, update the "What exists" list and the queue here.
