@@ -315,8 +315,6 @@ def rainbow_glass(name):
     b.inputs['Roughness'].default_value = 0.08; b.inputs['Coat Weight'].default_value = 1.0; b.inputs['Coat Roughness'].default_value = 0.02
     return m
 
-GLASS = os.environ.get('GLASS_STYLE', '1') == '1'   # glass family: see-through bodies with a glowing core
-
 def glass_on():
     bpy.context.scene.render.film_transparent = True
     try: bpy.context.scene.cycles.film_transparent_glass = True
@@ -327,7 +325,6 @@ POS_SK = {'lgreen': ((0.22, 0.82, 0.36), (0.1, 0.48, 0.2), False), 'ggreen': ((0
 
 def runner_mats():
     """body + limb materials for the current RUNNER_SKIN"""
-    P = smiley.PAL
     if RUNNER_SKIN in POS_SK:  # market position: light = 1x (opaque, soft), strong = 2x (deep translucent glass)
         c, cl, strong = POS_SK[RUNNER_SKIN]
         if strong:
@@ -337,21 +334,16 @@ def runner_mats():
             body = glass_grad('pglass', tuple(x * 0.55 for x in c), c, trans=0.7, emit=0.5, axis='Z', k=0.75)
             limb = principled('plimb', cl, 0.15, emit=cl, emit_str=0.45, coat=1.0, coat_rough=0.02)
             limb.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.4
-        elif GLASS:
+        else:
             glass_on(); body = glass_grad('lglass', tuple(0.7 * x for x in c), c, trans=0.3, emit=0.35, axis='Z', k=0.75)
             limb = principled('pleg', cl, 0.15, coat=1.0, coat_rough=0.02)
-        else:
-            body = principled('pbody', c, 0.22, coat=1.0, coat_rough=0.05); limb = principled('pleg', cl, 0.3, coat=0.6)
-    elif GLASS:  # honey glass: amber body, polished gold limbs
+    else:  # honey glass: amber body, polished gold limbs
         glass_on(); body = glass_grad('amber', (0.62, 0.3, 0.03), (1.0, 0.72, 0.22), trans=0.72, emit=0.32, axis='Z', k=0.75)
         limb = gold()
-    else:
-        body = plastic('rbody', P['gold']); limb = plastic('rleg', P['bronze'])
     return body, limb
 
 def coin_heart(x, z, rock=0.0, sz=1.0):
     """the runner's signature: a glowing gold $ coin floating inside the glass body. rock = small turn (rad) so it never goes edge-on; sz squashes it vertically (goo)"""
-    if not GLASS: return []
     m = principled('heart', (1.0, 0.72, 0.18), 0.2, metallic=0.6, coat=1.0, coat_rough=0.03, emit=(1.0, 0.62, 0.12), emit_str=1.6)
     hub = link(bpy.data.objects.new('coinhub', None)); hub.location = (x, -0.05, z)
     c = cyl(m, (0, 0, 0), 0.3, 0.08, (math.radians(90), 0, 0), 48, 0.02)
@@ -618,14 +610,14 @@ def o_pu_shield():
         o = link(bpy.data.objects.new('sh', me)); o.location = (0, y, 0); o.data.materials.append(mat)
         so = o.modifiers.new('so', 'SOLIDIFY'); so.thickness = th; so.offset = 0; return bevel(o, 0.05, 4)
     rim = slab(1.0, 0.28, gold(), 0)
-    if GLASS: glass_on()
-    face_ = slab(0.84, 0.3, glass_grad('shg', (0.55, 0.75, 1.0), (0.92, 0.97, 1.0), trans=0.85, emit=0.2) if GLASS else principled('plat', (0.86, 0.87, 0.9), 0.25, metallic=0.9, coat=0.6), -0.04)
+    glass_on()
+    face_ = slab(0.84, 0.3, glass_grad('shg', (0.55, 0.75, 1.0), (0.92, 0.97, 1.0), trans=0.85, emit=0.2), -0.04)
     return [rim, face_], face([face_], 0, 0.05, 0.85)
 
 def o_pu_magnet():
     """power-up: a chunky horseshoe magnet, bronze with platinum poles, with a face on the bend"""
-    if GLASS: glass_on()
-    mb = glass_grad('mag', (0.05, 0.25, 0.85), (0.35, 0.7, 1.0), trans=0.75, emit=0.3, axis='Z', k=0.9) if GLASS else principled('mag', smiley.PAL['bronze'], 0.3, coat=0.9, coat_rough=0.04); tip = principled('pole', (0.86, 0.87, 0.9), 0.22, metallic=1.0)
+    glass_on()
+    mb = glass_grad('mag', (0.05, 0.25, 0.85), (0.35, 0.7, 1.0), trans=0.75, emit=0.3, axis='Z', k=0.9); tip = principled('pole', (0.86, 0.87, 0.9), 0.22, metallic=1.0)
     arc = [(0.48 * math.cos(math.radians(a)), 0, 0.15 + 0.48 * math.sin(math.radians(a))) for a in range(0, 181, 10)]
     pts = [(0.48, 0, -0.45)] + arc + [(-0.48, 0, -0.45)]
     body = tube('magnet', pts, [0.22] * len(pts), mb)
@@ -747,18 +739,12 @@ def o_tick(tier=1, red=False):
     """currency: a glossy candle. green = +1/+3/+10% (tier 1-3, bigger and brighter), red = -2/-5% (tier 1-2, a down-candle)"""
     c = (0.9, 0.08, 0.12) if red else (0.05, 0.8, 0.3)
     k = [0, 0.8, 1.0, 1.2][tier]
-    if GLASS:  # clear tinted glass shell, a bright core bar inside
-        glass_on(); m = glass_grad('tick', tuple(0.45 * x for x in c), tuple(min(1, 0.35 + x) for x in c), trans=0.8, emit=0.25, axis='Z', k=0.6)
-        core = principled('core', c, 0.2, emit=c, emit_str=1.2 + 0.5 * tier)
-        body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.14 * k)
-        wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.05 * k, 0.05 * k], core)
-        parts = [body, wick, box('corebar', core, (0, 0, 0), (0.26 * k, 0.26 * k, 0.8 * k), bv=0.08 * k)]
-    else:
-        m = principled('tick', c, 0.12, coat=1.0, coat_rough=0.02, emit=c, emit_str=0.25 + 0.2 * tier)
-        m.node_tree.nodes['Principled BSDF'].inputs['Transmission Weight'].default_value = 0.35
-        body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.12 * k)
-        wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.06 * k, 0.06 * k], m)
-        parts = [body, wick]
+    # clear tinted glass shell, a bright core bar inside
+    glass_on(); m = glass_grad('tick', tuple(0.45 * x for x in c), tuple(min(1, 0.35 + x) for x in c), trans=0.8, emit=0.25, axis='Z', k=0.6)
+    core = principled('core', c, 0.2, emit=c, emit_str=1.2 + 0.5 * tier)
+    body = box('body', m, (0, 0, 0), (0.62 * k, 0.62 * k, 1.15 * k), bv=0.14 * k)
+    wick = tube('wick', [(0, 0, -1.0 * k), (0, 0, 1.0 * k)], [0.05 * k, 0.05 * k], core)
+    parts = [body, wick, box('corebar', core, (0, 0, 0), (0.26 * k, 0.26 * k, 0.8 * k), bv=0.08 * k)]
     if tier == 3 and not red:  # the big one: a gold band and a sparkle
         parts.append(box('band', gold(), (0, 0, 0.3 * k), (0.66 * k, 0.66 * k, 0.12 * k), bv=0.03))
         star = prim('ico_sphere', principled('spark', (1, 1, 0.9), 0.1, emit=(1, 0.95, 0.7), emit_str=3.0), (0.32 * k, -0.3, 1.0 * k), subdivisions=1, radius=0.12)

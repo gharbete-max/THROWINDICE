@@ -128,16 +128,7 @@ power-ups: stop-loss (blocks one loss) · index fund ───┘   stop-loss fl
 
 ## 8. Task list
 
-| # | Task | Done when |
-|---|---|---|
-| **B1** | **Unified portfolio:** `V`, compounding bank, score = profit; chains → alpha `+0.25·n²` % (no raw points), PERFECT → +0.25%, slippage −1%; HUD shows total return % + open %. The results card shows V, best bank and the alpha share. | harness: trader ≥ 60% market share; no `R.score+=` outside `bank()` |
-| **B2** | **Pacing:** `CPD` 20000 → +1500 per bull → cap 28000; `PNLK` 0.006; "take profit!" hint at 45% | bull interval 22–28 s; 1x stretch ±6–12% |
-| **B3** | **Momentum:** a clean chain of n ≥ 2 adds `R.surge = .25·n` s (stacks with the bull surge; cap 1.6 s) | trickster bull interval about 10% shorter than passive |
-| **B4** | **PERFECT window:** shrink `perfectEdge()` until random taps give ≤ 6 per minute; deliberate timing should still land them | harness passive ≤ 6 perfects / min |
-| **B5** | **Phases (MARKET M4):** terrain drift per phase; red-tick density per phase; icon + "BULL MARKET" / "BEAR MARKET" | a passive long earns in bull phases and loses in bear; the trader bot reading phases ≥ 2× passive |
-| **B6** | **Economy:** hat prices 300 / 900 / 2500; first-run-of-the-day gift +100 | prices in the `HATS` table; gift once per calendar day |
-| **B7** | **Missions + portfolio level:** three rotating market missions with wallet rewards (100–300), e.g. "Bank +15% in one stretch", "Short a red drop", "Land a TWISTER", "Dodge a rug in cash". Each completed set of three raises `V0` by +5% (max +50%) for future runs. | missions show in the Play tab; level persists (`cp-plevel`) |
-| **B8** | **Re-tune pass:** run the harness 3×, adjust `PNLK`, alpha factor, tick values and `CPD` within ±25% until every acceptance row holds; then play 5 human runs on a phone | the targets table holds; a short changelog of the final numbers is added to the bottom of this file |
+B1 (unified portfolio), B2 (pacing), B3 (momentum), B4 (PERFECT window), B5 (phases), B6 (economy), B7 (missions + portfolio level) and B8 (re-tune) are all built; what each one changed is in the changelog below.
 
 **Constraints (unchanged):**
 - The market never ends a run.
