@@ -397,6 +397,7 @@ def o_runner(gait, frame):
     return [hub], []
 
 TRICK_N = 24   # frames per trick row (24 = ~40 fps over a 0.6 s trick)
+CORK_LOOP_N = 16   # one extra cork turn at the cork's mid speed (frame 11 -> 12 turns ~23 deg; 360 / 16 = 22.5)
 
 def _keys(vals, u):
     """evenly spaced keyframes, eased between: lets hand-keyed poses render at any frame count"""
@@ -424,11 +425,14 @@ def o_trick(kind, i, n=TRICK_N):
     goo:   0-3 melt into a rippling pancake, 4-7 pancake loop (seamless), 8-11 land: splat on the floor and spring back"""
     global DOLLAR
     body, limb = runner_mats(); R0 = _rest_limbs(); u = i / (n - 1)
+    ex = 0.0
+    if kind == 'corkloop':  # double cork: frame 11's held pose turning one more 360 in CORK_LOOP_N frames; plays between cork frames 11 and 12
+        kind, u, ex = 'cork', 11 / (TRICK_N - 1), (i + 1) / CORK_LOOP_N
     yaw, lean, bob, rot = math.radians(30), math.radians(R0['lean']), 0.0, Quaternion()
     sq, ctr, rip, legs, arms = 0.0, 0.25, 0.0, [], []
     L = lambda a, b, t: a.lerp(b, t)
     if kind in ('cork', 'spin'):
-        e = _ss(0, 1, u); env = math.sin(math.pi * u) ** 0.7
+        e = _ss(0, 1, u) + ex; env = math.sin(math.pi * u) ** 0.7
         if kind == 'cork':
             rot = Quaternion(Vector((0.7, 0, 0.7)).normalized(), 2 * math.pi * e)
             for k, side in enumerate((-1, 1)):
@@ -948,7 +952,7 @@ def o_hat(kind):
             ps.append(box('blade', [f2, stem][k], (0, 0, 0.6), (0.9, 0.16, 0.025), (math.radians(10), 0, math.radians(30 + 90 * k)), bv=0.01))
     return ps + [a], []
 
-OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'dolla-%d' % v: ((lambda v=v: o_dolla(v)), 0) for v in (5, 20, 100)}, **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(DANCE_N)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), 'logo3d': (o_logo3d, 0), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
+OBJECTS = {'coin': (o_coin, -1), **{'trick-%s-%d' % (k, i): ((lambda k=k, i=i: o_trick(k, i)), 0) for k in ('cork', 'spin', 'split', 'goo') for i in range(TRICK_N)}, **{'trick-corkloop-%d' % i: ((lambda i=i: o_trick('corkloop', i)), 0) for i in range(CORK_LOOP_N)}, 'heart': (o_heart, 1), **{'bull-%d' % i: ((lambda i=i: o_bull(i)), 0) for i in range(96)}, **{'bearcp-%d' % i: ((lambda i=i: o_bear(i)), 0) for i in range(96)}, 'dolla': (o_dolla, 0), **{'dolla-%d' % v: ((lambda v=v: o_dolla(v)), 0) for v in (5, 20, 100)}, **{'skate-ride_%d-%d' % (p_, i): ((lambda p_=p_, i=i: o_skate('ride_%d' % p_, i)), 0) for p_ in SKATE_PITCH for i in range(SKATE_RIDE_N)}, **{'skate-%s-%d' % (k, i): ((lambda k=k, i=i: o_skate(k, i)), 0) for k, n_ in SKATE_SEQ.items() for i in range(n_)}, 'hat-top': (lambda: o_hat('top'), 0), 'hat-crown': (lambda: o_hat('crown'), 0), 'hat-prop': (lambda: o_hat('prop'), 0), 'bill': (o_bill, 0), **{'tick-%d' % t: ((lambda t=t: o_tick(t)), 0) for t in (1, 2, 3)}, **{'tick-r%d' % t: ((lambda t=t: o_tick(t, True)), 0) for t in (1, 2)}, 'rug': (o_rug, 0), 'rug-roll': (lambda: o_rug(True), 0), 'rocket': (o_rocket, 0), 'devwallet': (o_devwallet, 0), 'sign-100x': (o_sign100x, 0), 'bear': (o_bear, 0),  **{'dance-%d' % i: ((lambda i=i: o_dance(i)), 0) for i in range(DANCE_N)}, 'pu2-shield': (o_pu_shield, 1), 'pu2-magnet': (o_pu_magnet, 1), 'pu2-x2': (o_pu_x2, 1), 'pu2-dividend': (o_dividend, 1), 'logo3d': (o_logo3d, 0), **{'hero-%d' % i: ((lambda i=i: o_hero(i)), 0) for i in range(24)}, 'star': (o_star, 1), 'star-off': (lambda: o_star(True), 1), 'warn': (o_warn, -1), 'hook': (o_hook, 1), 'moon': (o_moon, -1), 'coin-silver': (lambda: o_coin('silver'), -1), 'coin-bronze': (lambda: o_coin('bronze'), -1),
            **{'runner-%s-%d' % (g, i): ((lambda g=g, i=i: o_runner(g, i)), 0) for g, n in [*[(g, GAIT_N) for g in GAITS], *AIR.items()] for i in range(n)}, 'crypto': (o_crypto, 1), 'notes': (o_notes, -1), 'moneybag': (o_moneybag, 1), 'receipt': (o_receipt, -1),
            'tag': (o_tag, 1), 'bank': (o_bank, -1), 'tower': (o_tower, 1), 'factory': (o_factory, -1), 'crane': (o_crane, 1),
            'house': (o_house, -1), 'castle': (o_castle, 1), 'dome': (o_dome, -1), 'map': (o_map, 1), 'pin': (o_pin, -1), 'compass': (o_compass, 1)}
