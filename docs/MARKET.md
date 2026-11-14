@@ -42,7 +42,7 @@
   - **Play:** the swipe legend.
   - **Style:** the wallet, a live preview of the runner wearing the hat, and the hat shop (buy / wear).
   - **Options:** the pause menu's settings sections, moved into the card (`hostSettings()`), so there's one set of controls.
-- **P&L:** `open += (prevGround − ground) · PNLK · dir · lev`. **Five states:** NEUTRAL (run start: gold, no position, `pos.flat`, collects ticks but the price doesn't move it), LONG, SHORT, CASH and ALL IN. The first ↑ gives LONG 1x.
+- **P&L:** `open += (prevGround − ground) · PNLK · dir · lev`. **Five states:** START (gold, `pos.flat`: already holding LONG 1x, like owning the stock, until the first swipe), LONG, SHORT, CASH and ALL IN. The first ↑ gives LONG 1x.
 - **Bull checkpoint** (`cp-bull`): launches up and forward (`R.surge`), and **banks** `open + cash` into the score.
 - **Code:** `skinOf`, `skateFrame` (`SKT`/`SKN`), `drawHat`, `auraFront` sit before `player()`; `setPos`, `bank`, `paintPnl`, `PNLK` sit next to `trick()`; the menu functions (`gcTab`, `paintStyle`, `prevRun`, `hostSettings`) sit before `setPause()`.
 

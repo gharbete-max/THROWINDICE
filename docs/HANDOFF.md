@@ -3,7 +3,7 @@
 - **Done:** queue items 1-13, 15-19, 21, and the Nov 14 audit queue (all non-owner items); B8 closed in `BALANCE.md` section 8; Tokens page replaces Token World (Token World pages and rug-pull code stay in the file, unreachable); ETF browser = fund cards; Low graphics is the only mode; stance rules (long 1x default, ALL IN toggles off, ticks pay by side).
 - **Styling matches throwpaper** (`gharbete-max/throwpaper` `DESIGN.md`): the `tpStyle` block at the end of `<head>`. Paper `#fafaf8`, ink `#0e0e10`, gold `#cea85c` fill, bronze `#8f6b3a` words, platinum greys, flat cards, glass only on the header, menu, dialogs and toasts, 44 px controls, Inter 16/1.55, dark derived (page `#0e0e10`, cards `#1c1c1e`).
 - **Hosting:** `docs/EMBEDDING.md` + `scripts/package.sh` (also used by the Pages workflow). `?embed` hides the wordmark; `#play` opens the game.
-- **Not built (deliberately):** higher notes (20); rendered trick bridges; deleting the dormant Token World code; bundling the Inter font (same as throwpaper).
+- **Not built (deliberately):** rendered trick bridges; deleting the dormant Token World code; bundling the Inter font (same as throwpaper).
 - **Owner still to do:** play five phone runs; enable Pages if using GitHub Pages; upload `dist/throwindice/` to the website.
 
 # Handoff: throwindice, Nov 14 2026
