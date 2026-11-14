@@ -73,7 +73,7 @@ Every trick is a **rendered Blender sequence**, not a canvas transform or a fade
 5. **Game:** add `{d, n}` to `TRK`, the row to `TROW`, and a direction or key in `flickDir` and the keydown map. If it isn't a straight play-through, give it a branch in `trickFrame` (see goo: in, loop, out).
 6. **Rules:** no canvas fakery (no scaleX flips, no cross-fades between poses). Motion lives in the frames, and loops must close (frame n+1 ≡ frame 0).
 
-## Trick combos: plan (stages 1, 2 and 4 built; 3 open)
+## Trick combos: plan (built; rendered bridges skipped)
 
 Goal: flicking several times in one jump chains tricks together. The same direction twice continues and speeds up the current trick (double cork, 720 spin). Back and forth reverses it or combines two tricks into one move (a cork that flows into a spin). Every chain still lands cleanly. Build in the phases below; each phase is shippable on its own.
 
@@ -163,7 +163,7 @@ Tricks nudge the arc slightly, so combos feel physical:
 - **Scoring:**
   - `R.cn` and `R.cnames` count tricks completed in the air. The live label `R.clbl` above the runner grows and punches on each link.
   - On landing the chain pays `3·n²` if clean (no trick mid-rotation; a goo landing is always clean), with the name from `chainName()`: DOUBLE/TRIPLE, spin degrees, CORKSPIN + SPIN → TWISTER, otherwise joined with `+`. A landing that isn't clean pays nothing.
-- **Not yet:** bridges/combined poses (stage 3).
+- **Stage 3 (Nov 14):** combo names only: SPLIT then PANCAKE = SPLAT SPLIT (`chainName`). Rendered bridges are skipped (decision): the only reachable pair is split → goo, which already chains cleanly through REST, and the bridge frames would not change play.
 
 ### Stages 2 and 4: what's built (Nov 14 2026)
 
@@ -176,7 +176,7 @@ Tricks nudge the arc slightly, so combos feel physical:
 
 1. ✅ **Input stream, queue, acceleration and chaining through REST, with today's sheets** (every trick already starts and ends at REST, so any chain works via its out segment), plus the land-aware warp and `n·n` scoring. *No renders.*
 2. ✅ **Loop segments:** double/triple cork (rendered), split extension (replayed hold). Spin rewind/720 dropped (spin is not reachable).
-3. **Bridges and combo names.**
+3. ✅ (names only) **Combo names**; rendered bridges skipped, see Stage 3 above.
 4. ✅ (mostly) **Physics coupling, lazy loading of the skin sheets**; the continuity script and checks at 30/120 fps are open.
 
 ## Blending under spam (built)
