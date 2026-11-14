@@ -51,7 +51,7 @@ Everything renders in the glass family (the only style): every skin is a glass b
 
 - **Runner frame list (105):** walk 24, jog 24, run 24 (`GAIT_N`), tko 9 (blended through 3 key poses), rise 12, fall 12 (`AIR`) → `runner-{gait}-{i}`. Sheets are 2 rows of 53 (`RC` in `index.html`; one row would pass WebP's 16383 px limit for the cash sheet). The game steps gaits by distance (30-75 fps), rise at 36 fps, fall at 45 fps. The love sheets keep their old 8 frames (rise 0-3, fall 0-3 of a 4-frame cycle = new rise/fall frames 0, 3, 6, 9); their hat anchors map to `HEADS.run[81+3i]` / `[93+3i]`.
 - **Menu dancer:** 54 frames (`DANCE_N`), a 0.9 s loop at 60 fps, slid by `transform` on `.gcDancer::before` (no repaint).
-- **Other sheets:** tricks 24 frames each, skate 168, bull/bear 96 (see `docs/ANIMATION.md`, "Frame rate and frame counts"). Sheets decode off the main thread (`bmMake`); canvas colours come from the theme palette `pal()`.
+- **Other sheets:** tricks 24 frames each (5 rows: cork, spin, split, goo, then the 16-frame double-cork loop `trick-corkloop-*`; cell crop `(30, 32, 215, 216)`), skate 168, bull/bear 96 (see `docs/ANIMATION.md`, "Frame rate and frame counts"). Sheets decode off the main thread (`bmMake`); canvas colours come from the theme palette `pal()`.
 - **Runner sheet packing:**
   - Crop box `(x0, 27, x1, 209)`, frames side by side, cell height 182.
   - The game draws at height 217, so the pixel scale is `217/182`.
