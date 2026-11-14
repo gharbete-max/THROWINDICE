@@ -15,3 +15,7 @@ Run before every push that touches `index.html`. History of past rounds: `docs/a
 
 - Not tested on Safari/Firefox or real phones by the cloud sessions; no real screen reader pass.
 - Fund facts come from the free Yahoo-based pipeline (`docs/UPDATING.md`); fees are dated issuer-page citations. Re-verify before relying on them.
+
+## Merge with the audit-queue session + 320 px check
+- Merged origin/main (daily chart, trick combos, fund details sheet, CSS deletions, repo hygiene): no conflicts. Re-ran home, Menu, Tokens, ETF cards, stance swipes and the fund sheet: no page errors or 4xx.
+- 320 px, light and dark, all eight pages: no horizontal overflow after a fix to the long pile-row names ("Cybersecurity" row pushed the ETF page to 383 px).
